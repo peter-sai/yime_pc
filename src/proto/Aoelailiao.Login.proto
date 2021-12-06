@@ -1,0 +1,855 @@
+syntax = "proto2";
+package Aoelailiao.Login;
+import "Aoelailiao.Common.proto";
+import "Aoelailiao.Message.proto";
+option java_package = "com.aoetech.aoelailiao.protobuf";
+option optimize_for = LITE_RUNTIME;
+
+//登录信息
+message UserPlatformInfo {
+    optional uint32 login_type = 1; //0--手机号,1--微信,2--QQ,3--微博,4--微信小程序,5--短信验证码登录,6--支付宝登录,7--验证码注册,8--token登录
+    optional string login_id = 2; //login_type=0时为手机号。 第三方账号登录时，为绑定的第三方平台的唯一标识openid,微信小程序登录时为code
+    optional string login_passwd_token = 3; //本字段仅用于绑定手机号或者第三方登录帐号。login_type为0，手机号绑定时为用户手机号登录密码的md5, 手机号登录时不需要填写。第三方绑定时为AccessToken。login_type为4时填写从微信端收到的json数据，login_type为5时填写收到的短信验证码
+    optional string wx_union_id = 4; //微信登录或者微信小程序登陆时需要填写该字段
+    optional Aoelailiao.Common.ThirdUserInfo third_user_info = 5; //第三方登录用户信息
+}
+//设备信息
+message EquipmentInformation {
+    optional string device_uuid = 1;//设备唯一id
+    optional string device_brand = 2;//设备平台
+    optional string device_model = 3;//设备型号
+    optional string device_os_version = 4;//系统版本
+    optional string release_version = 5;//应用版本
+    optional string device_private_ip = 6; //当前设备内网IP
+    optional string device_public_ip = 7; //当前设备外网IP
+    optional string distribution_channel_id = 8; //渠道号
+}
+
+//获取验证码（重置密码包括手机号注册用户修改密码和找回密码）
+message GetAuthCodeReq {
+    //cmd :1001
+    optional string phone = 1;
+    optional uint32 type = 2; //类型，1--获取登录验证码，2--获取重置登录密码验证码，3--获取重置支付密码验证码，4--实名认证的验证码(SWAuthenticationReq)，5--绑定手机号码，6--更换手机号码时获取原号码验证码，7--获取更换手机号时获取新手机号的验证码
+    optional string register_device_uuid = 3; //设备的唯一标识
+    optional string ios_idfa = 30; //ios 统计注册成功用户的标志符
+    optional bytes attach_data = 32;
+}
+
+message GetAuthCodeAns {
+    //cmd id: 1002
+    optional uint32 result_code = 1; //0--success,1--failed
+    optional string result_string = 2;
+    optional bytes attach_data = 32;
+}
+
+//验证验证码（并设置新的密码）
+message AuthAuthCodeReq {
+    //cmd :1003
+    optional uint32 type = 1; //类型，1--验证验证码，2--获取重置登录密码验证码，3--获取重置支付密码验证码，4--实名认证的验证码(SWAuthenticationReq)，6--更换手机号码时获取原号码验证码，7--获取更换手机号时获取新手机号的验证码
+    optional string phone = 2;
+    optional string auth_code = 3;
+    optional string new_passwd_md5 = 4; //重置密码时填写该字段，否则为空
+	optional string old_phone = 5;//更换手机号时填旧手机号,此时phone应该填写的是新手机号
+    optional string ios_idfa = 30; //ios 统计注册成功用户的标志符，指标
+    optional bytes attach_data = 32;
+}
+
+message AuthAuthCodeAns {
+    //cmd id: 1004
+    optional uint32 result_code = 1; //0--success,1--failed，1219--需绑定手机号
+    optional string result_string = 2;
+    optional bytes attach_data = 32;
+}
+
+message RegisterInfo{
+    optional string nickname = 1;
+    optional string icon = 2;
+    optional string password = 3;
+}
+
+//登录
+message LoginReq {
+    //cmd id: 1005
+    optional UserPlatformInfo login_info = 1;
+    optional RegisterInfo register_info = 2; //注册填写
+    optional uint32 client_language_type = 3; //客户端语言类型,0--简体中文(默认),1--繁体中文,2--英文
+    optional EquipmentInformation equipment_information = 27;//当前设备信息
+    optional bytes attach_data = 32;
+}
+
+message LoginAns {
+    //cmd id: 1006
+    optional uint32 result_code = 1; //0--成功,1201--用户不存在,1202--认证失败,1203--用户已登录,1204--Authenticator非法,1205--TGT非法,1206--用户注销中
+    optional string result_string = 2;
+    optional uint32 login_type = 3;
+    optional uint32 server_time = 4;
+    optional bytes user_login_token = 6; //客户端的token
+    optional Aoelailiao.Common.UserInfo user_info = 7;
+    optional Aoelailiao.Common.SwitchSettingInfo switch_setting_info = 8; //返回客户端当前的消息push设置状态
+    optional Aoelailiao.Common.UserDetailInfo user_detail_info = 9;
+    optional string device_uuid = 30; //该字段仅限后台使用
+    optional string distribution_channel_id = 31; //该字段仅限后台使用
+    optional bytes attach_data = 32;
+}
+
+//登录注销协议
+message LogOutReq {
+    //cmd id :1007
+    optional bytes attach_data = 32;
+}
+
+message LogOutAns {
+    //cmd id :1008
+    optional uint32 result_code = 1; //0--success,1--failed
+    optional string result_string = 2;
+    optional bytes attach_data = 32;
+}
+
+//获取好友与群列表
+message UserGetFriendsAndGroupsListReq {
+    //cmd id:1009
+    optional uint32 update_time = 1; //列表更新时间
+    optional bytes attach_data = 32;
+}
+
+message UserGetFriendsAndGroupsListAns {
+    //cmd id:1010
+    optional uint32 result_code = 1;
+    optional string result_string = 2;
+    repeated Aoelailiao.Common.UserInfo friend_infos = 3; //好友信息列表
+    repeated Aoelailiao.Common.GroupInfo group_infos = 4; //群信息列表
+    optional uint32 update_time = 5; //列表更新时间
+    optional uint32 is_need_bind_phone = 31; //绑定手机号弹窗提示,0--不提醒,1--推荐绑定,2--强制绑定
+    optional bytes attach_data = 32;
+}
+
+//获取用户资料
+message ClientGetUserInfoReq {
+    //cmd id:1011
+    optional uint32 uid = 1;
+    optional string source = 2;//来源 从这几个地方进入好友主页查询用户信息时客户端传来源文案 群聊、好友推荐、分享链接、手机号搜索、YIME号搜索、昵称搜索
+    optional uint32 source_id = 3;//来源id;用户id 群id
+    optional uint32 source_type = 4;//0--群聊1-好友推荐2-分享链接3-手机号搜索4-YIME号搜索5-昵称搜索
+    optional bytes attach_data = 32;
+}
+
+message ClientGetUserInfoAns {
+    //cmd id:1012
+    optional uint32 result_code = 1;
+    optional string result_string = 2;
+    optional Aoelailiao.Common.UserDetailInfo user_detail_info = 3;
+    optional bytes attach_data = 32;
+}
+
+//通用设置用户资料协议
+message ItemSettingInfo {
+    optional uint32 item_no = 1; //设置项目编号 ，1--头像，2--昵称，3--性别，4--位置，6--个性签名，7--im_account
+    optional string item_value = 2; //设置项目的新值,数字型的需要转换成string类型
+}
+
+message UserSetItemReq {
+    //cmd id :1013
+    repeated ItemSettingInfo item_infos = 1; //需要设置的选项及新值
+    optional bytes attach_data = 32;
+}
+
+message UserSetItemAns {
+    //cmd id :1014
+    optional uint32 result_code = 1; //0--success
+    optional string result_string = 2;
+    repeated ItemSettingInfo item_infos = 3; //需要设置的选项及新值
+    optional bytes attach_data = 32;
+}
+
+//查询用户,通过uid,手机号，昵称
+message UserQueryUserInfoReq {
+    //cmd id:1015
+    optional string query_string = 1; //查询内容
+    optional bytes attach_data = 32;
+}
+
+message UserQueryUserInfoAns {
+    //cmd id:1016
+    optional uint32 result_code = 1;
+    optional string result_string = 2;
+    repeated Aoelailiao.Common.UserDetailInfo user_detail_infos = 3; //用户信息查询结果 搜索结果要返回source_type区分是通过什么搜索到的
+    optional bytes attach_data = 32;
+}
+
+//上传客户端设备token
+message ClientUploadDevicePushTokenReq {
+    //cmd id:1017
+    optional uint32 operate_reason = 1; //操作原因(1--登录 2--登出 3--程序进入前台 4--程序进入后台 5--客户端断开连接)
+    optional string device_token = 2;
+    optional uint32 push_sdk_type = 3; //0--无效，1--苹果测试版本,2--苹果正式版本,101--小米,102--华为,103--友盟
+    optional string device_voip_token = 4; //用于音视频通话callkit提醒
+    optional bytes attach_data = 32;
+}
+
+message ClientUploadDevicePushTokenAns {
+    //cmd id:1018
+    optional uint32 result_code = 1;
+    optional string result_string = 2;
+    optional uint32 operate_reason = 3;
+    optional bytes attach_data = 32;
+}
+
+//上传APP角标计数
+message ClientUploadBadgeInfoReq {
+    //cmd id :1019
+    optional uint32 badge = 1;
+    optional bytes attach_data = 32;
+}
+
+message ClientUploadBadgeInfoAns {
+    //cmd id :1020
+    optional uint32 result_code = 1; //0--success,1--failed
+    optional string result_string = 2;
+    optional bytes attach_data = 32;
+}
+
+//用户知道原密码，修改密码
+message UserChangePassWordReq {
+    //cmd id:1021
+    optional uint32 password_type = 1; //修改的密码类型0--无效，1--登录密码，2--支付密码
+    optional string old_password_md5 = 2; //
+    optional string new_password_md5 = 3;
+    optional bytes attach_data = 32;
+}
+
+message UserChangePassWordAns {
+    //cmd id:1022
+    optional uint32 result_code = 1; //0--success,1--failed
+    optional string result_string = 2;
+    optional bytes attach_data = 32;
+}
+
+message DecodeResultInfo {
+    optional uint32 jump_type = 1; //跳转类型,0--无法识别，1--用户资料，2--群信息，3--网站地址
+    oneof jump_content {
+        string default_value = 2; //无法识别的内容
+        uint32 user_id = 3; //用户资料
+        uint32 group_id = 4; //群ID
+        string web_url = 5; //网址url
+    }
+}
+
+//用户请求服务器解码内容(包括扫描二维码与自定义数据)
+message UserDecodeConentReq {
+    //cmd id:1023
+    optional string encode_string = 1; //已编码内容
+    optional bytes attach_data = 32;
+}
+
+message UserDecodeConentAns {
+    //cmd id:1024
+    optional uint32 result_code = 1; //0--success,1--failed
+    optional string result_string = 2;
+    optional DecodeResultInfo decode_result_info = 3; //解码后的内容
+    optional string long_link_url=4;//短链接解析后的长链接
+    optional bytes attach_data = 32;
+}
+
+//用户操作好友关系
+message UserOperateFriendShipReq {
+    //cmd id:1025
+    optional uint32 operate_type = 1; //0--无效，1--添加好友，2--删除好友, 11-修改好友备注
+    optional uint32 query_type = 2; //获取好友信息的方式(增加时使用)，1--搜索，2--扫描二维码， 3--个人名片,4--聊天界面添加，5--通过手机号添加好友
+    optional Aoelailiao.Common.UserInfo user_info = 3; //通过uid添加好友时使用
+    optional string apply_desc = 4; //加好友时的申请说明
+	optional string phone=5;//带国际区号的手机号,包括+号,通过手机号添加好友时使用
+	optional string remark_name=6;//好友备注，通过手机号添加好友时使用
+    optional bytes attach_data = 32;
+}
+
+message UserOperateFriendShipAns {
+    //cmd id:1026
+    optional uint32 result_code = 1; //0--success,1--failed
+    optional string result_string = 2;
+    repeated Aoelailiao.Common.UserInfo user_info = 3; //好友列表
+    optional bytes attach_data = 32;
+}
+
+//用户操作群信息
+message UserOperateGroupInfoReq {
+    //cmd id:1027
+    optional uint32 operate_type = 1; //0--无效，1--创建群，2--加入群,3--退出群，4--添加群成员,5--删除群成员(管理权限)，6--设置管理员(群主权限)，7--转让群主(群主权限) 11-修改群名称与群头像(群主权限)，12--修改群公告(管理权限)，14--修改用户自己在群里面的昵称备注信息(可以修改自己的)，15--用户修改自己对群名称的备注
+    optional uint32 query_group_info_type = 2; //获取群信息的方式(增加时使用)，1--好友邀请，2--扫描群二维码,3--群链接
+    optional Aoelailiao.Common.GroupInfo group_info = 3; //
+    optional bytes attach_data = 32;
+}
+
+message UserOperateGroupInfoAns {
+    //cmd id:1028
+    optional uint32 result_code = 1; //0--success,1--failed
+    optional string result_string = 2;
+    optional Aoelailiao.Common.GroupInfo group_info = 3; //群信息
+    optional bytes attach_data = 32;
+}
+
+//获取群资料
+message ClientGetGroupInfoReq {
+    //cmd id:1029
+    optional uint32 group_id = 1;
+    optional bytes attach_data = 32;
+}
+
+message ClientGetGroupInfoAns {
+    //cmd id:1030
+    optional uint32 result_code = 1;
+    optional string result_string = 2;
+    optional Aoelailiao.Common.GroupInfo group_detail_info = 3;
+    optional bytes attach_data = 32;
+}
+
+//用户操作黑名单
+message UserOperateBlackListReq {
+    //cmd id:1039
+    optional uint32 operate_type = 1; //0--无效，1--查询黑名单列表，2--添加到黑名单，3--从黑名单中移除
+    optional uint32 operate_uid = 2; //被操作的用户uid
+    optional bytes attach_data = 32;
+}
+
+message UserOperateBlackListAns {
+    //cmd id:1040
+    optional uint32 result_code = 1; //0--success,1--failed
+    optional string result_string = 2;
+    optional Aoelailiao.Common.UserBlackListInfo user_blacklist_info = 3; //黑名单列表
+    optional bytes attach_data = 32;
+}
+
+//用户操作设置项的开关
+message UserOperateSettingItemSwitchReq {
+    //cmd id:1041
+    optional uint32 object_type = 1; //0--自己，1--uid，2--群id
+    optional uint32 object_id = 2;
+    optional uint32 setting_item_id = 3; //0--无效，1001--阅后即焚开关,1002--加群需要认证，1003--截屏通知，1004--会话(群)置顶,1005--消息免打扰(静音并不推送),1006--保存通信录(加入我的群列表),1007--群员隔离(不允许在群内查看其他用户资料)，1008--全员禁言，1009--禁止修改昵称，1101--群小时定时清理,1011--允许群成员获取聊天历史记录,1012--允许任何人加群,1013--允许群成员邀请其他用户入群,1014--群邀请权限 2001--新消息通知,2002--语音和视频通话提醒,2003--声音,2004--震动,2101--手机号,2102--IM号,2103--昵称,2104--群聊,2105--推荐,2106--向我推荐通讯录朋友,2107--已读未读消息设置
+    optional uint32 switch_state = 4; //0--关闭(默认)，1--打开
+    optional bytes attach_data = 32;
+}
+
+message UserOperateSettingItemSwitchAns {
+    //cmd id:1042
+    optional uint32 result_code = 1; //0--success,1--failed
+    optional string result_string = 2;
+    optional bytes attach_data = 32;
+}
+
+//通用举报协议
+message UserReportAndComplaintsReq {
+    //cmd id: 1043
+    optional uint32 report_type = 1; //1--举报好友,2--举报群
+    optional uint32 report_object = 2; //1--uid,2--gid
+    optional string explanation = 3;
+    optional bytes attach_data = 32;
+}
+
+message UserReportAndComplaintsAns {
+    //cmd id: 1044
+    optional uint32 result_code = 1; //0--success,1--failed
+    optional string result_string = 2;
+    optional uint32 is_need_kick_out_user = 3; //仅服务器使用，用户db通知msg踢人下线
+    optional bytes attach_data = 32;
+}
+
+//用户在聊天界面截图后向服务器发送通知
+message UserSendScreenShotEventNotifyReq {
+    //cmd id:1045
+    optional uint32 notify_type = 1; //0--好友聊天界面截屏,1--群聊天界面截屏
+    optional uint32 notify_object_id = 2; //好友uid或者群gid
+    optional bytes attach_data = 32;
+}
+
+message UserSendScreenShotEventNotifyAns {
+    //cmd id:1046
+    optional uint32 result_code = 1; //0--success,1--failed
+    optional string result_string = 2;
+    optional bytes attach_data = 32;
+}
+
+message ClientGetPhoneContactUserInfoReq {
+    //cmd id:1047
+    repeated Aoelailiao.Common.PhoneContactUserInfo phone_contact_user_info = 1;
+    optional bytes attach_data = 32;
+}
+
+message ClientGetPhoneContactUserInfoAns {
+    //cmd id:1048
+    optional uint32 result_code = 1; //0--success,1--failed
+    optional string result_string = 2;
+    repeated Aoelailiao.Common.PhoneContactUserInfo phone_contact_user_info = 3;
+    optional string user_invite_friend_sms_content = 4; //用户邀请好友的短信内容
+    optional bytes attach_data = 32;
+}
+
+message ClientReloginReq {
+    //cmd id:1049
+    optional uint32 uid = 1;
+    optional EquipmentInformation equipment_information = 27;//当前设备信息
+}
+
+message ClientReloginAns {
+    //cmd id:1050
+    optional uint32 result_code = 1; //0--success,1--failed
+    optional string result_string = 2;
+}
+
+
+message ClientGetFileUploadTokenReq {
+    //cmd id:1051
+    optional uint32 file_sdk_type = 1; //1--七牛
+    optional string file_etag = 2; //使用七牛sdk对文件进行hash的结果
+    optional bytes attach_data = 32;
+}
+
+message ClientGetFileUploadTokenAns {
+    //cmd id:1052
+    optional uint32 result_code = 1; //0--success,1--failed
+    optional string result_string = 2;
+    optional uint32 file_have_exist = 3; //0--文件不存在,需要上传,1--文件已存在,不需要上传
+    optional string file_exist_url = 4; //文件url
+    optional uint32 file_sdk_type = 5; //1--七牛
+    optional string file_upload_toke = 6; //使用七牛sdk上传文件的token
+    optional bytes attach_data = 32;
+}
+
+message FunctionItemInfo {
+    optional uint32 function_id = 1; //功能ID，10001--语音与视频，20001--支付宝红包，20002--零钱钱包功能（充值，转账，红包，提现）
+    optional uint32 function_switch_state = 2; //功能开关，0--关闭(默认)，1--打开
+}
+
+message ServerSendFunctionInfoNotify {
+    //cmd id:1054
+    repeated FunctionItemInfo function_item_infos = 1; //功能点版本控制描述
+    optional bytes attach_data = 32;
+}
+
+message SWGetAppFunctionInfoReq {
+    //cmd id:1055
+    optional bytes attach_data = 32;
+}
+
+message SWGetAppFunctionInfoAns {
+    //cmd id:1056
+    optional uint32 result_code = 1;
+    optional string result_string = 2;
+    repeated FunctionItemInfo function_item_infos = 3; //功能点版本控制描述
+    optional string user_chat_welcome_tips=4;//用户单聊欢迎语
+    optional string group_chat_welcome_tips=5;//群聊欢迎语
+    optional string app_about_us_info=6;//app内关于我们菜单内容
+    optional bytes attach_data = 32;
+}
+
+//检查IM版本更新
+message SWGetAppUpdateInfoReq {
+    //cmd id:1057
+    optional bytes attach_data = 32;
+}
+
+message SWGetAppUpdateInfoAns {
+    //cmd id:1058
+    optional uint32 result_code = 1;
+    optional string result_string = 2;
+    optional uint32 need_update = 3; //是否需要更新,1--需要更新,其他--不需要更新
+    optional uint32 force_update = 4; //是否强制更新,1--强制更新,其他--不需要强制更新
+    optional uint32 new_version = 5; //新的版本号
+    optional uint32 min_version = 6; //最小支持版本号
+    optional string update_url = 7; //更新跳转或者下载地址
+    optional string update_desc = 8; //更新描述
+    optional bytes attach_data = 32;
+}
+
+//服务器主动下发未处理申请计数
+message ServerSendApplyNotDealWithNum {
+    //cmd id:1060
+    optional uint32 not_deal_with_num = 1; //未处理申请计数
+    optional bytes attach_data = 32;
+}
+//操作申请
+message UserOperateApplyReq {
+    //cmd id:1061
+    optional uint32 apply_id = 1;
+    optional uint32 apply_type = 2; //1--好友申请，2--群申请
+    optional uint32 operate = 3; //1--同意，2--拒绝
+    optional bytes attach_data = 32;
+}
+message UserOperateApplyAns {
+    //cmd id:1062
+    optional uint32 result_code = 1;
+    optional string result_string = 2;
+    repeated Aoelailiao.Common.UserInfo user_info = 3; //好友列表
+    optional Aoelailiao.Common.GroupInfo group_info = 4; //群列表
+    optional Aoelailiao.Message.NewFriendsApplyNotice new_friends_apply_notice = 5;
+    optional bytes attach_data = 32;
+}
+//查询申请状态
+message UserQueryApplyStateReq {
+    //cmd id:1063
+    optional uint32 apply_id = 1;
+    optional bytes attach_data = 32;
+}
+message UserQueryApplyStateAns {
+    //cmd id:1064
+    optional uint32 result_code = 1;
+    optional string result_string = 2;
+    optional Aoelailiao.Message.NewFriendsApplyNotice new_friends_apply_notice = 3;
+    optional bytes attach_data = 32;
+}
+
+//获取申请列表
+message UserGetApplyInfoReq {
+    //cmd id:1065
+    optional uint32 apply_type = 1; //列表类型：1--好友列表，2--群列表
+    optional bytes attach_data = 32;
+}
+message UserGetApplyInfoAns {
+    //cmd id:1066
+    optional uint32 result_code = 1;
+    optional string result_string = 2;
+    repeated Aoelailiao.Message.NewFriendsApplyNotice new_friends_apply_notice = 3;
+    optional bytes attach_data = 32;
+}
+
+//获取客服uid
+message ClientGetCustomerServicerUidReq {
+    //cmd id:1067
+    optional bytes attach_data = 32;
+}
+message ClientGetCustomerServicerUidAns {
+    //cmd id:1068
+    optional uint32 result_code = 1;
+    optional string result_string = 2;
+    optional uint32 customer_servicer_uid = 3; //客服uid
+    optional bytes attach_data = 32;
+}
+
+//查询群消息
+message UserQueryGroupInfoReq {
+    //cmd id:1101
+    optional string query_string = 1; //查询内容
+    optional bytes attach_data = 32;
+}
+
+message UserQueryGroupInfoAns {
+    //cmd id:1102
+    optional uint32 result_code = 1;
+    optional string result_string = 2;
+    repeated Aoelailiao.Common.GroupInfo group_infos = 3; //群信息查询结果
+    optional bytes attach_data = 32;
+}
+
+//批量获取好友用户资料
+message ClientGetUserInfoListReq {
+    //cmd id:1115
+    repeated uint32 uid = 1;
+    optional bytes attach_data = 32;
+}
+
+message ClientGetUserInfoListAns {
+    //cmd id:1116
+    optional uint32 result_code = 1;
+    optional string result_string = 2;
+    repeated Aoelailiao.Common.UserInfo user_info = 3;
+    optional bytes attach_data = 32;
+}
+
+//DH秘钥协商
+//向服务端发送公钥
+message sendPublicKeyToServserReq {
+    // cmd id 1117
+    optional string conv_id = 1; //对话Id
+    optional uint32 receive_uid = 2;
+    optional string public_key = 3;
+    optional bytes attach_data = 32; //后台专用字段,前端忽略
+}
+message sendPublicKeyToServserAns {
+    // cmd id 1118
+    optional uint32 result_code = 1;
+    optional string result_string = 2;
+    optional bytes attach_data = 32; //后台专用字段,前端忽略
+}
+
+// 接受服务端的公钥
+message receivePublicKeyFromServser {
+    // cmd id 1119
+    optional string conv_id = 1; //对话Id
+    optional uint32 send_uid = 2;
+    optional string public_key = 3;
+    optional uint32 device_count = 4; //当前在线设备数
+    optional bytes attach_data = 32; //后台专用字段,前端忽略
+}
+
+//向服务端发送签名
+message sendSignatureToServserReq {
+    // cmd id 1120
+    optional string conv_id = 1; //对话Id
+    optional uint32 receive_uid = 2;
+    optional string sign = 3;
+    optional bytes attach_data = 32; //后台专用字段,前端忽略
+}
+message sendSignatureToServserAns {
+    // cmd id 1121
+    optional uint32 result_code = 2;
+    optional string result_string = 3;
+    optional bytes attach_data = 32; //后台专用字段,前端忽略
+}
+
+// 接受服务端的签名
+message receiveSignatureFromServser {
+    // cmd id 1122
+    optional string conv_id = 1; //对话Id
+    optional uint32 send_uid = 2;
+    optional string sign = 3;
+    optional bytes attach_data = 32; //后台专用字段,前端忽略
+}
+
+// 上报协商结果
+message reportCommunicateResultReq {
+    // cmd id 1123
+    optional string conv_id = 1;
+    optional uint32 code = 2; //1-success,2-failed
+    optional bytes attach_data = 32; //后台专用字段,前端忽略
+}
+
+// 协商结果响应
+message reportCommunicateResultAns {
+    // cmd id 1124
+    optional uint32 result_code = 1;
+    optional string result_string = 2;
+    optional bytes attach_data = 32; //后台专用字段,前端忽略
+}
+
+// 推送本次协商流程是否彻底成功
+message pushEncryptedTunnelResult {
+    // cmd id 1125
+    optional uint32 result_code = 1;
+    optional string result_string = 2;
+    optional string conv_id = 3; //临时会话ID
+    optional string final_conv_id = 4; //加密聊天最终会话ID（实际群ID）
+    optional bytes attach_data = 32; //后台专用字段,前端忽略
+}
+//上传加密对话的sessionKey
+message UploadSessionKeyReq {
+    // cmd id 1126
+    optional uint64 conv_id = 1; // 对话ID
+    optional string session_key = 2;
+    optional bytes attach_data = 32; //后台专用字段,前端忽略
+}
+message UploadSessionKeyAns {
+    // cmd id 1127
+    optional uint32 result_code = 1; //0--success,1--failed
+    optional string result_string = 2;
+    optional bytes attach_data = 32; //后台专用字段,前端忽略
+}
+
+
+
+//发起私密聊天前获取临时会话ID
+message UserGetTempEncryptedConvIdReq {
+    //cmd id:1173
+    optional uint32 friend_uid = 1; //对方uid
+    optional bytes attach_data = 32;
+}
+
+message UserGetTempEncryptedConvIdAns {
+    //cmd id:1174
+    optional uint32 result_code = 1;
+    optional string result_string = 2;
+    optional string temp_conv_id = 3; //临时会话ID
+    optional bytes attach_data = 32;
+}
+
+//请求向在线用户发送客户端自定义消息
+message ClientCustomMsgTransferReq {
+    //cmd id:1175
+    repeated uint32 recv_uids = 1;
+    optional string msg_data = 2;
+    optional bytes attach_data = 32;
+}
+
+message ClientCustomMsgTransferAns {
+    //cmd id:1176
+    optional uint32 result_code = 1;
+    optional string result_string = 2;
+    repeated uint32 failed_uids = 3; //不在线用户uid集合
+    optional bytes attach_data = 32;
+}
+//客户端自定义消息通知
+message ClientCustomMsgTransferNotify {
+    //cmd id:1178
+    optional string msg_data = 1;
+    optional bytes attach_data = 32;
+}
+
+//获取共同的群聊
+message GetCommonGroupReq {
+    //cmd id:1179
+    optional uint32 uid = 1;
+    optional bytes attach_data = 32;
+}
+
+message GetCommonGroupAns {
+    //cmd id:1180
+    optional uint32 result_code = 1;
+    optional string result_string = 2;
+    repeated Aoelailiao.Common.GroupInfo common_group_infos = 3;
+    optional bytes attach_data = 32;
+}
+
+message SearchInfoReq{
+    //cmd id:1181
+    optional string key_words = 1;
+    optional uint32 search_type = 2;//0--全部，1--好友，2--群，3--聊天记录
+    repeated uint64 receive_ids = 3;
+    optional bytes attach_data = 32;
+}
+
+message SearchMessageInfo{
+    optional uint32 is_group = 1;
+    optional uint32 to_id = 2;//接收者
+    optional uint32 msg_count = 3;
+}
+
+message SearchInfoAns {
+    //cmd id:1182
+    optional uint32 result_code = 1;
+    optional string result_string = 2;
+    optional uint32 search_type = 3;//0--全部，1--好友，2--群，3--聊天记录
+    repeated Aoelailiao.Common.UserInfo contracts = 4;
+    repeated Aoelailiao.Common.GroupInfo groups = 5;
+    repeated SearchMessageInfo message_infos = 6;
+    repeated Aoelailiao.Message.MsgInfo msg_infos = 7;
+    optional bytes attach_data = 32;
+}
+
+
+message DestroyUserAccountReq{
+    //cmd id:1183
+    optional bytes attach_data = 32;
+}
+message DestroyUserAccountAns{
+    //cmd id:1184
+    optional uint32 result_code = 1;
+    optional string result_string = 2;
+    optional bytes attach_data = 32;
+}
+
+message GetGroupNoticeInfoListReq{
+    //cmd id:1185
+    optional uint32 group_id = 1;
+    optional uint64 notice_id = 2;
+    optional bytes attach_data = 32;
+}
+
+message GetGroupNoticeInfoListAns{
+    //cmd id:1186
+    optional uint32 result_code = 1;
+    optional string result_string = 2;
+    repeated Aoelailiao.Common.GroupNoticeInfo group_notices = 3;
+    optional bytes attach_data = 32;
+}
+
+message UserCommitFeedBackReq{
+    //cmd id:1187
+    optional string feedback_content = 1;//反馈内容
+    repeated string feedback_images = 2;//反馈图片
+    optional bytes attach_data = 32;
+}
+
+message UserCommitFeedBackAns{
+    //cmd id:1188
+	optional uint32 result_code = 1;
+	optional string result_string = 2;
+    optional bytes attach_data = 32;
+}
+
+//用户检查某项功能状态
+message UserCheckFunctionPrivilegeReq{
+    //cmd id:1189
+    optional uint32 function_id = 1;//功能ID，20010--发送消息（包括音视频通话）
+    optional uint32 object_id = 2;//20010时表示对方的uid
+    optional bytes attach_data = 32;
+}
+
+message UserCheckFunctionPrivilegeAns{
+    //cmd id:1190
+	optional uint32 result_code = 1;
+	optional string result_string = 2;
+	optional uint32 function_id = 3;//功能ID，20010--发送消息
+	optional uint32 function_state = 4;//功能状态,1--可用,2--不可用
+    optional bytes attach_data = 32;
+}
+
+//用户更新客户端使用的语言类型
+message UserUpdateClientLanguageReq{
+    //cmd id:1191
+    optional uint32 client_language_type = 1; //客户端语言类型,0--简体中文(默认),1--繁体中文,2--英文
+    optional bytes attach_data = 32;
+}
+
+message UserUpdateClientLanguageAns{
+    //cmd id:1192
+	optional uint32 result_code = 1;
+	optional string result_string = 2;
+    optional bytes attach_data = 32;
+}
+
+
+//用户获取我可以将机器人加入群聊的列表
+message UserGetMyManagedGroupListReq{
+    //cmd id:1193
+    optional bytes attach_data = 32;
+}
+
+message UserGetMyManagedGroupListAns{
+    //cmd id:1194
+	optional uint32 result_code = 1;
+	optional string result_string = 2;
+	repeated Aoelailiao.Common.GroupInfo group_infos = 3; //群信息列表
+    optional bytes attach_data = 32;
+}
+
+
+//用户将机器人加入群聊
+message UserAddBotToMyManagedGroupReq{
+    //cmd id:1195
+    optional uint32 bot_user_id = 1;//机器人用户uid
+    optional uint32 group_id = 2;//群id
+    optional bytes attach_data = 32;
+}
+
+message UserAddBotToMyManagedGroupAns{
+    //cmd id:1196
+	optional uint32 result_code = 1;
+	optional string result_string = 2;
+	optional Aoelailiao.Common.GroupInfo group_info = 3; //群信息
+    optional bytes attach_data = 32;
+}
+
+message UserChatWithBotFatherReq{
+    //cmd id:1197
+    optional bytes attach_data = 32;
+}
+
+message UserChatWithBotFatherAns{
+    //cmd id:1198
+	optional uint32 result_code = 1;
+	optional string result_string = 2;
+    optional bytes attach_data = 32;
+}
+
+//短链接转换服务
+message UserShortLinkConvertReq{
+    //cmd id:1199
+    optional uint32 type = 1;//0--长链接转短链接（默认），1--短链接解析成长链接
+    optional string link_url = 2;//需要转换的链接地址
+    optional bytes attach_data = 32;
+}
+
+message UserShortLinkConvertAns{
+    //cmd id:1200
+	optional uint32 result_code = 1;
+	optional string result_string = 2;
+	optional string link_url = 3;
+    optional bytes attach_data = 32;
+}

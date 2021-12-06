@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="46px" height="46px" viewBox="0 0 46 46" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>编组 8</title>
+    <defs>
+        <linearGradient x1="85.3489074%" y1="11.8778313%" x2="25.5585705%" y2="90.8446125%" id="linearGradient-1">
+            <stop stop-color="#00BBFF" offset="0%"></stop>
+            <stop stop-color="#0085FF" offset="100%"></stop>
+        </linearGradient>
+        <filter id="filter-2">
+            <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 1.000000 0 0 0 0 1.000000 0 0 0 0 1.000000 0 0 0 1.000000 0"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="浅色模式" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="首页" transform="translate(-16.000000, -157.000000)">
+            <g id="编组-9" transform="translate(0.000000, 140.000000)">
+                <g id="编组-8" transform="translate(16.000000, 17.000000)">
+                    <rect id="矩形" fill="url(#linearGradient-1)" x="0" y="0" width="46" height="46" rx="23"></rect>
+                    <g filter="url(#filter-2)" id="公告">
+                        <g transform="translate(12.000000, 12.000000)">
+                            <path d="M0,6.6740513 L2.51920615,6.6740513 L2.51920615,12.4525927 L0,12.4525927 L0,6.6740513 Z M3.98380554,5.90412072 C3.98380554,5.90412072 12.7518673,5.57896309 17.3501443,0.0226558769 C17.3501443,0.0226558769 21.2841173,-0.930804379 20.9836217,9.53295161 C20.9836217,9.53295161 21.4020775,16.7385873 17.386626,17.7527018 C17.386626,17.7527018 14.3727172,13.786909 3.98551319,13.3050248 L3.98380554,5.90414697 L3.98380554,5.90412072 Z M5.61623384,15.0522027 C5.61623384,15.0522027 5.98480545,18.4452626 8.69659377,21.9966844 C8.69659377,21.9966844 11.0530966,22.1027231 11.408351,21.115449 C11.408351,21.115449 11.6592279,20.4618264 10.9085306,19.6194294 C10.6678013,19.232019 8.5322345,17.4023212 8.18342253,15.0522027 L5.61623384,15.0522027 L5.61623384,15.0522027 Z" id="形状" fill="#000000" fill-rule="nonzero"></path>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

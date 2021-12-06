@@ -1,0 +1,813 @@
+syntax = "proto2";
+package Aoelailiao.Message;
+import "Aoelailiao.Common.proto";
+option java_package = "com.aoetech.aoelailiao.protobuf";
+option optimize_for = LITE_RUNTIME;
+
+message MsgInfo{
+	optional uint64 msg_id = 1;
+    optional uint32 is_group_msg = 2;//0--普通单个用户消息(默认),1--群消息
+    optional uint32 from_id = 3;//发送者
+	optional uint32 to_id = 4;//接收者
+    optional uint32 msg_time = 5;
+    optional uint32 msg_show_type = 6;//0--无效，1--普通消息，2--系统通知消息,3--阅后即焚消息，4--需要客户端进行逻辑操作的消息，5--客服消息,  6--机器人客服消息
+    optional MsgContentInfo msg_content = 7;
+	optional string client_msg_uuid = 8;//客户端生成的消息uuid,用于客户端本地数据库消息去重,如果该字段为空则需要客户端自己生成，客户端发送的消息必须带这个字段
+    optional uint32 is_encrypt = 9;//是否是加密消息 0--不是 1--是
+    optional MsgAttachInfo attach_info = 10;//消息附加的信息,由客户端自定义解析
+}
+
+message MsgContentInfo{
+    optional uint32 msg_content_type=1;//消息内容类型,0--无效，1--文本，2--图片，3--语音，5--事件操作描述信息,6--系统通知消息，7--群内@消息，8--消息撤回,9--视频通话，11--位置，12--申请消息（属于系统通知消息）,15--名片，18--消息记录转发消息，17--邀请用户加入群聊,19--文件消息,23--视频消息,24--清理消息,25--链接消息,26--焚阅消息
+    oneof msg_content{
+        string string_content = 2;//文本
+        ImageMsgInfo image_msg = 3;//图片
+        VoiceMsgInfo voice_msg = 4;
+		UserOperateEventDescInfo user_operate_event_desc_info=6;//系统消息才会使用到本类型,未使用,废弃
+		SystemNotifyInfo system_notify_info=7;//系统通知消息,用户同一个消息不同的用户显示不同内容
+		GroupAtInfo group_at_info = 8;//群消息@功能,可以指定提醒的用户
+		RevokeInfo revoke_info = 9;//消息撤回操作消息
+		VideoCallMsgInfo video_call_info = 10;//视频通话消息
+		GpsMsgInfo gps_msg_info = 12;//定位消息
+		NewFriendsApplyNotice new_friends_apply_notice = 13;//申请消息
+		ForwardMsgInfo forward_msg = 17;//消息记录转发消息
+		VisitingCard visiting_card = 16;//名片
+		GroupUserInviteMsgInfo group_user_invite_info=18;//邀请用户加入群聊消息
+		Aoelailiao.Common.FileInfo file_info = 19;
+        string encrypt_content = 21; //加密消息内容
+		VideoMsgInfo video_msg_info = 23; //视频消息
+		CleanInfo   clean_info = 24; //清理消息
+        LinkUrlInfo   link_url_info = 25; //链接消息
+        FireInfo fire_info = 26;//焚阅消息
+    }
+    
+}
+
+message LinkUrlInfo {
+	optional string url = 1; // 链接地址
+	optional string title = 2; // 链接标题
+	optional string content = 3; // 链接描述
+	optional string icon = 4; // 链接图标
+	optional uint32 need_parse = 5;//是否需要解析 0--不需要 1--需要
+}
+
+message CleanInfo{
+	optional uint64 max_msg_id = 1;//需要删除的消息maxid
+	optional string string_content = 2;//文本消息内容
+}
+
+// 视频消息
+message VideoMsgInfo {
+    optional string url = 1; // 视频文件地址
+    optional string name = 2; // 视频文件名称
+    optional string image_url = 3; // 视频首帧图片(缩略图)
+    optional uint32 duration = 4; // 视频时长ms
+    optional string format = 5; // 视频格式，比如mp4
+    optional uint32 weight = 6; // 视频宽度
+    optional uint32 height = 7; // 视频高度
+    optional uint32 size = 8; // 视频文件大小
+    optional string extra = 9; // 扩展信息
+}
+
+
+//申请通知结构
+message NewFriendsApplyNotice
+{
+	optional uint32 uid = 1;
+	optional string nick_name = 2;
+	optional string icon = 3;
+	optional uint32 apply_state = 4;//申请状态，1--待处理，2--已同意，3--已拒绝，4--已过期
+	optional string apply_desc = 5;//验证信息
+	optional uint32 apply_type = 6;//1--好友申请，2--群申请
+	optional uint32 apply_id = 7;
+	optional uint32 end_time = 8;//结束时间
+	optional uint32 update_time = 9;//更新时间
+	repeated uint32 admin_uids=10;//有权限处理该请求的用户列表（申请时有效的群主和管理员）
+}
+
+//名片
+message VisitingCard
+{
+	optional uint32 type = 1;//0--个人名片，1--群名片
+	optional uint32 uid = 2;//用户uid
+	optional string icon = 3;//头像
+	optional string name = 4;//名字
+	optional string show_content = 5;//展示内容（个人名片/群名片）
+    optional string source_name = 6;//来源名称
+    optional uint32 source_id = 7;//来源id
+    optional uint32 source_time = 8;//分享时间 用于验证过期时间
+}
+message GpsMsgInfo{
+	optional string longitude = 1;//经度
+	optional string latitude = 2;//纬度
+	optional string position_name = 3;//地址名字
+	optional string position_detail = 4;//地址详情
+	optional string map_url = 5;//图片url
+}
+
+message VideoCallMsgInfo{
+	optional uint32 video_type = 1;//1--语音，2--视频
+	repeated AppointUserTextInfo send_show_msg = 2;//
+	optional uint32 need_show_time =3;//0--显示，1--不显示
+	optional uint32 call_time =4; //呼叫时长，单位秒
+}
+
+message AppointUserTextInfo{
+	repeated uint32 user_ids=1;//指定的用户uid集合
+	optional string msg_text=2;//指定用户需要显示的消息内容
+}
+
+
+message ImageMsgInfo{
+    optional string image_url = 1;
+	optional uint32 image_width = 2;
+	optional uint32 image_height = 3;
+}
+
+message VoiceMsgInfo{
+    optional string voice_url = 1;
+    optional uint32 voice_time =2;
+}
+
+//占位消息描述结构体
+message ReplaceMsgItem{
+	optional string show_content=1; //用来显示的字符
+	optional string jump_url=2;//跳转的链接
+	optional string show_content_color=3; //文字颜色
+}
+
+//带占位标识的文本消息
+message ReplaceMsgInfo{
+	optional string spile_text=1; //占位标识字符串,例如“[spile]”,当本字段为空时直接显示消息内容即可
+	optional string msg_text=2; //带占位标识的消息内容
+	repeated ReplaceMsgItem replace_msg_items=3;//依次填入的消息描述结构体
+}
+
+message AppointUserSystemNotifyInfo{
+	repeated uint32 user_ids=1;//指定的用户uid集合
+	optional ReplaceMsgInfo appoint_user_notify_info=2;//指定用户需要显示的消息内容
+}
+
+message SystemNotifyInfo{
+	repeated AppointUserSystemNotifyInfo appoint_user_system_notify_infos=1;//可以有多个不同类型的指定用户群分别显示不同的消息
+	optional ReplaceMsgInfo other_user_notify_info=2;//不在指定用户群的用户需要显示的消息
+    optional uint32 drawable_direction = 3;//0--无，1--top。2--left，3-- bottom，4--Right
+    optional string drawable_url = 4;
+}
+
+message GroupAtInfo{
+	repeated AtInfo at_users=1;//指定的提醒人uid
+	optional string string_content = 2;//文本消息内容
+}
+
+message AtInfo{
+	optional uint32 uid = 1;
+	optional uint32 type =2 ;// 0--uid ,1--all
+}
+
+message RevokeInfo{
+	optional uint64 revoke_msg_id = 1;//需要撤回的消息id
+	optional string string_content = 2;//文本消息内容
+}
+
+
+//用户操作事件描述信息
+message UserOperateEventDescInfo{
+	optional uint32 operate_type = 1;//1--请求添加好友,2--同意添加好友，3--拒绝添加好友，4--删除好友
+	optional uint32 operate_user_id = 2;//操作者信息
+	optional uint32 be_operated_user_id = 3;//被操作者信息
+	optional string operate_desc = 4;//操作描述
+	optional string operate_reason = 5;//操作备注信息，可以是添加理由，拒绝理由等
+}
+
+message ForwardMsgInfo
+{
+	optional string forward_msg_title=1;//转发消息标题
+	repeated MsgInfo forward_msg_infos=2;//转发的消息内容
+}
+
+//群用户邀请信息
+message GroupUserInviteMsgInfo
+{
+	optional string invite_title =1;//邀请标题
+	optional string invite_desc =2;//邀请描述
+	optional uint32 invite_group_id =3;//群ID
+	optional string invite_group_icon_url =4;//群图片
+}
+//焚阅消息
+message FireInfo{
+    optional uint64 fire_msg_id = 1;//需要焚阅的消息id
+    optional string string_content = 2;//xxx已焚阅一条消息
+}
+
+//消息附加信息
+message MsgAttachInfo {
+    optional string msg_source = 1;//消息来源
+}
+
+//---------------------------------------------------------协议定义--------------------------------------------
+
+message ClientSendMsgToServerReq{
+	//cmd id:2001
+    optional MsgInfo msg_info = 1;
+    optional uint32 random_num = 2;
+	optional bytes attach_data = 32;
+}
+
+message ClientSendMsgToServerAns{
+	//cmd id:2002
+    optional uint32 result_code = 1;
+    optional string result_string = 2 ;
+    optional MsgInfo msg_info = 3;
+    optional uint32 random_num = 4;
+	optional bytes attach_data = 32;
+}
+
+
+message ServerSendMsgToClientNotify{
+	//cmd id:2004
+    repeated MsgInfo msg_infos = 1;
+	optional bytes attach_data = 32;
+}
+
+message ClientSendMsgAckToServerReq{
+	//cmd id:2005
+    optional uint64 msg_id = 1;//当前收到的消息的最大msgid
+    optional uint32 is_encrypt =2; //是否私密聊,0--否（默认）,1--是
+    optional uint32 is_group_msg =3; //是否群消息
+    optional uint32 from_id = 4; //单聊A的uid,群聊时填0
+    optional uint32 to_id = 5; //单聊B的uid，群聊时填群ID
+    optional uint32 is_off_line = 6;//是否为离线消息：0--在线消息，1--离线消息
+    //客户端在收到离线消息的回包(cid=2054)中明确不需要在获取离线消息的时候(stop_get_offline_msg=1)才可以对在线消息发送此ack消息
+    //客户端收到离线消息后需要发送ack到服务器供服务器更新已收状态
+	optional bytes attach_data = 32;
+}
+
+message ClientSendMsgAckToServerAns{
+	//cmd id:2006
+    optional uint32 result_code = 1;
+    optional string result_string = 2 ;
+	optional bytes attach_data = 32;
+}
+
+//客户端请求撤回消息
+message ClientRevokeMsgReq{
+	//cmd id:2007
+    optional uint64 msg_id = 1;//客户端请求撤回的消息ID
+	optional bytes attach_data = 32;
+}
+
+message ClientRevokeMsgAns{
+	//cmd id:2008
+    optional uint32 result_code = 1;
+    optional string result_string = 2 ;
+	optional bytes attach_data = 32;
+}
+
+
+message VideoCallActionUploadReq{
+	//cmd id:2009
+	optional uint32 action_type = 1;//1--呼叫请求，2--收到呼叫邀请回调，3--远端已收到呼叫回调，4--远端已接受呼叫回调，5--对方已拒绝呼叫回调，6--呼叫失败回调，
+	//7--对方已结束呼叫回调，8--本地已结束呼叫回调，9--连接丢失回调，10--出错回调，11--重连成功回调，12--加入频道回调，13--加入频道失败回调，14--离开频道回调，
+	//15--其他用户加入频道回调，16--其他用户离开频道回调，21--用户主动取消呼叫(用户取消)，22--对方超时未响应(未接通)
+	optional uint32 video_type = 2;//1--语音，2--视频
+	optional uint32 talk_uid = 3;
+	optional bytes attach_data = 32;
+}
+
+message VideoCallActionUploadAns{
+	//cmd id:2010
+	optional uint32 result_code = 1;
+	optional string result_string = 2 ;
+	optional bytes attach_data = 32;
+}
+
+message ClientGetTencentVideoSignReq{
+	//cmd id:2011
+    optional uint32 uid = 1;//用户uid
+	optional bytes attach_data = 32;
+}
+
+message ClientGetTencentVideoSignAns {
+	//cmd id:2012
+	optional uint32 result_code = 1;
+	optional string result_string = 2;
+	optional string tencent_video_sign = 3; //腾讯云音视频功能tls sign
+	optional bytes attach_data = 32;
+}
+
+//通知类消息
+message SystemNoticeMsg{
+	optional uint32 system_user_id = 1;//系统用户帐号
+	optional string system_user_image = 2;//系统用户图片
+	optional string system_user_name = 3;//系统用户名称
+	optional string system_notice_content = 4;//系统通知内容
+}
+
+message UserFeedBackMsg{
+	optional string feedback_content = 1;//反馈内容
+	repeated string notice_image = 2;//反馈图片
+	optional uint32 feedback_time = 3;//反馈时间
+	optional string reply_content = 4;//回复内容
+	optional uint32 reply_time = 5;//回复时间
+}
+
+message NotifyMsgInfo{
+	optional uint32 msg_class_id = 1;//消息的分类id
+	optional uint32 msg_id = 2;//消息id
+	optional uint32 msg_content_type=3;//消息内容类型,0--无效，1--系统消息，2--用户反馈消息，3--群解散通知
+	optional SystemNoticeMsg system_notice_msg = 4;//系统消息/群解散通知
+	optional UserFeedBackMsg user_feedback_msg = 5;
+	optional uint32 update_time = 6;//更新时间
+}
+
+message NotifyClassMsgListInfo {
+	optional uint32 msg_class_id = 1;//消息分类id,1--系统消息
+	optional string msg_class_icon = 2 ;//消息分类图标
+	optional string msg_class_title = 3 ;//消息分类标题
+	optional uint32 msg_class_have_new_msg = 4;//是否有未读新消息, 1--有,2--无
+	optional string msg_class_recent_msg_content = 5 ;//最近的消息文本内容描述
+	optional uint32 update_time = 6;
+}
+
+message UsersInfoList
+{
+	optional uint32 from_id = 1;//发送消息用户uid
+	repeated MsgInfo msg_infos = 2;//消息内容
+	optional string icon_url = 3;//头像
+	optional string nick_name = 4;//昵称
+	optional string str_test = 5;//最新一条离线消息文本
+	optional uint32 time = 6;//消息发送时间
+}
+
+
+//获取系统通知分类列表
+message UserGetSystemNoticeMsgClassListReq{
+	//cmd id:2017
+	optional bytes attach_data = 32;
+}
+message UserGetSystemNoticeMsgClassListAns{
+	//cmd id:2018
+	optional uint32 result_code = 1;
+	optional string result_string = 2;
+	repeated NotifyClassMsgListInfo class_msg_info = 3;//
+	optional bytes attach_data = 32;
+}
+
+//获取系统通知内容列表
+message UserGetSystemNoticeContentListReq{
+	//cmd id:2019
+	optional uint32 msg_class_id = 1;//消息分类id,1--系统消息，2--用户反馈消息，3--群解散通知
+	optional uint32 min_has_read_msg_id = 2;//本地已读的消息最小的id
+	optional bytes attach_data = 32;
+}
+message UserGetSystemNoticeContentListAns{
+	//cmd id:2020
+	optional uint32 result_code = 1;
+	optional string result_string = 2;
+	repeated NotifyMsgInfo msg_content = 3;
+	optional bytes attach_data = 32;
+}
+
+message ServerSendSystemNotifyMsg{
+	//cmd id:2024
+	optional string notify_content = 1;//系统发给用户最新一条通知消息
+	optional uint32 update_time = 2;
+}
+
+//用户上传系统通知消息的已读状态
+message UserSendSystemNotifyMsgReadedStateReq{
+    //cmd id:2025
+	optional uint32 msg_class_id = 1;//消息分类id,1--系统消息，2--用户反馈消息，3--群解散通知
+	optional uint32 has_read_msg_id_max = 2;//本地已读的通知消息最大msg_id
+	optional bytes attach_data = 32;
+}
+
+message UserSendSystemNotifyMsgReadedStateAns{
+    //cmd id:2026
+	optional uint32 result_code = 1;
+	optional string result_string = 2;
+	optional bytes attach_data = 32;
+}
+
+
+//客户端上传用户选择的当前聊天背景
+message ClientSendBackgroundUrlToServerReq
+{
+	//cmd id:2039
+	optional uint32 to_id = 1;  //当前聊天目标的uid或群id，0：全局
+	optional string selected_background_url = 2;//选择的背景图片
+	optional uint32 is_group_msg = 3;//0--普通单个用户消息(默认),1--群消息
+	optional bytes attach_data = 32;
+}
+message ClientSendBackgroundUrlToServerAns
+{
+	//cmd id:2040
+	optional uint32 result_code = 1;
+	optional string result_string = 2;
+	optional bytes attach_data = 32;
+}
+
+//客户端获取当前聊天背景
+message ClientGetCurrentBackgroundUrlReq
+{
+	//cmd id:2041
+	optional uint32 to_id = 1;  //当前聊天目标的uid或群id
+	optional uint32 is_group_msg = 3;//0--普通单个用户消息(默认),1--群消息
+	optional bytes attach_data = 32;
+}
+message ClientGetCurrentBackgroundUrlAns
+{
+	//cmd id:2042
+	optional uint32 result_code = 1;
+	optional string result_string = 2;
+	optional string background_url = 3;//背景图片(用户背景，如果为空则返回全局背景，都没有则为空)
+	optional bytes attach_data = 32;
+}
+
+//设置系统开关
+message SetUpSystemSwitchReq
+{
+	//cmd id:2043
+	optional uint32 type=1;//开关类型，1--离线消息push声音，2-离线消息push震动,3--新消息离线通知,4--语音和视频通话离线提醒,5--戳一戳声音提醒,6--戳一戳震动提醒,11--通过手机号查找我,12--通过IM号查找我,13--通过昵称查找我,14--通过群聊,15--通过推荐,16--向我推荐通讯录朋友,17--已读未读消息设置,打开该开关后对方看不到我的已读状态 18--通过分享链接找到我 19--谁能邀请我进群 20--拒绝陌生人消息
+	optional uint32 state=2;//状态，0--打开，1--关闭
+	optional bytes attach_data = 32;
+}
+
+message SetUpSystemSwitchAns
+{
+	//cmd id:2044
+	optional uint32 result_code = 1;
+	optional string result_string = 2;
+	optional Aoelailiao.Common.SwitchSettingInfo switch_setting_info = 3;//回给客户端所有已设置过的开关
+	optional bytes attach_data = 32;
+}
+//获取系统开关
+message ClientGetSystemSwitchReq
+{
+	//cmd id:2045
+	optional bytes attach_data = 32;
+}
+message ClientGetSystemSwitchAns
+{
+	//cmd id:2046
+	optional uint32 result_code = 1;
+	optional string result_string = 2;
+	optional Aoelailiao.Common.SwitchSettingInfo switch_setting_info = 3;//回给客户端所有已设置过的开关
+	optional bytes attach_data = 32;
+}
+
+
+//用户登录获取离线消息
+message ClientGetSectionOfflineMsgReq{
+	//cmd id:2053
+	optional uint64 last_offline_msg_id_max = 1;
+	optional bytes attach_data = 32;
+}
+
+message ClientGetSectionOfflineMsgAns{
+	//cmd id:2054
+	optional uint32 result_code = 1;
+	optional string result_string = 2 ;
+	repeated MsgInfo offline_msg_infos=3;//离线消息
+	optional uint32 stop_get_offline_msg = 4;//停止获取离线消息，1--停止，2--继续获取
+	optional bytes attach_data = 32;
+}
+
+message UserForwardContent{
+    optional uint32 is_group_msg = 1;//是否转发到群，0--转发到个人,2--转发到群
+    optional uint32 to_id = 2;//接收者uid或者群id
+}
+
+//用户聊天记录转发
+message UserForwardMsgInfoReq{
+	//cmd id:2055
+	optional uint32 forward_type = 1;//1--逐条转发,2--合并转发
+	repeated uint64 forward_msg_ids = 2;//转发的消息id
+	repeated UserForwardContent forward_msg = 3;
+	optional bytes attach_data = 32;
+}
+
+message UserForwardMsgInfoAns{
+	//cmd id:2056
+	optional uint32 result_code = 1;
+	optional string result_string = 2;
+	optional bytes attach_data = 32;
+}
+
+//获取更多聊天记录
+message UserGetMoreMsgInfoReq{
+	//cmd id:2057
+	optional uint32 is_group_msg = 1;//0--单聊信息,1--群聊信息
+	optional uint32 object_id = 2;//对方uid或者群id
+	optional uint64 msg_id_min = 3;//消息起始ID
+	optional uint32 msg_direction = 4;//消息获取方向,0--默认倒序(msgid从大到小),1--顺序(msgid从小到大)
+	optional uint32 msg_num = 5;//想要获取的聊天记录条数，默认为20
+	optional bytes attach_data = 32;
+}
+
+message UserGetMoreMsgInfoAns{
+	//cmd id:2058
+	optional uint32 result_code = 1;
+	optional string result_string = 2;
+	repeated MsgInfo msg_infos=3;//消息记录
+	optional bytes attach_data = 32;
+}
+
+message UserGetFileListInfoReq{
+	//cmd id:2059
+	optional uint32 is_group_msg = 1;//0--单聊信息,1--群聊信息
+	optional uint32 object_id = 2;//对方uid或者群id
+	optional uint64 msg_id_min = 3;//本地已有的最小文件消息id
+	optional bytes attach_data = 32;
+}
+
+message UserGetFileListInfoAns{
+	//cmd id:2060
+	optional uint32 result_code = 1;
+	optional string result_string = 2;
+	repeated MsgInfo msg_infos=3;//文件消息记录
+	optional bytes attach_data = 32;
+}
+
+//用户请求删除文件
+message UserDeleteFileMsgReq{
+	//cmd id:2061
+    optional uint64 msg_id = 1;//客户端请求删除的文件消息ID
+	optional bytes attach_data = 32;
+}
+
+message UserDeleteFileMsgAns{
+	//cmd id:2062
+    optional uint32 result_code = 1;
+    optional string result_string = 2 ;
+	optional bytes attach_data = 32;
+}
+
+//用户搜索聊天记录
+message UserSearchHistoryMsgReq{
+	//cmd id:2063
+    optional uint32 is_group_msg = 1;//是否群消息
+	optional uint32 object_id = 2;//对方uid或者群id
+	optional string key_word = 3;
+	optional uint64 msg_id_min = 4;//加载更多搜索结果
+	optional uint32 search_type = 5;//搜索类型，1--聊天，2--图片、视频，3--文件
+	optional bytes attach_data = 32;
+}
+
+message UserSearchHistoryMsgAns{
+	//cmd id:2064
+    optional uint32 result_code = 1;
+    optional string result_string = 2 ;
+	repeated MsgInfo msg_infos=3;
+	optional bytes attach_data = 32;
+}
+
+
+message GroupVideoCallActionUploadReq{
+	//cmd id:2065
+	optional uint32 action_type = 1;//1--发起通话，2--取消通话,3--绑定群号与频道号
+	optional uint32 group_id = 2;//群号
+	optional string channel_id = 3;//频道号或者房间号
+	optional bytes attach_data = 32;
+}
+
+message GroupVideoCallActionUploadAns{
+	//cmd id:2066
+	optional uint32 result_code = 1;
+	optional string result_string = 2 ;
+	optional bytes attach_data = 32;
+}
+
+
+
+message GetGroupNoticeInfoReq{
+	//cmd id:2119
+	optional uint32 group_id = 1;
+	optional bytes attach_data = 32;
+}
+
+message GetGroupNoticeInfoAns{
+	//cmd id:2120
+	optional uint32 result_code = 1;
+	optional string result_string = 2 ;
+	optional Aoelailiao.Common.GroupNoticeInfo group_notice_info = 3;
+	optional bytes attach_data = 32;
+}
+//输入状态
+message WriteStateNotifyToServserReq{
+    // cmd id 2123
+    optional Aoelailiao.Common.UserWriteState user_write_state = 1;
+    optional bytes attach_data = 32;   //后台专用字段,前端忽略
+}
+
+message WriteStateNotifyToServserAns{
+    // cmd id 2124
+    optional uint32 result_code = 1;
+    optional string result_string = 2 ;
+    optional bytes attach_data = 32;
+}
+
+
+message WriteStateNotifyToClient{
+    // cmd id 2125
+    optional Aoelailiao.Common.UserWriteState user_write_state = 1;
+    optional bytes attach_data = 32;   //后台专用字段,前端忽略
+}
+//用户在线状态
+message UserOnlineStateNotifyReq{
+    // cmd id 2127
+    optional Aoelailiao.Common.UserInfo user_online_state = 1;
+	optional bytes attach_data = 32;   //后台专用字段,前端忽略
+}
+
+message UserOnlineStateNotifyAns{
+    // cmd id 2128
+    optional uint32 result_code = 1;
+	optional string result_string = 2 ;
+	optional Aoelailiao.Common.UserInfo user_online_state = 3;
+	optional bytes attach_data = 32;
+}
+
+message UserOnlineStateNotifyToClient{
+    // cmd id 2129   UserInfo中只有 uid 和online_state 有值,其他为空
+    optional Aoelailiao.Common.UserInfo user_online_state = 1;
+	optional bytes attach_data = 32;   //后台专用字段,前端忽略
+}
+
+//消息清理 
+message ClientCleanMsgReq{
+	//cmd id:2135
+	optional uint32 to_uid = 1;//对方用户id
+	optional uint32 is_group_msg=2;//是否为群聊
+	optional bytes attach_data = 32;   //后台服务器专业字段
+}
+
+message ClientCleanMsgAns{
+	//cmd id:2136
+    optional uint32 result_code = 1;
+    optional string result_string = 2 ;
+	optional bytes attach_data = 32;     //后台服务器专业字段
+}
+
+
+message MarkInfo{
+	optional MsgInfo msg_info = 1;
+	optional uint32 mark_time = 2;
+}
+
+//标记相关
+message OperationMarkInfoReq{
+	//cmd id:2139
+	optional uint32 operation_type = 1;//操作类型，1-- 添加，2-- 删除
+	optional uint64 msg_id = 2;
+	optional bytes attach_data = 32;     //后台服务器专业字段
+}
+
+message OperationMarkInfoAns{
+	//cmd id:2140
+	optional uint32 result_code = 1;
+	optional string result_string = 2 ;
+	optional bytes attach_data = 32;     //后台服务器专业字段
+}
+
+message SearchMarkInfoReq{
+	//cmd id:2141
+	optional string key_word = 1;
+	optional uint32 mark_time_min = 2;//加载更多搜索结果
+	optional bytes attach_data = 32;     //后台服务器专业字段
+}
+
+message SearchMarkInfoAns{
+	//cmd id:2142
+	optional uint32 result_code = 1;
+	optional string result_string = 2 ;
+	repeated MarkInfo mark_infos = 3;
+	optional bytes attach_data = 32;     //后台服务器专业字段
+}
+
+message UserGetMarkInfoListReq{
+	//cmd id:2143
+	optional uint32 mark_time_min = 1;//加载更多搜索结果
+	optional uint32 type=2;//收藏内容类型，1--图片，2--视频，3--文件
+	optional bytes attach_data = 32;     //后台服务器专业字段
+}
+
+message UserGetMarkInfoListAns{
+	//cmd id:2144
+	optional uint32 result_code = 1;
+	optional string result_string = 2 ;
+	repeated MarkInfo mark_infos = 3;
+	optional bytes attach_data = 32;     //后台服务器专业字段
+}
+
+//消息已读结构
+message MsgHasReadedInfo{
+	optional uint32 is_group_msg =1 ;
+	optional uint32 from_id =2;
+	optional uint32 to_id=3;
+	optional uint64 msg_id_max=4;//当前会话已读消息ID
+	optional uint64 conversation_id=5;//会话ID,主要是服务器检索用，前端也可用该字段标识会话
+}
+
+//查询会话当前已读消息id
+message UserGetConversationHasReadedMsgInfoReq{
+	//cmd id:2145
+	repeated MsgHasReadedInfo msg_has_readed_infos =1;
+	optional bytes attach_data = 32;     //后台服务器专业字段
+}
+
+message UserGetConversationHasReadedMsgInfoAns{
+	//cmd id:2146
+	optional uint32 result_code = 1;
+	optional string result_string = 2 ;
+	repeated MsgHasReadedInfo msg_has_readed_infos =3;
+	optional bytes attach_data = 32;     //后台服务器专业字段
+}
+//推送
+message ServerSendMsgHasReadedInfoToClientNotify{
+	//cmd id:2148
+    repeated MsgHasReadedInfo msg_has_readed_infos =1;
+	optional bytes attach_data = 32;
+}
+
+//用户上传当前已读消息最大值
+message UserUpdateConversationHasReadedMsgInfoReq{
+	//cmd id:2149
+	optional MsgHasReadedInfo msg_has_readed_info =1;
+	optional bytes attach_data = 32;     //后台服务器专业字段
+}
+
+message UserUpdateConversationHasReadedMsgInfoAns{
+	//cmd id:2150
+	optional uint32 result_code = 1;
+	optional string result_string = 2 ;
+	optional bytes attach_data = 32;     //后台服务器专业字段
+}
+
+
+//发送名片
+message UserSendVisitCardToFriendReq{
+	//cmd id:2151
+	repeated VisitingCard visiting_card=1; //名片
+	repeated uint32 to_uids=2;//接收者列表
+	optional bytes attach_data = 32;     //后台服务器专业字段
+}
+
+message UserSendVisitCardToFriendAns{
+	//cmd id:2152
+	optional uint32 result_code = 1;
+	optional string result_string = 2 ;
+	optional bytes attach_data = 32;     //后台服务器专业字段
+}
+//查询群通话状态
+message GroupCallStateNotifyToServserReq{
+    // cmd id 2153
+    optional Aoelailiao.Common.GroupCallState group_call_state = 1;
+    optional bytes attach_data = 32;   //后台专用字段,前端忽略
+}
+
+message GroupCallStateNotifyToServserAns{
+    // cmd id 2154
+    optional uint32 result_code = 1;
+    optional string result_string = 2 ;
+    optional Aoelailiao.Common.GroupCallState group_call_state = 3;
+    optional bytes attach_data = 32;
+}
+
+message GroupCallNotifyToClient{
+    // cmd id 2156
+    optional Aoelailiao.Common.GroupCallState group_call_state = 1;
+    optional bytes attach_data = 32;   //后台专用字段,前端忽略
+}
+//焚阅消息
+message FireReadFireMessageToServserReq{
+    // cmd id 2157
+    optional uint64 msg_id = 1; //消息id
+    optional bytes attach_data = 32;   //后台专用字段,前端忽略
+}
+message FireReadFireMessageToServserAns{
+    // cmd id 2158
+    optional uint32 result_code = 1;
+    optional string result_string = 2 ;
+    optional bytes attach_data = 32;
+}
+//申请加入群通话
+message GroupCallApplyJoinToServserReq {
+    // cmd id 2159
+    optional uint64 group_id = 1; //群id
+    optional bytes attach_data = 32;
+}
+message GroupCallApplyJoinToServserAns{
+    // cmd id 2160
+    optional uint32 result_code = 1;
+    optional string result_string = 2 ;
+    optional bytes attach_data = 32;
+}
+//收到申请加入群通话的推送
+message GroupCallApplyJoinToClient {
+    // cmd id 2162
+    optional uint64 group_id = 1; //群id
+    optional uint64 user_id = 2; //用户id
+    optional bytes attach_data = 32;
+}

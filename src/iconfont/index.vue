@@ -1,0 +1,144 @@
+<template>
+  <div class="iconfont">
+    <component :size="size" :color="color" v-bind:is="currentView"></component>
+  </div>
+</template>
+
+<script>
+import iconWORD from './iconWORD.vue';
+import iconbianzu4 from './iconbianzu4.vue';
+import iconbianzu6 from './iconbianzu6.vue';
+import iconbianzu8 from './iconbianzu8.vue';
+import iconbianzu9 from './iconbianzu9.vue';
+import iconbiaoqing from './iconbiaoqing.vue';
+import iconcaidan from './iconcaidan.vue';
+import icondagou from './icondagou.vue';
+import icondanxuankuang from './icondanxuankuang.vue';
+import icondiandian from './icondiandian.vue';
+import iconexcel from './iconexcel.vue';
+import iconfankui from './iconfankui.vue';
+import iconfork from './iconfork.vue';
+import iconfuxuankuang from './iconfuxuankuang.vue';
+import iconfuxuankuangactive from './iconfuxuankuangactive.vue';
+import iconfuzhi from './iconfuzhi.vue';
+import icongantanhao from './icongantanhao.vue';
+import iconguanyu from './iconguanyu.vue';
+import iconheimingdan from './iconheimingdan.vue';
+import iconicon_yuyinshipin from './iconicon_yuyinshipin.vue';
+import iconjiami from './iconjiami.vue';
+import iconjieping from './iconjieping.vue';
+import iconleft from './iconleft.vue';
+import iconlianxiren from './iconlianxiren.vue';
+import iconlianxiren1 from './iconlianxiren1.vue';
+import iconliaotianjilu from './iconliaotianjilu.vue';
+import iconpaishe from './iconpaishe.vue';
+import iconpdf from './iconpdf.vue';
+import iconqunliao from './iconqunliao.vue';
+import iconradio from './iconradio.vue';
+import iconright from './iconright.vue';
+import iconsearch from './iconsearch.vue';
+import iconshoujihaoma from './iconshoujihaoma.vue';
+import iconshoujihaoma1 from './iconshoujihaoma1.vue';
+import iconshuangxiangsudicopy from './iconshuangxiangsudicopy.vue';
+import iconsousuo from './iconsousuo.vue';
+import icontongzhi from './icontongzhi.vue';
+import icontuichu from './icontuichu.vue';
+import icontuijianhaoyou from './icontuijianhaoyou.vue';
+import iconweizhi from './iconweizhi.vue';
+import iconwenjian from './iconwenjian.vue';
+import iconwenjian1 from './iconwenjian1.vue';
+import iconxiangce from './iconxiangce.vue';
+import iconxiangji from './iconxiangji.vue';
+import iconxitongjingyin from './iconxitongjingyin.vue';
+import iconyaoqinghaoyou from './iconyaoqinghaoyou.vue';
+import iconyaoqinghaoyoubeifen from './iconyaoqinghaoyoubeifen.vue';
+import iconyidu from './iconyidu.vue';
+import iconyidu1 from './iconyidu1.vue';
+import iconyuehoujifen from './iconyuehoujifen.vue';
+import iconyuehoujifen2 from './iconyuehoujifen2.vue';
+import iconyuehoujifenbeifen1 from './iconyuehoujifenbeifen1.vue';
+import iconyunwenjian from './iconyunwenjian.vue';
+import iconyuyan from './iconyuyan.vue';
+import iconyuyin from './iconyuyin.vue';
+import iconzhiding from './iconzhiding.vue';
+import iconzhihangfankui from './iconzhihangfankui.vue';
+import { computed } from 'vue';
+export default {
+  props: {
+    size: String,
+    color: {
+      type: String,
+    },
+    name: String,
+  },
+  components: {
+    iconWORD,
+    iconbianzu4,
+    iconbianzu6,
+    iconbianzu8,
+    iconbianzu9,
+    iconbiaoqing,
+    iconcaidan,
+    icondagou,
+    icondanxuankuang,
+    icondiandian,
+    iconexcel,
+    iconfankui,
+    iconfork,
+    iconfuxuankuang,
+    iconfuxuankuangactive,
+    iconfuzhi,
+    icongantanhao,
+    iconguanyu,
+    iconheimingdan,
+    iconicon_yuyinshipin,
+    iconjiami,
+    iconjieping,
+    iconleft,
+    iconlianxiren,
+    iconlianxiren1,
+    iconliaotianjilu,
+    iconpaishe,
+    iconpdf,
+    iconqunliao,
+    iconradio,
+    iconright,
+    iconsearch,
+    iconshoujihaoma,
+    iconshoujihaoma1,
+    iconshuangxiangsudicopy,
+    iconsousuo,
+    icontongzhi,
+    icontuichu,
+    icontuijianhaoyou,
+    iconweizhi,
+    iconwenjian,
+    iconwenjian1,
+    iconxiangce,
+    iconxiangji,
+    iconxitongjingyin,
+    iconyaoqinghaoyou,
+    iconyaoqinghaoyoubeifen,
+    iconyidu,
+    iconyidu1,
+    iconyuehoujifen,
+    iconyuehoujifen2,
+    iconyuehoujifenbeifen1,
+    iconyunwenjian,
+    iconyuyan,
+    iconyuyin,
+    iconzhiding,
+    iconzhihangfankui,
+  },
+  data() {
+    return {
+      currentView: null,
+    };
+  },
+  mounted() {
+    if (this.name) {
+      this.currentView = this.name;
+    }
+  },
+};
+</script>

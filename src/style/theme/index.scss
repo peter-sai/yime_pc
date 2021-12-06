@@ -1,0 +1,332 @@
+
+    $--light--prominent: #0085FF;
+    $--dark--prominent: #006ED3;
+  
+    $--light--navDef: #404040;
+    $--dark--navDef: #FFFFFF;
+  
+    $--light--input: #b3b3b3;
+    $--dark--input: #b3b3b3;
+  
+    $--light--warn: #FF3432;
+    $--dark--warn: #FF3432;
+  
+    $--light--inputborder: #EDEDED;
+    $--dark--inputborder: #212121;
+  
+    $--light--inputbackground: #f9f9f9;
+    $--dark--inputbackground: #363636;
+  
+    $--light--main: #333333;
+    $--dark--main: #ffffff;
+  
+    $--light--divider: #f0f0f0;
+    $--dark--divider: #444444;
+  
+    $--light--sub: #666666;
+    $--dark--sub: #666666;
+  
+    $--light--background: #F4F4F4;
+    $--dark--background: #000;
+  
+    $--light--info: #bdbdbd;
+    $--dark--info: #bdbdbd;
+  
+    $--light--isMute: #B6B7BA;
+    $--dark--isMute: #68696D;
+  
+    $--light--btnInfo: #999;
+    $--dark--btnInfo: #444;
+  
+    $--light--encryption: #f4f6ff;
+    $--dark--encryption: #2b2b2b;
+  
+    $--light--yMsgBg: #F3F3F6;
+    $--dark--yMsgBg: #585757;
+  
+    $--light--sendBg: #F0F1F4;
+    $--dark--sendBg: #585757;
+  
+    $--light--send: #CCCCCC;
+    $--dark--send: #7F7F7F;
+  
+    $--light--sayHelloBg: #F4F4F4;
+    $--dark--sayHelloBg: #444444;
+  
+    $--light--background1: #fff;
+    $--dark--background1: #121212;
+  
+    $--light--toast: rgba(0, 0, 0, 0.8);
+    $--dark--toast: rgba(77, 77, 77, 0.8);
+  
+    $--light--mask: rgba(0, 0, 0, 0.6);
+    $--dark--mask: rgba(77, 77, 77, 0.6);
+  
+    $--light--dialog: #f9f9f9;
+    $--dark--dialog: #363636;
+  
+    $--light--linearGradient: linear-gradient(45deg, #00BBFF, #0085FF);
+    $--dark--linearGradient: linear-gradient(45deg, #2999FF, #0064C1);
+  
+    $--light--groupIconBg: #F0F0F0;
+    $--dark--groupIconBg: #444444;
+  
+    $--light--groupIconText: #0085FF;
+    $--dark--groupIconText: #0085FF;
+  
+    $--light--white: #fff;
+    $--dark--white: #fff;
+  
+    $--light--operation: #F1F2F6;
+    $--dark--operation: #000;
+  
+    $--light--linearGradient1: linear-gradient(-90deg, #F0F1F4 0%, #f4f6ff 50%, #F0F1F4 100%);
+    $--dark--linearGradient1: linear-gradient(-90deg, #444444 0%, #434343 50%, #444444 100%);
+  
+$themes: (
+  light: (
+    
+    prominent: $--light--prominent,
+  
+    navDef: $--light--navDef,
+  
+    input: $--light--input,
+  
+    warn: $--light--warn,
+  
+    inputborder: $--light--inputborder,
+  
+    inputbackground: $--light--inputbackground,
+  
+    main: $--light--main,
+  
+    divider: $--light--divider,
+  
+    sub: $--light--sub,
+  
+    background: $--light--background,
+  
+    info: $--light--info,
+  
+    isMute: $--light--isMute,
+  
+    btnInfo: $--light--btnInfo,
+  
+    encryption: $--light--encryption,
+  
+    yMsgBg: $--light--yMsgBg,
+  
+    sendBg: $--light--sendBg,
+  
+    send: $--light--send,
+  
+    sayHelloBg: $--light--sayHelloBg,
+  
+    background1: $--light--background1,
+  
+    toast: $--light--toast,
+  
+    mask: $--light--mask,
+  
+    dialog: $--light--dialog,
+  
+    linearGradient: $--light--linearGradient,
+  
+    groupIconBg: $--light--groupIconBg,
+  
+    groupIconText: $--light--groupIconText,
+  
+    white: $--light--white,
+  
+    operation: $--light--operation,
+  
+    linearGradient1: $--light--linearGradient1,
+  
+  ),
+  dark: (
+    
+    prominent: $--dark--prominent,
+  
+    navDef: $--dark--navDef,
+  
+    input: $--dark--input,
+  
+    warn: $--dark--warn,
+  
+    inputborder: $--dark--inputborder,
+  
+    inputbackground: $--dark--inputbackground,
+  
+    main: $--dark--main,
+  
+    divider: $--dark--divider,
+  
+    sub: $--dark--sub,
+  
+    background: $--dark--background,
+  
+    info: $--dark--info,
+  
+    isMute: $--dark--isMute,
+  
+    btnInfo: $--dark--btnInfo,
+  
+    encryption: $--dark--encryption,
+  
+    yMsgBg: $--dark--yMsgBg,
+  
+    sendBg: $--dark--sendBg,
+  
+    send: $--dark--send,
+  
+    sayHelloBg: $--dark--sayHelloBg,
+  
+    background1: $--dark--background1,
+  
+    toast: $--dark--toast,
+  
+    mask: $--dark--mask,
+  
+    dialog: $--dark--dialog,
+  
+    linearGradient: $--dark--linearGradient,
+  
+    groupIconBg: $--dark--groupIconBg,
+  
+    groupIconText: $--dark--groupIconText,
+  
+    white: $--dark--white,
+  
+    operation: $--dark--operation,
+  
+    linearGradient1: $--dark--linearGradient1,
+  
+  )
+);
+
+//遍历主题map
+@mixin theme($attribute, $color) {
+  @each $theme-name, $theme-map in $themes {
+    [data-theme='#{$theme-name}'] & {
+      @content;
+      #{$attribute}: map-get($theme-map, $color);
+    }
+  }
+};
+
+:export {
+  light: {
+    prominent: $--light--prominent;
+  
+    navDef: $--light--navDef;
+  
+    input: $--light--input;
+  
+    warn: $--light--warn;
+  
+    inputborder: $--light--inputborder;
+  
+    inputbackground: $--light--inputbackground;
+  
+    main: $--light--main;
+  
+    divider: $--light--divider;
+  
+    sub: $--light--sub;
+  
+    background: $--light--background;
+  
+    info: $--light--info;
+  
+    isMute: $--light--isMute;
+  
+    btnInfo: $--light--btnInfo;
+  
+    encryption: $--light--encryption;
+  
+    yMsgBg: $--light--yMsgBg;
+  
+    sendBg: $--light--sendBg;
+  
+    send: $--light--send;
+  
+    sayHelloBg: $--light--sayHelloBg;
+  
+    background1: $--light--background1;
+  
+    toast: $--light--toast;
+  
+    mask: $--light--mask;
+  
+    dialog: $--light--dialog;
+  
+    linearGradient: $--light--linearGradient;
+  
+    groupIconBg: $--light--groupIconBg;
+  
+    groupIconText: $--light--groupIconText;
+  
+    white: $--light--white;
+  
+    operation: $--light--operation;
+  
+    linearGradient1: $--light--linearGradient1;
+  }
+  dark: {
+    prominent: $--dark--prominent;
+  
+    navDef: $--dark--navDef;
+  
+    input: $--dark--input;
+  
+    warn: $--dark--warn;
+  
+    inputborder: $--dark--inputborder;
+  
+    inputbackground: $--dark--inputbackground;
+  
+    main: $--dark--main;
+  
+    divider: $--dark--divider;
+  
+    sub: $--dark--sub;
+  
+    background: $--dark--background;
+  
+    info: $--dark--info;
+  
+    isMute: $--dark--isMute;
+  
+    btnInfo: $--dark--btnInfo;
+  
+    encryption: $--dark--encryption;
+  
+    yMsgBg: $--dark--yMsgBg;
+  
+    sendBg: $--dark--sendBg;
+  
+    send: $--dark--send;
+  
+    sayHelloBg: $--dark--sayHelloBg;
+  
+    background1: $--dark--background1;
+  
+    toast: $--dark--toast;
+  
+    mask: $--dark--mask;
+  
+    dialog: $--dark--dialog;
+  
+    linearGradient: $--dark--linearGradient;
+  
+    groupIconBg: $--dark--groupIconBg;
+  
+    groupIconText: $--dark--groupIconText;
+  
+    white: $--dark--white;
+  
+    operation: $--dark--operation;
+  
+    linearGradient1: $--dark--linearGradient1;
+  }
+};

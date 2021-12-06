@@ -1,0 +1,14 @@
+{
+  "symbol_url": "http://at.alicdn.com/t/font_2929752_61wycwu90p.js",
+  "use_typescript": false,
+  "save_dir": "./src/iconfont",
+  "trim_icon_prefix": "",
+  "unit": "px",
+  "default_icon_size": 18,
+  "excludes": [
+    "iconpdf",
+    "iconexcel",
+    "iconWORD",
+    "iconwenjian"
+  ]
+}

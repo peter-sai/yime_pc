@@ -1,0 +1,86 @@
+syntax = "proto2";
+package Aoelailiao.Label;
+import "Aoelailiao.Common.proto";
+option java_package = "com.aoetech.aoelailiao.protobuf";
+option optimize_for = LITE_RUNTIME;
+
+
+
+//给用户创建标签  
+message ClientCreateLabelReq{
+	//cmd id:3301
+    repeated uint32 uid = 1;//接收者uid 
+	optional string label_content = 2;
+	optional bytes attach_data = 32;   //后台服务器专业字段
+}
+
+message ClientCreateLabelAns{
+	//cmd id:3302
+    optional uint32 result_code = 1;
+    optional string result_string = 2 ;
+	optional bytes attach_data = 32;     //后台服务器专业字段
+}
+
+//给用户添加标签
+message ClientUpdateLabelReq{
+	//cmd id:3303
+    optional uint32 uid = 1;//接收者uid 
+	repeated Aoelailiao.Common.LabelInfo label_info = 2;  //有label_id  表示修改,  没有表示新增
+	optional bytes attach_data = 32;   //后台服务器专业字段
+}
+
+message ClientUpdateLabelAns{
+	//cmd id:3304
+    optional uint32 result_code = 1;
+    optional string result_string = 2 ;
+	optional bytes attach_data = 32;     //后台服务器专业字段
+}
+
+//删除标签
+message ClientDeleteLabelReq{
+	//cmd id:3305
+	optional uint32 label_id = 1;		// 不为空表示删除标签,   都不为空,默认删除标签. 
+	optional uint32 uid = 2;			//好友uid 不为空表示删除好友标签   
+	optional bytes attach_data = 32;   //后台服务器专业字段
+}
+
+message ClientDeleteLabelAns{
+	//cmd id:3306
+    optional uint32 result_code = 1;
+    optional string result_string = 2 ;
+	optional bytes attach_data = 32;     //后台服务器专业字段
+}
+
+
+
+//修改标签
+message ClientEditLabelReq{
+	//cmd id:3307
+	optional uint32 label_id = 1;
+	repeated uint32 uid = 2;//接收者uid 
+	optional string label_content = 3;
+	optional bytes attach_data = 32;   //后台服务器专业字段
+}
+
+message ClientEditLabelAns{
+	//cmd id:3308
+    optional uint32 result_code = 1;
+    optional string result_string = 2 ;
+	optional bytes attach_data = 32;     //后台服务器专业字段
+}
+
+
+
+//获取用户创建标签
+message ClientGetLabelReq{
+	//cmd id:3309
+	optional bytes attach_data = 32;   //后台服务器专业字段
+}
+
+message ClientGetLabelAns{
+	//cmd id:3310
+    optional uint32 result_code = 1;
+    optional string result_string = 2 ;
+	repeated Aoelailiao.Common.LabelUserInfo label_user_info = 3;
+	optional bytes attach_data = 32;     //后台服务器专业字段
+}

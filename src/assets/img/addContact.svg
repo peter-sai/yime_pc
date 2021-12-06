@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="30px" height="30px" viewBox="0 0 30 30" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>位图</title>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#00B6FF" offset="0%"></stop>
+            <stop stop-color="#028AFF" offset="100%"></stop>
+        </linearGradient>
+        <circle id="path-2" cx="15" cy="15" r="15"></circle>
+        <filter id="filter-4">
+            <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 1.000000 0 0 0 0 1.000000 0 0 0 0 1.000000 0 0 0 1.000000 0"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="客户端" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="首页-联系人" transform="translate(-11.000000, -94.000000)">
+            <g id="编组-4备份" transform="translate(0.000000, 85.000000)">
+                <g id="位图" transform="translate(11.000000, 9.000000)">
+                    <mask id="mask-3" fill="white">
+                        <use xlink:href="#path-2"></use>
+                    </mask>
+                    <use id="蒙版" fill="url(#linearGradient-1)" xlink:href="#path-2"></use>
+                    <g filter="url(#filter-4)" id="227注册、添加好友">
+                        <g mask="url(#mask-3)">
+                            <g transform="translate(7.000000, 7.000000)" fill="#000000" fill-rule="nonzero" id="形状">
+                                <path d="M4,3.72579435 C4.13333333,1.74124208 5.76666667,0.123581825 7.75,0.00684345612 C10.0666667,-0.126571823 12,1.70788826 12,4.00930182 C12,6.21065392 10.2166667,8.01176018 8,8.01176018 C5.7,8.01176018 3.85,6.06056173 4,3.72579435 Z M9.31666667,13.3316944 C9.31666667,11.8140956 10.1666667,10.4799428 11.4166667,9.81286645 C10.1666667,9.49600516 8.91666667,9.32923606 7.98333333,9.32923606 C5.33333333,9.32923606 0,10.6633888 0,13.3316944 L0,15.3329236 C0,15.6998156 0.3,16 0.666666667,16 L10.3333333,16 C9.7,15.2995698 9.31666667,14.3656628 9.31666667,13.3316944 Z M16,12.664618 L14,12.664618 L14,10.6633888 L12.6666667,10.6633888 L12.6666667,12.664618 L10.6666667,12.664618 L10.6666667,13.9987708 L12.6666667,13.9987708 L12.6666667,16 L14,16 L14,13.9987708 L16,13.9987708 L16,12.664618 Z"></path>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

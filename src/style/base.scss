@@ -1,0 +1,75 @@
+@import '@/style/theme/index.scss';
+
+@mixin pseudoClass {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@mixin line {
+  width: 100%;
+  height: 5px;
+  @include theme('background', background);
+}
+
+@mixin tableBottomLine {
+  display: block;
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 54px;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: #ededed;
+}
+
+@mixin container {
+  position: fixed;
+  top: 50px;
+  bottom: 0;
+  right: 0;
+  left: 0;
+}
+
+.fade-transform-leave-active,
+.fade-transform-enter-active {
+  transition: all 0.3s;
+}
+
+.fade-transform-enter-from {
+  opacity: 0;
+  transform: translateX(-300px);
+}
+
+.fade-transform-leave-to {
+  opacity: 0;
+  transform: translateX(-300px);
+}
+
+.fade-transform1-leave-active,
+.fade-transform1-enter-active {
+  transition: all 0.3s;
+}
+
+.fade-transform1-enter-from {
+  opacity: 0;
+  transform: translateX(300px);
+}
+
+.fade-transform1-leave-to {
+  opacity: 0;
+  transform: translateX(300px);
+}
+
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}

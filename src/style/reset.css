@@ -1,0 +1,89 @@
+* {
+  padding: 0;
+  margin: 0;
+  font-size: 0;
+  font-family: SourceHanSansCN, SourceHanSansCN-Regular;
+  -webkit-touch-callout: none; /*系统默认菜单被禁用*/
+  -webkit-user-select: none; /*webkit浏览器*/
+  -khtml-user-select: none; /*早期浏览器*/
+  -moz-user-select: none; /*火狐*/
+  -ms-user-select: none; /*IE10*/
+  user-select: none;
+}
+input,
+textarea {
+  outline: none;
+  background: transparent;
+  border: none;
+  -webkit-user-select: auto !important;
+}
+input::-webkit-input-placeholder,
+textarea::-webkit-textarea-placeholder {
+  color: #999999;
+  font-size: 14px;
+}
+input::-moz-placeholder,
+textarea::-moz-placeholder {
+  /* Mozilla Firefox 19+ */
+  color: #999999;
+  font-size: 14px;
+}
+input:-moz-placeholder,
+textarea:-moz-placeholder {
+  /* Mozilla Firefox 4 to 18 */
+  color: #999999;
+  font-size: 14px;
+}
+input:-ms-input-placeholder,
+textarea:-ms-textarea-placeholder {
+  /* Internet Explorer 10-11 */
+  color: #999999;
+  font-size: 14px;
+}
+select {
+  outline: none;
+  border: none;
+  background: transparent;
+}
+
+#app {
+  position: relative;
+  z-index: 9999;
+}
+#use {
+  position: relative;
+  z-index: 99999;
+}
+.vc-panel * {
+  font-size: 10px;
+}
+.amap-logo,
+.amap-copyright {
+  display: none !important;
+}
+
+.el-slider__marks-text {
+  bottom: 20px !important;
+}
+.el-slider__runway,
+.el-slider__bar {
+  height: 0.06rem !important;
+}
+.el-slider__button-wrapper {
+  top: -0.33rem !important;
+}
+.el-slider__stop {
+  height: 0.3rem !important;
+  width: 0.02rem !important;
+  background-color: #e4e7ed !important;
+  transform: translate(-50%, -50%) !important;
+  margin-top: 0.03rem;
+}
+
+wave {
+  border-right: none !important;
+  margin-top: -8px;
+}
+wave wave {
+  margin-top: 0;
+}
