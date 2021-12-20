@@ -35,7 +35,8 @@
         </div>
         <Table :title="item.name" hideMore @click="setWindow(item)">
           <template v-slot:left>
-            <img :src="item.icon" alt="" />
+            <img v-if="item.icon" :src="item.icon" alt="" />
+            <Iconfont v-else name="iconlianxiren" size="30" color="#A8B5BE" />
           </template>
         </Table>
       </div>
@@ -43,13 +44,9 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue';
-export default defineComponent({
-  name: 'contacts',
-});
-</script>
-<script setup lang="ts">
+import { defineComponent, reactive } from 'vue';
 import Table from '@/components/Table/index.vue';
+import Iconfont from '@/iconfont/index.vue';
 import group from '@/assets/img/group.svg';
 import addContact from '@/assets/img/addContact.svg';
 import blacklist from '@/assets/img/blacklist.svg';
@@ -62,6 +59,11 @@ import { useStore } from 'vuex';
 import { getTag } from '@/utils/utils';
 import { key } from '@/store';
 import { IContacts } from '@/types/user';
+export default defineComponent({
+  name: 'contacts',
+});
+</script>
+<script setup lang="ts">
 const { t } = useI18n();
 const store = useStore(key);
 const goTo = useGoTo(useRouter);
@@ -141,6 +143,7 @@ const setWindow = (e: IContacts) => {
 }
 .content {
   padding: 8px 0;
+  padding-bottom: 50px;
   .item {
     padding: 0 13px;
     &.active {

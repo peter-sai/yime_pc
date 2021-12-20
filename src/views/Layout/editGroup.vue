@@ -53,7 +53,7 @@ const props = defineProps({
   },
 });
 const store = useStore(key);
-const notice = ref('');
+const notice = ref(props.groupDetailInfo?.groupNoticeInfo.groupNoticeContent);
 const groupName = ref(props.groupDetailInfo?.groupName);
 const { t } = useI18n();
 

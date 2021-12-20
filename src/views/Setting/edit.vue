@@ -57,14 +57,15 @@ import { useRouter } from 'vue-router';
 
 const store = useStore(key);
 let userInfo = computed(() => store.state.userInfo);
+const userDetailInfo = store.state.userDetailInfo;
 const changUserImg: Ref<any> = ref(null);
 const goBack = useGoBack(useRouter);
 
 const query = reactive({
-  id: '',
-  nickName: '',
-  introduction: '',
-  icon: '',
+  id: userInfo.value.uid,
+  nickName: userInfo.value.nickname,
+  introduction: userDetailInfo.userSign,
+  icon: userInfo.value.icon,
 });
 
 onMounted(() => {

@@ -105,7 +105,7 @@
           </template>
           <template v-slot:right>
             <Switch
-              :beforeChange="() => {}"
+              :beforeChange="beforeBlacklist"
               :switch="Boolean(userDetailInfo?.isInMyBlacklist)"
             />
           </template>
@@ -252,6 +252,27 @@ async function upDateContact(store: Store<initStore>) {
   list.sort((a, b) => a.tag.charCodeAt() - b.tag.charCodeAt());
   store.commit('SET_CONTACT', list);
 }
+
+// 操作黑名单
+function useBeforeBlacklist(
+  store: Store<initStore>,
+  t: { (key: string | number): string },
+) {
+  return async (e: boolean) => {
+    const res = {
+      operateType: e ? 2 : 3,
+      operateUid: store.state.activeUid,
+    };
+
+    const data = await store.dispatch('postMsg', {
+      query: res,
+      cmd: 1039,
+      encryption: 'Aoelailiao.Login.UserOperateBlackListReq',
+      auth: true,
+    });
+    Toast(t(data.body.resultString));
+  };
+}
 </script>
 <script setup lang="ts">
 defineEmits(['toggleBox', 'changeTag']);
@@ -278,6 +299,9 @@ const beforeCaptureNotifica = useBeforeSwitch(store, 1003, t);
 
 // 置顶
 const beforeTop = useBeforeSwitch(store, 1004, t);
+
+// 黑名单
+const beforeBlacklist = useBeforeBlacklist(store, t);
 
 // 双向清空聊天记录
 const clientCleanMsg = () => {

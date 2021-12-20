@@ -1,7 +1,7 @@
 <template>
   <div class="group">
     <NavigationBar title="群组" />
-    <div style="flex: 1">
+    <div class="content">
       <Table
         :title="item.groupName"
         :class="{ active: activeUid === item.groupId }"
@@ -78,9 +78,15 @@ const setGroupWindow = (e: IGroupListItem) => {
 <style lang="scss" scoped>
 @import '@/style/base.scss';
 .group {
-  display: flex;
   flex: 1;
-  flex-direction: column;
+  .content {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 50px;
+    top: 50px;
+    overflow: auto;
+  }
   .table {
     padding: 17px 13px;
     position: relative;

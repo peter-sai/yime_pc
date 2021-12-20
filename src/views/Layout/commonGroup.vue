@@ -5,7 +5,7 @@
       disable-left
       @left-click="$emit('changeTag', Etag.UserInfo)"
     />
-    <div style="flex: 1">
+    <div class="content">
       <Table
         :title="item.groupName"
         hide-more
@@ -69,6 +69,14 @@ init();
 <style lang="scss" scoped>
 @import '@/style/base.scss';
 .commonGroup {
+  .content {
+    overflow: auto;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 50px;
+  }
   .table {
     border-bottom: 1px solid #eaebea;
     padding: 17px 20px;

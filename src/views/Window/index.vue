@@ -19,9 +19,7 @@
       @changeTag="changeTag"
     />
 
-    <div class="bottom">
-      <Bottom />
-    </div>
+    <Bottom />
 
     <!-- 弹框 -->
     <div>
@@ -174,19 +172,6 @@ init();
     bottom: 0;
     width: 320px;
     background: #fff;
-  }
-  .bottom {
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 50px;
-    position: absolute;
-    display: flex;
-    align-items: center;
-    padding: 0 20px;
-    border-top: 1px solid #eaebea;
-    display: flex;
-    justify-content: space-between;
   }
 }
 </style>
