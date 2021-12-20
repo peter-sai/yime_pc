@@ -4,6 +4,7 @@
     <div style="flex: 1">
       <Table
         v-for="(item, key) in list"
+        @click="setWindow(item)"
         :key="item.uid"
         :title="
           (item.userAttachInfo && item.userAttachInfo.remarkName) ||
@@ -36,6 +37,7 @@ import { key } from '@/store';
 import { ref, Ref } from 'vue';
 import { IUserInfo } from '@/types/user';
 import { useI18n } from 'vue-i18n';
+import { IContacts } from '@/types/user';
 import { Toast } from '@/plugin/Toast';
 const { t } = useI18n();
 const store = useStore(key);
@@ -98,6 +100,12 @@ const remove = async (e: IUserInfo, k: number) => {
   }
   hideLoading();
 };
+
+// 进入聊天
+const setWindow = (e: IContacts) => {
+  store.commit('SET_ACTIVEUID', e.uid);
+  store.commit('SET_ACTIVEISGROUP', false);
+};
 </script>
 <style lang="scss" scoped>
 @import '@/style/base.scss';
@@ -108,12 +116,13 @@ const remove = async (e: IUserInfo, k: number) => {
   .table {
     padding: 17px 13px;
     position: relative;
+    cursor: pointer;
     &:not(:last-child)::after {
       @include tableBottomLine;
     }
     img {
-      width: 46px;
-      height: 46px;
+      width: 30px;
+      height: 30px;
       border-radius: 50%;
     }
     span {

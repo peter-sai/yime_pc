@@ -1,66 +1,68 @@
 <template>
-  <div class="itemLeft">
-    <Iconfont
-      name="iconsearch"
-      @click="showOpertion = !showOpertion"
-      size="20"
-      color="#2B2C33"
-    />
-    <input type="text" placeholder="输入消息" />
-  </div>
-  <div class="itemRight">
-    <Iconfont name="iconbiaoqing" size="20" color="#2B2C33" />
-    <Iconfont
-      @click="burnInfo.show = !burnInfo.show"
-      name="iconyuehoujifen"
-      size="24"
-      :color="burnInfo.show ? '#0085FF' : '#2B2C33'"
-    />
-    <Iconfont name="iconyuyin" size="20" color="#2B2C33" />
-  </div>
-  <!-- 操作弹框 -->
-  <div class="boxOperation" v-if="showOpertion">
-    <div class="child">
-      <div class="opeItem">
-        <Iconfont name="iconxiangce" size="20" color="#111111" />
-        <div>相册</div>
+  <div class="bottom">
+    <div class="itemLeft">
+      <Iconfont
+        name="iconsearch"
+        @click="showOpertion = !showOpertion"
+        size="20"
+        color="#2B2C33"
+      />
+      <input type="text" placeholder="输入消息" />
+    </div>
+    <div class="itemRight">
+      <Iconfont name="iconbiaoqing" size="20" color="#2B2C33" />
+      <Iconfont
+        @click="burnInfo.show = !burnInfo.show"
+        name="iconyuehoujifen"
+        size="24"
+        :color="burnInfo.show ? '#0085FF' : '#2B2C33'"
+      />
+      <Iconfont name="iconyuyin" size="20" color="#2B2C33" />
+    </div>
+    <!-- 操作弹框 -->
+    <div class="boxOperation" v-if="showOpertion">
+      <div class="child">
+        <div class="opeItem">
+          <Iconfont name="iconxiangce" size="20" color="#111111" />
+          <div>相册</div>
+        </div>
+        <div class="opeItem">
+          <Iconfont name="iconicon_yuyinshipin" size="20" color="#111111" />
+          <div>语音视频</div>
+        </div>
+        <div class="opeItem">
+          <Iconfont name="iconpaishe" size="20" color="#111111" />
+          <div>拍摄</div>
+        </div>
       </div>
-      <div class="opeItem">
-        <Iconfont name="iconicon_yuyinshipin" size="20" color="#111111" />
-        <div>语音视频</div>
-      </div>
-      <div class="opeItem">
-        <Iconfont name="iconpaishe" size="20" color="#111111" />
-        <div>拍摄</div>
+      <div class="child">
+        <div class="opeItem">
+          <Iconfont name="iconwenjian1" size="20" color="#111111" />
+          <div>文件</div>
+        </div>
+        <div class="opeItem">
+          <Iconfont name="icontuijianhaoyou" size="20" color="#111111" />
+          <div>推荐好友</div>
+        </div>
+        <div class="opeItem">
+          <Iconfont name="iconweizhi" size="20" color="#111111" />
+          <div>位置</div>
+        </div>
       </div>
     </div>
-    <div class="child">
-      <div class="opeItem">
-        <Iconfont name="iconwenjian1" size="20" color="#111111" />
-        <div>文件</div>
-      </div>
-      <div class="opeItem">
-        <Iconfont name="icontuijianhaoyou" size="20" color="#111111" />
-        <div>推荐好友</div>
-      </div>
-      <div class="opeItem">
-        <Iconfont name="iconweizhi" size="20" color="#111111" />
-        <div>位置</div>
-      </div>
-    </div>
-  </div>
-  <!-- 设置焚阅时间 -->
-  <div class="burnRead" v-if="burnInfo.show">
-    <div class="title">设置焚毁时间</div>
-    <div class="burnBox">
-      <div
-        class="burnItem"
-        @click="burnInfo.active = item.id"
-        v-for="item in burnInfo.list"
-        :key="item.id"
-        :class="{ active: item.id === burnInfo.active }"
-      >
-        {{ item.name }}
+    <!-- 设置焚阅时间 -->
+    <div class="burnRead" v-if="burnInfo.show">
+      <div class="title">设置焚毁时间</div>
+      <div class="burnBox">
+        <div
+          class="burnItem"
+          @click="burnInfo.active = item.id"
+          v-for="item in burnInfo.list"
+          :key="item.id"
+          :class="{ active: item.id === burnInfo.active }"
+        >
+          {{ item.name }}
+        </div>
       </div>
     </div>
   </div>
@@ -89,9 +91,37 @@ const burnInfo = reactive({
   active: 0,
   show: false,
 });
+
+const keys = require
+  .context('../../assets/img/expression/', true, /\.png$/)
+  .keys();
+
+const expression = keys.map((e, k) => {
+  return {
+    id: k,
+    name: e.slice(2, -4),
+    path: require(`../../assets/img/expression/${e.substr(2, e.length - 2)}`),
+  };
+});
+
+// 图标列表
+const expressionList = reactive(expression);
 </script>
 <style lang="scss" scoped>
 @import '@/style/base.scss';
+.bottom {
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50px;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  border-top: 1px solid #eaebea;
+  display: flex;
+  justify-content: space-between;
+}
 .burnRead {
   width: 130px;
   height: 150px;

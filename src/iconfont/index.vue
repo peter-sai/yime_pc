@@ -62,6 +62,7 @@ import iconyuyan from './iconyuyan.vue';
 import iconyuyin from './iconyuyin.vue';
 import iconzhiding from './iconzhiding.vue';
 import iconzhihangfankui from './iconzhihangfankui.vue';
+import { useStore } from 'vuex';
 import { computed } from 'vue';
 export default {
   props: {

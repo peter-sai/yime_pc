@@ -76,16 +76,16 @@ const initState = {
     isFriend: 0, //是否为好友关系，0--不是(默认)，1--是
     friend_query_type: 1, //加好友的方式，1--搜索，2--扫描二维码， 3--个人名片
     phone: '', //手机号
-    qr_code: '', //用户二维码url
-    is_realname_auth: 0, //是否实名认证，0--未实名认证(默认)，1--已实名认证
-    is_in_my_blacklist: 0, //是否在我的黑名单中，0--不是(默认)，1--是
-    is_set_password: 0, //是否设置过密码，0--未设置(默认,不需要设置密码)，1--已设置(进入修改密码页)，2--强制退出时需要设置登录密码(进入设置密码页)
-    user_sex: 1, //1--男，2--女
-    city_code: '', //设置的位置信息
-    user_sign: '', //用户签名
-    find_me_group: 0, //通过群聊向我发起聊天 0--打开,1--关闭
+    qrCode: '', //用户二维码url
+    isRealnameAuth: 0, //是否实名认证，0--未实名认证(默认)，1--已实名认证
+    isInMyBlacklist: 0, //是否在我的黑名单中，0--不是(默认)，1--是
+    isSetPassword: 0, //是否设置过密码，0--未设置(默认,不需要设置密码)，1--已设置(进入修改密码页)，2--强制退出时需要设置登录密码(进入设置密码页)
+    userSex: 1, //1--男，2--女
+    cityCode: '', //设置的位置信息
+    userSign: '', //用户签名
+    findMeGroup: 0, //通过群聊向我发起聊天 0--打开,1--关闭
     source: '', //来源
-    source_id: 0, //来源id;用户id 群id
+    sourceId: 0, //来源id;用户id 群id
     source_type: 0, //0--群聊1-好友推荐2-分享链接3-手机号搜索4-YIME号搜索5-昵称搜索
     labelLists: [], // 好友标签信息
   },
