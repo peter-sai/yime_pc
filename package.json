@@ -2,11 +2,26 @@
   "name": "yime_pc",
   "version": "0.1.0",
   "private": true,
+  "main": "electron/dev/main.js",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "iconfont-create": "npx iconfont-create && npm run lint"
+    "iconfont-create": "npx iconfont-create && npm run lint",
+    "electron": "cross-env NODE_ENV=development electron .",
+    "electron-dev": "node electron/config/electron-run-dev.js",
+    "electron-build": "vue-cli-service build && node electron/config/electron-build-pro.js && electron-builder --dir"
+  },
+  "build": {
+    "productName": "vue-cli-electron",
+    "appId": "com.test",
+    "asar": false,
+    "directories": {
+      "output": "build/electron-build"
+    },
+    "files": [
+      "build/vue-build/**/*"
+    ]
   },
   "dependencies": {
     "ali-oss": "^6.16.0",
@@ -34,6 +49,9 @@
     "@vue/eslint-config-prettier": "^6.0.0",
     "@vue/eslint-config-typescript": "^7.0.0",
     "cnchar-all": "^3.0.4",
+    "cross-env": "^7.0.3",
+    "electron": "^16.0.5",
+    "electron-builder": "^22.8.0",
     "eslint": "^6.7.2",
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-vue": "^7.0.0",
