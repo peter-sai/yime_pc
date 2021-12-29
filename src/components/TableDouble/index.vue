@@ -70,7 +70,7 @@ const slots = useSlots();
   display: flex;
   justify-content: space-between;
   .left {
-    margin-right: 6px;
+    margin-right: 10px;
   }
   .middle {
     flex: 1;

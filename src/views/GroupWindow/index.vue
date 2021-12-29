@@ -13,7 +13,23 @@
       @changeTag="changeTag"
     />
 
-    <Bottom />
+    <!-- 消息内容 -->
+    <div class="msg">
+      <Message
+        v-if="groupDetailInfo.groupId"
+        :groupDetailInfo="groupDetailInfo"
+      />
+    </div>
+
+    <Bottom
+      v-model="inputVal"
+      @sendImg="sendImg('img')"
+      @enter="enter"
+      @sendFile="sendImg('file')"
+    />
+    <!-- 文件 和 图片选择 -->
+    <input ref="changUserImg" type="file" hidden :accept="accept" />
+
     <!-- 弹框 -->
     <div>
       <transition name="fade">
@@ -49,20 +65,43 @@
           />
         </div>
       </transition>
+      <!-- 添加群成员 -->
+      <transition name="fade-transform1" mode="out-in">
+        <div v-if="showBox && tag === Etag.AddGroupMembers" class="boxContent">
+          <AddGroupMembers
+            :groupDetailInfo="groupDetailInfo"
+            @toggleBox="toggleBox"
+            @changeTag="changeTag"
+          />
+        </div>
+      </transition>
     </div>
   </div>
 </template>
 <script lang="ts">
 import { initStore, key } from '@/store';
 import { IGroupInfo } from '@/types/user';
-import { defineComponent, ref, Ref, defineEmits } from 'vue';
+import {
+  defineComponent,
+  ref,
+  Ref,
+  defineEmits,
+  nextTick,
+  onMounted,
+  onBeforeUnmount,
+} from 'vue';
+import Message from '../Window/message.vue';
 import { Store, useStore } from 'vuex';
 import GroupChatHeader from './header.vue';
-import GroupInfo from '../Layout/groupInfo.vue';
-import EditGroup from '../Layout/editGroup.vue';
-import AddGroupType from '../Layout/addGroupType.vue';
+import GroupInfo from '../Layout/GroupChat/groupInfo.vue';
+import EditGroup from '../Layout/GroupChat/editGroup.vue';
+import AddGroupType from '../Layout/GroupChat/addGroupType.vue';
+import AddGroupMembers from '../Layout/GroupChat/addGroupMembers.vue';
 import Bottom from '../Layout/bottom.vue';
 import { Etag } from '../Layout/index.vue';
+import { useEnter, useCbImg, useSendImg } from '@/hooks/window';
+import { useI18n } from 'vue-i18n';
+import { ImsgItem } from '@/types/msg';
 export default defineComponent({
   name: 'groupWindow',
 });
@@ -71,19 +110,29 @@ async function getGroupInfo(
   store: Store<initStore>,
   groupDetailInfo: Ref<IGroupInfo>,
 ) {
-  const data = await store.dispatch('postMsg', {
-    query: {
-      groupId: store.state.activeUid,
-    },
-    cmd: 1029,
-    encryption: 'Aoelailiao.Login.ClientGetGroupInfoReq',
-    auth: true,
-  });
-  groupDetailInfo.value = data.body?.groupDetailInfo || {};
+  if (!store.state.activeUid) return;
+
+  let msgItem: ImsgItem = store.state.msgList[store.state.activeUid!];
+
+  // 如果不存在则获取 (群聊不在聊天列表中会没有信息)
+  if (!msgItem) {
+    const data = await store.dispatch('postMsg', {
+      query: {
+        groupId: store.state.activeUid,
+      },
+      cmd: 1029,
+      encryption: 'Aoelailiao.Login.ClientGetGroupInfoReq',
+      auth: true,
+    });
+    msgItem = data.body;
+  }
+
+  groupDetailInfo.value = msgItem.groupDetailInfo || {};
 }
 </script>
 <script setup lang="ts">
 defineEmits(['toggleBox', 'changeTag']);
+const { t } = useI18n();
 // 是否显示右侧
 const showBox = ref(false);
 const toggleBox = () => {
@@ -101,10 +150,40 @@ async function init() {
   await getGroupInfo(store, groupDetailInfo);
 }
 init();
+
+const inputVal = ref('');
+
+// 文件选择类型
+const accept = ref('image/*');
+const changUserImg: Ref<HTMLInputElement | null> = ref(null);
+
+const cbImg = useCbImg(store, accept, t);
+
+onMounted(async () => {
+  changUserImg.value!.addEventListener('change', cbImg);
+});
+
+onBeforeUnmount(() => {
+  changUserImg.value!.removeEventListener('change', cbImg);
+});
+
+// 发送消息
+const enter = useEnter(store, inputVal, 1, null, t);
+// 发送图片
+const sendImg = useSendImg(store, 1, t, changUserImg, accept, nextTick);
 </script>
 <style lang="scss" scoped>
 @import '@/style/base.scss';
 .groupWindow {
+  .msg {
+    position: absolute;
+    top: 65px;
+    left: 0;
+    right: 0;
+    bottom: 50px;
+    overflow: auto;
+    padding: 20px;
+  }
   .box {
     position: absolute;
     left: 0;

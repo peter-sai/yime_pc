@@ -23,7 +23,7 @@
         <InputGroup :placeholder="t('请输入手机号')" v-model="query.phone">
           <template v-slot:phone>
             <div class="areaCode">
-              <div class="value" @click="showBox = true">
+              <div class="value" @click.stop="showBox = !showBox">
                 <span>+{{ areaCode }}</span>
                 <Iconfont name="iconright" size="10" class="iconfont" />
               </div>
@@ -32,7 +32,7 @@
                   class="boxItem"
                   :class="{ active: areaCode === item.code }"
                   v-for="item in list"
-                  @click="
+                  @click.stop="
                     areaCode = item.code;
                     showBox = false;
                   "
@@ -78,7 +78,14 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, reactive, ref, Ref } from 'vue';
+import {
+  defineComponent,
+  onMounted,
+  onUnmounted,
+  reactive,
+  ref,
+  Ref,
+} from 'vue';
 export default defineComponent({
   name: 'login',
 });
@@ -303,6 +310,17 @@ function useLoginCb(
   }
   return Toast(t(data.body.resultString));
 }
+
+const bodyClickCb = () => {
+  showBox.value = false;
+};
+
+onMounted(() => {
+  document.body.addEventListener('click', bodyClickCb);
+});
+onUnmounted(() => {
+  document.body.removeEventListener('click', bodyClickCb);
+});
 </script>
 <style lang="scss" scoped>
 .login {

@@ -37,6 +37,8 @@ export enum Etag {
   CommonGroup,
   Recommend,
   AddGroupType,
+  CreateGroupChat,
+  AddGroupMembers,
 }
 export default defineComponent({
   name: 'Layout',

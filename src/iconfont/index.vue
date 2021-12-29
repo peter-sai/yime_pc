@@ -15,6 +15,8 @@ import iconcaidan from './iconcaidan.vue';
 import icondagou from './icondagou.vue';
 import icondanxuankuang from './icondanxuankuang.vue';
 import icondiandian from './icondiandian.vue';
+import iconemoji_icon2_copy from './iconemoji_icon2_copy.vue';
+import iconemoji_icon3 from './iconemoji_icon3.vue';
 import iconexcel from './iconexcel.vue';
 import iconfankui from './iconfankui.vue';
 import iconfork from './iconfork.vue';
@@ -24,6 +26,7 @@ import iconfuzhi from './iconfuzhi.vue';
 import icongantanhao from './icongantanhao.vue';
 import iconguanyu from './iconguanyu.vue';
 import iconheimingdan from './iconheimingdan.vue';
+import iconicon_xiaolian from './iconicon_xiaolian.vue';
 import iconicon_yuyinshipin from './iconicon_yuyinshipin.vue';
 import iconjiami from './iconjiami.vue';
 import iconjieping from './iconjieping.vue';
@@ -37,6 +40,7 @@ import iconqunliao from './iconqunliao.vue';
 import iconradio from './iconradio.vue';
 import iconright from './iconright.vue';
 import iconsearch from './iconsearch.vue';
+import iconshijian from './iconshijian.vue';
 import iconshoujihaoma from './iconshoujihaoma.vue';
 import iconshoujihaoma1 from './iconshoujihaoma1.vue';
 import iconshuangxiangsudicopy from './iconshuangxiangsudicopy.vue';
@@ -62,8 +66,6 @@ import iconyuyan from './iconyuyan.vue';
 import iconyuyin from './iconyuyin.vue';
 import iconzhiding from './iconzhiding.vue';
 import iconzhihangfankui from './iconzhihangfankui.vue';
-import { useStore } from 'vuex';
-import { computed } from 'vue';
 export default {
   props: {
     size: String,
@@ -83,6 +85,8 @@ export default {
     icondagou,
     icondanxuankuang,
     icondiandian,
+    iconemoji_icon2_copy,
+    iconemoji_icon3,
     iconexcel,
     iconfankui,
     iconfork,
@@ -92,6 +96,7 @@ export default {
     icongantanhao,
     iconguanyu,
     iconheimingdan,
+    iconicon_xiaolian,
     iconicon_yuyinshipin,
     iconjiami,
     iconjieping,
@@ -105,6 +110,7 @@ export default {
     iconradio,
     iconright,
     iconsearch,
+    iconshijian,
     iconshoujihaoma,
     iconshoujihaoma1,
     iconshuangxiangsudicopy,

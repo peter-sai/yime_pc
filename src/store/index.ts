@@ -1,7 +1,14 @@
 import { createStore, Store } from 'vuex';
 import { InjectionKey } from 'vue';
-import { clearStorage, getStorage, setStorage } from '@/utils/utils';
+import {
+  clearStorage,
+  getMsgList,
+  getStorage,
+  setStorage,
+} from '@/utils/utils';
 import { useGetOfflineMsg } from '@/api/app';
+import { IMsgInfo, ImsgItem, TMsgContent } from '@/types/msg';
+import { IUserDetailInfo } from '@/types/user';
 const OSS = require('ali-oss');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const protoRoot = require('@/protoBuild/proto');
@@ -111,6 +118,7 @@ const initState = {
   client: {
     put: (fileName: any, file: any) => null,
   },
+  msgList: {} as { [key: number]: ImsgItem },
 };
 
 export type initStore = typeof initState;
@@ -121,6 +129,33 @@ const sotreRoot = createStore({
     SET_LANG: (state, res) => {
       state.lang = res;
       setStorage('lang', res);
+    },
+    SET_MSGLIST: (state, res) => {
+      state.msgList = res;
+    },
+    SET_MSGLISTITEM: (state, { res, uid }) => {
+      state.msgList[uid || state.activeUid] = res;
+    },
+    DEL_MSGITEM: (state, uid) => {
+      delete state.msgList[uid];
+    },
+    ADD_MSGLIST: (state, { res, id, groupDetailInfo, userDetailInfo }) => {
+      if (state.msgList[id]) {
+        state.msgList[id].readList.push(res);
+        if (Number(res.fromId) !== Number(state.userInfo.uid)) {
+          state.msgList[id].unReadNum++;
+        }
+        state.msgList[id].lastMsg = res;
+      } else {
+        state.msgList[id] = res;
+        if (groupDetailInfo) {
+          state.msgList[id].groupDetailInfo = groupDetailInfo;
+        }
+        if (userDetailInfo) {
+          state.msgList[id].userDetailInfo = userDetailInfo;
+        }
+        state.msgList[id].lastMsg = res.readList[0];
+      }
     },
     SET_APPABOUTUSINFO: (state, val) => {
       state.appAboutUsInfo = val;
@@ -166,7 +201,6 @@ const sotreRoot = createStore({
           const userList = getStorage('userList');
           if (!userList) return;
           const { offlineMsgInfos } = await useGetOfflineMsg(sotreRoot);
-          console.log(offlineMsgInfos);
 
           sotreRoot.commit('SET_OFFLINEMSGS', offlineMsgInfos);
         };
@@ -201,6 +235,8 @@ const sotreRoot = createStore({
       const appAboutUsInfo = getStorage('appAboutUsInfo');
       const groupChatWelcomeTips = getStorage('groupChatWelcomeTips');
       const userChatWelcomeTips = getStorage('userChatWelcomeTips');
+      const msgList = getMsgList() || {};
+      commit('SET_MSGLIST', msgList);
       appAboutUsInfo &&
         commit('SET_APPABOUTUSINFO', JSON.parse(appAboutUsInfo));
       groupChatWelcomeTips &&
@@ -267,6 +303,67 @@ const sotreRoot = createStore({
         ws.send(data);
       }
       return getMessage(cmd, encryption, state);
+    },
+    // push消息
+    async addMsgList({ state, commit, dispatch }, res) {
+      // console.log(res);
+
+      res.type = res.msgContent.msgContent;
+      let id: number;
+      // 单聊
+      if (res.isGroupMsg === 0) {
+        id =
+          Number(state.userInfo.uid) === Number(res.fromId)
+            ? res.toId
+            : res.fromId;
+      } else {
+        // 群聊
+        id = res.toId;
+      }
+
+      if (state.msgList[id]) {
+        if (
+          !state.msgList[id].readList.find(
+            (e: IMsgInfo<TMsgContent>) => Number(e.msgId) === Number(res.msgId),
+          )
+        ) {
+          commit('ADD_MSGLIST', { res, id });
+        }
+      } else {
+        const item = {
+          readList: [{ ...res }],
+          isGroup: res.isGroupMsg,
+          id: res.isGroupMsg ? res.toId : id,
+          unReadNum: Number(res.fromId) !== Number(state.userInfo.uid) ? 1 : 0,
+          isBotUser: false,
+          userDetailInfo: {} as IUserDetailInfo,
+          lastMsg: {},
+          groupDetailInfo: {},
+        };
+        if (res.isGroupMsg === 0) {
+          // 单聊获取用户详情
+          const data = await dispatch('postMsg', {
+            query: {
+              uid: id,
+            },
+            cmd: 1011,
+            encryption: 'Aoelailiao.Login.ClientGetUserInfoReq',
+            auth: true,
+          });
+          const userDetailInfo = data.body.userDetailInfo;
+          commit('ADD_MSGLIST', { res: item, id, userDetailInfo });
+        } else {
+          // 群聊获取群详情
+          const data = await dispatch('postMsg', {
+            query: { groupId: id },
+            cmd: 1029,
+            encryption: 'Aoelailiao.Login.ClientGetGroupInfoReq',
+            auth: true,
+          });
+          const groupDetailInfo = data.body.groupDetailInfo;
+          commit('ADD_MSGLIST', { res: item, id, groupDetailInfo });
+        }
+      }
     },
   },
   modules: {},

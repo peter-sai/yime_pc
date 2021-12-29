@@ -47,7 +47,7 @@ const activeUid = computed(() => store.state.activeUid);
 const store = useStore(key);
 const userInfo = store.state.userInfo;
 
-const list: Ref<IGroupListItem[]> = ref([]);
+const list: Ref<IGroupListItem[]> = computed(() => store.state.groupInfos);
 const init = async () => {
   const data = await store.dispatch('postMsg', {
     query: {},
@@ -55,7 +55,6 @@ const init = async () => {
     encryption: 'Aoelailiao.Login.UserGetFriendsAndGroupsListReq',
     auth: true,
   });
-  store.commit('SET_GROUPINFOS', data.body.groupInfos);
   data.body.groupInfos.forEach((e: IGroupListItem) => {
     if (e.groupMemberLists.rootUid === Number(userInfo.uid)) {
       e.root = true;
@@ -64,7 +63,7 @@ const init = async () => {
       e.admin = true;
     }
   });
-  list.value = data.body.groupInfos;
+  store.commit('SET_GROUPINFOS', data.body.groupInfos);
 };
 
 init();

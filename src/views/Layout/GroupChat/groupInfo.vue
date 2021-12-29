@@ -115,7 +115,10 @@
         <div class="groupInfo">
           <div class="title">
             <div class="titleLeft">群成员</div>
-            <div class="titleRight">
+            <div
+              class="titleRight"
+              @click="$emit('changeTag', Etag.AddGroupMembers)"
+            >
               <Iconfont
                 name="iconyaoqinghaoyoubeifen"
                 class="pointer"
@@ -135,7 +138,7 @@
                 <img class="userImg" :src="item.icon" alt="" />
               </template>
               <template v-slot:right v-if="isRoot">
-                <div class="del">删除</div>
+                <div class="del" @click="del(item)">删除</div>
               </template>
             </TableDouble>
           </div>
@@ -151,15 +154,20 @@ import Table from '@/components/Table/index.vue';
 import TableDouble from '@/components/TableDouble/index.vue';
 import Switch from '@/components/Switch/index.vue';
 import Iconfont from '@/iconfont/index.vue';
-import { Etag } from './index.vue';
-import { IGroupAttachInfo, IGroupInfo, IUserInfo } from '@/types/user';
+import { Etag } from '../index.vue';
+import {
+  IContacts,
+  IGroupAttachInfo,
+  IGroupInfo,
+  IUserInfo,
+} from '@/types/user';
 import { useI18n } from 'vue-i18n';
 import { Store, useStore } from 'vuex';
 import { initStore, key } from '@/store';
 import { ref, Ref, onMounted, onUnmounted } from 'vue';
 import ClipboardJS from 'clipboard';
 import { Toast } from '@/plugin/Toast';
-import { getMsgList, getStorage, setMsgList } from '@/utils/utils';
+import { getMsgList, getStorage, getTag, setMsgList } from '@/utils/utils';
 import {
   groupInviteState,
   useUserOperateGroupInfo,
@@ -246,7 +254,7 @@ inGroupType.value = groupInviteState(
 // 群管理员
 const adminUidList = props.groupDetailInfo?.groupMemberLists.adminUidList || [];
 // 判断是否是群主
-const userInfo = JSON.parse(getStorage('userInfo'));
+const userInfo = store.state.userInfo;
 if (
   Number(userInfo.uid) ===
   Number(props.groupDetailInfo?.groupMemberLists.rootUid)
@@ -278,13 +286,13 @@ const quitGroupChat = async () => {
       const data = await userOperateGroupInfo(3, query);
       Toast(t(data.body.resultString));
       if (data.body.resultCode === 0) {
-        const msgList = getMsgList() || [];
-        Object.keys(msgList).forEach((e: any) => {
-          if (Number(e) === Number(store.state.activeUid)) {
-            delete msgList[e];
-          }
+        const data = await store.dispatch('postMsg', {
+          query: {},
+          cmd: 1009,
+          encryption: 'Aoelailiao.Login.UserGetFriendsAndGroupsListReq',
+          auth: true,
         });
-        setMsgList(msgList);
+        store.commit('SET_GROUPINFOS', data.body.groupInfos);
       }
     },
   });
@@ -312,6 +320,19 @@ async function init() {
 }
 
 init();
+
+// 删除
+const del = async (e: IUserInfo) => {
+  const query = {
+    groupId: store.state.activeUid,
+    groupMemberLists: {
+      memberUserInfos: [{ memberUid: e.uid }],
+    },
+  };
+
+  const data = await userOperateGroupInfo(5, query);
+  Toast(t(data.body.resultString));
+};
 </script>
 <style lang="scss" scoped>
 @import '@/style/base.scss';

@@ -1,8 +1,10 @@
-import { getStorage, setStorage } from '@/utils/utils';
+import { initStore } from '@/store';
+import { setStorage } from '@/utils/utils';
+import { Store } from 'vuex';
 
 // 更新个人信息
-const upDateUser = async (store: any) => {
-  const info = JSON.parse(getStorage('userInfo'));
+const upDateUser = async (store: Store<initStore>) => {
+  const info = store.state.userInfo;
   const res = {
     uid: info.uid,
   };

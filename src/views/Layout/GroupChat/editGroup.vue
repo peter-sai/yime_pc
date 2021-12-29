@@ -7,7 +7,7 @@
     />
     <div style="flex: 1">
       <div class="header">
-        <img src="../../../public/img/notice.svg" alt="" />
+        <img src="../../../../public/img/notice.svg" alt="" />
       </div>
       <div class="main">
         <div class="info">群聊名称</div>
@@ -38,7 +38,7 @@ export default defineComponent({
 </script>
 <script setup lang="ts">
 import NavigationBar from '@/components/NavigationBar/index.vue';
-import { Etag } from './index.vue';
+import { Etag } from '../index.vue';
 import { useUserOperateGroupInfo } from '@/hooks/window';
 import { useStore } from 'vuex';
 import { key } from '@/store';

@@ -67,7 +67,7 @@ export default defineComponent({
 const { t } = useI18n();
 const store = useStore(key);
 const goTo = useGoTo(useRouter);
-const list: Ref<IContacts[]> = ref([]);
+const list: Ref<IContacts[]> = computed(() => store.state.contact);
 
 const activeUid = computed(() => store.state.activeUid);
 
@@ -84,26 +84,14 @@ const init = async () => {
       });
 
       store.commit('SET_GROUPINFOS', data.body.groupInfos);
-      list.value = data.body.friendInfos;
-      list.value.forEach((e: any) => {
+      const list = data.body.friendInfos;
+      list.forEach((e: any) => {
         e.name =
           (e.userAttachInfo && e.userAttachInfo.remarkName) || e.nickname;
         e.tag = getTag(e);
       });
-      list.value.sort(
-        (a: any, b: any) => a.tag.charCodeAt(0) - b.tag.charCodeAt(0),
-      );
-      store.commit('SET_CONTACT', list.value);
-    } else {
-      list.value = storeList;
-      list.value.forEach((e: any) => {
-        e.name =
-          (e.userAttachInfo && e.userAttachInfo.remarkName) || e.nickname;
-        e.tag = getTag(e);
-      });
-      list.value.sort(
-        (a: any, b: any) => a.tag.charCodeAt(0) - b.tag.charCodeAt(0),
-      );
+      list.sort((a: any, b: any) => a.tag.charCodeAt(0) - b.tag.charCodeAt(0));
+      store.commit('SET_CONTACT', list);
     }
   } catch (error) {
     console.log(error);

@@ -163,6 +163,7 @@ export function getSuffix(url) {
 
 export function getMsgList() {
   const userInfo = JSON.parse(getStorage('userInfo'));
+  if (!userInfo) return null;
   const uid = userInfo.uid;
   const msgList = JSON.parse(getStorage('msgList')) || {};
   const list = msgList[uid] || {};

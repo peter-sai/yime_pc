@@ -1,3 +1,5 @@
+import { IUserInfo } from './user';
+
 interface IMsgContent {
   stringContent?: string; //文本
   imageMsg: IImageMsgInfo; //图片
@@ -20,6 +22,25 @@ interface IMsgContent {
   fireInfo: IFireInfo; //焚阅消息
 }
 
+export type TMsgContent =
+  | string
+  | IImageMsgInfo
+  | IVoiceMsgInfo
+  | IUserOperateEventDescInfo
+  | ISystemNotifyInfo
+  | IGroupAtInfo
+  | IRevokeInfo
+  | IVideoCallMsgInfo
+  | IGpsMsgInfo
+  | INewFriendsApplyNotice
+  | IForwardMsgInfo
+  | IVisitingCard
+  | IGroupUserInviteMsgInfo
+  | IFileInfo
+  | IVideoMsgInfo
+  | ICleanInfo
+  | ILinkUrlInfo
+  | IFireInfo;
 type TMsgContent = keyof IMsgContent;
 
 export interface IFileInfo {
@@ -74,6 +95,7 @@ export interface IVisitingCard {
   sourceName: string; //来源名称
   sourceId: number; //来源id
   sourceTime: number; //分享时间 用于验证过期时间
+  showContent: string;
 }
 
 export interface IForwardMsgInfo {
@@ -181,8 +203,24 @@ export interface IMsgInfo<T> {
   msgShowType: number; //0--无效，1--普通消息，2--系统通知消息,3--阅后即焚消息，4--需要客户端进行逻辑操作的消息，5--客服消息,  6--机器人客服消息
   clientMsgUuid: string; //客户端生成的消息uuid,用于客户端本地数据库消息去重,如果该字段为空则需要客户端自己生成，客户端发送的消息必须带这个字段
   isEncrypt: number; //是否是加密消息 0--不是 1--是
+  type: string;
   attachInfo: {
     msgSource: string;
   }; //消息附加的信息,由客户端自定义解析
-  msgContent: Record<keyof IMsgContent, T> & { msgContentType: number };
+  msgContent: Record<keyof IMsgContent, T> & {
+    msgContentType: number;
+    msgContent: string;
+  };
+}
+
+// 缓存消息列表的 interface
+export interface ImsgItem {
+  id: number;
+  isBotUser: boolean;
+  isGroup: boolean;
+  readList: IMsgInfo[];
+  unReadNum: number;
+  userDetailInfo: IUserDetailInfo;
+  lastMsg: IMsgInfo;
+  groupDetailInfo: IGroupInfo;
 }

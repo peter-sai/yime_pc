@@ -28,6 +28,7 @@
     "axios": "^0.24.0",
     "clipboard": "^2.0.8",
     "core-js": "^3.6.5",
+    "lottie-web": "^5.8.1",
     "moment": "^2.29.1",
     "postcss-pxtorem": "^5.1.1",
     "protobufjs": "^6.11.2",

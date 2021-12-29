@@ -40,7 +40,7 @@ import { defineComponent, defineEmits, ref, Ref } from 'vue';
 import NavigationBar from '@/components/NavigationBar/index.vue';
 import Iconfont from '@/iconfont/index.vue';
 import TableDouble from '@/components/TableDouble/index.vue';
-import { Etag } from './index.vue';
+import { Etag } from '../index.vue';
 import { useStore } from 'vuex';
 import { key } from '@/store';
 import { IFileInfo, IMsgInfo } from '@/types/msg';

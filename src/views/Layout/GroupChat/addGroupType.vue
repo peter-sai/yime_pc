@@ -24,7 +24,7 @@
 </template>
 <script lang="ts">
 import { defineComponent, defineEmits, PropType } from 'vue';
-import { Etag } from './index.vue';
+import { Etag } from '../index.vue';
 import { reactive, defineProps } from 'vue';
 import Table from '@/components/Table/index.vue';
 import Iconfont from '@/iconfont/index.vue';
