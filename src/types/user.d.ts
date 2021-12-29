@@ -37,10 +37,17 @@ export interface IUserDetailInfo {
 export interface IContacts {
   active: boolean;
   name: string;
-  nikename: string;
+  nickname: string;
   tag: string;
   icon: string;
   uid: number;
+  userAttachInfo: {
+    remarkName: string; //备注名称
+    destoryReaded: number; //阅后即焚开关,0--关闭(默认),1--开
+    msgTop: number; //消息置顶开关,0--关闭(默认),1--开
+    msgMute: number; //消息免打扰开关,0--关闭(默认),1--开
+    msgScreenShotNotify: number;
+  }; //附加信息
 }
 
 //

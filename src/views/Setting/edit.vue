@@ -110,10 +110,10 @@ const submit = async () => {
       itemValue: query.icon,
     });
   }
-  if (query.id) {
+  if (query.id && query.id !== userInfo.value.uid) {
     res.itemInfos.push({
       itemNo: 7,
-      itemValue: query.id,
+      itemValue: query.id.toString(),
     });
   }
   if (query.nickName) {
@@ -131,6 +131,7 @@ const submit = async () => {
   if (!res.itemInfos.length) {
     return Toast('请输入内容');
   }
+
   const data = await store.dispatch('postMsg', {
     query: res,
     cmd: 1013,

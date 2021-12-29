@@ -29,9 +29,9 @@
         </div>
       </div>
       <div class="main">
-        <Table :title="yUserInfo?.onlineState ? '在线' : '离线'" hide-more>
+        <Table :title="onlineInfo?.onlineState ? '在线' : '离线'" hide-more>
           <template v-slot:left>
-            <div class="point" :class="{ onLine: yUserInfo?.onlineState }" />
+            <div class="point" :class="{ onLine: onlineInfo?.onlineState }" />
           </template>
         </Table>
         <Table title="保存联系人" hide-more>
@@ -84,7 +84,10 @@
             <Iconfont name="iconqunliao" size="15" />
           </template>
         </Table>
-        <Table title="与好友新建群聊">
+        <Table
+          title="与好友新建群聊"
+          @click="$emit('changeTag', Etag.CreateGroupChat)"
+        >
           <template v-slot:left>
             <Iconfont name="iconyaoqinghaoyou" size="15" />
           </template>
@@ -121,10 +124,10 @@ import { initStore, key } from '@/store';
 import { Toast } from '@/plugin/Toast';
 import NavigationBar from '@/components/NavigationBar/index.vue';
 import Iconfont from '@/iconfont/index.vue';
-import { IUserDetailInfo, IUserInfo } from '@/types/user';
+import { IContacts, IUserDetailInfo, IUserInfo } from '@/types/user';
 import Table from '@/components/Table/index.vue';
 import Switch from '@/components/Switch/index.vue';
-import { Etag } from './index.vue';
+import { Etag } from '../index.vue';
 import { useI18n } from 'vue-i18n';
 import { getMsgList, getTag, setMsgList } from '@/utils/utils';
 import { hideLoading, showLoading } from '@/plugin/Loading';
@@ -154,7 +157,7 @@ function useToggleFriend(
     });
     return new Promise((resovle, reject) => {
       if (data.body.resultCode === 0) {
-        upDateContact(store);
+        upDateContact(store, e);
         resovle(true);
       } else {
         reject();
@@ -189,6 +192,7 @@ function useBeforeSwitch(
       encryption: 'Aoelailiao.Login.UserOperateSettingItemSwitchReq',
       auth: true,
     });
+
     hideLoading();
     return new Promise((resovle, reject) => {
       if (data.body.resultCode === 0) {
@@ -199,6 +203,9 @@ function useBeforeSwitch(
         } else if (settingItemId === 1004) {
           // 置顶
           upDateStore('msgTop', Number(e), store, isBack);
+        } else if (settingItemId === 1003) {
+          // 截屏通知
+          upDateStore('msgScreenShotNotify', Number(e), store, isBack);
         }
         resovle(true);
       } else {
@@ -210,46 +217,50 @@ function useBeforeSwitch(
 }
 
 // 更新缓存
-function upDateStore(
+async function upDateStore(
   res: string,
   e: number,
   store: Store<initStore>,
   isBack: boolean | undefined,
 ) {
-  const msgList = getMsgList();
+  const msgList = store.state.msgList;
+
   if (msgList && msgList[store.state.activeUid!]) {
     const newMsgList = msgList[store.state.activeUid!];
-    if (!newMsgList.userInfo.userAttachInfo) {
-      newMsgList.userInfo.userAttachInfo = {};
+    if (!newMsgList.userDetailInfo.userInfo.userAttachInfo) {
+      newMsgList.userDetailInfo.userInfo.userAttachInfo = {};
     }
-    newMsgList.userInfo.userAttachInfo[res] = e ? 1 : 0;
+    newMsgList.userDetailInfo.userInfo.userAttachInfo[res] = e ? 1 : 0;
     if (isBack) {
-      newMsgList.userInfo.userAttachInfo[res] = e ? 0 : 1;
+      newMsgList.userDetailInfo.userInfo.userAttachInfo[res] = e ? 0 : 1;
     }
-    if (newMsgList.userDetailInfo && newMsgList.userDetailInfo.userInfo) {
-      newMsgList.userDetailInfo.userInfo = newMsgList.userInfo;
-    }
-    msgList[store.state.activeUid!] = newMsgList;
-    setMsgList(msgList);
+
+    store.commit('SET_MSGLISTITEM', { res: newMsgList });
   }
 }
 
 // 删除/添加好友后更新联系人列表
-async function upDateContact(store: Store<initStore>) {
-  let list: any[] = [];
+async function upDateContact(store: Store<initStore>, val: boolean) {
+  const item = store.state.msgList[store.state.activeUid!];
+  if (item) {
+    item.userDetailInfo.isFriend = val ? 1 : 0;
+    store.commit('SET_MSGLISTITEM', { res: item });
+  }
+  let list: IContacts[] = [];
   const data = await store.dispatch('postMsg', {
     query: {},
     cmd: 1009,
     encryption: 'Aoelailiao.Login.UserGetFriendsAndGroupsListReq',
     auth: true,
   });
+
   store.commit('SET_GROUPINFOS', data.body.groupInfos);
   list = data.body.friendInfos;
   list.forEach((e) => {
     e.name = (e.userAttachInfo && e.userAttachInfo.remarkName) || e.nickname;
     e.tag = getTag(e);
   });
-  list.sort((a, b) => a.tag.charCodeAt() - b.tag.charCodeAt());
+  list.sort((a: any, b: any) => a.tag.charCodeAt() - b.tag.charCodeAt());
   store.commit('SET_CONTACT', list);
 }
 
@@ -281,6 +292,9 @@ defineProps({
     type: Object as PropType<IUserDetailInfo>,
   },
   yUserInfo: {
+    type: Object as PropType<IUserInfo>,
+  },
+  onlineInfo: {
     type: Object as PropType<IUserInfo>,
   },
 });

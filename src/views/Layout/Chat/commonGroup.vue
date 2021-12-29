@@ -34,7 +34,7 @@ export default defineComponent({
 <script setup lang="ts">
 import NavigationBar from '@/components/NavigationBar/index.vue';
 import Table from '@/components/Table/index.vue';
-import { Etag } from './index.vue';
+import { Etag } from '../index.vue';
 import { useStore } from 'vuex';
 import { key } from '@/store';
 import { ref, Ref } from 'vue';
@@ -58,7 +58,6 @@ async function init() {
     encryption: 'Aoelailiao.Login.GetCommonGroupReq',
     auth: true,
   });
-  console.log(data);
 
   if (data.body.resultCode === 0) {
     commonGroup.value = data.body.commonGroupInfos;

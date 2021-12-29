@@ -39,12 +39,12 @@
             <Iconfont name="iconzhihangfankui" size="20" color="#2B2C33" />
           </template>
         </Table>
-        <Table title="关于YIME">
+        <Table title="关于YIME" @click="goLink('https://yime.app/home')">
           <template v-slot:left>
             <Iconfont name="iconguanyu" size="20" color="#2B2C33" />
           </template>
         </Table>
-        <Table title="下载手机APP">
+        <Table title="下载手机APP" @click="goLink('https://yime.app/home')">
           <template v-slot:left>
             <Iconfont name="iconshoujihaoma1" size="20" color="#2B2C33" />
           </template>
@@ -73,6 +73,10 @@ const { t } = useI18n();
 const store = useStore(key);
 const userDetailInfo = store.state.userDetailInfo;
 const userInfo = store.state.userInfo;
+
+const goLink = (url: string) => {
+  window.open(url);
+};
 </script>
 <style lang="scss" scoped>
 @import '@/style/base.scss';

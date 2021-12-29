@@ -3,10 +3,13 @@
 </template>
 
 <script lang="ts" setup>
+import { computed, onBeforeUnmount, watch } from 'vue';
 import { useStore } from 'vuex';
 import { getOssInfo } from './api';
 import { key } from './store';
-import { getStorage } from './utils/utils';
+import { getStorage, setMsgList } from './utils/utils';
+import { useClientSendMsgAckToServer } from './hooks/window';
+import { IMsgInfo, ImsgItem } from './types/msg';
 
 const store = useStore(key);
 store.dispatch('init');
@@ -71,6 +74,63 @@ window.addEventListener('offline', () => {
 window.addEventListener('online', () => {
   store.commit('SET_ISONLINE', '消息');
 });
+
+// aks
+const clientSendMsgAckToServer = (msgInfos: IMsgInfo<string>[]) => {
+  const lastMsgInfo =
+    msgInfos.length > 0 ? msgInfos[msgInfos.length - 1] : null;
+  if (lastMsgInfo) {
+    const { msgId, fromId, toId } = lastMsgInfo;
+    const ackToServer = useClientSendMsgAckToServer(
+      store,
+      lastMsgInfo.isGroupMsg ? 1 : 0,
+    );
+    ackToServer(msgId, fromId, toId, 0);
+  }
+};
+
+const stop = watch(
+  computed(() => store.state.msgInfo),
+  async (data: any) => {
+    // 监听接受消息
+    if (data.cmd === 2004) {
+      const msgInfos = data.body.msgInfos;
+      const msgList = store.state.msgList;
+      // 处理撤回消息
+      if (msgInfos[0].msgContent.msgContent === 'revokeInfo') {
+        const { revokeMsgId } = msgInfos[0].msgContent.revokeInfo;
+        const revokeKey = msgList[msgInfos[0].fromId].readList.findIndex(
+          (e: any) => Number(e.msgId) === Number(revokeMsgId),
+        );
+        msgList[msgInfos[0].fromId].readList.splice(revokeKey, 1);
+        console.log(msgList, revokeKey);
+
+        store.commit('SET_MSGLIST', msgList);
+      }
+
+      // 处理双向清空消息
+      if (msgInfos[0].msgContent.msgContent === 'cleanInfo') {
+        const { maxMsgId } = msgInfos[0].msgContent.cleanInfo;
+        const newList = msgList[store.state.activeUid!].readList.filter(
+          (e: any) => Number(e.msgId) > Number(maxMsgId),
+        );
+        msgList[store.state.activeUid!].readList = newList;
+        store.commit('SET_MSGLIST', msgList);
+      }
+      console.log('推送消息', data);
+      clientSendMsgAckToServer(msgInfos);
+      store.dispatch('addMsgList', { ...(msgInfos[0] || {}) });
+    }
+  },
+);
+
+onBeforeUnmount(() => {
+  stop();
+});
+window.onunload = () => {
+  setMsgList(store.state.msgList);
+  stop();
+};
 </script>
 <style lang="scss">
 #app {
