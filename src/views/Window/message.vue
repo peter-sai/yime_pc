@@ -90,6 +90,19 @@
           :isRead="item.msgId <= readMsgId"
         />
       </div>
+      <!-- 音视频消息 -->
+      <div class="item" v-else-if="item.type === 'voiceMsg'">
+        <YAudio
+          v-if="isShowHowComponent(item)"
+          :userInfo="getUserInfo(item)"
+          :voiceMsg="item.msgContent.voiceMsg"
+        />
+        <MAudio
+          v-else
+          :isRead="item.msgId <= readMsgId"
+          :voiceMsg="item.msgContent.voiceMsg"
+        />
+      </div>
       <!-- 系统消息 -->
       <div class="item" v-else-if="item.type === 'systemNotifyInfo'">
         <div class="revoke">{{ systemNotifyInfo(item) }}</div>
@@ -154,6 +167,8 @@ import YFile from '@/components/Message/YFile/index.vue';
 import MFile from '@/components/Message/MFile/index.vue';
 import MVisitingCard from '@/components/Message/MVisitingCard/index.vue';
 import YVisitingCard from '@/components/Message/YVisitingCard/index.vue';
+import YAudio from '@/components/Message/YAudio/index.vue';
+import MAudio from '@/components/Message/MAudio/index.vue';
 import { useStore } from 'vuex';
 import { key } from '@/store';
 import { useI18n } from 'vue-i18n';

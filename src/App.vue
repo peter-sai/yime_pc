@@ -15,8 +15,8 @@ const store = useStore(key);
 store.dispatch('init');
 
 const init = async () => {
-  const url = 'ws://101.34.76.94:8002';
-  // const url = 'wss://ws.yime.app';
+  // const url = 'ws://101.34.76.94:8002';
+  const url = 'wss://ws.yime.app';
   let ws = new WebSocket(url);
   store.commit('SET_ISONLINE', '连接中...');
   store.commit('SET_WS', ws);

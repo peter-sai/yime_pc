@@ -13,6 +13,7 @@ import iconbianzu8 from './iconbianzu8.vue';
 import iconbianzu9 from './iconbianzu9.vue';
 import iconbiaoqing from './iconbiaoqing.vue';
 import iconcaidan from './iconcaidan.vue';
+import iconchahao from './iconchahao.vue';
 import icondagou from './icondagou.vue';
 import icondanxuankuang from './icondanxuankuang.vue';
 import icondiandian from './icondiandian.vue';
@@ -39,6 +40,7 @@ import iconlianxiren1 from './iconlianxiren1.vue';
 import iconliaotianjilu from './iconliaotianjilu.vue';
 import iconpaishe from './iconpaishe.vue';
 import iconpdf from './iconpdf.vue';
+import iconplay1 from './iconplay1.vue';
 import iconqunliao from './iconqunliao.vue';
 import iconradio from './iconradio.vue';
 import iconright from './iconright.vue';
@@ -48,6 +50,7 @@ import iconshoujihaoma from './iconshoujihaoma.vue';
 import iconshoujihaoma1 from './iconshoujihaoma1.vue';
 import iconshuangxiangsudicopy from './iconshuangxiangsudicopy.vue';
 import iconsousuo from './iconsousuo.vue';
+import iconsuspend from './iconsuspend.vue';
 import icontongzhi from './icontongzhi.vue';
 import icontuichu from './icontuichu.vue';
 import icontuichu1 from './icontuichu1.vue';
@@ -89,6 +92,7 @@ export default {
     iconbianzu9,
     iconbiaoqing,
     iconcaidan,
+    iconchahao,
     icondagou,
     icondanxuankuang,
     icondiandian,
@@ -115,6 +119,7 @@ export default {
     iconliaotianjilu,
     iconpaishe,
     iconpdf,
+    iconplay1,
     iconqunliao,
     iconradio,
     iconright,
@@ -124,6 +129,7 @@ export default {
     iconshoujihaoma1,
     iconshuangxiangsudicopy,
     iconsousuo,
+    iconsuspend,
     icontongzhi,
     icontuichu,
     icontuichu1,
