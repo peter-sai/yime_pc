@@ -2,6 +2,7 @@ import { showLoading } from '@/plugin/Loading';
 import { Toast } from '@/plugin/Toast';
 import { initStore } from '@/store';
 import {
+  IFireInfo,
   IGroupAtInfo,
   IMsgInfo,
   ImsgItem,
@@ -478,7 +479,8 @@ const switchMsg = (
       return t('[图片]');
     case 'fileInfo':
       return t('[文件]');
-    // case 'fireInfo':
+    case 'fireInfo':
+      return (item.msgContent.fireInfo as IFireInfo).stringContent;
     //   fireInfo = item.msgContent.fireInfo.stringContent;
     //   infoList = fireInfo.substr(7, fireInfo.length).split('#');
     //   return infoList[1] + infoList[0];

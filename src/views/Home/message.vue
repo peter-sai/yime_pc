@@ -2,6 +2,7 @@
   <div style="flex: 1" @click.stop="showMenu = 0">
     <MessageHeader />
     <div class="message">
+      <Errors v-if="!msgList.length" id="2" />
       <div
         class="tableItem"
         @contextmenu="contextmenu($event, item)"
@@ -171,6 +172,7 @@ import Iconfont from '@/iconfont/index.vue';
 import MessageHeader from './header.vue';
 import { ref } from 'vue';
 import { Store, storeKey, useStore } from 'vuex';
+import Errors from '../Errors/index.vue';
 import { initStore, key } from '@/store';
 import { IUserInfo } from '@/types/user';
 import {
@@ -337,11 +339,13 @@ const clientSendMsgAckToServer = (msgInfos: IMsgInfo<TMsgContent>[]) => {
 const init = async () => {
   // 一、 获取离线数据
   const { offlineMsgInfos } = await useGetOfflineMsg(store);
+
   // 发送ack
   clientSendMsgAckToServer(offlineMsgInfos);
 
   // 获取通知
   const data: INotifyClassMsgListInfo[] = await userGetSystemNotice(store);
+
   data.forEach((e: any) => {
     store.commit('ADD_NOTIFY', { id: e.msgClassId, res: e });
   });
