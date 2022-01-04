@@ -224,3 +224,12 @@ export interface ImsgItem {
   lastMsg: IMsgInfo;
   groupDetailInfo: IGroupInfo;
 }
+
+export interface INotifyClassMsgListInfo {
+  msgClassHaveNewMsg: number;
+  msgClassIcon: string;
+  msgClassId: number;
+  msgClassRecentMsgContent: string;
+  msgClassTitle: string;
+  updateTime: number;
+}

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="46px" height="46px" viewBox="0 0 46 46" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>news_icon1</title>
+    <defs>
+        <linearGradient x1="85.3489074%" y1="11.8778313%" x2="25.5585705%" y2="90.8446125%" id="linearGradient-1">
+            <stop stop-color="#00BBFF" offset="0%"></stop>
+            <stop stop-color="#0085FF" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="浅色模式" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="通知" transform="translate(-16.000000, -111.000000)">
+            <g id="编组-2" transform="translate(0.000000, 94.000000)">
+                <g id="news_icon1" transform="translate(16.000000, 17.000000)">
+                    <rect id="矩形" fill="url(#linearGradient-1)" x="0" y="0" width="46" height="46" rx="23"></rect>
+                    <g id="通知-填充" transform="translate(12.000000, 12.000000)" fill-rule="nonzero">
+                        <g id="编组">
+                            <rect id="矩形" fill="#000000" opacity="0" x="0" y="0" width="22" height="22"></rect>
+                            <path d="M11,21.3125 C9.69375,21.3125 8.6625,20.41875 8.31875,19.25 L3.4375,19.25 C2.8875,19.25 2.475,19.04375 2.2,18.63125 C1.85625,18.08125 1.925,17.39375 2.26875,16.6375 C2.3375,16.56875 2.3375,16.5 2.40625,16.43125 L4.125,14.85 L4.125,8.9375 C4.125,6.05 5.9125,3.50625 8.59375,2.475 C8.73125,1.44375 9.7625,0.6875 11,0.6875 C12.2375,0.6875 13.26875,1.44375 13.40625,2.475 C16.0875,3.50625 17.875,6.05 17.875,8.9375 L17.875,14.85 L19.59375,16.43125 C19.6625,16.5 19.73125,16.56875 19.73125,16.6375 C20.075,17.39375 20.14375,18.08125 19.8,18.63125 C19.525,19.04375 19.1125,19.25 18.5625,19.25 L13.68125,19.25 C13.3375,20.41875 12.30625,21.3125 11,21.3125 Z" id="路径" fill="#FFFFFF"></path>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

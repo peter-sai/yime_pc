@@ -8,12 +8,39 @@
         v-for="item in msgList"
         :key="item.id"
       >
-        <TableDouble @click="goTo(item)">
-          <template v-slot:title v-if="item.isGroup">
-            {{ item.groupDetailInfo.groupName }}
-          </template>
-          <template v-slot:title v-else>
-            {{ item?.userDetailInfo?.userInfo?.nickname }}
+        <!-- 普通消息列表 -->
+        <TableDouble
+          v-if="!item.msgClassTitle"
+          @click="goTo(item)"
+          :hover="item.id === store.state.activeUid"
+        >
+          <template v-slot:title>
+            <div class="title">
+              <span v-if="item.isGroup">
+                {{ item.groupDetailInfo?.groupName }}
+              </span>
+              <span v-else>{{ item.userDetailInfo?.userInfo?.nickname }}</span>
+              <Iconfont
+                v-if="
+                  item.isGroup
+                    ? item.groupDetailInfo?.groupAttachInfo?.groupTop
+                    : item.userDetailInfo?.userInfo?.userAttachInfo?.msgTop
+                "
+                name="icondingzi"
+                size="12"
+                color="#B6B7BA"
+              />
+              <Iconfont
+                v-if="
+                  item.isGroup
+                    ? item.groupDetailInfo?.groupAttachInfo?.groupMsgMute
+                    : item.userDetailInfo?.userInfo?.userAttachInfo?.msgMute
+                "
+                name="iconjingyin"
+                size="12"
+                color="#B6B7BA"
+              />
+            </div>
           </template>
           <template v-slot:subTitle>
             <span
@@ -44,8 +71,48 @@
           </template>
           <template v-slot:time> </template>
           <template v-slot:num v-if="item.unReadNum">
-            <Badge :isMute="false" :num="item.unReadNum" />
+            <Badge
+              :isMute="
+                item.isGroup
+                  ? item.groupDetailInfo?.groupAttachInfo?.groupMsgMute
+                  : item.userDetailInfo?.userInfo?.userAttachInfo?.msgMute
+              "
+              :num="item.unReadNum"
+              :hover="item.id === store.state.activeUid"
+            />
           </template>
+        </TableDouble>
+        <!-- 群通知 -->
+        <TableDouble
+          v-if="item.msgClassId === 1"
+          html
+          :subTitle="JSON.parse(item.msgClassRecentMsgContent).Jt"
+          :title="t(item.msgClassTitle)"
+          @click="store.commit('SET_ACTIVEUID', item.msgClassId)"
+          :hover="item.msgClassId === store.state.activeUid"
+        >
+          <template v-slot:userImg>
+            <div class="userImg">
+              <img src="img/systemNotify.svg" alt="" />
+            </div>
+          </template>
+          <!-- <template v-slot:time>{{ formateTime(item.updateTime) }}</template> -->
+        </TableDouble>
+        <!-- 反馈 -->
+        <TableDouble
+          v-if="item.msgClassId === 2"
+          html
+          :subTitle="item.msgClassRecentMsgContent"
+          :title="t(item.msgClassTitle)"
+          @click="store.commit('SET_ACTIVEUID', item.msgClassId)"
+          :hover="item.msgClassId === store.state.activeUid"
+        >
+          <template v-slot:userImg>
+            <div class="userImg">
+              <img src="img/feedback.svg" alt="" />
+            </div>
+          </template>
+          <!-- <template v-slot:time>{{ formateTime(item.updateTime) }}</template> -->
         </TableDouble>
         <div class="box" v-if="showMenu === item.id">
           <div class="item" @click="read(item)">
@@ -97,7 +164,7 @@
   </div>
 </template>
 <script lang="ts">
-import { computed, defineComponent, Ref } from 'vue';
+import { computed, ComputedRef, defineComponent, Ref } from 'vue';
 import TableDouble from '@/components/TableDouble/index.vue';
 import Badge from '@/components/Badge/index.vue';
 import Iconfont from '@/iconfont/index.vue';
@@ -106,8 +173,18 @@ import { ref } from 'vue';
 import { Store, storeKey, useStore } from 'vuex';
 import { initStore, key } from '@/store';
 import { IUserInfo } from '@/types/user';
-import { switchMsg, useGetOfflineMsg, mergeData } from '@/hooks/window';
-import { IMsgInfo, ImsgItem, TMsgContent } from '@/types/msg';
+import {
+  switchMsg,
+  useGetOfflineMsg,
+  mergeData,
+  useFormateTime,
+} from '@/hooks/window';
+import {
+  IMsgInfo,
+  ImsgItem,
+  INotifyClassMsgListInfo,
+  TMsgContent,
+} from '@/types/msg';
 import { useI18n } from 'vue-i18n';
 import {
   useClientSendMsgAckToServer,
@@ -166,10 +243,23 @@ function useBeforeSwitchChat(
     Toast(t(data.body.resultString));
   };
 }
+
+// 获取通知
+async function userGetSystemNotice(store: Store<initStore>) {
+  const data = await store.dispatch('postMsg', {
+    query: {},
+    cmd: 2017,
+    encryption: 'Aoelailiao.Message.UserGetSystemNoticeMsgClassListReq',
+    auth: true,
+  });
+
+  return data.body?.classMsgInfo.filter((e: any) => e.msgClassHaveNewMsg === 1);
+}
 </script>
 <script setup lang="ts">
+type TMsgItem = INotifyClassMsgListInfo & ImsgItem;
 const { t } = useI18n();
-
+const formateTime = useFormateTime();
 const showMenu = ref(0);
 const contextmenu = (e: any, item: ImsgItem) => {
   e.preventDefault();
@@ -178,7 +268,38 @@ const contextmenu = (e: any, item: ImsgItem) => {
 
 // 列表
 const store = useStore(key);
-const msgList = computed(() => store.state.msgList);
+const msgList: ComputedRef<TMsgItem[]> = computed(() => {
+  const list: TMsgItem[] = Object.values(store.state.msgList) as TMsgItem[];
+  // 区分置顶和非置顶
+  let topList: TMsgItem[] = [];
+  let defList: TMsgItem[] = [];
+  list
+    .filter((e: TMsgItem) => e.msgClassId! || e.lastMsg.msgId)
+    .forEach((e: TMsgItem) => {
+      if (e.isGroup && e.groupDetailInfo?.groupAttachInfo?.groupTop) {
+        topList.push(e);
+      } else if (
+        !e.isGroup &&
+        e?.userDetailInfo?.userInfo?.userAttachInfo?.msgTop
+      ) {
+        topList.push(e);
+      } else {
+        defList.push(e);
+      }
+    });
+
+  // 排序置顶和非置顶列表
+  topList.sort(
+    (a: TMsgItem, b: TMsgItem) =>
+      (b.updateTime || b.lastMsg.msgTime) - (a.updateTime || a.lastMsg.msgTime),
+  );
+  defList.sort(
+    (a: TMsgItem, b: TMsgItem) =>
+      (b.updateTime || b.lastMsg.msgTime) - (a.updateTime || a.lastMsg.msgTime),
+  );
+
+  return topList.concat(defList);
+});
 
 const getType = (lastMsg: IMsgInfo<TMsgContent>, item: ImsgItem) => {
   if (lastMsg.isGroupMsg) {
@@ -216,10 +337,16 @@ const clientSendMsgAckToServer = (msgInfos: IMsgInfo<TMsgContent>[]) => {
 const init = async () => {
   // 一、 获取离线数据
   const { offlineMsgInfos } = await useGetOfflineMsg(store);
-  // 合并数据
-  await mergeData(offlineMsgInfos, store);
   // 发送ack
   clientSendMsgAckToServer(offlineMsgInfos);
+
+  // 获取通知
+  const data: INotifyClassMsgListInfo[] = await userGetSystemNotice(store);
+  data.forEach((e: any) => {
+    store.commit('ADD_NOTIFY', { id: e.msgClassId, res: e });
+  });
+  // 合并数据
+  await mergeData(offlineMsgInfos, store);
 };
 init();
 
@@ -261,6 +388,24 @@ const quitGroupChat = async (item: ImsgItem) => {
   padding: 17px 13px;
   position: relative;
   cursor: pointer;
+  box-sizing: border-box;
+  width: 300px;
+  .title {
+    display: flex;
+    align-items: center;
+    span {
+      font-size: 16px;
+      line-height: 16px;
+      color: #333;
+      font-weight: 500;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .iconfont {
+      margin-left: 10px;
+    }
+  }
   .subTitle {
     font-size: 14px;
     color: #999;
@@ -319,6 +464,17 @@ const quitGroupChat = async (item: ImsgItem) => {
         font-size: 14px;
         margin-left: 8px;
       }
+    }
+  }
+}
+
+.hover {
+  .subTitle {
+    color: #fff;
+  }
+  .title {
+    span {
+      color: #fff;
     }
   }
 }

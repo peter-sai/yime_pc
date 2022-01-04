@@ -4,6 +4,7 @@ import {
   clearStorage,
   getMsgList,
   getStorage,
+  getToken,
   setStorage,
 } from '@/utils/utils';
 import { useGetOfflineMsg } from '@/api/app';
@@ -157,6 +158,9 @@ const sotreRoot = createStore({
         state.msgList[id].lastMsg = res.readList[0];
       }
     },
+    ADD_NOTIFY: (state, { res, id }) => {
+      state.msgList[id] = res;
+    },
     SET_APPABOUTUSINFO: (state, val) => {
       state.appAboutUsInfo = val;
     },
@@ -200,9 +204,12 @@ const sotreRoot = createStore({
           }, 10000);
           const userList = getStorage('userList');
           if (!userList) return;
-          const { offlineMsgInfos } = await useGetOfflineMsg(sotreRoot);
 
-          sotreRoot.commit('SET_OFFLINEMSGS', offlineMsgInfos);
+          // if (getToken()) {
+          //   const { offlineMsgInfos } = await useGetOfflineMsg(sotreRoot);
+
+          //   sotreRoot.commit('SET_OFFLINEMSGS', offlineMsgInfos);
+          // }
         };
       }
     },
@@ -306,8 +313,6 @@ const sotreRoot = createStore({
     },
     // push消息
     async addMsgList({ state, commit, dispatch }, res) {
-      // console.log(res);
-
       res.type = res.msgContent.msgContent;
       let id: number;
       // 单聊
@@ -472,16 +477,13 @@ function getMessage(cmd: any, encryption: any, state: any) {
           body: LogOutAns ? LogOutAns.decode(bodyBuf) : bodyBuf,
         };
 
-        if (ansCmd === 2024) {
-          console.log(ansCmd, query);
-        }
-
         // 自动保存到本地
         const body = query.body;
 
         if (body.resultCode === 1101) {
           // 登录凭证失效
           sotreRoot.dispatch('logout');
+
           location.reload();
           return;
         }
@@ -490,19 +492,28 @@ function getMessage(cmd: any, encryption: any, state: any) {
             'switchSettingInfo',
             JSON.stringify(body.switchSettingInfo),
           );
-          sotreRoot.dispatch('init');
+          sotreRoot.commit('SET_SWITCHSETTINGINFO', body.switchSettingInfo);
         }
         if (body.appAboutUsInfo) {
-          setStorage('appAboutUsInfo', body.appAboutUsInfo);
-          sotreRoot.dispatch('init');
+          setStorage('appAboutUsInfo', JSON.stringify(body.appAboutUsInfo));
+          sotreRoot.commit('SET_APPABOUTUSINFO', body.appAboutUsInfo);
         }
         if (body.groupChatWelcomeTips) {
-          setStorage('groupChatWelcomeTips', body.groupChatWelcomeTips);
-          sotreRoot.dispatch('init');
+          setStorage(
+            'groupChatWelcomeTips',
+            JSON.stringify(body.groupChatWelcomeTips),
+          );
+          sotreRoot.commit(
+            'SET_GROUPCHATWELCOMETIPS',
+            body.groupChatWelcomeTips,
+          );
         }
         if (body.userChatWelcomeTips) {
-          setStorage('userChatWelcomeTips', body.userChatWelcomeTips);
-          sotreRoot.dispatch('init');
+          setStorage(
+            'userChatWelcomeTips',
+            JSON.stringify(body.userChatWelcomeTips),
+          );
+          sotreRoot.commit('SET_USERCHATWELCOMETIPS', body.userChatWelcomeTips);
         }
 
         state.msgInfo = query;
@@ -525,7 +536,7 @@ function getMessage(cmd: any, encryption: any, state: any) {
 }
 
 function onMessage() {
-  const cmdList = [2129, 2004, 2125, 2148];
+  const cmdList = [2129, 2004, 2125, 2148, 2024];
   ws.onmessage = (evt: any) => {
     if (sotreRoot.state.isOnLine !== '消息') {
       sotreRoot.commit('SET_ISONLINE', '消息');

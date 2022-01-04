@@ -46,7 +46,7 @@ import { ref, defineProps } from 'vue';
 import { Toast } from '@/plugin/Toast';
 import { useI18n } from 'vue-i18n';
 import { IGroupInfo } from '@/types/user';
-defineEmits(['changeTag']);
+const emit = defineEmits(['changeTag', 'toggleBox']);
 const props = defineProps({
   groupDetailInfo: {
     type: Object as PropType<IGroupInfo>,
@@ -60,31 +60,56 @@ const { t } = useI18n();
 const userOperateGroupInfo = useUserOperateGroupInfo(store);
 
 const submit = async () => {
-  if (!groupName.value) return Toast('请输入新的群名称');
-  if (!notice.value) return Toast('请输入新的群公告内容');
-  // 群名
-  const query1 = {
-    groupName: groupName.value,
-    groupId: store.state.activeUid,
-  };
-  const data1 = await userOperateGroupInfo(11, query1);
+  if (!groupName.value && !notice.value) return Toast('请输入内容');
+  if (groupName.value !== props.groupDetailInfo?.groupName && groupName.value) {
+    try {
+      // 群名
+      const query1 = {
+        groupName: groupName.value,
+        groupId: store.state.activeUid,
+      };
+      const data = await userOperateGroupInfo(11, query1);
 
-  if (data1.body.resultCode !== 0) {
-    return Toast(t(data1.body.resultString));
+      if (data.body.resultCode === 0) {
+        const uid = data.body?.groupInfo?.groupId || store.state.activeUid;
+        const item = store.state.msgList[uid];
+        item.groupDetailInfo = data.body.groupInfo;
+        store.commit('SET_MSGLISTITEM', { res: item, uid: uid });
+      }
+      Toast(t(data.body.resultString));
+    } catch (error) {
+      console.log(error);
+    }
   }
 
-  // 公告
-  const query = {
-    groupId: store.state.activeUid,
-    groupNoticeInfo: {
-      groupNoticeContent: notice.value,
-      updateTime: Date.now(),
-      editorUid: store.state.userInfo.uid,
-    },
-  };
-  const data = await userOperateGroupInfo(12, query);
-
-  Toast(t(data.body.resultString));
+  if (
+    notice.value !==
+      props.groupDetailInfo?.groupNoticeInfo.groupNoticeContent &&
+    notice.value
+  ) {
+    try {
+      // 公告
+      const query = {
+        groupId: store.state.activeUid,
+        groupNoticeInfo: {
+          groupNoticeContent: notice.value,
+          updateTime: Date.now(),
+          editorUid: store.state.userInfo.uid,
+        },
+      };
+      const data = await userOperateGroupInfo(12, query);
+      if (data.body.resultCode === 0) {
+        const uid = data.body?.groupInfo?.groupId || store.state.activeUid;
+        const item = store.state.msgList[uid];
+        item.groupDetailInfo = data.body.groupInfo;
+        store.commit('SET_MSGLISTITEM', { res: item, uid: uid });
+      }
+      Toast(t(data.body.resultString));
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  emit('toggleBox');
 };
 </script>
 <style lang="scss" scoped>

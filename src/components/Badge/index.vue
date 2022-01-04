@@ -5,6 +5,7 @@
       double: length === 2,
       isMute: props.isMute,
       isHome: props.isHome,
+      hover: props.hover,
     }"
   >
     {{ num }}
@@ -28,6 +29,10 @@ const props = defineProps({
     default: false,
   },
   isHome: {
+    type: Boolean,
+    default: false,
+  },
+  hover: {
     type: Boolean,
     default: false,
   },
@@ -60,6 +65,10 @@ length.value = props.num.toString().length;
   }
   &.isHome {
     background: #ff3432;
+  }
+  &.hover {
+    background: #ffffff;
+    color: #0085ff;
   }
 }
 </style>

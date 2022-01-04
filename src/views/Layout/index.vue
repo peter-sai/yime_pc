@@ -12,22 +12,34 @@
         <div>请选择一个对话开始聊天</div>
       </div>
       <div class="chat" v-else>
-        <!-- 个人 -->
-        <Window
-          v-if="!store.state.activeIsGroup"
+        <!-- 反馈&系统消息 -->
+        <SystemWindow
+          v-if="[1, 2, 3].includes(store.state.activeUid)"
           :key="store.state.activeUid"
         />
-        <!-- 群 -->
-        <GroupWindow
-          v-if="store.state.activeIsGroup"
-          :key="store.state.activeUid"
-        />
+        <div v-else>
+          <!-- 个人 -->
+          <Window
+            v-if="!store.state.activeIsGroup"
+            :key="store.state.activeUid"
+          />
+          <!-- 群 -->
+          <GroupWindow
+            v-if="store.state.activeIsGroup"
+            :key="store.state.activeUid"
+          />
+        </div>
       </div>
     </div>
   </div>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue';
+import SystemWindow from '../SystemWindow/index.vue';
+import Window from '../Window/index.vue';
+import GroupWindow from '../GroupWindow/index.vue';
+import { useStore } from 'vuex';
+import { key } from '@/store';
 
 export enum Etag {
   UserInfo,
@@ -45,11 +57,6 @@ export default defineComponent({
 });
 </script>
 <script setup lang="ts">
-import Window from '../Window/index.vue';
-import GroupWindow from '../GroupWindow/index.vue';
-import { useStore } from 'vuex';
-import { key } from '@/store';
-
 const store = useStore(key);
 </script>
 <style lang="scss" scoped>
@@ -62,6 +69,7 @@ const store = useStore(key);
     left: 0;
     top: 0;
     bottom: 0;
+    z-index: 10;
   }
   .right {
     position: fixed;
@@ -70,6 +78,7 @@ const store = useStore(key);
     top: 0;
     bottom: 0;
     display: flex;
+    z-index: 9;
 
     .chat {
       position: relative;

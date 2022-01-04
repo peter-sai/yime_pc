@@ -70,7 +70,9 @@
           <Table
             title="加群方式"
             :hideMore="!isRoot && !isAdmin"
-            @click="$emit('changeTag', Etag.AddGroupType)"
+            @click="
+              (isRoot || isAdmin) && $emit('changeTag', Etag.AddGroupType)
+            "
           >
             <template v-slot:left>
               <Iconfont name="iconyaoqinghaoyou" size="15" />
@@ -82,6 +84,7 @@
             </template>
           </Table>
           <Table
+            v-if="props.groupDetailInfo?.groupAttachInfo.groupInviteState !== 1"
             title="群链接"
             class="copyGroup"
             :data-clipboard-text="groupDetailInfo?.qrCode"
@@ -107,6 +110,15 @@
               />
             </template>
           </Table>
+          <Table
+            title="群管理"
+            v-if="isRoot || isAdmin"
+            @click="Toast('为了您的帐户安全，请用手机app进行群设置')"
+          >
+            <template v-slot:left>
+              <Iconfont name="iconyaoqinghaoyou" size="15" />
+            </template>
+          </Table>
         </div>
         <div class="info">邀请链接复制后60分钟有效</div>
         <!-- button -->
@@ -129,15 +141,21 @@
           <!-- 群列表 -->
           <div class="groupList">
             <TableDouble
-              :title="item.nickname"
+              :title="item?.userAttachInfo?.remarkName || item.nickname"
               :sub-title="item.onlineState ? '当前在线' : '离线'"
               v-for="item in groupMemberUserInfos"
               :key="item.uid"
             >
               <template v-slot:userImg>
-                <img class="userImg" :src="item.icon" alt="" />
+                <img v-if="item.icon" class="userImg" :src="item.icon" alt="" />
+                <Iconfont
+                  v-else
+                  name="iconlianxiren"
+                  size="45"
+                  color="#A8B5BE"
+                />
               </template>
-              <template v-slot:right v-if="isRoot">
+              <template v-slot:right v-if="isRoot && !item.isRoot">
                 <div class="del" @click="del(item)">删除</div>
               </template>
             </TableDouble>
@@ -195,7 +213,15 @@ async function getGroupMemberUserInfos(
     encryption: 'Aoelailiao.Login.ClientGetUserInfoListReq',
     auth: true,
   });
-  groupMemberUserInfos.value = res.body.userInfo;
+  groupMemberUserInfos.value = (res.body.userInfo || []).map((e: any) => {
+    e.isRoot = false;
+    if (
+      Number(e.uid) === Number(props.groupDetailInfo?.groupMemberLists.rootUid)
+    ) {
+      e.isRoot = true;
+    }
+    return e;
+  });
 }
 
 // 链接转换
@@ -234,7 +260,7 @@ const props = defineProps({
     type: Object as PropType<IGroupInfo>,
   },
 });
-defineEmits(['changeTag', 'toggleBox']);
+const emit = defineEmits(['changeTag', 'toggleBox']);
 
 const isRoot = ref(false);
 const isAdmin = ref(false);
@@ -332,6 +358,21 @@ const del = async (e: IUserInfo) => {
 
   const data = await userOperateGroupInfo(5, query);
   Toast(t(data.body.resultString));
+  if (data.body.resultCode === 0) {
+    const data = await store.dispatch('postMsg', {
+      query: {
+        groupId: store.state.activeUid,
+      },
+      cmd: 1029,
+      encryption: 'Aoelailiao.Login.ClientGetGroupInfoReq',
+      auth: true,
+    });
+    const msgItem = data.body;
+    const item = store.state.msgList[store.state.activeUid!];
+    item.groupDetailInfo = msgItem.groupDetailInfo;
+    store.commit('SET_MSGLISTITEM', { res: item });
+    emit('toggleBox');
+  }
 };
 </script>
 <style lang="scss" scoped>

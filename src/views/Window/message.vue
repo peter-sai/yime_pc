@@ -4,8 +4,8 @@
     class="noMsg"
     v-if="(!itemChat.readList || !itemChat.readList.length) && !activeIsGroup"
   >
-    <img class="userImg" :src="yUserInfo.icon" alt="" />
-    <div class="title">{{ yUserInfo.nickname }}</div>
+    <img class="userImg" :src="yUserInfo?.icon" alt="" />
+    <div class="title">{{ yUserInfo?.nickname }}</div>
     <div class="bg">
       <!-- <img :src="sayHello" alt="" /> -->
       <SayHello class="img" />
@@ -18,22 +18,36 @@
   <div class="Message">
     <div v-for="(item, key) in itemChat.readList || []" :key="item.id">
       <Time v-if="isShowTime(key)">{{ formateTime(item.msgTime, t) }}</Time>
+      <!-- 普通消息 -->
       <div class="item" v-if="item.type === 'stringContent'">
-        <Ymsg
-          @menuClick="menuClick($event, item)"
-          :userInfo="getUserInfo(item)"
-          v-if="isShowHowComponent(item)"
-        >
-          {{ item.msgContent.stringContent }}
-        </Ymsg>
-        <Mmsg
-          @menuClick="menuClick($event, item)"
-          :isRead="item.msgId <= readMsgId"
-          v-else
-        >
-          {{ item.msgContent.stringContent }}
-        </Mmsg>
+        <!-- 阅后即焚 -->
+        <div v-if="item.msgShowType === 3">
+          <Ymsg :userInfo="getUserInfo(item)" v-if="isShowHowComponent(item)">
+            请在App客户端, 查看阅后即焚消息
+          </Ymsg>
+          <Mmsg :isRead="item.msgId <= readMsgId" v-else>
+            请在App客户端, 查看阅后即焚消息
+          </Mmsg>
+        </div>
+        <!-- 普通消息 -->
+        <div v-else>
+          <Ymsg
+            @menuClick="menuClick($event, item)"
+            :userInfo="getUserInfo(item)"
+            v-if="isShowHowComponent(item)"
+          >
+            {{ item.msgContent.stringContent }}
+          </Ymsg>
+          <Mmsg
+            @menuClick="menuClick($event, item)"
+            :isRead="item.msgId <= readMsgId"
+            v-else
+          >
+            {{ item.msgContent.stringContent }}
+          </Mmsg>
+        </div>
       </div>
+      <!-- 图片消息 -->
       <div class="item" v-else-if="item.type === 'imageMsg'">
         <YImg
           v-if="isShowHowComponent(item)"
@@ -48,6 +62,7 @@
           :src="item.msgContent.imageMsg.imageUrl"
         />
       </div>
+      <!-- 文件消息 -->
       <div class="item" v-else-if="item.type === 'fileInfo'">
         <YFile
           v-if="isShowHowComponent(item)"
@@ -60,6 +75,19 @@
           :isRead="item.msgId <= readMsgId"
           @menuClick="menuClick($event, item)"
           :item="item.msgContent.fileInfo"
+        />
+      </div>
+      <!-- 名片 -->
+      <div class="item" v-else-if="item.type === 'visitingCard'">
+        <YVisitingCard
+          :userInfo="getUserInfo(item)"
+          v-if="isShowHowComponent(item)"
+          :item="item.msgContent.visitingCard"
+        />
+        <MVisitingCard
+          v-else
+          :item="item.msgContent.visitingCard"
+          :isRead="item.msgId <= readMsgId"
         />
       </div>
       <!-- 系统消息 -->
@@ -124,6 +152,8 @@ import MImg from '@/components/Message/MImg/index.vue';
 import YImg from '@/components/Message/YImg/index.vue';
 import YFile from '@/components/Message/YFile/index.vue';
 import MFile from '@/components/Message/MFile/index.vue';
+import MVisitingCard from '@/components/Message/MVisitingCard/index.vue';
+import YVisitingCard from '@/components/Message/YVisitingCard/index.vue';
 import { useStore } from 'vuex';
 import { key } from '@/store';
 import { useI18n } from 'vue-i18n';

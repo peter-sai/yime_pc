@@ -3,6 +3,7 @@ export interface IUserInfo {
   uid: number;
   nickname: string;
   icon: string;
+  isRoot: boolean;
   userAttachInfo: {
     remarkName: string; //备注名称
     destoryReaded: number; //阅后即焚开关,0--关闭(默认),1--开

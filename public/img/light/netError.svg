@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200px" height="200px" viewBox="0 0 200 200" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>编组 2</title>
+    <defs>
+        <linearGradient x1="50%" y1="-44.2938699%" x2="50%" y2="78.4212257%" id="linearGradient-1">
+            <stop stop-color="#F8F9FC" offset="0%"></stop>
+            <stop stop-color="#FFFFFF" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-2">
+            <stop stop-color="#EFF3F9" offset="0%"></stop>
+            <stop stop-color="#EAEFF3" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="100%" y1="14.1128941%" x2="0%" y2="85.8871059%" id="linearGradient-3">
+            <stop stop-color="#DAE2EE" offset="0%"></stop>
+            <stop stop-color="#FFFFFF" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-4">
+            <stop stop-color="#ECF0F5" offset="0%"></stop>
+            <stop stop-color="#FFFFFF" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="浅色模式" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="网络断开" transform="translate(-90.000000, -144.000000)">
+            <g id="编组-2" transform="translate(90.000000, 144.000000)">
+                <g id="编组" transform="translate(8.000000, 15.884216)">
+                    <ellipse id="椭圆形" fill="url(#linearGradient-1)" cx="90.5" cy="81.1157843" rx="80.5" ry="80"></ellipse>
+                    <g id="编组-18" transform="translate(58.040645, 28.515293)">
+                        <rect id="矩形" fill="url(#linearGradient-2)" x="0" y="0" width="64" height="58" rx="3"></rect>
+                        <rect id="矩形" fill="#C7CFDE" x="16.3137255" y="22.9583333" width="7.52941176" height="12.0833333" rx="3"></rect>
+                        <rect id="矩形备份-11" fill="#C7CFDE" x="38.9019608" y="22.9583333" width="7.52941176" height="12.0833333" rx="3"></rect>
+                    </g>
+                    <g id="路径-9" transform="translate(19.040645, 57.515293)">
+                        <path d="M57.4839676,68.4937669 L62.779328,78.3068322 C44.1458731,88.3518006 27.4450739,101.487802 12.6600399,117.735733 L11.677209,118.823539 L3.37190083,111.380421 C18.9186153,94.0502092 36.541899,79.9759212 56.2248144,69.1785127 L57.4839676,68.4937669 Z" fill="url(#linearGradient-3)" fill-rule="nonzero" transform="translate(33.075614, 93.658653) rotate(-6.000000) translate(-33.075614, -93.658653) "></path>
+                        <g id="编组-19" transform="translate(85.958120, 49.202182) rotate(50.000000) translate(-85.958120, -49.202182) translate(56.458120, 8.202182)">
+                            <path d="M0.108451262,25.4229093 L58.3622722,25.4229093 L58.3622722,51.4757698 C58.3622722,64.4544614 47.8409638,74.9757698 34.8622722,74.9757698 L23.6084513,74.9757698 C10.6297596,74.9757698 0.108451262,64.4544614 0.108451262,51.4757698 L0.108451262,25.4229093 L0.108451262,25.4229093 Z" id="矩形" fill="#D7DEEA"></path>
+                            <path d="M17.5955759,69.4933375 L39.9055498,69.4933375 L39.9055498,77.8815526 C39.9055498,80.0906916 38.1146888,81.8815526 35.9055498,81.8815526 L21.5955759,81.8815526 C19.3864369,81.8815526 17.5955759,80.0906916 17.5955759,77.8815526 L17.5955759,69.4933375 L17.5955759,69.4933375 Z" id="矩形" fill="#D7DEEA"></path>
+                            <ellipse id="椭圆形" fill="#C0C8DB" transform="translate(29.156667, 25.395841) rotate(-90.000000) translate(-29.156667, -25.395841) " cx="29.1566672" cy="25.395841" rx="14.2464474" ry="29.1269104"></ellipse>
+                            <rect id="矩形" fill="#D3DCEA" x="16.3561329" y="0.73874367" width="7.43665799" height="27.2540732" rx="3"></rect>
+                            <rect id="矩形备份-12" fill="#D3DCEA" x="33.7083348" y="0.73874367" width="7.43665799" height="27.2540732" rx="3"></rect>
+                        </g>
+                    </g>
+                    <ellipse id="椭圆形" fill="url(#linearGradient-4)" opacity="0.513567243" cx="9.84210526" cy="106.904348" rx="9.84210526" ry="9.90434783"></ellipse>
+                    <ellipse id="椭圆形备份" fill="url(#linearGradient-4)" opacity="0.99181475" cx="164.842105" cy="9.90434783" rx="9.84210526" ry="9.90434783"></ellipse>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

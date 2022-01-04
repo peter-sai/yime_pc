@@ -1,0 +1,171 @@
+<template>
+  <div class="SystemWindow">
+    <SystemWindowHeader :title="title" :icon="icon" />
+    <!-- 消息内容 -->
+    <div class="msg" v-if="store.state.activeUid === 1">
+      <div class="mmsg" v-for="item in systemList" :key="item">
+        <div class="img">
+          <img src="img/systemNotify.svg" />
+        </div>
+        <div>
+          <ImgBg>
+            <span class="SystemWindowContent" v-html="item"></span>
+          </ImgBg>
+        </div>
+      </div>
+    </div>
+    <!-- 用户反馈 -->
+    <div class="msg" v-else>
+      <Time>{{ formateTime(feedback.feedbackTime, t) }}</Time>
+      <div
+        style="
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-end;
+          align-items: flex-end;
+        "
+      >
+        <div class="box">
+          <ImgBg isMe>{{ feedback.feedbackContent }}</ImgBg>
+        </div>
+      </div>
+      <Time>{{ formateTime(feedback.replyTime, t) }}</Time>
+      <div class="mmsg">
+        <div class="img">
+          <img src="img/feedback.svg" />
+        </div>
+        <div>
+          <ImgBg>
+            <span class="SystemWindowContent">{{ feedback.replyContent }}</span>
+          </ImgBg>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<script lang="ts">
+import { initStore, key } from '@/store';
+import { computed, defineComponent, reactive, ref } from 'vue';
+import { Store, useStore } from 'vuex';
+import Mmsg from '@/components/Message/Mmsg/index.vue';
+import Ymsg from '@/components/Message/Ymsg/index.vue';
+import ImgBg from '@/components/Message/ImgBg/index.vue';
+import Time from '@/components/Time/index.vue';
+import { formateTime } from '@/utils/utils';
+export default defineComponent({
+  name: 'SystemWindow',
+});
+
+// 获取系统通知详情
+async function userGetSystemNoticeContent(store: Store<initStore>) {
+  const data = await store.dispatch('postMsg', {
+    query: {
+      msgClassId: store.state.activeUid,
+    },
+    cmd: 2019,
+    encryption: 'Aoelailiao.Message.UserGetSystemNoticeContentListReq',
+    auth: true,
+  });
+  return data.body.msgContent;
+}
+</script>
+<script setup lang="ts">
+import SystemWindowHeader from './header.vue';
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
+const store = useStore(key);
+const systemList = ref([]);
+const feedback = reactive({
+  feedbackContent: '',
+  replyContent: '',
+  feedbackTime: 0,
+  replyTime: 0,
+});
+const list = [
+  { id: 1, title: '系统消息', icon: 'img/systemNotify.svg' },
+  { id: 2, title: '用户反馈消息', icon: 'img/feedback.svg' },
+  // { id: 3, title: '群解散通知' },
+];
+
+const title = computed(() => {
+  const item = list.find((e) => e.id === store.state.activeUid);
+  return item?.title;
+});
+
+const icon = computed(() => {
+  const item = list.find((e) => e.id === store.state.activeUid);
+  return item?.icon;
+});
+
+const init = async () => {
+  const data = await userGetSystemNoticeContent(store);
+  if (store.state.activeUid === 1) {
+    // 系统通知详情
+    systemList.value = data.map((e: any) => {
+      let text = '';
+      try {
+        text = JSON.parse(e.systemNoticeMsg.systemNoticeContent).Jt;
+      } catch (error) {
+        text = '';
+      }
+      return text;
+    });
+  } else {
+    // 反馈
+    if (data.length) {
+      feedback.feedbackContent = data[0].userFeedbackMsg.feedbackContent;
+      feedback.feedbackTime = data[0].userFeedbackMsg.feedbackTime;
+      feedback.replyContent = data[0].userFeedbackMsg.replyContent;
+      feedback.replyTime = data[0].userFeedbackMsg.replyTime;
+    }
+  }
+};
+init();
+</script>
+<style lang="scss" scoped>
+@import '@/style/base.scss';
+.SystemWindow {
+  .msg {
+    position: absolute;
+    top: 65px;
+    left: 0;
+    right: 0;
+    bottom: 50px;
+    overflow: auto;
+    padding: 20px;
+  }
+  .mmsg {
+    display: flex;
+    max-width: 80%;
+    .title {
+      font-size: 10px;
+      font-family: SourceHanSansCN-Regular, SourceHanSansCN;
+      font-weight: 400;
+      color: #999999;
+      margin-bottom: 5px;
+    }
+    .text {
+      font-size: 16px;
+      @include theme('color', main);
+      padding: 0;
+    }
+    .img {
+      img {
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+      }
+      margin-right: 10px;
+    }
+  }
+}
+</style>
+<style>
+.SystemWindowContent p {
+  font-size: 16px;
+}
+.SystemWindowContent {
+  font-size: 16px;
+}
+</style>

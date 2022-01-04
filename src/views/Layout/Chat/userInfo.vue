@@ -8,7 +8,7 @@
         <Iconfont @click="$emit('toggleBox')" name="iconfork" size="20" />
       </template>
     </NavigationBar>
-    <div style="flex: 1; padding: 0 20px; height: 100%; overflow: auto">
+    <div style="flex: 1; padding: 0 20px; height: 90%; overflow: auto">
       <div class="header">
         <div class="left">
           <img :src="yUserInfo?.icon" alt="" />

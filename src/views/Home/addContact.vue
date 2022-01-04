@@ -1,34 +1,32 @@
 <template>
   <div class="addContact">
     <NavigationBar title="添加联系人" />
-    <div style="flex: 1">
-      <div class="input">
-        <Search
-          v-model="query"
-          :placeholder="t('YIME ID，昵称，手机号')"
-          @enter="enter"
-        />
-      </div>
-      <div>
-        <Table
-          :title="item.userInfo.nickname"
-          hideMore
-          v-for="item in list"
-          :key="item.userInfo.uid"
-        >
-          <template v-slot:left>
-            <img class="img" :src="item.userInfo.icon" alt="" />
-          </template>
-          <template v-slot:right>
-            <span class="btn" @click="goWindow(item)">发起聊天</span>
-          </template>
-        </Table>
-      </div>
+    <div class="input">
+      <Search
+        v-model="query"
+        :placeholder="t('YIME ID，昵称，手机号')"
+        @enter="enter"
+      />
     </div>
+    <Error v-if="!list.length && isShowResult" id="3" />
+    <Table
+      :title="item.userInfo.nickname"
+      hideMore
+      v-for="item in list"
+      :key="item.userInfo.uid"
+    >
+      <template v-slot:left>
+        <img class="img" :src="item.userInfo.icon" alt="" />
+      </template>
+      <template v-slot:right>
+        <span class="btn" @click="goWindow(item)">发起聊天</span>
+      </template>
+    </Table>
   </div>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue';
+import Error from '../Errors/index.vue';
 export default defineComponent({
   name: 'addContact',
 });
@@ -43,27 +41,37 @@ import { key } from '@/store';
 import { ref, Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { IUserDetailInfo } from '@/types/user';
+import { Toast } from '@/plugin/Toast';
 
 const { t } = useI18n();
 const query = ref('');
 const list: Ref<IUserDetailInfo[]> = ref([]);
 const store = useStore(key);
+const isShowResult = ref(false);
 // 点击确认按钮
 const enter = async () => {
   showLoading();
   const res = {
     queryString: query.value,
   };
+  try {
+    const data = await store.dispatch('postMsg', {
+      query: res,
+      cmd: 1015,
+      encryption: 'Aoelailiao.Login.UserQueryUserInfoReq',
+      auth: true,
+    });
+    hideLoading();
 
-  const data = await store.dispatch('postMsg', {
-    query: res,
-    cmd: 1015,
-    encryption: 'Aoelailiao.Login.UserQueryUserInfoReq',
-    auth: true,
-  });
-  hideLoading();
-
-  list.value = data.body.userDetailInfos;
+    list.value = data.body.userDetailInfos || [];
+    if (data.body.resultCode !== 0) {
+      return Toast(data.body.resultString);
+    }
+  } catch (error) {
+    console.log(error);
+  } finally {
+    isShowResult.value = true;
+  }
 };
 
 const goWindow = (e: IUserDetailInfo) => {
@@ -77,6 +85,13 @@ const goWindow = (e: IUserDetailInfo) => {
   display: flex;
   width: 100%;
   flex-direction: column;
+  .errorContainer {
+    z-index: 9;
+  }
+  .input {
+    position: relative;
+    z-index: 99;
+  }
   .table {
     padding: 17px 13px;
     position: relative;

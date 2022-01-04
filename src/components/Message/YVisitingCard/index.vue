@@ -5,7 +5,7 @@
       <div style="flex: 1">
         <div class="fileBg">
           <div class="left">
-            <div class="title">{{ t(item?.showContent) }}</div>
+            <div class="title">{{ t(item.showContent) }}</div>
             <div class="content">
               <img v-if="item?.icon" class="userImg" :src="item?.icon" alt="" />
               <span v-else>{{
@@ -34,6 +34,7 @@ defineComponent({
 defineProps({
   item: {
     type: Object as PropType<IVisitingCard>,
+    required: true,
   },
   userInfo: {
     type: Object as PropType<IUserInfo>,
@@ -54,7 +55,7 @@ const { t } = useI18n();
   display: flex;
   .fileBg {
     text-align: left;
-    @include theme('background', encryption);
+    background: #f4f6ff;
     display: flex;
     justify-content: space-between;
     width: 222px;
@@ -69,7 +70,7 @@ const { t } = useI18n();
         width: 100px;
         font-size: 16px;
         margin-bottom: 5px;
-        @include theme('color', main);
+        color: #333;
         line-height: 22px;
       }
       .content {
@@ -81,8 +82,8 @@ const { t } = useI18n();
           height: 40px;
           border-radius: 50%;
           margin-right: 10px;
-          @include theme('background', divider);
-          @include theme('color', prominent);
+          background: #f0f0f0;
+          color: #0085ff;
           font-size: 20px;
           display: flex;
           justify-content: center;
@@ -90,7 +91,7 @@ const { t } = useI18n();
         }
         .size {
           font-size: 14px;
-          @include theme('color', sub);
+          color: #666;
           line-height: 17px;
         }
       }
@@ -98,7 +99,7 @@ const { t } = useI18n();
   }
   .isRead {
     font-size: 12px;
-    @include theme('color', input);
+    color: #b3b3b3;
     margin-top: 5px;
     img {
       width: 12px;

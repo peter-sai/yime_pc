@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="201px" height="200px" viewBox="0 0 201 200" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>编组 2</title>
+    <defs>
+        <linearGradient x1="50%" y1="-44.2938699%" x2="50%" y2="78.4212257%" id="linearGradient-1">
+            <stop stop-color="#F8F9FC" offset="0%"></stop>
+            <stop stop-color="#FFFFFF" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-2">
+            <stop stop-color="#ECF0F5" offset="0%"></stop>
+            <stop stop-color="#FFFFFF" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="57.156631%" y1="19.723055%" x2="50%" y2="92.4168975%" id="linearGradient-3">
+            <stop stop-color="#EEF2F7" offset="0%"></stop>
+            <stop stop-color="#E9EEF3" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="浅色模式" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="没有内容" transform="translate(-86.000000, -144.000000)">
+            <g id="编组-2" transform="translate(85.188331, 144.000000)">
+                <g id="编组" transform="translate(4.000000, 15.884216)">
+                    <ellipse id="椭圆形" fill="url(#linearGradient-1)" cx="99.3116691" cy="81.1157843" rx="80.5" ry="80"></ellipse>
+                    <ellipse id="椭圆形备份" fill="url(#linearGradient-2)" opacity="0.99181475" cx="173.653774" cy="9.90434783" rx="9.84210526" ry="9.90434783"></ellipse>
+                    <ellipse id="椭圆形" fill="#D4DBE6" cx="99.8116691" cy="131.115784" rx="64" ry="10"></ellipse>
+                    <path d="M141.811669,40.8549448 L141.811669,79.8549448 L118.048669,79.8547843 L118.048669,140.273569 C114.171418,140.582833 107.808724,140.797824 98.9605865,140.918542 C90.1124487,141.039259 83.4754464,140.748298 79.0495796,140.045658 L79.0495796,60.3549448 C79.0495796,49.6999619 87.5952608,41.0409298 98.2065709,40.8579009 L98.5495796,40.8549448 L141.811669,40.8549448 Z" id="路径-21" fill="#ECF0F6" fill-rule="nonzero"></path>
+                    <ellipse id="椭圆形" fill="#C0C8DB" cx="141.224389" cy="60.38704" rx="14" ry="19.5"></ellipse>
+                    <path d="M18.0362939,75.0526601 C17.3892058,80.0080802 16.0393013,83.5767136 13.9865802,85.7585603 C11.9338591,87.940407 7.27166571,90.7620602 0,94.22352 C0.597673141,95.6741042 2.77367996,97.6129354 6.52802045,100.040014 C9.06077097,101.677368 13.4724254,102.779292 18.0362939,105.245377 C19.503783,106.038334 21.6534848,107.640762 24.4853991,110.05266 L36.9459403,91.0236981 C38.1483654,89.1874536 38.1479655,86.8131167 36.9449329,84.9772701 C36.9449329,84.9772701 36.9449329,84.9772701 36.9449329,84.9772701 C36.4514912,84.2242703 35.342393,83.3303041 33.6176382,82.2953715 L18.0362939,75.0526601 Z" id="路径-22" fill="url(#linearGradient-3)" opacity="0.529689244"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

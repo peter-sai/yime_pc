@@ -7,7 +7,7 @@ export function getStorage(key:string): string
 export function clearStorage(): void
 export function getToken(): string
 export function getTime(key:string | number, t: {(key: string | number): string}): string
-export function formateTime(key:string): string
+export function formateTime(key:number, t: {(key: string | number): string}): string
 export function isCurrentChat(key:string, yUid: string, uid: string): boolean
 export function getTag(key:IContacts): string
 export function getSize(key:number): string

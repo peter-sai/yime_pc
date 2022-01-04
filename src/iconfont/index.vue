@@ -8,6 +8,7 @@
 import iconWORD from './iconWORD.vue';
 import iconbianzu4 from './iconbianzu4.vue';
 import iconbianzu6 from './iconbianzu6.vue';
+import iconbianzu7 from './iconbianzu7.vue';
 import iconbianzu8 from './iconbianzu8.vue';
 import iconbianzu9 from './iconbianzu9.vue';
 import iconbiaoqing from './iconbiaoqing.vue';
@@ -15,6 +16,7 @@ import iconcaidan from './iconcaidan.vue';
 import icondagou from './icondagou.vue';
 import icondanxuankuang from './icondanxuankuang.vue';
 import icondiandian from './icondiandian.vue';
+import icondingzi from './icondingzi.vue';
 import iconemoji_icon2_copy from './iconemoji_icon2_copy.vue';
 import iconemoji_icon3 from './iconemoji_icon3.vue';
 import iconexcel from './iconexcel.vue';
@@ -30,6 +32,7 @@ import iconicon_xiaolian from './iconicon_xiaolian.vue';
 import iconicon_yuyinshipin from './iconicon_yuyinshipin.vue';
 import iconjiami from './iconjiami.vue';
 import iconjieping from './iconjieping.vue';
+import iconjingyin from './iconjingyin.vue';
 import iconleft from './iconleft.vue';
 import iconlianxiren from './iconlianxiren.vue';
 import iconlianxiren1 from './iconlianxiren1.vue';
@@ -47,6 +50,7 @@ import iconshuangxiangsudicopy from './iconshuangxiangsudicopy.vue';
 import iconsousuo from './iconsousuo.vue';
 import icontongzhi from './icontongzhi.vue';
 import icontuichu from './icontuichu.vue';
+import icontuichu1 from './icontuichu1.vue';
 import icontuijianhaoyou from './icontuijianhaoyou.vue';
 import iconweizhi from './iconweizhi.vue';
 import iconwenjian from './iconwenjian.vue';
@@ -66,6 +70,8 @@ import iconyuyan from './iconyuyan.vue';
 import iconyuyin from './iconyuyin.vue';
 import iconzhiding from './iconzhiding.vue';
 import iconzhihangfankui from './iconzhihangfankui.vue';
+import { useStore } from 'vuex';
+import { computed } from 'vue';
 export default {
   props: {
     size: String,
@@ -78,6 +84,7 @@ export default {
     iconWORD,
     iconbianzu4,
     iconbianzu6,
+    iconbianzu7,
     iconbianzu8,
     iconbianzu9,
     iconbiaoqing,
@@ -85,6 +92,7 @@ export default {
     icondagou,
     icondanxuankuang,
     icondiandian,
+    icondingzi,
     iconemoji_icon2_copy,
     iconemoji_icon3,
     iconexcel,
@@ -100,6 +108,7 @@ export default {
     iconicon_yuyinshipin,
     iconjiami,
     iconjieping,
+    iconjingyin,
     iconleft,
     iconlianxiren,
     iconlianxiren1,
@@ -117,6 +126,7 @@ export default {
     iconsousuo,
     icontongzhi,
     icontuichu,
+    icontuichu1,
     icontuijianhaoyou,
     iconweizhi,
     iconwenjian,
