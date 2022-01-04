@@ -67,8 +67,9 @@ const submit = async () => {
   showLoading();
   const res = {
     feedbackContent: query.msg,
-    feedbackImages: imgUrl.value,
+    feedbackImages: [imgUrl.value],
   };
+
   const data = await store.dispatch('postMsg', {
     query: res,
     cmd: 1187,

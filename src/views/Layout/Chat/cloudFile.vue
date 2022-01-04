@@ -6,6 +6,7 @@
       @left-click="$emit('changeTag', Etag.UserInfo)"
     />
     <div style="flex: 1; padding: 0 20px">
+      <Error v-if="!list.length" id="4" />
       <a
         :href="item.msgContent.fileInfo.fileUrl"
         :a="item.msgContent.fileInfo"
@@ -45,6 +46,7 @@ import { useStore } from 'vuex';
 import { key } from '@/store';
 import { IFileInfo, IMsgInfo } from '@/types/msg';
 import { getSize, getSuffix } from '@/utils/utils';
+import Error from '@/views/Errors/index.vue';
 export default defineComponent({
   name: 'cloudFile',
 });
@@ -77,6 +79,9 @@ init();
 <style lang="scss" scoped>
 @import '@/style/base.scss';
 .cloudFile {
+  .listItem {
+    text-decoration: none;
+  }
   .tableDouble {
     padding: 17px 0;
     position: relative;

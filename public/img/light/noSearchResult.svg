@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200px" height="200px" viewBox="0 0 200 200" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>编组 5</title>
+    <defs>
+        <linearGradient x1="50%" y1="-44.2938699%" x2="50%" y2="78.4212257%" id="linearGradient-1">
+            <stop stop-color="#F8F9FC" offset="0%"></stop>
+            <stop stop-color="#FFFFFF" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-2">
+            <stop stop-color="#ECF0F5" offset="0%"></stop>
+            <stop stop-color="#FFFFFF" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-3">
+            <stop stop-color="#EEF2F7" offset="0%"></stop>
+            <stop stop-color="#FFFFFF" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="0%" y1="50%" x2="118.084979%" y2="50%" id="linearGradient-4">
+            <stop stop-color="#EDF1F6" offset="0%"></stop>
+            <stop stop-color="#C7CFDE" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="0%" y1="50%" x2="118.084979%" y2="50%" id="linearGradient-5">
+            <stop stop-color="#EDF1F6" offset="0%"></stop>
+            <stop stop-color="#C7CFDE" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="-3.55271368e-13%" x2="50%" y2="100%" id="linearGradient-6">
+            <stop stop-color="#E7ECF1" offset="0%"></stop>
+            <stop stop-color="#F3F6FA" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="浅色模式" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="没有搜索结果" transform="translate(-90.000000, -144.000000)">
+            <g id="编组-5" transform="translate(90.000000, 144.000000)">
+                <g id="编组-4" transform="translate(8.000000, 15.884216)">
+                    <ellipse id="椭圆形" fill="url(#linearGradient-1)" cx="90.5" cy="81.1157843" rx="80.5" ry="80"></ellipse>
+                    <ellipse id="椭圆形" fill="url(#linearGradient-2)" opacity="0.513567243" cx="9.84210526" cy="106.904348" rx="9.84210526" ry="9.90434783"></ellipse>
+                    <ellipse id="椭圆形备份" fill="url(#linearGradient-2)" opacity="0.99181475" cx="164.842105" cy="9.90434783" rx="9.84210526" ry="9.90434783"></ellipse>
+                    <g id="编组-2" transform="translate(38.000000, 35.115784)">
+                        <rect id="矩形" fill="url(#linearGradient-3)" x="0" y="0" width="88.5470085" height="105.133333" rx="7"></rect>
+                        <rect id="矩形" fill="url(#linearGradient-4)" x="13.9145299" y="24.0666667" width="35.4188034" height="8.86666667" rx="3.5"></rect>
+                        <rect id="矩形备份" fill="url(#linearGradient-5)" x="13.9145299" y="45.6" width="44.2735043" height="8.86666667" rx="3.5"></rect>
+                        <g id="编组" transform="translate(44.905983, 25.966667)">
+                            <g transform="translate(50.976020, 53.218130) rotate(-38.000000) translate(-50.976020, -53.218130) translate(19.984567, 10.151464)">
+                                <rect id="矩形" fill="#C0C8DB" x="28.5426255" y="58.8227642" width="4.32464022" height="22.4910569"></rect>
+                                <path d="M25.9478413,64.8780488 L35.4620498,64.8780488 L35.4620498,80.8819201 C35.4620498,83.5091963 33.3322217,85.6390244 30.7049456,85.6390244 C28.0776694,85.6390244 25.9478413,83.5091963 25.9478413,80.8819201 L25.9478413,64.8780488 L25.9478413,64.8780488 Z" id="矩形" fill="#D7DEEA"></path>
+                                <ellipse id="椭圆形" fill="url(#linearGradient-6)" cx="30.7049456" cy="30.7089431" rx="30.7049456" ry="30.7089431"></ellipse>
+                                <path d="M30.7049456,0 C47.6628188,0 61.4098912,13.7488621 61.4098912,30.7089431 C61.4098912,47.669024 47.6628188,61.4178862 30.7049456,61.4178862 C13.7470724,61.4178862 0,47.669024 0,30.7089431 C0,13.7488621 13.7470724,0 30.7049456,0 Z M30.7049456,4.32520325 C16.1355052,4.32520325 4.32464022,16.1376059 4.32464022,30.7089431 C4.32464022,45.2802802 16.1355052,57.0926829 30.7049456,57.0926829 C45.2743859,57.0926829 57.0852509,45.2802802 57.0852509,30.7089431 C57.0852509,16.1376059 45.2743859,4.32520325 30.7049456,4.32520325 Z" id="椭圆形备份-2" fill="#C0C8DB" fill-rule="nonzero"></path>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

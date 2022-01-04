@@ -124,6 +124,10 @@ const isGroup = computed(() => store.state.activeIsGroup);
         font-size: 16px;
         color: #333;
         line-height: 22px;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        -webkit-line-clamp: 2;
       }
       .size {
         font-size: 12px;

@@ -87,3 +87,15 @@ wave {
 wave wave {
   margin-top: 0;
 }
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 15px;
+  background-color: rgba(50, 50, 50, 0.3);
+}
+::-webkit-scrollbar-track {
+  border-radius: 15px;
+  background-color: rgba(50, 50, 50, 0.1);
+}

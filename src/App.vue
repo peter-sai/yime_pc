@@ -15,7 +15,8 @@ const store = useStore(key);
 store.dispatch('init');
 
 const init = async () => {
-  const url = 'wss://ws.yime.app';
+  const url = 'ws://101.34.76.94:8002';
+  // const url = 'wss://ws.yime.app';
   let ws = new WebSocket(url);
   store.commit('SET_ISONLINE', '连接中...');
   store.commit('SET_WS', ws);
@@ -78,7 +79,7 @@ window.addEventListener('online', () => {
 // aks
 const clientSendMsgAckToServer = (msgInfos: IMsgInfo<string>[]) => {
   const lastMsgInfo =
-    msgInfos.length > 0 ? msgInfos[msgInfos.length - 1] : null;
+    msgInfos[0].length > 0 ? msgInfos[msgInfos[0].length - 1] : null;
   if (lastMsgInfo) {
     const { msgId, fromId, toId } = lastMsgInfo;
     const ackToServer = useClientSendMsgAckToServer(
@@ -92,6 +93,16 @@ const clientSendMsgAckToServer = (msgInfos: IMsgInfo<string>[]) => {
 const stop = watch(
   computed(() => store.state.msgInfo),
   async (data: any) => {
+    if (data.cmd === 2024) {
+      const res = {
+        msgClassHaveNewMsg: 1,
+        msgClassId: 2,
+        msgClassRecentMsgContent: data.body.notifyContent,
+        msgClassTitle: '用户反馈消息',
+        updateTime: data.body.updateTime,
+      };
+      store.commit('ADD_NOTIFY', { id: 2, res });
+    }
     // 监听接受消息
     if (data.cmd === 2004) {
       const msgInfos = data.body.msgInfos;
@@ -118,8 +129,52 @@ const stop = watch(
         store.commit('SET_MSGLIST', msgList);
       }
       console.log('推送消息', data);
+      // 发送ack
       clientSendMsgAckToServer(msgInfos);
       store.dispatch('addMsgList', { ...(msgInfos[0] || {}) });
+      // 发送已读msgId
+      const userInfo = store.state.userInfo;
+      // 如果发送者是自己 或者 已经开启了对方不显示已读消息开关 不需要发送msgId
+      if (
+        Number(userInfo.uid) === Number(msgInfos[0].fromId) ||
+        store.state.switchSettingInfo.readMessageState
+      )
+        return;
+
+      if (msgInfos[0].isGroupMsg) {
+        const res = {
+          msgHasReadedInfo: {
+            isGroupMsg: 1,
+            fromId: msgInfos[0].toId,
+            toId: msgInfos[0].fromId,
+            msgIdMax: msgInfos[0].msgId,
+          },
+        };
+        await store.dispatch('postMsg', {
+          query: res,
+          cmd: 2149,
+          encryption:
+            'Aoelailiao.Message.UserUpdateConversationHasReadedMsgInfoReq',
+          auth: true,
+        });
+      } else {
+        const res = {
+          msgHasReadedInfo: {
+            isGroupMsg: 0,
+            toId: msgInfos[0].toId,
+            fromId: msgInfos[0].fromId,
+            msgIdMax: msgInfos[0].msgId,
+          },
+        };
+
+        await store.dispatch('postMsg', {
+          query: res,
+          cmd: 2149,
+          encryption:
+            'Aoelailiao.Message.UserUpdateConversationHasReadedMsgInfoReq',
+          auth: true,
+        });
+      }
     }
   },
 );

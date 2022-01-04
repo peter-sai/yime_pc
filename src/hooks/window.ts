@@ -11,7 +11,9 @@ import {
 import { IGroupInfo, IUserDetailInfo, IUserInfo } from '@/types/user';
 import { getMsgList, setMsgList } from '@/utils/utils';
 import { number } from '@intlify/core-base';
+import moment from 'moment';
 import { ComputedRef, Ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { stringifyQuery } from 'vue-router';
 import { Store } from 'vuex';
 
@@ -22,6 +24,7 @@ const useUserOperateGroupInfo = (store: Store<initStore>) => {
       operateType: type,
       groupInfo,
     };
+
     const data = await store.dispatch('postMsg', {
       query,
       cmd: 1027,
@@ -375,8 +378,9 @@ const useSystemNotifyInfo = (
 ) => {
   return (item: IMsgInfo<ISystemNotifyInfo>) => {
     const { systemNotifyInfo } = item.msgContent;
+
     const frestMsg = systemNotifyInfo.appointUserSystemNotifyInfos[0];
-    if (Number(store.state.userInfo.uid) === Number(frestMsg.userIds[0])) {
+    if (frestMsg.userIds.includes(store.state.userInfo.uid)) {
       const msg = frestMsg.appointUserNotifyInfo.msgText || '';
       // 格式化消息
       return formatMsg(msg, t);
@@ -647,6 +651,33 @@ const useRevoke = (
   };
 };
 
+// 计算时间显示
+const useFormateTime = () => {
+  return (msgTime: number) => {
+    const { t } = useI18n();
+    if (!msgTime) {
+      return '';
+    }
+    const time = msgTime * 1000;
+    const minute = moment().diff(moment(time), 'minute');
+    const day = moment().diff(moment(time), 'day');
+    if (minute < 10) {
+      return t('刚刚');
+    } else if (minute < 3600) {
+      if (moment(time).format('DD') === moment().format('DD')) {
+        // 今天
+        return moment(time).format('HH:mm');
+      } else {
+        // 昨天
+        return t('昨天') + ' ' + moment(time).format('HH:mm');
+      }
+    } else if (day < 30) {
+      return moment(time).format('MM/DD');
+    }
+    return moment(time).format('YYYY/MM/DD');
+  };
+};
+
 export {
   useUserOperateGroupInfo,
   useBeforeSwitch,
@@ -663,4 +694,5 @@ export {
   useSystemNotifyInfo,
   useUserGetConversationHasReadedMsgInfo,
   useRevoke,
+  useFormateTime,
 };

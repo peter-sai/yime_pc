@@ -25,12 +25,12 @@
           size="20"
           color="#2B2C33"
         />
-        <Iconfont
+        <!-- <Iconfont
           @click.stop="burnInfo.show = !burnInfo.show"
           name="iconyuehoujifen"
           size="24"
           :color="burnInfo.show ? '#0085FF' : '#2B2C33'"
-        />
+        /> -->
         <Iconfont name="iconyuyin" size="20" color="#2B2C33" />
       </div>
       <!-- 操作弹框 -->

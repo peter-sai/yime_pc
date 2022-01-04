@@ -1,5 +1,5 @@
 <template>
-  <div class="tableDouble">
+  <div class="tableDouble" :class="{ hover }">
     <div class="left">
       <slot name="userImg"></slot>
     </div>
@@ -54,6 +54,10 @@ defineProps({
     type: Boolean,
     default: false,
   },
+  hover: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const slots = useSlots();
@@ -78,11 +82,15 @@ const slots = useSlots();
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    overflow: hidden;
     .title {
       font-size: 16px;
       line-height: 16px;
-      @include theme('color', main);
+      color: #333;
       font-weight: 500;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .subTitle {
       font-size: 14px;
@@ -110,6 +118,17 @@ const slots = useSlots();
     .num {
       font-size: 12px;
       @include theme('color', sub);
+    }
+  }
+}
+.hover {
+  background: #0085ff;
+  .middle {
+    .title {
+      color: #fff;
+    }
+    .subTitle {
+      color: #fff;
     }
   }
 }

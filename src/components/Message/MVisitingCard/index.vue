@@ -43,7 +43,7 @@ const { t } = useI18n();
   display: flex;
   .fileBg {
     text-align: left;
-    @include theme('background', encryption);
+    background: #f4f6ff;
     display: flex;
     justify-content: space-between;
     width: 222px;
@@ -62,7 +62,7 @@ const { t } = useI18n();
         white-space: nowrap;
         font-size: 16px;
         margin-bottom: 5px;
-        @include theme('color', main);
+        color: #333;
         line-height: 22px;
       }
       .content {
@@ -76,7 +76,7 @@ const { t } = useI18n();
         }
         .size {
           font-size: 14px;
-          @include theme('color', sub);
+          color: #666;
           line-height: 17px;
         }
       }

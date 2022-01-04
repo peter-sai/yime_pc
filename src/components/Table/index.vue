@@ -48,12 +48,16 @@ const slots = useSlots();
     display: flex;
     justify-content: space-between;
     align-items: center;
+    overflow: hidden;
     .icon {
       margin-right: 10px;
     }
     .text {
       @include theme('color', main);
       font-size: 16px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
   .right {

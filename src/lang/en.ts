@@ -8,6 +8,9 @@ export default {
   个字节以内: 'Within {0} bytes',
   '60S后重试': '60s after retry',
   '<spile>与<spile>的私密聊天': '<spile> and <spile bbb>ivate chat',
+  '<spile>被移出了群聊': '<spile> was removed from group chat',
+  '你将这些用户移出了群聊:<spile>':
+    'You removed these users from group chat :<spile>',
   '<spile>修改了群信息': '<spile> modifies group information',
   '<spile>修改了群公告': '<spile> modifies the group announcement',
   '<spile>修改了群用户名': '<spile> modifies the group username',

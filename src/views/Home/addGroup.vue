@@ -1,46 +1,39 @@
 <template>
   <div class="addGroup">
-    <NavigationBar title="添加成员" right-text="确认" />
-    <div style="flex: 1">
-      <div class="content">
-        <div class="item" v-for="(item, key) in list" :key="item.uid">
-          <div v-if="item.tag && key === 0" class="tag">{{ item.tag }}</div>
-          <div
-            v-else-if="item.tag && list[key - 1].tag !== item.tag"
-            class="tag"
-          >
-            {{ item.tag }}
-          </div>
-          <Table
-            :title="item.name"
-            hideMore
-            @click="item.active = !item.active"
-          >
-            <template v-slot:left>
-              <img :src="item.icon" alt="" />
-            </template>
-            <template v-slot:right>
-              <Iconfont
-                name="icondanxuankuang"
-                v-if="item.active"
-                size="14"
-                color="#0085FF"
-              />
-              <Iconfont name="iconradio" v-else size="14" color="#BDBDBD" />
-            </template>
-          </Table>
+    <NavigationBar
+      title="添加成员"
+      right-text="确认"
+      @rigth-click="submit"
+      :rightTextDef="filterList.length <= 1"
+    />
+    <div class="content">
+      <div class="item" v-for="(item, key) in list" :key="item.uid">
+        <div v-if="item.tag && key === 0" class="tag">{{ item.tag }}</div>
+        <div v-else-if="item.tag && list[key - 1].tag !== item.tag" class="tag">
+          {{ item.tag }}
         </div>
+        <Table :title="item.name" hideMore @click="item.active = !item.active">
+          <template v-slot:left>
+            <img v-if="item.icon" :src="item.icon" alt="" />
+            <Iconfont v-else name="iconlianxiren" size="30" color="#A8B5BE" />
+          </template>
+          <template v-slot:right>
+            <Iconfont
+              name="icondanxuankuang"
+              v-if="item.active"
+              size="14"
+              color="#0085FF"
+            />
+            <Iconfont name="iconradio" v-else size="14" color="#BDBDBD" />
+          </template>
+        </Table>
       </div>
     </div>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue';
-export default defineComponent({
-  name: 'addGroup',
-});
-</script>
-<script setup lang="ts">
+import { computed, defineComponent } from 'vue';
+import { cloneDeep } from 'lodash';
 import Table from '@/components/Table/index.vue';
 import Iconfont from '../../iconfont/index.vue';
 import { ref, Ref } from 'vue';
@@ -49,12 +42,24 @@ import { Store, useStore } from 'vuex';
 import { initStore, key } from '@/store';
 import { getTag } from '@/utils/utils';
 import { IContacts } from '@/types/user';
+import { hideLoading, showLoading } from '@/plugin/Loading';
+import { Toast } from '@/plugin/Toast';
+import { useI18n } from 'vue-i18n';
+export default defineComponent({
+  name: 'addGroup',
+});
+</script>
+<script setup lang="ts">
 const store = useStore(key);
 const list: Ref<IContacts[]> = ref([]);
+
+const { t } = useI18n();
 
 const init = async () => {
   list.value = await useGetContactList(store);
 };
+
+const filterList = computed(() => list.value.filter((e) => e.active));
 
 init();
 
@@ -70,6 +75,7 @@ async function useGetContactList(store: Store<initStore>) {
       auth: true,
     });
     list = data.body.friendInfos;
+
     list.forEach((e: any) => {
       e.name = (e.userAttachInfo && e.userAttachInfo.remarkName) || e.nickname;
       e.tag = getTag(e);
@@ -77,14 +83,59 @@ async function useGetContactList(store: Store<initStore>) {
     list.sort((a: any, b: any) => a.tag.charCodeAt() - b.tag.charCodeAt());
     store.commit('SET_CONTACT', list);
   }
-  return list;
+  return [...list].map((e: any) => cloneDeep(e));
 }
+
+// 确定
+const submit = async () => {
+  if (filterList.value.length <= 1) {
+    return;
+  }
+  const memberUserInfos = filterList.value.map((e) => {
+    return {
+      memberUid: e.uid,
+    };
+  });
+  memberUserInfos.unshift({
+    memberUid: store.state.userInfo.uid,
+  });
+  showLoading();
+  // 创建群
+  const data = await store.dispatch('postMsg', {
+    query: {
+      operateType: 1,
+      groupInfo: {
+        groupMemberLists: {
+          rootUid: store.state.userInfo.uid,
+          memberUserInfos,
+        },
+      },
+    },
+    cmd: 1027,
+    encryption: 'Aoelailiao.Login.UserOperateGroupInfoReq',
+    auth: true,
+  });
+  hideLoading();
+  Toast(t(data.body.resultString));
+  if (data.body.resultCode === 0) {
+    // 群聊
+    store.commit('SET_ACTIVEUID', data.body.groupInfo.groupId);
+    store.commit('SET_ACTIVEISGROUP', true);
+  }
+};
 </script>
 <style lang="scss" scoped>
 @import '@/style/base.scss';
 .addGroup {
   .content {
     padding: 8px 13px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 50px;
     .item {
       img {
         width: 30px;

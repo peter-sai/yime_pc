@@ -89,6 +89,8 @@ import {
   nextTick,
   onMounted,
   onBeforeUnmount,
+  computed,
+  ComputedRef,
 } from 'vue';
 import Message from '../Window/message.vue';
 import { Store, useStore } from 'vuex';
@@ -106,16 +108,13 @@ export default defineComponent({
   name: 'groupWindow',
 });
 
-async function getGroupInfo(
-  store: Store<initStore>,
-  groupDetailInfo: Ref<IGroupInfo>,
-) {
+async function getGroupInfo(store: Store<initStore>) {
   if (!store.state.activeUid) return;
 
-  let msgItem: ImsgItem = store.state.msgList[store.state.activeUid!];
+  let msgItem: Ref<ImsgItem> = ref(store.state.msgList[store.state.activeUid!]);
 
   // 如果不存在则获取 (群聊不在聊天列表中会没有信息)
-  if (!msgItem) {
+  if (!msgItem.value) {
     const data = await store.dispatch('postMsg', {
       query: {
         groupId: store.state.activeUid,
@@ -124,10 +123,22 @@ async function getGroupInfo(
       encryption: 'Aoelailiao.Login.ClientGetGroupInfoReq',
       auth: true,
     });
-    msgItem = data.body;
-  }
+    msgItem.value = data.body;
+    console.log(msgItem.value);
 
-  groupDetailInfo.value = msgItem.groupDetailInfo || {};
+    const item = {
+      id: data.body.groupDetailInfo.groupId,
+      isBotUser: false,
+      isGroup: true,
+      readList: [],
+      unReadNum: 0,
+      userDetailInfo: {},
+      lastMsg: {},
+      groupDetailInfo: data.body.groupDetailInfo,
+    };
+
+    store.commit('SET_MSGLISTITEM', { res: item });
+  }
 }
 </script>
 <script setup lang="ts">
@@ -144,10 +155,12 @@ const changeTag = (val: Etag) => {
   tag.value = val;
 };
 
-const groupDetailInfo: Ref<IGroupInfo> = ref({}) as Ref<IGroupInfo>;
+const groupDetailInfo: ComputedRef<IGroupInfo> = computed(
+  () => store.state.msgList[store.state.activeUid!]?.groupDetailInfo || {},
+);
 const store = useStore(key);
 async function init() {
-  await getGroupInfo(store, groupDetailInfo);
+  await getGroupInfo(store);
 }
 init();
 

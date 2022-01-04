@@ -56,7 +56,7 @@ const router = useRouter();
 
 function useToggle(type: number) {
   return async (e: boolean) => {
-    showLoading();
+    // showLoading();
     const res = {
       type,
       state: e ? 0 : 1,

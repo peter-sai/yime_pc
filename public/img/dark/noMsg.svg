@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200px" height="200px" viewBox="0 0 200 200" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>编组 6</title>
+    <defs>
+        <linearGradient x1="50%" y1="-44.2938699%" x2="50%" y2="78.4212257%" id="linearGradient-1">
+            <stop stop-color="#2A2A2A" offset="0%"></stop>
+            <stop stop-color="#121212" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-2">
+            <stop stop-color="#2D2D2D" offset="0%"></stop>
+            <stop stop-color="#121212" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="18.2855289%" x2="50%" y2="100%" id="linearGradient-3">
+            <stop stop-color="#2A2A2A" offset="0%"></stop>
+            <stop stop-color="#121212" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-4">
+            <stop stop-color="#2B2B2B" offset="0%"></stop>
+            <stop stop-color="#121212" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="100%" y1="10.1483568%" x2="9.88763553%" y2="79.4785289%" id="linearGradient-5">
+            <stop stop-color="#5A5A5A" offset="0%"></stop>
+            <stop stop-color="#525252" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-6">
+            <stop stop-color="#292929" offset="0%"></stop>
+            <stop stop-color="#121212" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-7">
+            <stop stop-color="#585858" offset="0%"></stop>
+            <stop stop-color="#121212" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="浅色模式" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="暂无消息备份" transform="translate(-90.000000, -144.000000)">
+            <g id="编组-6" transform="translate(90.000000, 144.000000)">
+                <g id="编组-5" transform="translate(18.000000, 15.884216)">
+                    <ellipse id="椭圆形" fill="url(#linearGradient-1)" opacity="0.5" cx="80.5" cy="81.1157843" rx="80.5" ry="80"></ellipse>
+                    <g id="编组-4" transform="translate(14.000000, 30.916644)">
+                        <g id="编组-2" transform="translate(0.000000, 0.199140)">
+                            <polygon id="路径-5" fill="url(#linearGradient-2)" points="24.1551082 0 24.1551082 85.9469801 119.111396 85.9469801 119.111396 0"></polygon>
+                            <polygon id="路径-7" fill="url(#linearGradient-3)" points="131.661858 57.2580672 131.661858 133.112853 11.0284857 133.112853 11.0284857 85.9469801"></polygon>
+                            <polygon id="路径-6" fill="url(#linearGradient-4)" points="11.0284857 57.2580672 11.0284857 133.112853 131.661858 133.112853 131.661858 85.9469801"></polygon>
+                            <polygon id="路径-8" fill="url(#linearGradient-5)" points="79.514158 10.0332797 79.514158 57.2580672 89.20255 44.9000053 128.300836 44.9000053 128.300836 10.0332797"></polygon>
+                            <ellipse id="椭圆形" fill="url(#linearGradient-6)" opacity="0.576764788" cx="9.84210526" cy="88.7885636" rx="9.84210526" ry="9.90434783"></ellipse>
+                            <g id="编组" transform="translate(92.631579, 24.118998)" fill="#B8B8B8">
+                                <ellipse id="椭圆形" cx="2.89473684" cy="2.91304348" rx="2.89473684" ry="2.91304348"></ellipse>
+                                <ellipse id="椭圆形备份" cx="11.5789474" cy="2.91304348" rx="2.89473684" ry="2.91304348"></ellipse>
+                                <ellipse id="椭圆形备份-2" cx="20.2631579" cy="2.91304348" rx="2.89473684" ry="2.91304348"></ellipse>
+                            </g>
+                        </g>
+                    </g>
+                    <ellipse id="椭圆形备份" fill="url(#linearGradient-7)" opacity="0.200000003" cx="154.842105" cy="9.90434783" rx="9.84210526" ry="9.90434783"></ellipse>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -49,6 +49,11 @@
             <Iconfont name="iconshoujihaoma1" size="20" color="#2B2C33" />
           </template>
         </Table>
+        <Table title="退出" @click="logOut">
+          <template v-slot:left>
+            <Iconfont name="icontuichu1" size="20" color="#2B2C33" />
+          </template>
+        </Table>
       </div>
     </div>
   </div>
@@ -68,6 +73,7 @@ import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { useStore } from 'vuex';
 import { key } from '@/store';
+import { Dialog } from '@/plugin/Dialog';
 const goTo = useGoTo(useRouter);
 const { t } = useI18n();
 const store = useStore(key);
@@ -76,6 +82,16 @@ const userInfo = store.state.userInfo;
 
 const goLink = (url: string) => {
   window.open(url);
+};
+
+const logOut = () => {
+  Dialog({
+    title: '确定退出登录?',
+    callBack: async () => {
+      store.dispatch('logout');
+      location.reload();
+    },
+  });
 };
 </script>
 <style lang="scss" scoped>
@@ -88,6 +104,7 @@ const goLink = (url: string) => {
       width: 60px;
       height: 60px;
       margin-bottom: 10px;
+      border-radius: 50%;
     }
     .userName {
       font-size: 14px;

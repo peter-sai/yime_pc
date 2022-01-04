@@ -168,10 +168,12 @@ export function getMsgList() {
   const msgList = JSON.parse(getStorage('msgList')) || {};
   const list = msgList[uid] || {};
   Object.values(list).forEach((v) => {
-    const fireMsgIds = v.readList
-      .filter((k) => k.type === 'fireInfo')
-      .map((a) => a.msgContent.fireInfo.fireMsgId);
-    v.readList.forEach((b) => {
+    const fireMsgIds =
+      v.readList ||
+      []
+        .filter((k) => k.type === 'fireInfo')
+        .map((a) => a.msgContent.fireInfo.fireMsgId);
+    (v.readList || []).forEach((b) => {
       if (fireMsgIds.includes(b.msgId.toString())) {
         b.fire = true;
       }

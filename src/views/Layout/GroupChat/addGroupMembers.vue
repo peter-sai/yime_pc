@@ -10,6 +10,7 @@
     </div>
     <div class="main">
       <div class="content">
+        <Errors :id="search ? '3' : '4'" v-if="!newList.length" />
         <div class="item" v-for="(item, key) in newList" :key="item.uid">
           <div v-if="item.tag && key === 0" class="tag">{{ item.tag }}</div>
           <div
@@ -24,7 +25,8 @@
             @click="item.active = !item.active"
           >
             <template v-slot:left>
-              <img :src="item.icon" alt="" />
+              <img v-if="item.icon" :src="item.icon" alt="" />
+              <Iconfont v-else name="iconlianxiren" size="30" color="#A8B5BE" />
             </template>
             <template v-slot:right>
               <Iconfont
@@ -58,6 +60,7 @@ import {
   ref,
   defineProps,
   PropType,
+  defineEmits,
 } from 'vue';
 import Search from '@/components/Search/index.vue';
 import Iconfont from '@/iconfont/index.vue';
@@ -72,6 +75,7 @@ import { getTag } from '@/utils/utils';
 import { showLoading } from '@/plugin/Loading';
 import { Toast } from '@/plugin/Toast';
 import { useI18n } from 'vue-i18n';
+import Errors from '../../Errors/index.vue';
 export default defineComponent({
   name: 'addGroupMembers',
 });
@@ -81,6 +85,7 @@ const search = ref('');
 const list: Ref<IContacts[]> = ref([]);
 const store = useStore(key);
 const { t } = useI18n();
+const emit = defineEmits(['changeTag', 'toggleBox']);
 const props = defineProps({
   groupDetailInfo: {
     type: Object as PropType<IGroupInfo>,
@@ -88,7 +93,9 @@ const props = defineProps({
 });
 
 const newList = computed(() =>
-  list.value.filter((e) => e.name.includes(search.value)),
+  list.value.filter((e) =>
+    e.name.toLocaleLowerCase().includes(search.value.toLocaleLowerCase()),
+  ),
 );
 // 获取列表
 const init = async () => {
@@ -141,6 +148,22 @@ const submit = async () => {
 
   const data = await userOperateGroupInfo(4, query);
   Toast(t(data.body.resultString));
+  if (data.body.resultCode === 0) {
+    const data = await store.dispatch('postMsg', {
+      query: {
+        groupId: store.state.activeUid,
+      },
+      cmd: 1029,
+      encryption: 'Aoelailiao.Login.ClientGetGroupInfoReq',
+      auth: true,
+    });
+
+    const msgItem = data.body;
+    const item = store.state.msgList[store.state.activeUid!];
+    item.groupDetailInfo = msgItem.groupDetailInfo;
+    store.commit('SET_MSGLISTITEM', { res: item });
+    emit('toggleBox');
+  }
 };
 </script>
 <style lang="scss" scoped>
