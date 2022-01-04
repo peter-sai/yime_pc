@@ -113,6 +113,9 @@
           {{ getRevokeName(item) }} {{ t('撤回了一条消息') }}
         </div>
       </div>
+      <div class="item" v-else-if="item.type === 'fireInfo'">
+        <div class="revoke">{{ fireInfo(item) }}</div>
+      </div>
     </div>
     <div
       class="menu"
@@ -172,7 +175,7 @@ import MAudio from '@/components/Message/MAudio/index.vue';
 import { useStore } from 'vuex';
 import { key } from '@/store';
 import { useI18n } from 'vue-i18n';
-import { IMsgInfo, ImsgItem } from '@/types/msg';
+import { IFireInfo, IMsgInfo, ImsgItem } from '@/types/msg';
 import { formateTime } from '@/utils/utils';
 import {
   useSendImg,
@@ -258,6 +261,15 @@ const isShowTime = (k: number) => {
   }
   msgKey = k;
   return true;
+};
+
+// 焚烧消息
+const fireInfo = (item: IMsgInfo<IFireInfo>) => {
+  const res = item.msgContent.fireInfo.stringContent;
+  // const msg = t(res.split('#')[0]).substr(7, res.length);
+  // const user = res.split('#')[1];
+  // return user + msg;
+  return res;
 };
 
 // 发送图片

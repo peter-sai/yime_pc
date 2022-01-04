@@ -100,6 +100,7 @@ const icon = computed(() => {
 
 const init = async () => {
   const data = await userGetSystemNoticeContent(store);
+
   if (store.state.activeUid === 1) {
     // 系统通知详情
     systemList.value = data.map((e: any) => {
