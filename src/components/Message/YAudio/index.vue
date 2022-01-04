@@ -1,0 +1,138 @@
+<template>
+  <div class="mmsg">
+    <div>
+      <img :src="userInfo?.icon" />
+    </div>
+    <ImBg>
+      <div class="imBgBox">
+        <span class="time">{{ voiceMsg.voiceTime }} ''</span>
+        <ShowAudio :time="time" type="you" v-if="isPlay" />
+        <div class="audio" v-else></div>
+        <div class="icon">
+          <Iconfont
+            v-if="!isPlay"
+            @click="play"
+            name="iconplay1"
+            size="10"
+            color="#0085FF"
+          />
+          <Iconfont
+            @click="pause"
+            v-else
+            name="iconsuspend"
+            size="10"
+            color="#0085FF"
+          />
+        </div>
+      </div>
+    </ImBg>
+  </div>
+</template>
+<script lang="ts">
+import { defineComponent, defineProps } from 'vue';
+import ImBg from '../ImgBg/index.vue';
+import Iconfont from '@/iconfont/index.vue';
+import { watch, computed, onDeactivated } from '@vue/runtime-core';
+import { ref } from '@vue/reactivity';
+import { useStore } from 'vuex';
+import BenzAMRRecorder from 'benz-amr-recorder';
+import { useI18n } from 'vue-i18n';
+import ShowAudio from '../ShowAudio/index.vue';
+import { key } from '@/store';
+export default defineComponent({
+  name: 'YAudio',
+});
+</script>
+<script lang="ts" setup>
+const props = defineProps({
+  userInfo: {
+    type: Object,
+  },
+  voiceMsg: {
+    type: Object,
+    required: true,
+  },
+  groupMemberSplit: {
+    type: Boolean,
+  },
+});
+const { t } = useI18n();
+const isPlay = ref(false);
+const store = useStore(key);
+const time = ref(0);
+
+const amr = new BenzAMRRecorder();
+const amrCtx = amr.initWithUrl(props.voiceMsg.voiceUrl);
+amr.onEnded(() => {
+  isPlay.value = false;
+});
+
+const play = () => {
+  amrCtx.then(() => {
+    time.value = amr.getDuration();
+    if (!amr.isPlaying()) {
+      amr && amr.play();
+    }
+  });
+
+  isPlay.value = true;
+  //非常简单的就能拿到blob音频url
+  store.commit('SET_PLAYAUDIO', props.voiceMsg.voiceUrl);
+};
+
+watch(
+  computed(() => store.state.playAudio),
+  (e) => {
+    if (e !== props.voiceMsg.voiceUrl) {
+      isPlay.value = false;
+      amr && amr.stop();
+    }
+  },
+);
+
+onDeactivated(() => {
+  amr && amr.stop();
+});
+
+const pause = () => {
+  amrCtx.then(() => {
+    if (amr.isPlaying()) {
+      amr && amr.stop();
+    }
+  });
+  isPlay.value = false;
+};
+</script>
+<style lang="scss" scoped>
+@import '@/style/theme/index.scss';
+.audio {
+  width: 20px;
+}
+.mmsg {
+  display: flex;
+  .imBgBox {
+    display: flex;
+    .time {
+      font-size: 16px;
+      margin-right: 5px;
+    }
+  }
+  .icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #fff;
+    margin-left: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  img {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+}
+</style>

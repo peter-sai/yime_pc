@@ -120,6 +120,7 @@ const initState = {
     put: (fileName: any, file: any) => null,
   },
   msgList: {} as { [key: number]: ImsgItem },
+  playAudio: '', // 当前正在播放的音频
 };
 
 export type initStore = typeof initState;
@@ -130,6 +131,9 @@ const sotreRoot = createStore({
     SET_LANG: (state, res) => {
       state.lang = res;
       setStorage('lang', res);
+    },
+    SET_PLAYAUDIO: (state, res) => {
+      state.playAudio = res;
     },
     SET_MSGLIST: (state, res) => {
       state.msgList = res;

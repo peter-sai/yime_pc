@@ -31,7 +31,12 @@
           size="24"
           :color="burnInfo.show ? '#0085FF' : '#2B2C33'"
         /> -->
-        <Iconfont name="iconyuyin" size="20" color="#2B2C33" />
+        <Iconfont
+          @click="toggleAudio"
+          name="iconyuyin"
+          size="20"
+          color="#2B2C33"
+        />
       </div>
       <!-- 操作弹框 -->
       <div class="boxOperation" v-if="showOpertion">
@@ -44,21 +49,25 @@
             <Iconfont name="iconicon_yuyinshipin" size="20" color="#111111" />
             <div>语音视频</div>
           </div>
-          <div class="opeItem">
+          <!-- <div class="opeItem">
             <Iconfont name="iconpaishe" size="20" color="#111111" />
             <div>拍摄</div>
-          </div>
-        </div>
-        <div class="child">
+          </div> -->
           <div class="opeItem" @click.stop="$emit('sendFile')">
             <Iconfont name="iconwenjian1" size="20" color="#111111" />
             <div>文件</div>
+          </div>
+        </div>
+        <div class="child">
+          <div class="opeItem">
+            <Iconfont name="iconweizhi" size="20" color="#111111" />
+            <div>位置</div>
           </div>
           <div class="opeItem" @click="$emit('recommend')">
             <Iconfont name="icontuijianhaoyou" size="20" color="#111111" />
             <div>推荐好友</div>
           </div>
-          <div class="opeItem">
+          <div class="opeItem" style="opacity: 0; cursor: auto">
             <Iconfont name="iconweizhi" size="20" color="#111111" />
             <div>位置</div>
           </div>
@@ -80,66 +89,105 @@
         </div>
       </div>
     </div>
-    <div class="box" v-if="showExpres">
-      <div class="expres" v-if="!showCacheEmoji">
-        <div
-          class="item"
-          @click.stop="select(item, modelValue)"
-          v-for="item in expressionList"
-          :key="item.id"
-        >
-          <img class="img" :src="item.path" alt="" />
+    <!-- 录音 语音消息 -->
+    <div v-show="showAudio" class="audioBox">
+      <div class="left">
+        <Iconfont
+          @click="toggleAudio"
+          name="iconchahao"
+          size="14"
+          color="main"
+        />
+        <div class="time">
+          <div class="canvas" style="height: 20px; width: 40px" />
+          <div class="line"><i :style="{ width: line + '%' }"></i></div>
+          <span>{{ formateAudioTime(audioTime) }}</span>
+          <span class="info" v-if="audioTime === 60">{{
+            t('时间最长60s')
+          }}</span>
         </div>
       </div>
-      <div class="expres" v-else>
-        <div
-          class="item"
-          @click.stop="select(item, modelValue)"
-          v-for="item in emojiList"
-          :key="item.id"
-        >
-          <img class="img" :src="item.path" alt="" />
-        </div>
+      <div class="right" @click="toggleAudio('send')">
+        <img
+          style="
+            width: 30px;
+            height: 30px;
+            background: #fff;
+            border-radius: 50%;
+          "
+          class="ml15"
+          :src="send"
+          alt=""
+        />
       </div>
     </div>
-    <div class="btn" v-if="showExpres">
-      <Iconfont
-        v-if="!showCacheEmoji"
-        class="iconfont"
-        @click.stop="changeCacheEmoji(true)"
-        name="iconshijian"
-        color="main"
-        size="18"
-      />
-      <Iconfont
-        v-else
-        class="iconfont"
-        @click.stop="changeCacheEmoji(true)"
-        name="iconemoji_icon2_copy"
-        size="18"
-      />
-      <Iconfont
-        v-if="showCacheEmoji"
-        class="iconfont"
-        name="iconemoji_icon3"
-        size="18"
-        color="main"
-        @click.stop="changeCacheEmoji(false)"
-      />
-      <Iconfont
-        v-else
-        class="iconfont"
-        name="iconicon_xiaolian"
-        size="18"
-        color="#617EE0"
-        @click.stop="changeCacheEmoji(false)"
-      />
+    <!-- 表情 -->
+    <div v-if="showExpres">
+      <div class="box">
+        <div class="expres" v-if="!showCacheEmoji">
+          <div
+            class="item"
+            @click.stop="select(item, modelValue)"
+            v-for="item in expressionList"
+            :key="item.id"
+          >
+            <img class="img" :src="item.path" alt="" />
+          </div>
+        </div>
+        <div class="expres" v-else>
+          <div
+            class="item"
+            @click.stop="select(item, modelValue)"
+            v-for="item in emojiList"
+            :key="item.id"
+          >
+            <img class="img" :src="item.path" alt="" />
+          </div>
+        </div>
+      </div>
+      <div class="btn">
+        <Iconfont
+          v-if="!showCacheEmoji"
+          class="iconfont"
+          @click.stop="changeCacheEmoji(true)"
+          name="iconshijian"
+          color="main"
+          size="18"
+        />
+        <Iconfont
+          v-else
+          class="iconfont"
+          @click.stop="changeCacheEmoji(true)"
+          name="iconemoji_icon2_copy"
+          size="18"
+        />
+        <Iconfont
+          v-if="showCacheEmoji"
+          class="iconfont"
+          name="iconemoji_icon3"
+          size="18"
+          color="main"
+          @click.stop="changeCacheEmoji(false)"
+        />
+        <Iconfont
+          v-else
+          class="iconfont"
+          name="iconicon_xiaolian"
+          size="18"
+          color="#617EE0"
+          @click.stop="changeCacheEmoji(false)"
+        />
+      </div>
     </div>
   </div>
 </template>
 <script lang="ts">
 import Iconfont from '@/iconfont/index.vue';
+import { Toast } from '@/plugin/Toast';
+import { key } from '@/store';
 import { getStorage, setStorage } from '@/utils/utils';
+import send from '/public/img/send.svg';
+import Recorder from 'Recorder';
 import {
   defineComponent,
   ref,
@@ -149,7 +197,11 @@ import {
   defineProps,
   onMounted,
   onBeforeUnmount,
+  watch,
+  nextTick,
 } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { useStore } from 'vuex';
 export default defineComponent({
   name: 'bottom',
 });
@@ -194,6 +246,8 @@ function useInput(
 </script>
 <script setup lang="ts">
 const input: Ref<HTMLInputElement | null> = ref(null);
+const store = useStore(key);
+const { t } = useI18n();
 defineProps({
   modelValue: {
     type: String,
@@ -284,6 +338,138 @@ onMounted(() => {
 onBeforeUnmount(() => {
   document.body.removeEventListener('click', bodyClickCb);
 });
+
+// 录音 语音消息
+
+// 控制按住说话按钮的显示和隐藏
+const showAudio = ref(false);
+const toggleAudio = (isSend?: string) => {
+  console.log(11);
+
+  showAudio.value = !showAudio.value;
+  if (showAudio.value) {
+    startRec();
+  } else if (isSend === 'send') {
+    sendRec();
+  } else {
+    closeRec();
+  }
+};
+
+let line = ref(0);
+let audioTime = ref(0);
+// 监听是否需要audio
+watch(showAudio, (e) => {
+  audioTime.value = 0;
+  line.value = 0;
+});
+
+// 格式化录音时间
+const formateAudioTime = (e: number) => {
+  if (e < 10) {
+    return `00:0${e}`;
+  } else if (e < 60) {
+    return `00:${e}`;
+  } else {
+    return `01:0${e - 60}`;
+  }
+};
+
+let rec: any;
+let wave: any;
+async function startRec() {
+  await nextTick();
+  wave = Recorder.FrequencyHistogramView({
+    elem: '.canvas',
+    position: 0,
+    stripeEnable: false,
+    linear: [0, '#333', 0.5, '#333', 1, '#333'],
+    widthRatio: 0.3,
+    lineCount: 5,
+  });
+  rec = Recorder({
+    onProcess: function (buffers: any, level: any, time: any, sampleRate: any) {
+      wave.input(buffers[buffers.length - 1], level, sampleRate);
+    },
+  }); //使用默认配置，mp3格式
+
+  //打开麦克风授权获得相关资源
+  rec.open(
+    function () {
+      //开始录音
+      rec.start();
+      startAudio();
+    },
+    function (msg: string, isUserNotAllow: boolean) {
+      //用户拒绝了权限或浏览器不支持
+      alert((isUserNotAllow ? '用户拒绝了权限，' : '') + '无法录音:' + msg);
+    },
+  );
+}
+
+// 发送
+function sendRec() {
+  rec.stop(
+    async function (blob: any, duration: number) {
+      const name = new Date().toLocaleString();
+      const audioFile = new File([blob], name);
+      let info: any = await store.state.client.put(name, audioFile);
+      const userInfo = JSON.parse(getStorage('userInfo'));
+      const isGroupMsg = store.state.activeIsGroup ? 1 : 0;
+
+      const res = {
+        msgInfo: {
+          isGroupMsg,
+          fromId: userInfo.uid,
+          toId: Number(store.state.activeUid),
+          msgShowType: 1,
+          isEncrypt: 0,
+          msgContent: {
+            msgContentType: 3,
+            msgContent: 'voiceMsg',
+            voiceMsg: {
+              voiceTime: Math.ceil(duration / 1000),
+              voiceUrl: info.url,
+            },
+          },
+          type: 'voiceMsg',
+          // attachInfo: {
+          //   msgSource: route.query.msgSource,
+          // },
+        },
+      };
+
+      const data = await store.dispatch('postMsg', {
+        query: res,
+        cmd: 2001,
+        encryption: 'Aoelailiao.Message.ClientSendMsgToServerReq',
+        auth: true,
+      });
+      if (data.body.resultCode !== 0) {
+        Toast(t(data.body.resultString));
+      }
+    },
+    function (msg: string) {
+      alert('录音失败:' + msg);
+    },
+  );
+}
+
+// 取消发送
+function closeRec() {
+  //停止录音，得到了录音文件blob二进制对象，想干嘛就干嘛
+  rec.close();
+}
+
+function startAudio() {
+  setTimeout(() => {
+    if (audioTime.value < 59 && showAudio.value) {
+      startAudio();
+    }
+    audioTime.value++;
+    line.value = (audioTime.value / 60) * 100;
+  }, 1000);
+}
 </script>
 <style lang="scss" scoped>
 @import '@/style/base.scss';
@@ -293,6 +479,48 @@ onBeforeUnmount(() => {
   right: 0;
   position: absolute;
   border-top: 1px solid #eaebea;
+  .audioBox {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #fff;
+    height: 50px;
+    .line {
+      width: 100%;
+      position: absolute;
+      height: 5px;
+      background: #ededed;
+      top: -5px;
+      left: 0;
+      i {
+        display: block;
+        height: 100%;
+        background: #0085ff;
+      }
+    }
+    .left {
+      display: flex;
+      align-items: center;
+      .time {
+        margin-left: 20px;
+        display: flex;
+        align-items: center;
+        span {
+          font-size: 14px;
+          color: #333;
+          &.info {
+            margin-left: 10px;
+            color: #333;
+          }
+        }
+      }
+    }
+  }
   .content {
     height: 50px;
     padding: 0 20px;
