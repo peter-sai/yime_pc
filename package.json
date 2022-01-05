@@ -9,11 +9,11 @@
     "lint": "vue-cli-service lint",
     "iconfont-create": "npx iconfont-create && npm run lint",
     "electron": "cross-env NODE_ENV=development electron .",
-    "electron-dev": "node electron/config/electron-run-dev.js",
+    "electron-dev": "nodemon electron/config/electron-run-dev.js",
     "electron-build": "vue-cli-service build && node electron/config/electron-build-pro.js && electron-builder --dir"
   },
   "build": {
-    "productName": "vue-cli-electron",
+    "productName": "YIME",
     "appId": "com.test",
     "asar": false,
     "directories": {
@@ -21,7 +21,15 @@
     },
     "files": [
       "build/vue-build/**/*"
-    ]
+    ],
+    "mac": {
+      "entitlements": "entitlements.mac.plist",
+      "hardenedRuntime": true,
+      "extendInfo": {
+        "NSMicrophoneUsageDescription": "请允许本程序访问您的麦克风",
+        "NSCameraUsageDescription": "请允许本程序访问您的摄像头"
+      }
+    }
   },
   "dependencies": {
     "ali-oss": "^6.16.0",
@@ -61,6 +69,7 @@
     "eslint-plugin-vue": "^7.0.0",
     "js-md5": "^0.7.3",
     "node-sass": "^4.12.0",
+    "nodemon": "^2.0.15",
     "prettier": "^2.2.1",
     "sass-loader": "^8.0.2",
     "typescript": "~4.1.5"

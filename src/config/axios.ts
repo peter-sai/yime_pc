@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const request = axios.create({
-  baseURL: '',
+  baseURL: process.env.NODE_ENV === 'development' ? '' : 'https://web.yime.app',
   timeout: 5000,
 });
 

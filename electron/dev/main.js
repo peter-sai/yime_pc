@@ -1,5 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, systemPreferences } = require('electron');
+console.log(systemPreferences.getMediaAccessStatus('microphone'));
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require('path');
 

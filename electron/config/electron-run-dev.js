@@ -13,7 +13,7 @@ let dev_vue_process = null;
 // electron 服务进程
 let dev_electron_process = null;
 
-init();
+// init();
 // 启动服务
 function init() {
   // 启动Vue服务
@@ -36,10 +36,9 @@ function init() {
     });
   }
 }
-
+startElectron();
 // 启动 electron
 function startElectron() {
-  console.log(11111);
   if (dev_electron_process == null) {
     // 执行 electron 入口为 package.json 中配置的 main 属性
     dev_electron_process = exec('electron .', {});
