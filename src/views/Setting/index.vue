@@ -19,37 +19,40 @@
         </div>
       </div>
       <div class="list">
-        <Table title="切换语言" @click="goTo('/Setting/changeLang')">
+        <Table :title="t('切换语言')" @click="goTo('/Setting/changeLang')">
           <template v-slot:left>
             <Iconfont name="iconyuyan" size="20" color="#2B2C33" />
           </template>
         </Table>
-        <Table title="通知与声音" @click="goTo('/Setting/notice')">
+        <Table :title="t('通知和声音')" @click="goTo('/Setting/notice')">
           <template v-slot:left>
             <Iconfont name="icontongzhi" size="20" color="#2B2C33" />
           </template>
         </Table>
-        <Table title="安全与隐私" @click="goTo('/Setting/security')">
+        <Table :title="t('安全与隐私')" @click="goTo('/Setting/security')">
           <template v-slot:left>
             <Iconfont name="iconjiami" size="20" color="#2B2C33" />
           </template>
         </Table>
-        <Table title="意见反馈" @click="goTo('/Setting/feedback')">
+        <Table :title="t('意见反馈')" @click="goTo('/Setting/feedback')">
           <template v-slot:left>
             <Iconfont name="iconzhihangfankui" size="20" color="#2B2C33" />
           </template>
         </Table>
-        <Table title="关于YIME" @click="goLink('https://yime.app/home')">
+        <Table :title="t('关于YIME')" @click="goLink('https://yime.app/home')">
           <template v-slot:left>
             <Iconfont name="iconguanyu" size="20" color="#2B2C33" />
           </template>
         </Table>
-        <Table title="下载手机APP" @click="goLink('https://yime.app/home')">
+        <Table
+          :title="t('下载手机APP')"
+          @click="goLink('https://yime.app/home')"
+        >
           <template v-slot:left>
             <Iconfont name="iconshoujihaoma1" size="20" color="#2B2C33" />
           </template>
         </Table>
-        <Table title="退出" @click="logOut">
+        <Table :title="t('退出登录')" @click="logOut">
           <template v-slot:left>
             <Iconfont name="icontuichu1" size="20" color="#2B2C33" />
           </template>

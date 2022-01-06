@@ -915,4 +915,13 @@ export default {
   设置主题: 'set up themes',
   浅色主题: 'Light theme',
   深色主题: 'Dark theme',
+  '请在App客户端, 查看阅后即焚消息':
+    'Please check the burn after reading message on the app client',
+  下载手机APP: 'Download Mobile App',
+  '为了您的帐户安全，请用手机app进行群设置':
+    'For your account security, please use the mobile app for group settings',
+  请选择一个对话开始聊天: 'Please select a conversation to start chatting',
+  群资料: 'Group data',
+  群聊名称: 'Group chat name',
+  请输入群聊名称: 'Please enter group chat name',
 };

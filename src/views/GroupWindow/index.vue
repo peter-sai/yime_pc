@@ -18,6 +18,8 @@
       <Message
         v-if="groupDetailInfo.groupId"
         :groupDetailInfo="groupDetailInfo"
+        @toggleBox="toggleBox"
+        @changeTag="changeTag"
       />
     </div>
 
@@ -75,12 +77,47 @@
           />
         </div>
       </transition>
+
+      <transition name="fade-transform1" mode="out-in">
+        <div v-if="showBox && tag === Etag.UserInfo" class="boxContent">
+          <!-- 用户资料 -->
+          <UserInfo
+            :userDetailInfo="userDetailInfo"
+            :yUserInfo="userInfo"
+            :onlineInfo="onlineInfo"
+            @toggleBox="toggleBox"
+            @changeTag="changeTag"
+          />
+        </div>
+      </transition>
+      <!-- 共同群聊 -->
+      <transition name="fade-transform1" mode="out-in">
+        <div v-if="showBox && tag === Etag.CommonGroup" class="boxContent">
+          <CommonGroup @toggleBox="toggleBox" @changeTag="changeTag" />
+        </div>
+      </transition>
+      <!-- 云文件 -->
+      <transition name="fade-transform1" mode="out-in">
+        <div v-if="showBox && tag === Etag.CloudFile" class="boxContent">
+          <CloudFile @toggleBox="toggleBox" @changeTag="changeTag" />
+        </div>
+      </transition>
+      <!-- 创建群聊 -->
+      <transition name="fade-transform1" mode="out-in">
+        <div v-if="showBox && tag === Etag.CreateGroupChat" class="boxContent">
+          <Recommend
+            @toggleBox="toggleBox"
+            :isCreateGroupChat="true"
+            @changeTag="changeTag"
+          />
+        </div>
+      </transition>
     </div>
   </div>
 </template>
 <script lang="ts">
 import { initStore, key } from '@/store';
-import { IGroupInfo } from '@/types/user';
+import { IGroupInfo, IUserDetailInfo, IUserInfo } from '@/types/user';
 import {
   defineComponent,
   ref,
@@ -92,6 +129,10 @@ import {
   computed,
   ComputedRef,
 } from 'vue';
+import UserInfo from '../Layout/Chat/userInfo.vue';
+import Recommend from '../Layout/Chat/recommend.vue';
+import CloudFile from '../Layout/Chat/cloudFile.vue';
+import CommonGroup from '../Layout/Chat/commonGroup.vue';
 import Message from '../Window/message.vue';
 import { Store, useStore } from 'vuex';
 import GroupChatHeader from './header.vue';
@@ -124,7 +165,6 @@ async function getGroupInfo(store: Store<initStore>) {
       auth: true,
     });
     msgItem.value = data.body;
-    console.log(msgItem.value);
 
     const item = {
       id: data.body.groupDetailInfo.groupId,
@@ -144,9 +184,31 @@ async function getGroupInfo(store: Store<initStore>) {
 <script setup lang="ts">
 defineEmits(['toggleBox', 'changeTag']);
 const { t } = useI18n();
+const userInfo: Ref<IUserInfo> = ref({}) as Ref<IUserInfo>; // 需要显示详情用户的信息
+const userDetailInfo: Ref<IUserDetailInfo> = ref({}) as Ref<IUserDetailInfo>; // 需要显示详情用户的信息
 // 是否显示右侧
 const showBox = ref(false);
-const toggleBox = () => {
+const toggleBox = async (uid?: number) => {
+  if (!showBox.value) {
+    const userId = uid || store.state.activeUid;
+    store.commit('SET_USERUID', userId);
+  }
+  let msgItem: ImsgItem = store.state.msgList[store.state.userUid!];
+  // 如果不存在则获取 (单聊不在聊天列表中会没有信息)
+  if (!msgItem) {
+    const res = {
+      uid: store.state.userUid,
+    };
+    const data = await store.dispatch('postMsg', {
+      query: res,
+      cmd: 1011,
+      encryption: 'Aoelailiao.Login.ClientGetUserInfoReq',
+      auth: true,
+    });
+    msgItem = data.body;
+  }
+  userDetailInfo.value = msgItem.userDetailInfo || {};
+  userInfo.value = msgItem.userDetailInfo?.userInfo || {};
   showBox.value = !showBox.value;
 };
 // 右侧显示的内容

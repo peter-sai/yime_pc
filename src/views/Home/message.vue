@@ -1,8 +1,13 @@
 <template>
   <div style="flex: 1" @click.stop="showMenu = 0">
     <MessageHeader />
+    <div
+      v-if="!msgList.length"
+      style="position: absolute; left: 0; right: 0; bottom: 50px; top: 50px"
+    >
+      <Errors id="2" />
+    </div>
     <div class="message">
-      <Errors v-if="!msgList.length" id="2" />
       <div
         class="tableItem"
         @contextmenu="contextmenu($event, item)"
@@ -337,6 +342,17 @@ const clientSendMsgAckToServer = (msgInfos: IMsgInfo<TMsgContent>[]) => {
 };
 
 const init = async () => {
+  const res = await store.dispatch('postMsg', {
+    query: {
+      type: 0,
+      uid: store.state.userInfo.uid,
+    },
+    cmd: 5001,
+    encryption: 'Aoelailiao.Message.AtInfo',
+    auth: true,
+  });
+  console.log(res);
+
   // 一、 获取离线数据
   const { offlineMsgInfos } = await useGetOfflineMsg(store);
 

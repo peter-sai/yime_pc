@@ -36,7 +36,8 @@
           </div>
           <Table :title="item.name" hideMore @click="toggleActive(item)">
             <template v-slot:left>
-              <img :src="item.icon" alt="" />
+              <img v-if="item.icon" :src="item.icon" alt="" />
+              <Iconfont v-else name="iconlianxiren" size="30" color="#A8B5BE" />
             </template>
             <template v-slot:right>
               <Iconfont
@@ -101,6 +102,7 @@ const { t } = useI18n();
 const store = useStore(key);
 const list: Ref<IContacts[]> = ref([]);
 const activeUid = store.state.activeUid;
+const userId = store.state.userUid;
 const search = ref('');
 // 获取列表
 const init = async () => {
@@ -119,9 +121,8 @@ const init = async () => {
     );
     list.value.forEach((e: IContacts) => {
       e.name = (e.userAttachInfo && e.userAttachInfo.remarkName) || e.nickname;
-      // e.active = false;
       e.tag = getTag(e);
-      if (Number(e.uid) === Number(activeUid)) {
+      if (Number(e.uid) === Number(userId)) {
         e.active = true;
       } else {
         e.active = false;
@@ -140,7 +141,7 @@ const newList = computed(() =>
 
 // 切换选中状态
 const toggleActive = (item: IContacts) => {
-  if (Number(item.uid) === Number(store.state.activeUid)) return;
+  if (Number(item.uid) === Number(userId)) return;
   item.active = !item.active;
 };
 

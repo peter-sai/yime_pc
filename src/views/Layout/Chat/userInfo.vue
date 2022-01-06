@@ -17,7 +17,6 @@
           <div class="userName">{{ yUserInfo?.nickname }}</div>
           <div class="phone">
             <Iconfont name="iconshoujihaoma" size="10" color="#929292" />
-            <!-- +86 156 0508 9976 -->
             {{ userDetailInfo?.phone }}
           </div>
           <div class="uid">
@@ -25,7 +24,7 @@
             {{ yUserInfo?.imAccount }}
           </div>
           <!-- 按钮 -->
-          <div class="btn" @click="$emit('toggleBox')">发消息</div>
+          <div class="btn" @click="send">发消息</div>
         </div>
       </div>
       <div class="main">
@@ -286,8 +285,8 @@ function useBeforeBlacklist(
 }
 </script>
 <script setup lang="ts">
-defineEmits(['toggleBox', 'changeTag']);
-defineProps({
+const emit = defineEmits(['toggleBox', 'changeTag']);
+const props = defineProps({
   userDetailInfo: {
     type: Object as PropType<IUserDetailInfo>,
   },
@@ -334,6 +333,13 @@ const clientCleanMsg = () => {
       Toast(t(data.body.resultString));
     },
   });
+};
+
+// 点击发送消息
+const send = () => {
+  emit('toggleBox');
+  store.commit('SET_ACTIVEUID', props.yUserInfo?.uid);
+  store.commit('SET_ACTIVEISGROUP', false);
 };
 </script>
 <style lang="scss" scoped>

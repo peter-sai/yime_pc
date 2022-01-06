@@ -5,7 +5,7 @@
       disable-left
       @left-click="$emit('changeTag', Etag.UserInfo)"
     />
-    <div style="flex: 1; padding: 0 20px">
+    <div style="position: absolute; left: 0; right: 0; bottom: 0; top: 50px">
       <Error v-if="!list.length" id="4" />
       <a
         :href="item.msgContent.fileInfo.fileUrl"
@@ -28,11 +28,6 @@
           </template>
         </TableDouble>
       </a>
-      <!-- <TableDouble title="OLA官网原型1113.doc" sub-title="144Mb">
-        <template v-slot:userImg>
-          <Iconfont name="iconpdf" size="36" />
-        </template>
-      </TableDouble> -->
     </div>
   </div>
 </template>
@@ -61,7 +56,7 @@ const init = async () => {
   const data = await store.dispatch('postMsg', {
     query: {
       isGroupMsg: 0, //0--单聊信息,1--群聊信息
-      objectId: store.state.activeUid, //对方uid或者群id
+      objectId: store.state.userUid, //对方uid或者群id
       // msg_id_min = 3;//消息起始ID
       // msgNum: 50, //想要获取的聊天记录条数，默认为20
     },

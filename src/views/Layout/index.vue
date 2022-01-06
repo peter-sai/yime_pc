@@ -9,7 +9,7 @@
     </div>
     <div class="right">
       <div class="noChat chat" v-if="!store.state.activeUid">
-        <div>请选择一个对话开始聊天</div>
+        <div>{{ t('请选择一个对话开始聊天') }}</div>
       </div>
       <div class="chat" v-else>
         <!-- 反馈&系统消息 -->
@@ -40,6 +40,7 @@ import Window from '../Window/index.vue';
 import GroupWindow from '../GroupWindow/index.vue';
 import { useStore } from 'vuex';
 import { key } from '@/store';
+import { useI18n } from 'vue-i18n';
 
 export enum Etag {
   UserInfo,
@@ -58,6 +59,7 @@ export default defineComponent({
 </script>
 <script setup lang="ts">
 const store = useStore(key);
+const { t } = useI18n();
 </script>
 <style lang="scss" scoped>
 .layout {
@@ -96,7 +98,8 @@ const store = useStore(key);
           color: #828282;
           line-height: 18px;
           letter-spacing: 1px;
-          width: 189px;
+          // width: 189px;
+          padding: 0 20px;
           height: 26px;
           background: #f3f3f6;
           border-radius: 13px;

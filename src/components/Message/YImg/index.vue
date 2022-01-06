@@ -1,6 +1,6 @@
 <template>
   <div class="yImg">
-    <div>
+    <div @click="$emit('click')">
       <img class="userImg" :src="userInfo?.icon" />
     </div>
     <div>
@@ -19,8 +19,7 @@ import {
   defineComponent,
   defineProps,
   PropType,
-  ref,
-  useSlots,
+  defineEmits,
 } from 'vue';
 import SayHello from '../SayHello/index.vue';
 import { useI18n } from 'vue-i18n';
@@ -58,6 +57,7 @@ defineProps({
 const { t } = useI18n();
 const store = useStore(key);
 const isGroup = computed(() => store.state.activeIsGroup);
+defineEmits(['click']);
 </script>
 <style lang="scss" scoped>
 @import '@/style/theme/index.scss';
