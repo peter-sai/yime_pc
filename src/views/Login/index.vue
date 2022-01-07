@@ -161,7 +161,7 @@ function useGetCode(
     if (!query.phone) {
       return Toast('请输入手机号');
     }
-    if (codeMsg.value === '获取验证码') {
+    if (codeMsg.value === t('获取验证码')) {
       showLoading();
       const res = {
         phone: '+' + areaCode.value + query.phone,

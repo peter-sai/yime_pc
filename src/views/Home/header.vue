@@ -7,7 +7,7 @@
       @click="goTo('/setting')"
     />
     <div class="input">
-      <Search placeholder="用户、群组与消息" />
+      <Search :placeholder="t('用户、群组与消息')" />
     </div>
     <Iconfont
       name="iconsearch"
@@ -39,8 +39,10 @@ import Search from '@/components/Search/index.vue';
 import { useGoTo } from '@/hooks/router';
 import { useRouter } from 'vue-router';
 import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 const goTo = useGoTo(useRouter);
 const showBox = ref(false);
+const { t } = useI18n();
 </script>
 <style lang="scss" scoped>
 @import '@/style/base.scss';

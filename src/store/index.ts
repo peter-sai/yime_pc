@@ -10,6 +10,8 @@ import {
 import { useGetOfflineMsg } from '@/api/app';
 import { IMsgInfo, ImsgItem, TMsgContent } from '@/types/msg';
 import { IUserDetailInfo } from '@/types/user';
+import { useClientSendMsgAckToServer, mergeData } from '@/hooks/window';
+
 const OSS = require('ali-oss');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const protoRoot = require('@/protoBuild/proto');
@@ -64,6 +66,7 @@ const initState = {
     whoCanInviteMeGroup: 0, ///谁能拉我进群 0-所有人 1-仅好友 2-没有人,默认为0表示所有人可以拉我进去
     refuseStrangerMessage: 0, ///拒绝陌生人消息 0-关闭 1--打开 默认为0表示默认接收陌生人消息
   },
+  userUid: 0, // 用来判断显示哪个用户详情
   userDetailInfo: {
     userInfo: {
       uid: 0,
@@ -135,6 +138,9 @@ const sotreRoot = createStore({
     SET_PLAYAUDIO: (state, res) => {
       state.playAudio = res;
     },
+    SET_USERUID: (state, res) => {
+      state.userUid = res;
+    },
     SET_MSGLIST: (state, res) => {
       state.msgList = res;
     },
@@ -147,7 +153,12 @@ const sotreRoot = createStore({
     ADD_MSGLIST: (state, { res, id, groupDetailInfo, userDetailInfo }) => {
       if (state.msgList[id]) {
         state.msgList[id].readList.push(res);
-        if (Number(res.fromId) !== Number(state.userInfo.uid)) {
+        if (
+          Number(res.fromId) !== Number(state.userInfo.uid) &&
+          (res.isGroupMsg
+            ? Number(res.toId) !== Number(state.activeUid)
+            : Number(res.fromId) !== Number(state.activeUid))
+        ) {
           state.msgList[id].unReadNum++;
         }
         state.msgList[id].lastMsg = res;
@@ -209,11 +220,13 @@ const sotreRoot = createStore({
           const userList = getStorage('userList');
           if (!userList) return;
 
-          // if (getToken()) {
-          //   const { offlineMsgInfos } = await useGetOfflineMsg(sotreRoot);
-
-          //   sotreRoot.commit('SET_OFFLINEMSGS', offlineMsgInfos);
-          // }
+          if (getToken()) {
+            const { offlineMsgInfos } = await useGetOfflineMsg(sotreRoot);
+            // 发送ack
+            clientSendMsgAckToServer(offlineMsgInfos);
+            // 合并数据
+            await mergeData(offlineMsgInfos, sotreRoot);
+          }
         };
       }
     },
@@ -443,6 +456,11 @@ function getMessage(cmd: any, encryption: any, state: any) {
             'Aoelailiao.Message.ServerSendMsgToClientNotify',
           );
         }
+        if (ansCmd === 5002) {
+          LogOutAns = protoRoot.lookup(
+            'Aoelailiao.Message.ServerSendMsgToClientNotify',
+          );
+        }
         if (ansCmd === 2148) {
           LogOutAns = protoRoot.lookup(
             'Aoelailiao.Message.ServerSendMsgHasReadedInfoToClientNotify',
@@ -584,5 +602,16 @@ async function heartbeat(dispatch: any, ws: any) {
     num++;
   }
 }
+
+// 发送ack
+const clientSendMsgAckToServer = (msgInfos: IMsgInfo<TMsgContent>[]) => {
+  const lastMsgInfo =
+    msgInfos.length > 0 ? msgInfos[msgInfos.length - 1] : null;
+  if (lastMsgInfo) {
+    const { msgId, fromId, toId } = lastMsgInfo;
+    const ackToServer = useClientSendMsgAckToServer(sotreRoot);
+    ackToServer(msgId, fromId, toId, 1);
+  }
+};
 
 export default sotreRoot;

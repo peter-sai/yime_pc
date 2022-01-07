@@ -1,32 +1,44 @@
 <template>
   <div class="editGroup">
     <NavigationBar
-      title="群资料"
+      :title="t('群资料')"
       disable-left
       @left-click="$emit('changeTag', Etag.GroupInfo)"
     />
     <div style="flex: 1">
       <div class="header">
-        <img src="../../../../public/img/notice.svg" alt="" />
+        <!-- <img src="../../../../public/img/notice.svg" alt="" /> -->
+        <div class="userImg">
+          <img
+            v-if="groupDetailInfo?.groupIcon"
+            :src="groupDetailInfo?.groupIcon"
+            alt=""
+          />
+          <span v-else>{{
+            groupDetailInfo?.groupName
+              ? groupDetailInfo?.groupName.substr(0, 1).toLocaleUpperCase()
+              : ''
+          }}</span>
+        </div>
       </div>
       <div class="main">
-        <div class="info">群聊名称</div>
+        <div class="info">{{ t('群聊名称') }}</div>
         <div class="input">
           <input
             type="text"
-            placeholder="请输入新的群名称"
+            :placeholder="t('请输入新的群名称')"
             v-model="groupName"
           />
         </div>
-        <div class="info">群公告</div>
+        <div class="info">{{ t('群公告') }}</div>
         <div class="input">
           <textarea
-            placeholder="请输入新的群公告内容"
+            :placeholder="t('请输入群公告内容')"
             v-model="notice"
           ></textarea>
         </div>
       </div>
-      <div class="btn" @click="submit">保存修改</div>
+      <div class="btn" @click="submit">{{ t('保存') }}</div>
     </div>
   </div>
 </template>
@@ -118,11 +130,26 @@ const submit = async () => {
   .header {
     text-align: center;
     margin: 20px 0;
-    img {
+    .userImg {
+      margin: 0 0 8px;
       width: 60px;
       height: 60px;
-      overflow: hidden;
       border-radius: 50%;
+      background: #f0f0f0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 10px;
+      span {
+        color: #0085ff;
+        font-size: 32px;
+      }
+      img {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        overflow: hidden;
+      }
     }
   }
   .main {

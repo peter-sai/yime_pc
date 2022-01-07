@@ -1,9 +1,9 @@
 <template>
   <div class="mmsg">
-    <img :src="userInfo?.icon" />
+    <img @click="$emit('click')" :src="userInfo?.icon" />
     <div>
       <div style="flex: 1">
-        <div class="fileBg">
+        <div class="fileBg" @click="$emit('clickCard')">
           <div class="left">
             <div class="title">{{ t(item.showContent) }}</div>
             <div class="content">
@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, defineProps } from 'vue';
+import { defineComponent, defineProps, defineEmits } from 'vue';
 import { PropType } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { IUserInfo } from '@/types/user';
@@ -31,6 +31,7 @@ defineComponent({
 });
 </script>
 <script lang="ts" setup>
+defineEmits(['click', 'clickCard']);
 defineProps({
   item: {
     type: Object as PropType<IVisitingCard>,

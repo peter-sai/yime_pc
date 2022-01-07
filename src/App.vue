@@ -101,6 +101,8 @@ const stop = watch(
         msgClassTitle: '用户反馈消息',
         updateTime: data.body.updateTime,
       };
+      console.log(res);
+
       store.commit('ADD_NOTIFY', { id: 2, res });
     }
     // 监听接受消息
@@ -114,8 +116,6 @@ const stop = watch(
           (e: any) => Number(e.msgId) === Number(revokeMsgId),
         );
         msgList[msgInfos[0].fromId].readList.splice(revokeKey, 1);
-        console.log(msgList, revokeKey);
-
         store.commit('SET_MSGLIST', msgList);
       }
 
@@ -142,6 +142,7 @@ const stop = watch(
         return;
 
       if (msgInfos[0].isGroupMsg) {
+        // 发送ack
         const res = {
           msgHasReadedInfo: {
             isGroupMsg: 1,
@@ -157,6 +158,25 @@ const stop = watch(
             'Aoelailiao.Message.UserUpdateConversationHasReadedMsgInfoReq',
           auth: true,
         });
+        // 如果是群聊并且是系统消息则更新本地缓存群详情
+        if (msgInfos[0].msgContent.msgContent === 'systemNotifyInfo') {
+          const item = msgInfos[0];
+          // 群聊获取群详情
+          const data = await store.dispatch('postMsg', {
+            query: { groupId: item.toId },
+            cmd: 1029,
+            encryption: 'Aoelailiao.Login.ClientGetGroupInfoReq',
+            auth: true,
+          });
+          const groupDetailInfo = data.body.groupDetailInfo;
+          const res = store.state.msgList[item.toId];
+          res.groupDetailInfo = groupDetailInfo;
+
+          store.commit('SET_MSGLISTITEM', {
+            res: res,
+            uid: item.toId,
+          });
+        }
       } else {
         const res = {
           msgHasReadedInfo: {

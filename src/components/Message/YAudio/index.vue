@@ -1,6 +1,6 @@
 <template>
   <div class="mmsg">
-    <div>
+    <div @click="$emit('click')">
       <img :src="userInfo?.icon" />
     </div>
     <ImBg>
@@ -29,7 +29,7 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, defineProps } from 'vue';
+import { defineComponent, defineProps, defineEmits } from 'vue';
 import ImBg from '../ImgBg/index.vue';
 import Iconfont from '@/iconfont/index.vue';
 import { watch, computed, onDeactivated } from '@vue/runtime-core';
@@ -44,6 +44,7 @@ export default defineComponent({
 });
 </script>
 <script lang="ts" setup>
+defineEmits(['click']);
 const props = defineProps({
   userInfo: {
     type: Object,

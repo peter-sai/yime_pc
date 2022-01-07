@@ -6,6 +6,7 @@
       @left-click="$emit('changeTag', Etag.UserInfo)"
     />
     <div class="content">
+      <Errors v-if="!commonGroup.length" id="4" />
       <Table
         :title="item.groupName"
         hide-more
@@ -38,6 +39,7 @@ import { Etag } from '../index.vue';
 import { useStore } from 'vuex';
 import { key } from '@/store';
 import { ref, Ref } from 'vue';
+import Errors from '../../Errors/index.vue';
 import { IGroupInfo } from '@/types/user';
 const emit = defineEmits(['changeTag', 'toggleBox']);
 const store = useStore(key);
@@ -53,7 +55,7 @@ const setGroupWindow = (e: IGroupInfo) => {
 async function init() {
   // 获取共同群聊
   const data = await store.dispatch('postMsg', {
-    query: { uid: store.state.activeUid },
+    query: { uid: store.state.userUid },
     cmd: 1179,
     encryption: 'Aoelailiao.Login.GetCommonGroupReq',
     auth: true,

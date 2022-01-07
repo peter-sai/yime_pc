@@ -3,42 +3,49 @@
     <SystemWindowHeader :title="title" :icon="icon" />
     <!-- 消息内容 -->
     <div class="msg" v-if="store.state.activeUid === 1">
-      <div class="mmsg" v-for="item in systemList" :key="item">
-        <div class="img">
-          <img src="img/systemNotify.svg" />
-        </div>
-        <div>
-          <ImgBg>
-            <span class="SystemWindowContent" v-html="item"></span>
-          </ImgBg>
+      <div v-for="item in systemList" :key="item">
+        <Time>{{ formateTime(item.time, t) }}</Time>
+        <div class="mmsg">
+          <div class="img">
+            <img src="img/systemNotify.svg" />
+          </div>
+          <div>
+            <ImgBg>
+              <span class="SystemWindowContent" v-html="item.text"></span>
+            </ImgBg>
+          </div>
         </div>
       </div>
     </div>
     <!-- 用户反馈 -->
     <div class="msg" v-else>
-      <Time>{{ formateTime(feedback.feedbackTime, t) }}</Time>
-      <div
-        style="
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          justify-content: flex-end;
-          align-items: flex-end;
-        "
-      >
-        <div class="box">
-          <ImgBg isMe>{{ feedback.feedbackContent }}</ImgBg>
+      <div v-for="item in feedbackList" :key="item.msgId">
+        <Time>{{ formateTime(item.userFeedbackMsg.feedbackTime, t) }}</Time>
+        <div
+          style="
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: flex-end;
+          "
+        >
+          <div class="box">
+            <ImgBg isMe>{{ item.userFeedbackMsg.feedbackContent }}</ImgBg>
+          </div>
         </div>
-      </div>
-      <Time>{{ formateTime(feedback.replyTime, t) }}</Time>
-      <div class="mmsg">
-        <div class="img">
-          <img src="img/feedback.svg" />
-        </div>
-        <div>
-          <ImgBg>
-            <span class="SystemWindowContent">{{ feedback.replyContent }}</span>
-          </ImgBg>
+        <Time>{{ formateTime(item.userFeedbackMsg.replyTime, t) }}</Time>
+        <div class="mmsg">
+          <div class="img">
+            <img src="img/feedback.svg" />
+          </div>
+          <div>
+            <ImgBg>
+              <span class="SystemWindowContent">{{
+                item.userFeedbackMsg.replyContent
+              }}</span>
+            </ImgBg>
+          </div>
         </div>
       </div>
     </div>
@@ -67,6 +74,7 @@ async function userGetSystemNoticeContent(store: Store<initStore>) {
     encryption: 'Aoelailiao.Message.UserGetSystemNoticeContentListReq',
     auth: true,
   });
+
   return data.body.msgContent;
 }
 </script>
@@ -76,6 +84,7 @@ import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 const store = useStore(key);
 const systemList = ref([]);
+const feedbackList = ref([]);
 const feedback = reactive({
   feedbackContent: '',
   replyContent: '',
@@ -105,20 +114,24 @@ const init = async () => {
     // 系统通知详情
     systemList.value = data.map((e: any) => {
       let text = '';
+      let time = 0;
       try {
         text = JSON.parse(e.systemNoticeMsg.systemNoticeContent).Jt;
+        time = e.updateTime;
       } catch (error) {
         text = '';
+        time = 0;
       }
-      return text;
+      return { text, time };
     });
   } else {
     // 反馈
     if (data.length) {
-      feedback.feedbackContent = data[0].userFeedbackMsg.feedbackContent;
-      feedback.feedbackTime = data[0].userFeedbackMsg.feedbackTime;
-      feedback.replyContent = data[0].userFeedbackMsg.replyContent;
-      feedback.replyTime = data[0].userFeedbackMsg.replyTime;
+      feedbackList.value = data;
+      // feedback.feedbackContent = data[0].userFeedbackMsg.feedbackContent;
+      // feedback.feedbackTime = data[0].userFeedbackMsg.feedbackTime;
+      // feedback.replyContent = data[0].userFeedbackMsg.replyContent;
+      // feedback.replyTime = data[0].userFeedbackMsg.replyTime;
     }
   }
 };

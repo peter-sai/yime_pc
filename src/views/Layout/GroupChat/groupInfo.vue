@@ -1,6 +1,6 @@
 <template>
   <div class="groupInfo">
-    <NavigationBar title="群资料" hide-left disable-left>
+    <NavigationBar :title="t('群资料')" hide-left disable-left>
       <template v-slot:left>
         <Iconfont
           class="pointer"
@@ -9,7 +9,7 @@
           size="20"
         />
       </template>
-      <template v-slot:right>
+      <template v-slot:right v-if="isRoot || isAdmin">
         <Iconfont
           @click="$emit('changeTag', Etag.EditGroup)"
           class="pointer"
@@ -113,7 +113,7 @@
           <Table
             title="群管理"
             v-if="isRoot || isAdmin"
-            @click="Toast('为了您的帐户安全，请用手机app进行群设置')"
+            @click="Toast(t('为了您的帐户安全，请用手机app进行群设置'))"
           >
             <template v-slot:left>
               <Iconfont name="iconyaoqinghaoyou" size="15" />
@@ -155,7 +155,10 @@
                   color="#A8B5BE"
                 />
               </template>
-              <template v-slot:right v-if="isRoot && !item.isRoot">
+              <template
+                v-slot:right
+                v-if="(isRoot || isAdmin) && !item.isRoot && !item.isAdmin"
+              >
                 <div class="del" @click="del(item)">删除</div>
               </template>
             </TableDouble>
@@ -213,12 +216,20 @@ async function getGroupMemberUserInfos(
     encryption: 'Aoelailiao.Login.ClientGetUserInfoListReq',
     auth: true,
   });
+  console.log(res.body);
+
   groupMemberUserInfos.value = (res.body.userInfo || []).map((e: any) => {
     e.isRoot = false;
+    e.isAdmin = false;
     if (
       Number(e.uid) === Number(props.groupDetailInfo?.groupMemberLists.rootUid)
     ) {
       e.isRoot = true;
+    }
+    if (
+      props.groupDetailInfo?.groupMemberLists?.adminUidList?.includes(e.uid)
+    ) {
+      e.isAdmin = true;
     }
     return e;
   });

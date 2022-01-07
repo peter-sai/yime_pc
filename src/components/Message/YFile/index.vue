@@ -1,6 +1,6 @@
 <template>
   <div class="ymsg">
-    <div>
+    <div @click="$emit('click')">
       <img :src="userInfo?.icon" />
     </div>
     <div>
@@ -25,7 +25,7 @@ import {
   defineProps,
   PropType,
   ref,
-  useSlots,
+  defineEmits,
 } from 'vue';
 import Iconfont from '@/iconfont/index.vue';
 import { useRouter, useRoute } from 'vue-router';
@@ -43,6 +43,7 @@ defineComponent({
 });
 </script>
 <script lang="ts" setup>
+defineEmits(['click']);
 const props = defineProps({
   userInfo: {
     type: Object as PropType<IUserInfo>,

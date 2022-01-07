@@ -1,7 +1,7 @@
 <template>
   <div class="mmsg">
     <div style="flex: 1">
-      <div class="fileBg">
+      <div class="fileBg" @click="$emit('clickCard')">
         <div class="left">
           <div class="title">{{ t(item.showContent) }}</div>
           <div class="content">
@@ -18,12 +18,13 @@
 import IsRead from '@/components/IsRead/index.vue';
 import { useI18n } from 'vue-i18n';
 import { IVisitingCard } from '@/types/msg';
-import { PropType, defineComponent, defineProps } from 'vue';
+import { PropType, defineComponent, defineProps, defineEmits } from 'vue';
 export default defineComponent({
   name: 'MVisitingCard',
 });
 </script>
 <script lang="ts" setup>
+defineEmits(['clickCard']);
 defineProps({
   isRead: {
     type: Boolean,

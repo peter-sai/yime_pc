@@ -1,6 +1,6 @@
 <template>
   <div class="mmsg">
-    <div class="img" @click="goTo">
+    <div class="img" @click="$emit('click')">
       <Iconfont v-if="userInfo?.isBotUser" name="iconbianzu16" size="44" />
       <img v-else :src="userInfo?.icon" />
     </div>
@@ -19,6 +19,7 @@ import {
   useSlots,
   PropType,
   computed,
+  defineEmits,
 } from 'vue';
 import ImBg from '../ImgBg/index.vue';
 import Iconfont from '@/iconfont/index.vue';
@@ -31,6 +32,7 @@ export default defineComponent({
 });
 </script>
 <script lang="ts" setup>
+defineEmits(['click']);
 defineProps({
   userInfo: {
     type: Object as PropType<IUserInfo>,
@@ -43,10 +45,6 @@ const slots: any = useSlots();
 const list = slots.default()[0].children
   ? slots.default()[0].children.split('\n\n')
   : [];
-
-const goTo = () => {
-  console.log(22);
-};
 </script>
 <style lang="scss" scoped>
 @import '@/style/theme/index.scss';

@@ -22,16 +22,21 @@
       <div class="item" v-if="item.type === 'stringContent'">
         <!-- 阅后即焚 -->
         <div v-if="item.msgShowType === 3">
-          <Ymsg :userInfo="getUserInfo(item)" v-if="isShowHowComponent(item)">
-            请在App客户端, 查看阅后即焚消息
+          <Ymsg
+            @click="showUserInfo(getUserInfo(item).uid)"
+            :userInfo="getUserInfo(item)"
+            v-if="isShowHowComponent(item)"
+          >
+            {{ t('请在App客户端, 查看阅后即焚消息') }}
           </Ymsg>
           <Mmsg :isRead="item.msgId <= readMsgId" v-else>
-            请在App客户端, 查看阅后即焚消息
+            {{ t('请在App客户端, 查看阅后即焚消息') }}
           </Mmsg>
         </div>
         <!-- 普通消息 -->
         <div v-else>
           <Ymsg
+            @click="showUserInfo(getUserInfo(item).uid)"
             @menuClick="menuClick($event, item)"
             :userInfo="getUserInfo(item)"
             v-if="isShowHowComponent(item)"
@@ -47,9 +52,28 @@
           </Mmsg>
         </div>
       </div>
+      <!-- at消息 -->
+      <div class="item" v-else-if="item.type === 'groupAtInfo'">
+        <Ymsg
+          @click="showUserInfo(getUserInfo(item).uid)"
+          @menuClick="menuClick($event, item)"
+          :userInfo="getUserInfo(item)"
+          v-if="isShowHowComponent(item)"
+        >
+          {{ item.msgContent.groupAtInfo.stringContent }}
+        </Ymsg>
+        <Mmsg
+          @menuClick="menuClick($event, item)"
+          :isRead="item.msgId <= readMsgId"
+          v-else
+        >
+          {{ item.msgContent.groupAtInfo.stringContent }}
+        </Mmsg>
+      </div>
       <!-- 图片消息 -->
       <div class="item" v-else-if="item.type === 'imageMsg'">
         <YImg
+          @click="showUserInfo(getUserInfo(item).uid)"
           v-if="isShowHowComponent(item)"
           @menuClick="menuClick($event, item)"
           :userInfo="getUserInfo(item)"
@@ -65,6 +89,7 @@
       <!-- 文件消息 -->
       <div class="item" v-else-if="item.type === 'fileInfo'">
         <YFile
+          @click="showUserInfo(getUserInfo(item).uid)"
           v-if="isShowHowComponent(item)"
           @menuClick="menuClick($event, item)"
           :userInfo="getUserInfo(item)"
@@ -80,12 +105,15 @@
       <!-- 名片 -->
       <div class="item" v-else-if="item.type === 'visitingCard'">
         <YVisitingCard
+          @clickCard="showUserInfo(item.msgContent.visitingCard.uid)"
+          @click="showUserInfo(getUserInfo(item).uid)"
           :userInfo="getUserInfo(item)"
           v-if="isShowHowComponent(item)"
           :item="item.msgContent.visitingCard"
         />
         <MVisitingCard
           v-else
+          @clickCard="showUserInfo(item.msgContent.visitingCard.uid)"
           :item="item.msgContent.visitingCard"
           :isRead="item.msgId <= readMsgId"
         />
@@ -93,6 +121,7 @@
       <!-- 音视频消息 -->
       <div class="item" v-else-if="item.type === 'voiceMsg'">
         <YAudio
+          @click="showUserInfo(getUserInfo(item).uid)"
           v-if="isShowHowComponent(item)"
           :userInfo="getUserInfo(item)"
           :voiceMsg="item.msgContent.voiceMsg"
@@ -175,8 +204,9 @@ import MAudio from '@/components/Message/MAudio/index.vue';
 import { useStore } from 'vuex';
 import { key } from '@/store';
 import { useI18n } from 'vue-i18n';
-import { IFireInfo, IMsgInfo, ImsgItem } from '@/types/msg';
+import { IFireInfo, IMsgInfo, ImsgItem, IVisitingCard } from '@/types/msg';
 import { formateTime } from '@/utils/utils';
+import { Etag } from '../Layout/index.vue';
 import {
   useSendImg,
   useSystemNotifyInfo,
@@ -187,7 +217,13 @@ import { IGroupInfo, IUserInfo } from '@/types/user';
 import { Toast } from '@/plugin/Toast';
 import ClipboardJS from 'clipboard';
 const store = useStore(key);
-defineEmits(['menuClick', 'contextmenu']);
+const emit = defineEmits(['toggleBox', 'changeTag']);
+
+// 显示用户详情
+const showUserInfo = (uid: number) => {
+  emit('toggleBox', uid);
+  emit('changeTag', Etag.UserInfo);
+};
 const { t } = useI18n();
 const style = ref({
   left: 0,

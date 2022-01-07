@@ -56,7 +56,7 @@ const list = ['contacts', 'addContact', 'group', 'blacklist'];
     overflow: auto;
     flex: 1;
     padding-bottom: 50px;
-    display: flex;
+    // display: flex;
   }
   .footer {
     display: flex;

@@ -21,7 +21,11 @@
 
     <!-- 消息内容 -->
     <div class="msg">
-      <Message :yUserInfo="yUserInfo" />
+      <Message
+        :yUserInfo="yUserInfo"
+        @toggleBox="toggleBox"
+        @changeTag="changeTag"
+      />
     </div>
 
     <Bottom
@@ -52,7 +56,7 @@
           <!-- 用户资料 -->
           <UserInfo
             :userDetailInfo="userDetailInfo"
-            :yUserInfo="yUserInfo"
+            :yUserInfo="userInfo"
             :onlineInfo="onlineInfo"
             @toggleBox="toggleBox"
             @changeTag="changeTag"
@@ -157,7 +161,7 @@ const useGetDetail = async (
     isBotUser.value = false;
   }
 
-  userDetailInfo.value = msgItem.userDetailInfo || {};
+  // userDetailInfo.value = msgItem.userDetailInfo || {};
   yUserInfo.value = msgItem.userDetailInfo?.userInfo || {};
 };
 
@@ -200,8 +204,9 @@ defineEmits(['toggleBox', 'changeTag']);
 const { t } = useI18n();
 const writeState = ref(0); //0--结束输入(未输入), 1--正在输入
 const store = useStore(key);
-const userDetailInfo: Ref<IUserDetailInfo> = ref({}) as Ref<IUserDetailInfo>;
-const yUserInfo: Ref<IUserInfo> = ref({}) as Ref<IUserInfo>;
+const yUserInfo: Ref<IUserInfo> = ref({}) as Ref<IUserInfo>; // 当前聊天用户信息
+const userInfo: Ref<IUserInfo> = ref({}) as Ref<IUserInfo>; // 需要显示详情用户的信息
+const userDetailInfo: Ref<IUserDetailInfo> = ref({}) as Ref<IUserDetailInfo>; // 需要显示详情用户的信息
 const isBotUser = ref(false);
 const onlineInfo: Ref<IUserInfo> = ref({}) as Ref<IUserInfo>;
 
@@ -211,8 +216,35 @@ const changUserImg: Ref<HTMLInputElement | null> = ref(null);
 
 // 是否显示右侧
 const showBox = ref(false);
-const toggleBox = () => {
+const toggleBox = async (uid?: number) => {
+  if (!showBox.value) {
+    const userId = uid || store.state.activeUid;
+    store.commit('SET_USERUID', userId);
+  }
+  let msgItem: ImsgItem | null = null;
+  // let msgItem: ImsgItem = store.state.msgList[store.state.userUid!];
+  // 如果不存在则获取 (单聊不在聊天列表中会没有信息)
+  if (!msgItem) {
+    const res = {
+      uid: store.state.userUid,
+    };
+    const data = await store.dispatch('postMsg', {
+      query: res,
+      cmd: 1011,
+      encryption: 'Aoelailiao.Login.ClientGetUserInfoReq',
+      auth: true,
+    });
+    msgItem = data.body;
+  }
+  userDetailInfo.value = msgItem?.userDetailInfo || {};
+  userInfo.value = msgItem?.userDetailInfo?.userInfo || {};
   showBox.value = !showBox.value;
+  const newMsgItem: ImsgItem = store.state.msgList[store.state.userUid!];
+  newMsgItem.userDetailInfo = msgItem?.userDetailInfo;
+  store.commit('SET_MSGLISTITEM', {
+    uid: store.state.userUid,
+    res: newMsgItem,
+  });
 };
 
 // 右侧显示的内容
