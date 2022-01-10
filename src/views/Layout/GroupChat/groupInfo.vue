@@ -84,7 +84,10 @@
             </template>
           </Table>
           <Table
-            v-if="props.groupDetailInfo?.groupAttachInfo.groupInviteState !== 1"
+            v-if="
+              props.groupDetailInfo?.groupAttachInfo.groupInviteState !== 1 &&
+              props.groupDetailInfo?.groupAttachInfo.groupInviteState !== 2
+            "
             title="群链接"
             class="copyGroup"
             :data-clipboard-text="groupDetailInfo?.qrCode"
@@ -96,7 +99,10 @@
               <div class="right">{{ groupDetailInfo?.qrCode }}</div>
             </template>
           </Table>
-          <Table title="邀请链接">
+          <Table
+            title="邀请链接"
+            v-if="props.groupDetailInfo?.groupAttachInfo.groupInviteState !== 2"
+          >
             <template v-slot:left>
               <Iconfont name="iconbianzu6" size="15" />
             </template>
@@ -216,7 +222,6 @@ async function getGroupMemberUserInfos(
     encryption: 'Aoelailiao.Login.ClientGetUserInfoListReq',
     auth: true,
   });
-  console.log(res.body);
 
   groupMemberUserInfos.value = (res.body.userInfo || []).map((e: any) => {
     e.isRoot = false;

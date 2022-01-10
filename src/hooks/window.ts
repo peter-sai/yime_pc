@@ -442,6 +442,7 @@ const switchMsg = (
   store: Store<initStore>,
   yUserInfo?: IUserInfo,
   groupUserInfos?: IUserInfo[],
+  msgItem?: ImsgItem,
 ) => {
   // 格式化 systemNotifyInfo
   const systemNotifyInfo = useSystemNotifyInfo(store, t);
@@ -452,25 +453,29 @@ const switchMsg = (
     return t('[阅后即焚]');
   }
 
-  // // // 处理@信息
-  // const length = readList.length;
-  // const newList = readList.slice(length - unReadNum, length);
-  // const isAt = newList.find((e) => {
-  //   if (e.type === 'groupAtInfo') {
-  //     const atUsers = e.msgContent.groupAtInfo.atUsers[0];
-  //     if (atUsers.type === 1) {
-  //       return true;
-  //     }
-  //     if (Number(atUsers.uid) === Number(user.uid)) {
-  //       return true;
-  //     }
-  //   }
-  //   return false;
-  // });
+  // 处理@信息
+  if (msgItem) {
+    const readList = msgItem.readList;
+    const unReadNum = msgItem.unReadNum;
+    const length = readList.length;
+    const newList = readList.slice(length - unReadNum, length);
+    const isAt = newList.find((e) => {
+      if (e.type === 'groupAtInfo') {
+        const atUsers = e.msgContent.groupAtInfo.atUsers[0];
+        if (atUsers.type === 1) {
+          return true;
+        }
+        if (Number(atUsers.uid) === Number(store.state.userInfo.uid)) {
+          return true;
+        }
+      }
+      return false;
+    });
 
-  // if (isAt) {
-  //   return t('有提到你的信息');
-  // }
+    if (isAt) {
+      return t('有提到你的信息');
+    }
+  }
 
   switch (item.type || (item.msgContent && item.msgContent.msgContent)) {
     case 'stringContent':
@@ -557,10 +562,14 @@ const useGetOfflineMsg = async (store: any) => {
 const mergeData = async (
   offlineMsgInfos: IMsgInfo<TMsgContent>[],
   store: Store<initStore>,
+  roamList: IMsgInfo<TMsgContent>[],
 ) => {
-  for (const v of offlineMsgInfos) {
+  const list = roamList.concat(offlineMsgInfos);
+  for (const v of list) {
     const e = { ...v };
     e.type = e.msgContent.msgContent;
+    e.isRoamMsg = roamList.length ? true : false;
+
     await store.dispatch('addMsgList', e);
   }
 };

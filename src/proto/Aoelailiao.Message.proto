@@ -735,6 +735,7 @@ message ServerSendMsgHasReadedInfoToClientNotify{
 message UserUpdateConversationHasReadedMsgInfoReq{
 	//cmd id:2149
 	optional MsgHasReadedInfo msg_has_readed_info =1;
+  optional string device_brand = 2;
 	optional bytes attach_data = 32;     //后台服务器专业字段
 }
 

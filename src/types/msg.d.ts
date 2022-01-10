@@ -211,6 +211,7 @@ export interface IMsgInfo<T> {
     msgContentType: number;
     msgContent: string;
   };
+  isRoamMsg: boolean;
 }
 
 // 缓存消息列表的 interface

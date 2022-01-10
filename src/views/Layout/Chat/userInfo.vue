@@ -140,12 +140,13 @@ export default defineComponent({
 function useToggleFriend(
   store: Store<initStore>,
   t: { (key: string | number): string },
+  yUserInfo: IUserInfo,
 ) {
   return async (e: boolean) => {
     const res = {
       operateType: e ? 1 : 2,
       userInfo: {
-        uid: store.state.activeUid,
+        uid: yUserInfo.uid,
       },
     };
     const data = await store.dispatch('postMsg', {
@@ -171,12 +172,13 @@ function useBeforeSwitch(
   store: Store<initStore>,
   settingItemId: number,
   t: { (key: string | number): string },
+  yUserInfo: IUserInfo,
   isBack?: boolean,
 ) {
   return async (e: boolean) => {
     const res = {
       objectType: 1,
-      objectId: store.state.activeUid,
+      objectId: yUserInfo.uid,
       settingItemId,
       switchState: e ? 1 : 0,
     };
@@ -267,11 +269,12 @@ async function upDateContact(store: Store<initStore>, val: boolean) {
 function useBeforeBlacklist(
   store: Store<initStore>,
   t: { (key: string | number): string },
+  yUserInfo: IUserInfo,
 ) {
   return async (e: boolean) => {
     const res = {
       operateType: e ? 2 : 3,
-      operateUid: store.state.activeUid,
+      operateUid: yUserInfo.uid,
     };
 
     const data = await store.dispatch('postMsg', {
@@ -292,6 +295,7 @@ const props = defineProps({
   },
   yUserInfo: {
     type: Object as PropType<IUserInfo>,
+    required: true,
   },
   onlineInfo: {
     type: Object as PropType<IUserInfo>,
@@ -302,19 +306,25 @@ const store = useStore(key);
 const { t } = useI18n();
 
 // 添加好友和删除好友
-const toggleFriend = useToggleFriend(store, t);
+const toggleFriend = useToggleFriend(store, t, props.yUserInfo);
 
 // 消息免打扰
-const beforeMsgNotdisturb = useBeforeSwitch(store, 1005, t, true);
+const beforeMsgNotdisturb = useBeforeSwitch(
+  store,
+  1005,
+  t,
+  props.yUserInfo,
+  true,
+);
 
 // 截屏通知
-const beforeCaptureNotifica = useBeforeSwitch(store, 1003, t);
+const beforeCaptureNotifica = useBeforeSwitch(store, 1003, t, props.yUserInfo);
 
 // 置顶
-const beforeTop = useBeforeSwitch(store, 1004, t);
+const beforeTop = useBeforeSwitch(store, 1004, t, props.yUserInfo);
 
 // 黑名单
-const beforeBlacklist = useBeforeBlacklist(store, t);
+const beforeBlacklist = useBeforeBlacklist(store, t, props.yUserInfo);
 
 // 双向清空聊天记录
 const clientCleanMsg = () => {
@@ -323,7 +333,7 @@ const clientCleanMsg = () => {
     callBack: async () => {
       const data = await store.dispatch('postMsg', {
         query: {
-          toUid: store.state.activeUid,
+          toUid: props.yUserInfo.uid,
           isGroupMsg: 0,
         },
         cmd: 2135,

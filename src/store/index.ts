@@ -152,16 +152,28 @@ const sotreRoot = createStore({
     },
     ADD_MSGLIST: (state, { res, id, groupDetailInfo, userDetailInfo }) => {
       if (state.msgList[id]) {
-        state.msgList[id].readList.push(res);
-        if (
-          Number(res.fromId) !== Number(state.userInfo.uid) &&
-          (res.isGroupMsg
-            ? Number(res.toId) !== Number(state.activeUid)
-            : Number(res.fromId) !== Number(state.activeUid))
-        ) {
-          state.msgList[id].unReadNum++;
+        // push 消息
+        if (!res.isRoamMsg) {
+          state.msgList[id].readList.push(res);
+          if (
+            Number(res.fromId) !== Number(state.userInfo.uid) &&
+            (res.isGroupMsg
+              ? Number(res.toId) !== Number(state.activeUid)
+              : Number(res.fromId) !== Number(state.activeUid))
+          ) {
+            state.msgList[id].unReadNum++;
+          }
+          state.msgList[id].lastMsg = res;
+        } else {
+          // 漫游消息
+
+          const list = state.msgList[id].readList;
+          const item = state.msgList[id];
+          list.push(res);
+          list.sort((a, b) => b.msgId - a.msgId);
+          item.readList = list;
+          state.msgList[id] = item;
         }
-        state.msgList[id].lastMsg = res;
       } else {
         state.msgList[id] = res;
         if (groupDetailInfo) {
@@ -225,7 +237,7 @@ const sotreRoot = createStore({
             // 发送ack
             clientSendMsgAckToServer(offlineMsgInfos);
             // 合并数据
-            await mergeData(offlineMsgInfos, sotreRoot);
+            await mergeData(offlineMsgInfos, sotreRoot, []);
           }
         };
       }
@@ -349,6 +361,7 @@ const sotreRoot = createStore({
             (e: IMsgInfo<TMsgContent>) => Number(e.msgId) === Number(res.msgId),
           )
         ) {
+          // push消息
           commit('ADD_MSGLIST', { res, id });
         }
       } else {
@@ -356,7 +369,10 @@ const sotreRoot = createStore({
           readList: [{ ...res }],
           isGroup: res.isGroupMsg,
           id: res.isGroupMsg ? res.toId : id,
-          unReadNum: Number(res.fromId) !== Number(state.userInfo.uid) ? 1 : 0,
+          unReadNum:
+            Number(res.fromId) !== Number(state.userInfo.uid) && !res.isRoamMsg
+              ? 1
+              : 0,
           isBotUser: false,
           userDetailInfo: {} as IUserDetailInfo,
           lastMsg: {},
@@ -373,6 +389,7 @@ const sotreRoot = createStore({
             auth: true,
           });
           const userDetailInfo = data.body.userDetailInfo;
+          // push 消息
           commit('ADD_MSGLIST', { res: item, id, userDetailInfo });
         } else {
           // 群聊获取群详情

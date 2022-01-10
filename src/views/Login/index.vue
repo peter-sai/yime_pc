@@ -306,6 +306,7 @@ function useLoginCb(
       userList[data.body.userInfo.uid].token = JSON.stringify(obj);
       setStorage('userList', JSON.stringify(userList));
     }
+    store.dispatch('init');
     return goTo('/Home/Message');
   }
   return Toast(t(data.body.resultString));

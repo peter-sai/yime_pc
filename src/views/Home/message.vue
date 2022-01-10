@@ -1,13 +1,13 @@
 <template>
   <div style="flex: 1" @click.stop="showMenu = 0">
-    <MessageHeader />
+    <MessageHeader @isSearch="changeIsSearch" />
     <div
       v-if="!msgList.length"
       style="position: absolute; left: 0; right: 0; bottom: 50px; top: 50px"
     >
       <Errors id="2" />
     </div>
-    <div class="message">
+    <div class="message" v-if="!isSearch">
       <div
         class="tableItem"
         @contextmenu="contextmenu($event, item)"
@@ -88,7 +88,7 @@
             />
           </template>
         </TableDouble>
-        <!-- 群通知 -->
+        <!-- 系统消息 -->
         <TableDouble
           v-if="item.msgClassId === 1"
           html
@@ -170,12 +170,11 @@
   </div>
 </template>
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, Ref } from 'vue';
+import { computed, ComputedRef, defineComponent, ref } from 'vue';
 import TableDouble from '@/components/TableDouble/index.vue';
 import Badge from '@/components/Badge/index.vue';
 import Iconfont from '@/iconfont/index.vue';
 import MessageHeader from './header.vue';
-import { ref } from 'vue';
 import { Store, storeKey, useStore } from 'vuex';
 import Errors from '../Errors/index.vue';
 import { initStore, key } from '@/store';
@@ -199,9 +198,15 @@ import {
 } from '@/hooks/window';
 import { hideLoading, showLoading } from '@/plugin/Loading';
 import { Toast } from '@/plugin/Toast';
+import { getMsgList } from '@/utils/utils';
 export default defineComponent({
   name: 'message',
 });
+const isSearch = ref(false);
+
+const changeIsSearch = (res: boolean) => {
+  isSearch.value = res;
+};
 
 // 用户操作设置项的开关
 function useBeforeSwitchChat(
@@ -310,7 +315,7 @@ const msgList: ComputedRef<TMsgItem[]> = computed(() => {
 
 const getType = (lastMsg: IMsgInfo<TMsgContent>, item: ImsgItem) => {
   if (lastMsg.isGroupMsg) {
-    return switchMsg(lastMsg, t, store, {} as IUserInfo, []);
+    return switchMsg(lastMsg, t, store, {} as IUserInfo, [], item);
   } else {
     return switchMsg(lastMsg, t, store, item.userDetailInfo.userInfo);
   }
@@ -336,25 +341,19 @@ const clientSendMsgAckToServer = (msgInfos: IMsgInfo<TMsgContent>[]) => {
     msgInfos.length > 0 ? msgInfos[msgInfos.length - 1] : null;
   if (lastMsgInfo) {
     const { msgId, fromId, toId } = lastMsgInfo;
-    const ackToServer = useClientSendMsgAckToServer(store);
+    const ackToServer = useClientSendMsgAckToServer(
+      store,
+      lastMsgInfo.isGroupMsg ? 1 : 0,
+    );
     ackToServer(msgId, fromId, toId, 1);
   }
 };
 
 const init = async () => {
-  const res = await store.dispatch('postMsg', {
-    query: {
-      type: 0,
-      uid: store.state.userInfo.uid,
-    },
-    cmd: 5001,
-    encryption: 'Aoelailiao.Message.AtInfo',
-    auth: true,
-  });
-  console.log(res);
-
   // 一、 获取离线数据
   const { offlineMsgInfos } = await useGetOfflineMsg(store);
+
+  const roamList = await getRoam();
 
   // 发送ack
   clientSendMsgAckToServer(offlineMsgInfos);
@@ -366,9 +365,29 @@ const init = async () => {
     store.commit('ADD_NOTIFY', { id: e.msgClassId, res: e });
   });
   // 合并数据
-  await mergeData(offlineMsgInfos, store);
+  await mergeData(offlineMsgInfos, store, roamList);
 };
 init();
+
+// 漫游数据
+async function getRoam() {
+  const msgList = getMsgList();
+
+  if (!Object.keys(msgList).length) {
+    const res = await store.dispatch('postMsg', {
+      query: {
+        type: 0,
+        uid: store.state.userInfo.uid,
+      },
+      cmd: 5001,
+      encryption: 'Aoelailiao.Message.AtInfo',
+      auth: true,
+    });
+
+    return res.body.msgInfos;
+  }
+  return [];
+}
 
 // 设置已读
 const read = (item: ImsgItem) => {

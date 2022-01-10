@@ -1,6 +1,6 @@
 <template>
   <div style="flex: 1">
-    <ContactsHeader />
+    <ContactsHeader @isSearch="changeIsSearch" />
     <div class="contacts">
       <Table
         @click="goTo('/Home/addContact')"
@@ -22,7 +22,7 @@
         </template>
       </Table>
     </div>
-    <div class="content">
+    <div class="content" v-if="!isSearch">
       <div
         class="item"
         v-for="(item, key) in list"
@@ -70,6 +70,12 @@ const goTo = useGoTo(useRouter);
 const list: Ref<IContacts[]> = computed(() => store.state.contact);
 
 const activeUid = computed(() => store.state.activeUid);
+
+const isSearch = ref(false);
+
+const changeIsSearch = (res: boolean) => {
+  isSearch.value = res;
+};
 
 // 获取列表
 const init = async () => {
