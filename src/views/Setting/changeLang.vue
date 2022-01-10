@@ -31,6 +31,9 @@ import store, { initStore } from '@/store';
 import i18n from '@/lang';
 import { Toast } from '@/plugin/Toast';
 import { useI18n } from 'vue-i18n';
+import { useGoBack } from '@/hooks';
+import { useRouter } from 'vue-router';
+import { hideLoading, showLoading } from '@/plugin/Loading';
 export default defineComponent({
   name: 'changeLang',
 });
@@ -62,20 +65,30 @@ interface ILang {
 <script setup lang="ts">
 const { language, changeLang } = useChangeLang(store);
 const { t } = useI18n();
+const goBack = useGoBack(useRouter);
 const rigthClick = async () => {
   const activeId = language.active !== -1 ? language.active : getLang();
   const item = language.list.find((e) => e.id === activeId);
-  i18n.global.locale = item.locale!;
-  store.commit('SET_LANG', language.active);
-  await store.dispatch('postMsg', {
-    query: {
-      clientLanguageType: activeId,
-    },
-    cmd: 1191,
-    encryption: 'Aoelailiao.Login.UserUpdateClientLanguageReq',
-    auth: true,
-  });
-  Toast(t('成功'));
+  try {
+    showLoading();
+    const data = await store.dispatch('postMsg', {
+      query: {
+        clientLanguageType: activeId,
+      },
+      cmd: 1191,
+      encryption: 'Aoelailiao.Login.UserUpdateClientLanguageReq',
+      auth: true,
+    });
+    Toast(t(data.body.resultString));
+    if (data.body.resultCode === 0) {
+      i18n.global.locale = item.locale!;
+      store.commit('SET_LANG', language.active);
+      goBack();
+    }
+  } catch (error) {
+    console.log(error);
+  }
+  hideLoading();
 };
 </script>
 <style lang="scss" scoped>

@@ -45,6 +45,8 @@ import { IContacts } from '@/types/user';
 import { hideLoading, showLoading } from '@/plugin/Loading';
 import { Toast } from '@/plugin/Toast';
 import { useI18n } from 'vue-i18n';
+import { useGoBack } from '@/hooks';
+import { useRouter } from 'vue-router';
 export default defineComponent({
   name: 'addGroup',
 });
@@ -52,6 +54,7 @@ export default defineComponent({
 <script setup lang="ts">
 const store = useStore(key);
 const list: Ref<IContacts[]> = ref([]);
+const goBack = useGoBack(useRouter);
 
 const { t } = useI18n();
 
@@ -121,6 +124,7 @@ const submit = async () => {
     // 群聊
     store.commit('SET_ACTIVEUID', data.body.groupInfo.groupId);
     store.commit('SET_ACTIVEISGROUP', true);
+    goBack();
   }
 };
 </script>

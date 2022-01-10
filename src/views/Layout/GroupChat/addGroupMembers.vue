@@ -72,7 +72,7 @@ import { useUserOperateGroupInfo } from '@/hooks/window';
 import { useStore } from 'vuex';
 import { key } from '@/store';
 import { getTag } from '@/utils/utils';
-import { showLoading } from '@/plugin/Loading';
+import { hideLoading, showLoading } from '@/plugin/Loading';
 import { Toast } from '@/plugin/Toast';
 import { useI18n } from 'vue-i18n';
 import Errors from '../../Errors/index.vue';
@@ -99,6 +99,7 @@ const newList = computed(() =>
 );
 // 获取列表
 const init = async () => {
+  showLoading();
   try {
     const res = {};
     const data = await store.dispatch('postMsg', {
@@ -125,6 +126,7 @@ const init = async () => {
   } catch (error) {
     console.log(error);
   }
+  hideLoading();
 };
 init();
 
@@ -162,7 +164,7 @@ const submit = async () => {
     const item = store.state.msgList[store.state.activeUid!];
     item.groupDetailInfo = msgItem.groupDetailInfo;
     store.commit('SET_MSGLISTITEM', { res: item });
-    emit('toggleBox');
+    emit('changeTag', Etag.GroupInfo);
   }
 };
 </script>

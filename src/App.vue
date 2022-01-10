@@ -10,13 +10,19 @@ import { key } from './store';
 import { getStorage, setMsgList } from './utils/utils';
 import { useClientSendMsgAckToServer } from './hooks/window';
 import { IMsgInfo, ImsgItem } from './types/msg';
-
+import messageAudio from './assets/audio/message.wav';
+import logo from './assets/logo.svg';
 const store = useStore(key);
 store.dispatch('init');
 
+// 获取浏览器弹框权限
+if (Notification.permission !== 'granted') {
+  Notification.requestPermission();
+}
+
 const init = async () => {
-  // const url = 'ws://101.34.76.94:8002';
-  const url = 'wss://ws.yime.app';
+  const url = 'ws://101.34.76.94:8002';
+  // const url = 'wss://ws.yime.app';
   let ws = new WebSocket(url);
   store.commit('SET_ISONLINE', '连接中...');
   store.commit('SET_WS', ws);
@@ -48,7 +54,7 @@ const init = async () => {
         store.commit('SET_ISONLINE', '网络状态不佳');
         console.log('error');
       };
-    }, 2000);
+    }, 1000);
   }
 
   try {
@@ -94,16 +100,30 @@ const stop = watch(
   computed(() => store.state.msgInfo),
   async (data: any) => {
     if (data.cmd === 2024) {
-      const res = {
-        msgClassHaveNewMsg: 1,
-        msgClassId: 2,
-        msgClassRecentMsgContent: data.body.notifyContent,
-        msgClassTitle: '用户反馈消息',
-        updateTime: data.body.updateTime,
-      };
-      console.log(res);
-
-      store.commit('ADD_NOTIFY', { id: 2, res });
+      try {
+        const notifyContent = JSON.parse(data.body.notifyContent);
+        if (notifyContent.Jt) {
+          const res = {
+            msgClassHaveNewMsg: 1,
+            msgClassId: 1,
+            msgClassRecentMsgContent: data.body.notifyContent,
+            msgClassTitle: '系统消息',
+            updateTime: data.body.updateTime,
+          };
+          store.commit('ADD_NOTIFY', { id: 1, res });
+        } else {
+          const res = {
+            msgClassHaveNewMsg: 1,
+            msgClassId: 2,
+            msgClassRecentMsgContent: data.body.notifyContent,
+            msgClassTitle: '用户反馈消息',
+            updateTime: data.body.updateTime,
+          };
+          store.commit('ADD_NOTIFY', { id: 2, res });
+        }
+      } catch (error) {
+        console.log(error);
+      }
     }
     // 监听接受消息
     if (data.cmd === 2004) {
@@ -132,6 +152,8 @@ const stop = watch(
       // 发送ack
       clientSendMsgAckToServer(msgInfos);
       store.dispatch('addMsgList', { ...(msgInfos[0] || {}) });
+      // 处理消息通知
+      msgNotice(msgInfos[0]);
       // 发送已读msgId
       const userInfo = store.state.userInfo;
       // 如果发送者是自己 或者 已经开启了对方不显示已读消息开关 不需要发送msgId
@@ -150,6 +172,7 @@ const stop = watch(
             toId: msgInfos[0].fromId,
             msgIdMax: msgInfos[0].msgId,
           },
+          deviceBrand: 'web',
         };
         await store.dispatch('postMsg', {
           query: res,
@@ -185,6 +208,7 @@ const stop = watch(
             fromId: msgInfos[0].fromId,
             msgIdMax: msgInfos[0].msgId,
           },
+          deviceBrand: 'web',
         };
 
         await store.dispatch('postMsg', {
@@ -198,6 +222,42 @@ const stop = watch(
     }
   },
 );
+
+const audio = new Audio();
+audio.src = messageAudio;
+function msgNotice(item: any) {
+  // 如果发送者不是自己 则需要通知 并且没有开通消息免打扰
+  const id = item.isGroupMsg ? item.toId : item.fromId;
+  const res = store.state.msgList[id];
+  let isMsgMute = !res ? false : true;
+  if (res) {
+    isMsgMute = Boolean(res?.userDetailInfo?.userInfo?.userAttachInfo?.msgMute);
+  }
+  if (Number(item.fromId) !== Number(store.state.userDetailInfo.userInfo.uid)) {
+    if (store.state.switchSettingInfo.pokeSound) {
+      // 声音
+      audio.play();
+    }
+
+    if (store.state.switchSettingInfo.newMessage && !isMsgMute) {
+      // 浏览器弹框
+      if (Notification.permission === 'granted') {
+        const res = new Notification('YIME', {
+          body: '您收到一条消息',
+          data: {
+            id: item.isGroupMsg ? item.toId : item.fromId,
+            isGroupMsg: Boolean(item.isGroupMsg),
+          },
+        });
+        res.onclick = function (e: any) {
+          store.commit('SET_ACTIVEUID', e.target.data.id);
+          store.commit('SET_ACTIVEISGROUP', e.target.data.isGroupMsg);
+          res.close();
+        };
+      }
+    }
+  }
+}
 
 onBeforeUnmount(() => {
   stop();

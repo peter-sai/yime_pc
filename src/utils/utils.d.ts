@@ -13,5 +13,5 @@ export function getTag(key:IContacts): string
 export function getSize(key:number): string
 export function getSuffix(key:string): string
 export function getLang(): number
-export function getMsgList(): any[] | null
+export function getMsgList(): Object
 export function setMsgList(val: any): void
