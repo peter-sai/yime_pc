@@ -3,6 +3,7 @@
     <!-- 个人 -->
     <ChatHeader
       :icon="yUserInfo?.icon"
+      :isBotUser="isBotUser"
       :title="
         yUserInfo?.userAttachInfo && yUserInfo.userAttachInfo.remarkName
           ? yUserInfo.userAttachInfo.remarkName

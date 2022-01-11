@@ -21,7 +21,7 @@ if (Notification.permission !== 'granted') {
 }
 
 const init = async () => {
-  const url = 'ws://101.34.76.94:8002';
+  const url = 'ws://16.163.55.202:8002';
   // const url = 'wss://ws.yime.app';
   let ws = new WebSocket(url);
   store.commit('SET_ISONLINE', '连接中...');
@@ -234,7 +234,7 @@ function msgNotice(item: any) {
     isMsgMute = Boolean(res?.userDetailInfo?.userInfo?.userAttachInfo?.msgMute);
   }
   if (Number(item.fromId) !== Number(store.state.userDetailInfo.userInfo.uid)) {
-    if (store.state.switchSettingInfo.pokeSound) {
+    if (store.state.switchSettingInfo.pokeSound && !isMsgMute) {
       // 声音
       audio.play();
     }

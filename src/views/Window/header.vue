@@ -3,7 +3,8 @@
     <div class="header">
       <div class="headerLeft">
         <div class="userImg">
-          <img :src="icon" alt="" />
+          <img v-if="!isBotUser" :src="icon" alt="" />
+          <Iconfont v-else name="iconbianzu16" size="30" />
         </div>
         <div class="userInfo">
           <div class="name">{{ title }}</div>
@@ -35,6 +36,10 @@ defineProps({
   },
   icon: {
     type: String,
+  },
+  isBotUser: {
+    type: Boolean,
+    default: false,
   },
 });
 const rightClick = () => {

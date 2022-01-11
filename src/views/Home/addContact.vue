@@ -16,7 +16,26 @@
       :key="item.userInfo.uid"
     >
       <template v-slot:left>
-        <img class="img" :src="item.userInfo.icon" alt="" />
+        <Iconfont
+          v-if="item.userInfo.isBotUser"
+          style="display: inline-block"
+          name="iconbianzu16"
+          size="30"
+          color="#A8B5BE"
+        />
+        <img
+          class="img"
+          v-else-if="item.userInfo.icon"
+          :src="item.userInfo.icon"
+          alt=""
+        />
+        <Iconfont
+          v-else
+          name="iconlianxiren"
+          style="display: inline-block"
+          size="30"
+          color="#A8B5BE"
+        />
       </template>
       <template v-slot:right>
         <span class="btn" @click="goWindow(item)">发起聊天</span>
@@ -42,6 +61,7 @@ import { ref, Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { IUserDetailInfo } from '@/types/user';
 import { Toast } from '@/plugin/Toast';
+import Iconfont from '../../iconfont/index.vue';
 
 const { t } = useI18n();
 const query = ref('');

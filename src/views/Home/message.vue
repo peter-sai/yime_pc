@@ -72,7 +72,24 @@
               }}
             </div>
             <div class="userImg" v-else>
-              <img :src="item?.userDetailInfo?.userInfo?.icon" />
+              <Iconfont
+                v-if="item?.userDetailInfo?.userInfo.isBotUser"
+                style="display: inline-block"
+                name="iconbianzu16"
+                size="45"
+                color="#A8B5BE"
+              />
+              <img
+                v-else-if="item?.userDetailInfo?.userInfo?.icon"
+                :src="item?.userDetailInfo?.userInfo?.icon"
+              />
+              <Iconfont
+                v-else
+                name="iconlianxiren"
+                style="display: inline-block"
+                size="45"
+                color="#A8B5BE"
+              />
             </div>
           </template>
           <template v-slot:time> </template>

@@ -4,7 +4,25 @@
     class="noMsg"
     v-if="(!itemChat.readList || !itemChat.readList.length) && !activeIsGroup"
   >
-    <img class="userImg" :src="yUserInfo?.icon" alt="" />
+    <Iconfont
+      style="display: inline-block"
+      v-if="yUserInfo?.isBotUser"
+      name="iconbianzu16"
+      size="90"
+    />
+    <img
+      class="userImg"
+      v-else-if="yUserInfo?.icon"
+      :src="yUserInfo?.icon"
+      alt=""
+    />
+    <Iconfont
+      style="display: inline-block"
+      v-else
+      name="iconlianxiren"
+      size="90"
+      color="#A8B5BE"
+    />
     <div class="title">{{ yUserInfo?.nickname }}</div>
     <div class="bg">
       <!-- <img :src="sayHello" alt="" /> -->
@@ -201,6 +219,7 @@ import MVisitingCard from '@/components/Message/MVisitingCard/index.vue';
 import YVisitingCard from '@/components/Message/YVisitingCard/index.vue';
 import YAudio from '@/components/Message/YAudio/index.vue';
 import MAudio from '@/components/Message/MAudio/index.vue';
+import Iconfont from '../../iconfont/index.vue';
 import { useStore } from 'vuex';
 import { key } from '@/store';
 import { useI18n } from 'vue-i18n';

@@ -45,7 +45,7 @@
             <Iconfont name="iconxiangce" size="20" color="#111111" />
             <div>相册</div>
           </div>
-          <div class="opeItem">
+          <div class="opeItem" @click.stop="start">
             <Iconfont name="iconicon_yuyinshipin" size="20" color="#111111" />
             <div>语音视频</div>
           </div>
@@ -63,11 +63,15 @@
             <Iconfont name="iconweizhi" size="20" color="#111111" />
             <div>位置</div>
           </div>
-          <div class="opeItem" @click="$emit('recommend')">
+          <div
+            class="opeItem"
+            :style="store.state.activeIsGroup && style"
+            @click="$emit('recommend')"
+          >
             <Iconfont name="icontuijianhaoyou" size="20" color="#111111" />
             <div>推荐好友</div>
           </div>
-          <div class="opeItem" style="opacity: 0; cursor: auto">
+          <div class="opeItem" :style="style">
             <Iconfont name="iconweizhi" size="20" color="#111111" />
             <div>位置</div>
           </div>
@@ -187,6 +191,7 @@ import { Toast } from '@/plugin/Toast';
 import { key } from '@/store';
 import { getStorage, setStorage } from '@/utils/utils';
 import send from '/public/img/send.svg';
+import { MediaAudio } from '@/plugin/Audio';
 import Recorder from 'Recorder';
 import {
   defineComponent,
@@ -248,6 +253,10 @@ function useInput(
 const input: Ref<HTMLInputElement | null> = ref(null);
 const store = useStore(key);
 const { t } = useI18n();
+const style = {
+  opacity: 0,
+  cursor: 'auto',
+};
 defineProps({
   modelValue: {
     type: String,
@@ -339,13 +348,15 @@ onBeforeUnmount(() => {
   document.body.removeEventListener('click', bodyClickCb);
 });
 
+const start = () => {
+  MediaAudio({});
+};
+
 // 录音 语音消息
 
 // 控制按住说话按钮的显示和隐藏
 const showAudio = ref(false);
 const toggleAudio = (isSend?: string) => {
-  console.log(11);
-
   showAudio.value = !showAudio.value;
   if (showAudio.value) {
     startRec();

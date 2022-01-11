@@ -201,6 +201,7 @@ const useEnter = (
         },
       };
     }
+    console.log(res);
 
     const data = await store.dispatch('postMsg', {
       query: res,

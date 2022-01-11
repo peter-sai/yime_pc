@@ -328,13 +328,28 @@ const quitGroupChat = async () => {
       const data = await userOperateGroupInfo(3, query);
       Toast(t(data.body.resultString));
       if (data.body.resultCode === 0) {
+        emit('toggleBox');
         const data = await store.dispatch('postMsg', {
+          query: {
+            groupId: store.state.activeUid,
+          },
+          cmd: 1029,
+          encryption: 'Aoelailiao.Login.ClientGetGroupInfoReq',
+          auth: true,
+        });
+        const msgItem = data.body;
+        const item = store.state.msgList[store.state.activeUid!];
+        item.groupDetailInfo = msgItem.groupDetailInfo;
+        store.commit('SET_MSGLISTITEM', { res: item });
+
+        const data1 = await store.dispatch('postMsg', {
           query: {},
           cmd: 1009,
           encryption: 'Aoelailiao.Login.UserGetFriendsAndGroupsListReq',
           auth: true,
         });
-        store.commit('SET_GROUPINFOS', data.body.groupInfos);
+
+        store.commit('SET_GROUPINFOS', data1.body.groupInfos);
       }
     },
   });

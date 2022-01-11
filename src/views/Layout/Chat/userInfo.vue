@@ -11,7 +11,9 @@
     <div style="flex: 1; padding: 0 20px; height: 90%; overflow: auto">
       <div class="header">
         <div class="left">
-          <img :src="yUserInfo?.icon" alt="" />
+          <Iconfont v-if="yUserInfo?.isBotUser" name="iconbianzu16" size="60" />
+          <img v-else-if="yUserInfo?.icon" :src="yUserInfo?.icon" alt="" />
+          <Iconfont v-else name="iconlianxiren" size="60" color="#A8B5BE" />
         </div>
         <div class="right">
           <div class="userName">{{ yUserInfo?.nickname }}</div>
@@ -28,7 +30,11 @@
         </div>
       </div>
       <div class="main">
-        <Table :title="onlineInfo?.onlineState ? '在线' : '离线'" hide-more>
+        <Table
+          v-if="!yUserInfo?.isBotUser"
+          :title="onlineInfo?.onlineState ? '在线' : '离线'"
+          hide-more
+        >
           <template v-slot:left>
             <div class="point" :class="{ onLine: onlineInfo?.onlineState }" />
           </template>
@@ -55,7 +61,7 @@
             />
           </template>
         </Table>
-        <Table title="截屏通知" hide-more>
+        <Table v-if="!yUserInfo?.isBotUser" title="截屏通知" hide-more>
           <template v-slot:left>
             <Iconfont name="iconjieping" size="15" />
           </template>
@@ -77,41 +83,43 @@
             />
           </template>
         </Table>
-        <p class="info">群聊</p>
-        <Table title="共同群聊" @click="$emit('changeTag', Etag.CommonGroup)">
-          <template v-slot:left>
-            <Iconfont name="iconqunliao" size="15" />
-          </template>
-        </Table>
-        <Table
-          title="与好友新建群聊"
-          @click="$emit('changeTag', Etag.CreateGroupChat)"
-        >
-          <template v-slot:left>
-            <Iconfont name="iconyaoqinghaoyou" size="15" />
-          </template>
-        </Table>
-        <Table title="云文件" @click="$emit('changeTag', Etag.CloudFile)">
-          <template v-slot:left>
-            <Iconfont name="iconyunwenjian" size="15" />
-          </template>
-        </Table>
-        <Table title="双向清除聊天记录" @click="clientCleanMsg">
-          <template v-slot:left>
-            <Iconfont name="iconshuangxiangsudicopy" size="15" />
-          </template>
-        </Table>
-        <Table title="加入黑名单" hide-more>
-          <template v-slot:left>
-            <Iconfont name="iconheimingdan" size="15" />
-          </template>
-          <template v-slot:right>
-            <Switch
-              :beforeChange="beforeBlacklist"
-              :switch="Boolean(userDetailInfo?.isInMyBlacklist)"
-            />
-          </template>
-        </Table>
+        <div v-if="!yUserInfo?.isBotUser">
+          <p class="info">群聊</p>
+          <Table title="共同群聊" @click="$emit('changeTag', Etag.CommonGroup)">
+            <template v-slot:left>
+              <Iconfont name="iconqunliao" size="15" />
+            </template>
+          </Table>
+          <Table
+            title="与好友新建群聊"
+            @click="$emit('changeTag', Etag.CreateGroupChat)"
+          >
+            <template v-slot:left>
+              <Iconfont name="iconyaoqinghaoyou" size="15" />
+            </template>
+          </Table>
+          <Table title="云文件" @click="$emit('changeTag', Etag.CloudFile)">
+            <template v-slot:left>
+              <Iconfont name="iconyunwenjian" size="15" />
+            </template>
+          </Table>
+          <Table title="双向清除聊天记录" @click="clientCleanMsg">
+            <template v-slot:left>
+              <Iconfont name="iconshuangxiangsudicopy" size="15" />
+            </template>
+          </Table>
+          <Table title="加入黑名单" hide-more>
+            <template v-slot:left>
+              <Iconfont name="iconheimingdan" size="15" />
+            </template>
+            <template v-slot:right>
+              <Switch
+                :beforeChange="beforeBlacklist"
+                :switch="Boolean(userDetailInfo?.isInMyBlacklist)"
+              />
+            </template>
+          </Table>
+        </div>
       </div>
     </div>
   </div>
