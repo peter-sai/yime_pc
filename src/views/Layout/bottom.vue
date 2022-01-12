@@ -45,7 +45,7 @@
             <Iconfont name="iconxiangce" size="20" color="#111111" />
             <div>相册</div>
           </div>
-          <div class="opeItem" @click.stop="start">
+          <div class="opeItem" @click="start">
             <Iconfont name="iconicon_yuyinshipin" size="20" color="#111111" />
             <div>语音视频</div>
           </div>

@@ -3,6 +3,17 @@
     <div class="miniSize">
       <Iconfont name="iconnarrow_icon" size="20" color="#fff" />
     </div>
+    <div class="call">
+      <div class="img">
+        <Iconfont
+          style="display: inline-block"
+          name="iconlianxiren"
+          size="75"
+        />
+      </div>
+      <div class="userName">秃头程序员</div>
+      <div class="status">连接中…</div>
+    </div>
     <div class="btn">
       <div class="item">
         <img src="../../assets/img/video.png" alt="" />
@@ -12,7 +23,7 @@
         <img src="../../assets/img/audio.png" alt="" />
         <span>静音</span>
       </div>
-      <div class="item">
+      <div class="item" @click="close">
         <Iconfont name="iconvideo_icon1" size="44" />
         <span>挂断</span>
       </div>
@@ -72,6 +83,25 @@ const submit = async () => {
     left: 30px;
     top: 25px;
   }
+  .call {
+    text-align: center;
+    margin-top: 50px;
+    .userName {
+      font-size: 24px;
+      font-family: PingFangSC-Semibold, PingFang SC;
+      font-weight: 600;
+      color: #ffffff;
+      line-height: 33px;
+      margin: 10px 0 5px;
+    }
+    .status {
+      font-size: 14px;
+      font-family: PingFangSC-Regular, PingFang SC;
+      font-weight: 400;
+      color: #ffffff;
+      line-height: 20px;
+    }
+  }
   .btn {
     position: absolute;
     bottom: 30px;
@@ -88,6 +118,7 @@ const submit = async () => {
       align-items: center;
       justify-content: center;
       margin-top: 25px;
+      cursor: pointer;
       img {
         width: 44px;
         height: 44px;
