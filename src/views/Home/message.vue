@@ -303,7 +303,7 @@ const msgList: ComputedRef<TMsgItem[]> = computed(() => {
   let topList: TMsgItem[] = [];
   let defList: TMsgItem[] = [];
   list
-    .filter((e: TMsgItem) => e.msgClassId! || e.lastMsg.msgId)
+    .filter((e: TMsgItem) => e.msgClassId! || (e.lastMsg && e.lastMsg.msgId))
     .forEach((e: TMsgItem) => {
       if (e.isGroup && e.groupDetailInfo?.groupAttachInfo?.groupTop) {
         topList.push(e);

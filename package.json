@@ -9,6 +9,9 @@
     "iconfont-create": "npx iconfont-create && npm run lint"
   },
   "dependencies": {
+    "@rongcloud/imlib-next": "^5.1.0",
+    "@rongcloud/plugin-call": "^5.0.7",
+    "@rongcloud/plugin-rtc": "^5.3.0",
     "ali-oss": "^6.16.0",
     "axios": "^0.24.0",
     "benz-amr-recorder": "^1.1.3",

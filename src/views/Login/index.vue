@@ -105,6 +105,7 @@ import { hideLoading, showLoading } from '@/plugin/Loading/index';
 import { useGoTo } from '@/hooks';
 import { useRouter } from 'vue-router';
 import { saveData } from '@/api/app';
+import { initRongConnect } from '@/hooks/window';
 
 const { t } = useI18n();
 const store = useStore(key);
@@ -307,6 +308,8 @@ function useLoginCb(
       setStorage('userList', JSON.stringify(userList));
     }
     store.dispatch('init');
+    // 初始化融云
+    initRongConnect(store);
     return goTo('/Home/Message');
   }
   return Toast(t(data.body.resultString));

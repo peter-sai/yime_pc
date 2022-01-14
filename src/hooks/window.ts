@@ -1,6 +1,7 @@
 import { showLoading } from '@/plugin/Loading';
 import { Toast } from '@/plugin/Toast';
 import { initStore } from '@/store';
+import * as RongIMLib from '@rongcloud/imlib-next';
 import {
   IFireInfo,
   IGroupAtInfo,
@@ -11,6 +12,7 @@ import {
 } from '@/types/msg';
 import { IGroupInfo, IUserDetailInfo, IUserInfo } from '@/types/user';
 import { getMsgList, setMsgList } from '@/utils/utils';
+import { getToken } from '../api';
 import { number } from '@intlify/core-base';
 import moment from 'moment';
 import { ComputedRef, Ref } from 'vue';
@@ -690,6 +692,23 @@ const useFormateTime = () => {
   };
 };
 
+const initRongConnect = async (store: Store<initStore>) => {
+  const userInfo = store.state.userInfo;
+  const res: any = await getToken({
+    uid: userInfo.uid,
+    name: userInfo.nickname,
+    portrait: userInfo.icon,
+  });
+
+  RongIMLib.connect(res.token).then((res: any) => {
+    if (res.code === 0) {
+      console.log('链接成功, 链接用户 id 为: ', res.data.userId);
+    } else {
+      console.warn('链接失败, code:', res.code);
+    }
+  });
+};
+
 export {
   useUserOperateGroupInfo,
   useBeforeSwitch,
@@ -707,4 +726,5 @@ export {
   useUserGetConversationHasReadedMsgInfo,
   useRevoke,
   useFormateTime,
+  initRongConnect,
 };

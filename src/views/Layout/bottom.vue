@@ -204,9 +204,18 @@ import {
   onBeforeUnmount,
   watch,
   nextTick,
+  PropType,
 } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useStore } from 'vuex';
+import {
+  IMuteUser,
+  ISenderInfo,
+  RCCallEndReason,
+  RCCallSession,
+} from '@rongcloud/plugin-call';
+import { RCTrack } from '@rongcloud/plugin-rtc';
+import { IUserInfo } from '@/types/user';
 export default defineComponent({
   name: 'bottom',
 });
@@ -257,10 +266,13 @@ const style = {
   opacity: 0,
   cursor: 'auto',
 };
-defineProps({
+const props = defineProps({
   modelValue: {
     type: String,
     default: '',
+  },
+  yUserInfo: {
+    type: Object as PropType<IUserInfo>,
   },
 });
 const showExpres = ref(false);
@@ -348,8 +360,10 @@ onBeforeUnmount(() => {
   document.body.removeEventListener('click', bodyClickCb);
 });
 
-const start = () => {
-  MediaAudio({});
+// 开始音视频
+const start = async () => {
+  MediaAudio({ isCall: true, mediaType: 2, yUserInfo: props.yUserInfo });
+  await nextTick();
 };
 
 // 录音 语音消息

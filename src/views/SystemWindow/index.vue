@@ -74,7 +74,6 @@ async function userGetSystemNoticeContent(store: Store<initStore>) {
     encryption: 'Aoelailiao.Message.UserGetSystemNoticeContentListReq',
     auth: true,
   });
-  console.log(data.body);
 
   return data.body.msgContent;
 }

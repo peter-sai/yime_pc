@@ -31,6 +31,7 @@
 
     <Bottom
       v-model="inputVal"
+      :yUserInfo="yUserInfo"
       @recommend="recommend"
       @enter="enter"
       @sendImg="sendImg('img')"

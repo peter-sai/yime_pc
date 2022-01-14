@@ -1,6 +1,6 @@
 import { createApp } from 'vue';
 import dialogApp from './index.vue';
-import store from '@/store';
+import store, { key } from '@/store';
 import router from '@/router/index';
 import i18n from '@/lang/index';
 
@@ -13,7 +13,7 @@ const MediaAudio = (props: any) => {
     },
   };
   app = createApp(dialogApp, option);
-  app.use(store);
+  app.use(store, key);
   app.use(router);
   app.use(i18n);
   app.mount('#media');
