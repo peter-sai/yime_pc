@@ -27,6 +27,7 @@ let defCb: any = null;
 let time = 0;
 
 const initState = {
+  rongIm: null,
   lang: -1, // 设置语言
   token: '',
   isOnLine: '消息',
@@ -131,6 +132,9 @@ export type initStore = typeof initState;
 const sotreRoot = createStore({
   state: initState,
   mutations: {
+    SET_RONGIM: (state, res) => {
+      state.rongIm = res;
+    },
     SET_LANG: (state, res) => {
       state.lang = res;
       setStorage('lang', res);
@@ -170,9 +174,10 @@ const sotreRoot = createStore({
           const list = state.msgList[id].readList;
           const item = state.msgList[id];
           list.push(res);
-          list.sort((a, b) => b.msgId - a.msgId);
+          list.sort((a, b) => a.msgId - b.msgId);
           item.readList = list;
           state.msgList[id] = item;
+          state.msgList[id].lastMsg = list[list.length - 1];
         }
       } else {
         state.msgList[id] = res;

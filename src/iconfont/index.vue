@@ -6,6 +6,7 @@
 
 <script>
 import iconWORD from './iconWORD.vue';
+import iconbianzu16 from './iconbianzu16.vue';
 import iconbianzu4 from './iconbianzu4.vue';
 import iconbianzu6 from './iconbianzu6.vue';
 import iconbianzu7 from './iconbianzu7.vue';
@@ -38,6 +39,7 @@ import iconleft from './iconleft.vue';
 import iconlianxiren from './iconlianxiren.vue';
 import iconlianxiren1 from './iconlianxiren1.vue';
 import iconliaotianjilu from './iconliaotianjilu.vue';
+import iconnarrow_icon from './iconnarrow_icon.vue';
 import iconpaishe from './iconpaishe.vue';
 import iconpdf from './iconpdf.vue';
 import iconplay1 from './iconplay1.vue';
@@ -55,6 +57,8 @@ import icontongzhi from './icontongzhi.vue';
 import icontuichu from './icontuichu.vue';
 import icontuichu1 from './icontuichu1.vue';
 import icontuijianhaoyou from './icontuijianhaoyou.vue';
+import iconvideo_icon1 from './iconvideo_icon1.vue';
+import iconvideo_icon7 from './iconvideo_icon7.vue';
 import iconweizhi from './iconweizhi.vue';
 import iconwenjian from './iconwenjian.vue';
 import iconwenjian1 from './iconwenjian1.vue';
@@ -85,6 +89,7 @@ export default {
   },
   components: {
     iconWORD,
+    iconbianzu16,
     iconbianzu4,
     iconbianzu6,
     iconbianzu7,
@@ -117,6 +122,7 @@ export default {
     iconlianxiren,
     iconlianxiren1,
     iconliaotianjilu,
+    iconnarrow_icon,
     iconpaishe,
     iconpdf,
     iconplay1,
@@ -134,6 +140,8 @@ export default {
     icontuichu,
     icontuichu1,
     icontuijianhaoyou,
+    iconvideo_icon1,
+    iconvideo_icon7,
     iconweizhi,
     iconwenjian,
     iconwenjian1,

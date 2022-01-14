@@ -54,6 +54,10 @@ select {
   position: relative;
   z-index: 99999;
 }
+#media {
+  position: relative;
+  z-index: 99999;
+}
 .vc-panel * {
   font-size: 10px;
 }
