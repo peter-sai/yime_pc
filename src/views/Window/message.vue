@@ -136,7 +136,7 @@
           :isRead="item.msgId <= readMsgId"
         />
       </div>
-      <!-- 音视频消息 -->
+      <!-- 语音消息 -->
       <div class="item" v-else-if="item.type === 'voiceMsg'">
         <YAudio
           @click="showUserInfo(getUserInfo(item).uid)"
@@ -148,6 +148,19 @@
           v-else
           :isRead="item.msgId <= readMsgId"
           :voiceMsg="item.msgContent.voiceMsg"
+        />
+      </div>
+      <!-- 音视频 -->
+      <div class="item" v-else-if="item.type === 'videoCallInfo'">
+        <YVideo
+          v-if="isShowHowComponent(item)"
+          :userInfo="getUserInfo(item)"
+          :data="item.msgContent.videoCallInfo"
+        />
+        <MVideo
+          v-else
+          :isRead="item.msgId <= readMsgId"
+          :data="item.msgContent.videoCallInfo"
         />
       </div>
       <!-- 系统消息 -->
@@ -176,7 +189,7 @@
         :data-clipboard-text="copyItem.msgContent.stringContent"
         >复制</span
       >
-      <span>转发</span>
+      <span @click="forward(copyItem.msgId)">转发</span>
       <span>保存</span>
       <span
         v-if="copyItem.fromId === store.state.userInfo.uid"
@@ -219,6 +232,8 @@ import MVisitingCard from '@/components/Message/MVisitingCard/index.vue';
 import YVisitingCard from '@/components/Message/YVisitingCard/index.vue';
 import YAudio from '@/components/Message/YAudio/index.vue';
 import MAudio from '@/components/Message/MAudio/index.vue';
+import MVideo from '@/components/Message/MVideo/index.vue';
+import YVideo from '@/components/Message/YVideo/index.vue';
 import Iconfont from '../../iconfont/index.vue';
 import { useStore } from 'vuex';
 import { key } from '@/store';
@@ -293,8 +308,10 @@ const showMen = ref(false);
 
 const menuClick = (e: any, data: any) => {
   copyItem.value = data;
-  style.value.left = e.x - 320;
-  style.value.top = e.y - 85;
+  console.log(e);
+
+  style.value.left = e.target.offsetLeft + 10;
+  style.value.top = e.target.offsetTop + 10;
   showMen.value = true;
 };
 const contextmenu = (e: any) => {
@@ -353,10 +370,12 @@ const isShowHowComponent = (item: IMsgInfo<string>) => {
 };
 
 // 获取需要显示的头像信息
-const getUserInfo = (item: IMsgInfo<string>) => {
-  return !activeIsGroup.value
-    ? props.yUserInfo
-    : groupMemberLists.value.find((e) => e.uid === item.fromId);
+const getUserInfo: (item: IMsgInfo<string>) => IUserInfo = (item) => {
+  return (
+    !activeIsGroup.value
+      ? props.yUserInfo
+      : groupMemberLists.value.find((e) => e.uid === item.fromId)
+  ) as IUserInfo;
 };
 
 const userGetConversationHasReadedMsgInfo =
@@ -427,6 +446,14 @@ const getRevokeName = (item: IMsgInfo<string>) => {
     return userAttachInfo.remarkName || userInfo.value.nickname;
   }
   return '';
+};
+
+// 转发
+const forward = (msgId: number) => {
+  //
+  store.commit('SET_FORWARDMSGID', msgId);
+  emit('toggleBox');
+  emit('changeTag', Etag.Forward);
 };
 </script>
 <style lang="scss" scoped>
