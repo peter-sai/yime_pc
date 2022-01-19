@@ -19,6 +19,7 @@ import { ComputedRef, Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { stringifyQuery } from 'vue-router';
 import { Store } from 'vuex';
+import { RCCallClient } from '@rongcloud/plugin-call';
 
 // 群操作
 const useUserOperateGroupInfo = (store: Store<initStore>) => {
@@ -692,7 +693,10 @@ const useFormateTime = () => {
   };
 };
 
-const initRongConnect = async (store: Store<initStore>) => {
+const initRongConnect = async (
+  store: Store<initStore>,
+  rongIm: RCCallClient | null,
+) => {
   const userInfo = store.state.userInfo;
   const res: any = await getToken({
     uid: userInfo.uid,
@@ -703,6 +707,7 @@ const initRongConnect = async (store: Store<initStore>) => {
   RongIMLib.connect(res.token).then((res: any) => {
     if (res.code === 0) {
       console.log('链接成功, 链接用户 id 为: ', res.data.userId);
+      store.commit('SET_RONGIM', rongIm);
     } else {
       console.warn('链接失败, code:', res.code);
     }

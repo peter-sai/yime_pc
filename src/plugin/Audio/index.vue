@@ -26,8 +26,16 @@
     </div>
     <div class="btn">
       <div
+        class="item changeAudio"
+        v-if="mediaType === 2 && conversationIng && !isAudio"
+        @click="changeAudio"
+      >
+        <Iconfont name="iconbianzu" size="30" color="#fff" />
+        <span>切换到语音</span>
+      </div>
+      <div
         class="item"
-        v-if="mediaType === 2 && conversationIng"
+        v-if="mediaType === 2 && conversationIng && !isAudio"
         @click="toggleVideo"
       >
         <img v-if="isOpenVideo" src="../../assets/img/videoActive.svg" alt="" />
@@ -119,6 +127,7 @@ const init = async (
   close: () => void,
   startTimeOut: () => void,
   conversationIng: Ref<boolean>,
+  isAudio: Ref<boolean>,
 ) => {
   // 发送者
   const { session } = await (store.state.rongIm as any).call({
@@ -177,7 +186,7 @@ const init = async (
        */
       onTrackReady(track: RCTrack) {
         // 远程的音频直接播放, 为了减少回音，可不播放本端音频
-        if (track.isAudioTrack()) {
+        if (track.isAudioTrack() && !track.isLocalTrack()) {
           track.play();
         }
 
@@ -200,6 +209,10 @@ const init = async (
           videos.push(video);
           track.play(video);
         }
+      },
+      onMediaModify: function (sender: any): void {
+        console.log('onMediaModify', sender);
+        isAudio.value = true;
       },
       onVideoMuteChange: function (muteUser: IMuteUser): void {
         if (muteUser.muted) {
@@ -249,6 +262,7 @@ const sessionRoot = ref({}) as Ref<RCCallSession>;
 const info = ref('连接中…');
 let time = 0;
 const isAnswer = ref(false);
+const isAudio = ref(false);
 
 // 是否是静音
 const isMute = ref(false);
@@ -267,7 +281,7 @@ const startTimeOut = () => {
   }, 1000);
 };
 
-onMounted(() => {
+onMounted(async () => {
   if (props.isCall) {
     // 呼叫方
     init(
@@ -279,6 +293,7 @@ onMounted(() => {
       close,
       startTimeOut,
       conversationIng,
+      isAudio,
     );
   } else {
     // 接听方
@@ -327,7 +342,7 @@ onMounted(() => {
        */
       onTrackReady(track: RCTrack): void {
         // 远程的音频直接播放, 为了减少回音，可不播放本端音频
-        if (track.isAudioTrack()) {
+        if (track.isAudioTrack() && !track.isLocalTrack()) {
           track.play();
         }
 
@@ -356,6 +371,7 @@ onMounted(() => {
       },
       onMediaModify: function (sender: any): void {
         console.log('onMediaModify', sender);
+        isAudio.value = true;
       },
       onAudioMuteChange: function (muteUser: IMuteUser): void {
         console.log('onAudioMuteChange', muteUser);
@@ -407,14 +423,55 @@ const accept = () => {
 };
 
 // 挂断
-const hungup = () => {
+const hungup = async () => {
   sessionRoot.value.hungup();
   close();
+  let actionType = 21;
+  // 是否是发起人
+  if (props.isCall) {
+    // 是否是通话中
+    if (conversationIng.value) {
+      // 在通话中 发起人挂断
+      actionType = 8;
+    } else {
+      // 是发起人 并且 还未接听 则是 发起人自动取消
+      actionType = 21;
+    }
+  } else {
+    // 是否是通话中
+    if (conversationIng.value) {
+      // 在通话中 非发起人挂断
+      actionType = 7;
+    } else {
+      // 不是发起人 并且 还未接听 则是 被呼叫人拒绝接听
+      actionType = 5;
+    }
+  }
+
+  const query = {
+    actionType: actionType,
+    videoType: props.mediaType,
+    talkUid: props.yUserInfo?.uid,
+  };
+  console.log(query);
+
+  const data = await store.dispatch('postMsg', {
+    query,
+    cmd: 2009,
+    encryption: 'Aoelailiao.Message.VideoCallActionUploadReq',
+    auth: true,
+  });
 };
 
 // 关闭弹框
 const close = () => {
   props.destroy && props.destroy();
+};
+
+// 转为语音
+const changeAudio = () => {
+  sessionRoot.value.descendAbility();
+  isAudio.value = true;
 };
 </script>
 
@@ -506,6 +563,11 @@ const close = () => {
         font-size: 12px;
         color: #e0d1c3;
         margin-top: 10px;
+      }
+      &.changeAudio {
+        position: absolute;
+        bottom: 100%;
+        right: 0;
       }
     }
   }

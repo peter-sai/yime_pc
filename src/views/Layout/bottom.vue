@@ -45,17 +45,13 @@
             <Iconfont name="iconxiangce" size="20" color="#111111" />
             <div>相册</div>
           </div>
-          <div class="opeItem" @click="start">
-            <Iconfont name="iconicon_yuyinshipin" size="20" color="#111111" />
-            <div>语音视频</div>
+          <div class="opeItem" @click="start(1)">
+            <Iconfont name="iconicon_yuyinshipin1" size="20" color="#111111" />
+            <div>语音</div>
           </div>
-          <!-- <div class="opeItem">
-            <Iconfont name="iconpaishe" size="20" color="#111111" />
-            <div>拍摄</div>
-          </div> -->
-          <div class="opeItem" @click.stop="$emit('sendFile')">
-            <Iconfont name="iconwenjian1" size="20" color="#111111" />
-            <div>文件</div>
+          <div class="opeItem" @click="start(2)">
+            <Iconfont name="iconshipintonghua" size="24" color="#111111" />
+            <div>视频</div>
           </div>
         </div>
         <div class="child">
@@ -71,9 +67,13 @@
             <Iconfont name="icontuijianhaoyou" size="20" color="#111111" />
             <div>推荐好友</div>
           </div>
-          <div class="opeItem" :style="style">
+          <!-- <div class="opeItem" :style="style">
             <Iconfont name="iconweizhi" size="20" color="#111111" />
             <div>位置</div>
+          </div> -->
+          <div class="opeItem" @click.stop="$emit('sendFile')">
+            <Iconfont name="iconwenjian1" size="20" color="#111111" />
+            <div>文件</div>
           </div>
         </div>
       </div>
@@ -361,8 +361,9 @@ onBeforeUnmount(() => {
 });
 
 // 开始音视频
-const start = async () => {
-  MediaAudio({ isCall: true, mediaType: 2, yUserInfo: props.yUserInfo });
+const start = async (mediaType: number) => {
+  if (!store.state.rongIm) return Toast('融云服务初始化失败');
+  MediaAudio({ isCall: true, mediaType, yUserInfo: props.yUserInfo });
   await nextTick();
 };
 
