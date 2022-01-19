@@ -112,6 +112,12 @@
           />
         </div>
       </transition>
+      <!-- 转发消息 -->
+      <transition name="fade-transform1" mode="out-in">
+        <div v-if="showBox && tag === Etag.Forward" class="boxContent">
+          <Forward @toggleBox="toggleBox" @changeTag="changeTag" />
+        </div>
+      </transition>
     </div>
   </div>
 </template>
@@ -133,6 +139,7 @@ import UserInfo from '../Layout/Chat/userInfo.vue';
 import Recommend from '../Layout/Chat/recommend.vue';
 import CloudFile from '../Layout/Chat/cloudFile.vue';
 import CommonGroup from '../Layout/Chat/commonGroup.vue';
+import Forward from '../Layout/Chat/Forward.vue';
 import Message from '../Window/message.vue';
 import { Store, useStore } from 'vuex';
 import GroupChatHeader from './header.vue';
@@ -153,7 +160,6 @@ async function getGroupInfo(store: Store<initStore>) {
   if (!store.state.activeUid) return;
 
   let msgItem: Ref<ImsgItem> = ref(store.state.msgList[store.state.activeUid!]);
-
   // 如果不存在则获取 (群聊不在聊天列表中会没有信息)
   if (!msgItem.value) {
     const data = await store.dispatch('postMsg', {
@@ -164,6 +170,7 @@ async function getGroupInfo(store: Store<initStore>) {
       encryption: 'Aoelailiao.Login.ClientGetGroupInfoReq',
       auth: true,
     });
+
     msgItem.value = data.body;
 
     const item = {

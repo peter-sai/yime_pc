@@ -52,6 +52,7 @@ export enum Etag {
   AddGroupType,
   CreateGroupChat,
   AddGroupMembers,
+  Forward,
 }
 export default defineComponent({
   name: 'Layout',

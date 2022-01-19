@@ -97,6 +97,12 @@
           />
         </div>
       </transition>
+      <!-- 转发消息 -->
+      <transition name="fade-transform1" mode="out-in">
+        <div v-if="showBox && tag === Etag.Forward" class="boxContent">
+          <Forward @toggleBox="toggleBox" @changeTag="changeTag" />
+        </div>
+      </transition>
     </div>
   </div>
 </template>
@@ -120,6 +126,7 @@ import { useI18n } from 'vue-i18n';
 import { getTime } from '@/utils/utils';
 import { Store, useStore } from 'vuex';
 import UserInfo from '../Layout/Chat/userInfo.vue';
+import Forward from '../Layout/Chat/Forward.vue';
 import CloudFile from '../Layout/Chat/cloudFile.vue';
 import CommonGroup from '../Layout/Chat/commonGroup.vue';
 import Recommend from '../Layout/Chat/recommend.vue';

@@ -190,6 +190,7 @@ const timeout = (time: Ref<number>, codeMsg: Ref<string>) => {
       codeMsg.value = time.value + 's';
     } else {
       codeMsg.value = '获取验证码';
+      time.value = 60;
     }
   }, 1000);
 };

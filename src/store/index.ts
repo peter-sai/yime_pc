@@ -28,6 +28,7 @@ let time = 0;
 
 const initState = {
   rongIm: null,
+  forwardMsgId: 0,
   lang: -1, // 设置语言
   token: '',
   isOnLine: '消息',
@@ -134,6 +135,9 @@ const sotreRoot = createStore({
   mutations: {
     SET_RONGIM: (state, res) => {
       state.rongIm = res;
+    },
+    SET_FORWARDMSGID: (state, res) => {
+      state.forwardMsgId = res;
     },
     SET_LANG: (state, res) => {
       state.lang = res;

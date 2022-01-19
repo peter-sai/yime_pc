@@ -6,6 +6,7 @@
 
 <script>
 import iconWORD from './iconWORD.vue';
+import iconbianzu from './iconbianzu.vue';
 import iconbianzu16 from './iconbianzu16.vue';
 import iconbianzu4 from './iconbianzu4.vue';
 import iconbianzu6 from './iconbianzu6.vue';
@@ -32,6 +33,7 @@ import iconguanyu from './iconguanyu.vue';
 import iconheimingdan from './iconheimingdan.vue';
 import iconicon_xiaolian from './iconicon_xiaolian.vue';
 import iconicon_yuyinshipin from './iconicon_yuyinshipin.vue';
+import iconicon_yuyinshipin1 from './iconicon_yuyinshipin1.vue';
 import iconjiami from './iconjiami.vue';
 import iconjieping from './iconjieping.vue';
 import iconjingyin from './iconjingyin.vue';
@@ -48,6 +50,7 @@ import iconradio from './iconradio.vue';
 import iconright from './iconright.vue';
 import iconsearch from './iconsearch.vue';
 import iconshijian from './iconshijian.vue';
+import iconshipintonghua from './iconshipintonghua.vue';
 import iconshoujihaoma from './iconshoujihaoma.vue';
 import iconshoujihaoma1 from './iconshoujihaoma1.vue';
 import iconshuangxiangsudicopy from './iconshuangxiangsudicopy.vue';
@@ -59,6 +62,8 @@ import icontuichu1 from './icontuichu1.vue';
 import icontuijianhaoyou from './icontuijianhaoyou.vue';
 import iconvideo_icon1 from './iconvideo_icon1.vue';
 import iconvideo_icon7 from './iconvideo_icon7.vue';
+import iconvideo_refuse from './iconvideo_refuse.vue';
+import iconvioce_refuse from './iconvioce_refuse.vue';
 import iconweizhi from './iconweizhi.vue';
 import iconwenjian from './iconwenjian.vue';
 import iconwenjian1 from './iconwenjian1.vue';
@@ -89,6 +94,7 @@ export default {
   },
   components: {
     iconWORD,
+    iconbianzu,
     iconbianzu16,
     iconbianzu4,
     iconbianzu6,
@@ -115,6 +121,7 @@ export default {
     iconheimingdan,
     iconicon_xiaolian,
     iconicon_yuyinshipin,
+    iconicon_yuyinshipin1,
     iconjiami,
     iconjieping,
     iconjingyin,
@@ -131,6 +138,7 @@ export default {
     iconright,
     iconsearch,
     iconshijian,
+    iconshipintonghua,
     iconshoujihaoma,
     iconshoujihaoma1,
     iconshuangxiangsudicopy,
@@ -142,6 +150,8 @@ export default {
     icontuijianhaoyou,
     iconvideo_icon1,
     iconvideo_icon7,
+    iconvideo_refuse,
+    iconvioce_refuse,
     iconweizhi,
     iconwenjian,
     iconwenjian1,

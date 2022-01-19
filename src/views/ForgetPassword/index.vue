@@ -1,5 +1,9 @@
 <template>
   <div class="forgetPassword">
+    <div class="boBack" @click="goBack">
+      <Iconfont name="iconleft" size="15" />
+      <span>返回</span>
+    </div>
     <!-- logo -->
     <div class="logo">
       <img :src="logo" alt="" srcset="" />
@@ -75,6 +79,7 @@ import { getLang, md5 } from '@/utils/utils';
 import { Toast } from '@/plugin/Toast';
 import { showLoading } from '@/plugin/Loading';
 import { useRouter } from 'vue-router';
+import { useGoBack } from '@/hooks';
 
 const router = useRouter();
 const store = useStore(key);
@@ -101,6 +106,8 @@ const langList = ['zh', 'tw', 'en'];
 const langKey = store.state.lang === -1 ? getLang() : store.state.lang;
 const lang = langList[langKey];
 const list = reactive(code);
+
+const goBack = useGoBack(useRouter);
 
 // 点击获取验证码
 const getCode = useGetCode(store, codeMsg, query, areaCode, time, timeout, t);
@@ -182,6 +189,7 @@ function timeout() {
       codeMsg.value = time.value + 's';
     } else {
       codeMsg.value = t('获取验证码');
+      time.value = 60;
     }
   }, 1000);
 }
@@ -189,6 +197,19 @@ function timeout() {
 <style lang="scss" scoped>
 @import '@/style/base.scss';
 .forgetPassword {
+  .boBack {
+    display: flex;
+    align-items: center;
+    margin: 20px 25px;
+    cursor: pointer;
+    span {
+      font-size: 14px;
+      font-family: PingFangSC-Regular, PingFang SC;
+      font-weight: 400;
+      color: #222222;
+      line-height: 20px;
+    }
+  }
   .logo {
     width: 120px;
     margin: 76px auto 36px;

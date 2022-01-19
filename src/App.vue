@@ -143,10 +143,10 @@ const stop = watch(
       // 处理撤回消息
       if (msgInfos[0].msgContent.msgContent === 'revokeInfo') {
         const { revokeMsgId } = msgInfos[0].msgContent.revokeInfo;
-        const revokeKey = msgList[msgInfos[0].fromId].readList.findIndex(
+        const revokeKey = msgList[msgInfos[0].toId].readList.findIndex(
           (e: any) => Number(e.msgId) === Number(revokeMsgId),
         );
-        msgList[msgInfos[0].fromId].readList.splice(revokeKey, 1);
+        msgList[msgInfos[0].toId].readList.splice(revokeKey, 1);
         store.commit('SET_MSGLIST', msgList);
       }
 
@@ -167,6 +167,29 @@ const stop = watch(
       msgNotice(msgInfos[0]);
       // 发送已读msgId
       const userInfo = store.state.userInfo;
+
+      // 如果是群聊并且是系统消息则更新本地缓存群详情
+      if (
+        msgInfos[0].isGroupMsg &&
+        msgInfos[0].msgContent.msgContent === 'systemNotifyInfo'
+      ) {
+        const item = msgInfos[0];
+        // 群聊获取群详情
+        const data = await store.dispatch('postMsg', {
+          query: { groupId: item.toId },
+          cmd: 1029,
+          encryption: 'Aoelailiao.Login.ClientGetGroupInfoReq',
+          auth: true,
+        });
+        const groupDetailInfo = data.body.groupDetailInfo;
+        const res = store.state.msgList[item.toId];
+        res.groupDetailInfo = groupDetailInfo;
+
+        store.commit('SET_MSGLISTITEM', {
+          res: res,
+          uid: item.toId,
+        });
+      }
       // 如果发送者是自己 或者 已经开启了对方不显示已读消息开关 不需要发送msgId
       if (
         Number(userInfo.uid) === Number(msgInfos[0].fromId) ||
@@ -192,25 +215,6 @@ const stop = watch(
             'Aoelailiao.Message.UserUpdateConversationHasReadedMsgInfoReq',
           auth: true,
         });
-        // 如果是群聊并且是系统消息则更新本地缓存群详情
-        if (msgInfos[0].msgContent.msgContent === 'systemNotifyInfo') {
-          const item = msgInfos[0];
-          // 群聊获取群详情
-          const data = await store.dispatch('postMsg', {
-            query: { groupId: item.toId },
-            cmd: 1029,
-            encryption: 'Aoelailiao.Login.ClientGetGroupInfoReq',
-            auth: true,
-          });
-          const groupDetailInfo = data.body.groupDetailInfo;
-          const res = store.state.msgList[item.toId];
-          res.groupDetailInfo = groupDetailInfo;
-
-          store.commit('SET_MSGLISTITEM', {
-            res: res,
-            uid: item.toId,
-          });
-        }
       } else {
         const res = {
           msgHasReadedInfo: {
@@ -281,7 +285,7 @@ window.onunload = () => {
 async function initRonyun() {
   // IM 客户端初始化
   RongIMLib.init({
-    appkey: 'k51hidwqkgghb',
+    appkey: 'tdrvipkst22v5',
   });
   // RTC 客户端初始化
   const rtcClient: RCRTCClient = RongIMLib.installPlugin(
@@ -330,10 +334,10 @@ async function initRonyun() {
       //
     },
   });
-  store.commit('SET_RONGIM', rongIm);
+  // store.commit('SET_RONGIM', rongIm);
   // 如果以登录状态 则 连接融云
   if (getUserToken()) {
-    initRongConnect(store);
+    initRongConnect(store, rongIm);
   }
 }
 </script>
