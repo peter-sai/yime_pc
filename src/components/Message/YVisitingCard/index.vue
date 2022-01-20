@@ -2,7 +2,7 @@
   <div class="mmsg">
     <img @click="$emit('click')" :src="userInfo?.icon" />
     <div>
-      <div style="flex: 1">
+      <div style="flex: 1" @contextmenu="contextmenu">
         <div class="fileBg" @click="$emit('clickCard')">
           <div class="left">
             <div class="title">{{ t(item.showContent) }}</div>
@@ -31,7 +31,6 @@ defineComponent({
 });
 </script>
 <script lang="ts" setup>
-defineEmits(['click', 'clickCard']);
 defineProps({
   item: {
     type: Object as PropType<IVisitingCard>,
@@ -42,6 +41,13 @@ defineProps({
   },
 });
 const { t } = useI18n();
+
+const emit = defineEmits(['menuClick', 'click', 'clickCard']);
+
+const contextmenu = (e: any) => {
+  e.preventDefault();
+  emit('menuClick', e);
+};
 </script>
 <style lang="scss" scoped>
 @import '@/style/theme/index.scss';

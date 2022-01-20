@@ -1,7 +1,7 @@
 <template>
   <div class="mmsg">
     <div style="flex: 1">
-      <ImBg isMe style="display: inline-block">
+      <ImBg v-bind="$attrs" isMe style="display: inline-block">
         <div class="imBgBox" @click="$emit('call')">
           <span
             >{{ filterData[0].msgText

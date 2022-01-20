@@ -1,6 +1,6 @@
 <template>
   <div class="mmsg">
-    <div style="flex: 1">
+    <div style="flex: 1" @contextmenu="contextmenu">
       <div class="fileBg">
         <div class="left">
           <div class="title">{{ item?.fileName }}</div>
@@ -18,7 +18,7 @@
 <script lang="ts">
 import Iconfont from '@/iconfont/index.vue';
 import { getSize } from '@/utils/utils';
-import { ref, defineComponent, defineProps, PropType } from 'vue';
+import { ref, defineComponent, defineProps, PropType, defineEmits } from 'vue';
 import IsRead from '@/components/IsRead/index.vue';
 import { IFileInfo } from '@/types/msg';
 defineComponent({
@@ -52,6 +52,13 @@ if (res.length > 1) {
 }
 
 const size = getSize(props.item!.fileSize);
+
+const emit = defineEmits(['menuClick']);
+
+const contextmenu = (e: any) => {
+  e.preventDefault();
+  emit('menuClick', e);
+};
 </script>
 <style lang="scss" scoped>
 @import '@/style/theme/index.scss';

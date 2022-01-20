@@ -1,6 +1,6 @@
 <template>
   <div class="mmsg">
-    <div style="flex: 1">
+    <div style="flex: 1" @contextmenu="contextmenu">
       <div class="fileBg" @click="$emit('clickCard')">
         <div class="left">
           <div class="title">{{ t(item.showContent) }}</div>
@@ -24,7 +24,6 @@ export default defineComponent({
 });
 </script>
 <script lang="ts" setup>
-defineEmits(['clickCard']);
 defineProps({
   isRead: {
     type: Boolean,
@@ -36,6 +35,13 @@ defineProps({
   },
 });
 const { t } = useI18n();
+
+const emit = defineEmits(['menuClick', 'clickCard']);
+
+const contextmenu = (e: any) => {
+  e.preventDefault();
+  emit('menuClick', e);
+};
 </script>
 <style lang="scss" scoped>
 @import '@/style/theme/index.scss';

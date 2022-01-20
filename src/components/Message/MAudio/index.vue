@@ -1,6 +1,6 @@
 <template>
   <div class="mmsg">
-    <ImBg isMe>
+    <ImBg v-bind="$attrs" isMe>
       <div class="imBgBox">
         <div class="icon">
           <Iconfont

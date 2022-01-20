@@ -3,6 +3,24 @@
 </template>
 
 <script lang="ts">
+import { computed, defineComponent, onBeforeUnmount, watch } from 'vue';
+import { Store, useStore } from 'vuex';
+import { getOssInfo } from './api';
+import { getToken as getUserToken } from './utils/utils';
+import { initStore, key } from './store';
+import { getStorage, setMsgList } from './utils/utils';
+import { initRongConnect, useClientSendMsgAckToServer } from './hooks/window';
+import { IMsgInfo } from './types/msg';
+import * as RongIMLib from '@rongcloud/imlib-next';
+import { installer as rtcInstaller, RCRTCClient } from '@rongcloud/plugin-rtc';
+import {
+  installer as callInstaller,
+  RCCallSession,
+  IEndSummary,
+} from '@rongcloud/plugin-call';
+import messageAudio from './assets/audio/message.wav';
+import { MediaAudio } from './plugin/Audio';
+import { GroupMediaAudio } from './plugin/GroupAudio';
 export async function initRonyun(store: Store<initStore>) {
   // IM 客户端初始化
   RongIMLib.init({
@@ -86,26 +104,12 @@ export async function initRonyun(store: Store<initStore>) {
     initRongConnect(store, rongIm);
   }
 }
+
+export default defineComponent({
+  name: 'App',
+});
 </script>
 <script lang="ts" setup>
-import { computed, onBeforeUnmount, watch } from 'vue';
-import { Store, useStore } from 'vuex';
-import { getOssInfo } from './api';
-import { getToken as getUserToken } from './utils/utils';
-import { initStore, key } from './store';
-import { getStorage, setMsgList } from './utils/utils';
-import { initRongConnect, useClientSendMsgAckToServer } from './hooks/window';
-import { IMsgInfo } from './types/msg';
-import * as RongIMLib from '@rongcloud/imlib-next';
-import { installer as rtcInstaller, RCRTCClient } from '@rongcloud/plugin-rtc';
-import {
-  installer as callInstaller,
-  RCCallSession,
-  IEndSummary,
-} from '@rongcloud/plugin-call';
-import messageAudio from './assets/audio/message.wav';
-import { MediaAudio } from './plugin/Audio';
-import { GroupMediaAudio } from './plugin/GroupAudio';
 const store = useStore(key);
 store.dispatch('init');
 
@@ -115,7 +119,8 @@ if (Notification.permission !== 'granted') {
 }
 
 const init = async () => {
-  const url = 'ws://16.163.55.202:8002';
+  const url = 'wss://ws-test.yime.app';
+  // const url = 'ws://16.163.55.202:8002';
   // const url = 'wss://ws.yime.app';
   let ws = new WebSocket(url);
   store.commit('SET_ISONLINE', '连接中...');

@@ -3,7 +3,7 @@
     <div @click="$emit('click')">
       <img :src="userInfo?.icon" />
     </div>
-    <ImBg>
+    <ImBg v-bind="$attrs">
       <div class="imBgBox">
         <span class="time">{{ voiceMsg.voiceTime }} ''</span>
         <ShowAudio :time="time" type="you" v-if="isPlay" />

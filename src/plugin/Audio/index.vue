@@ -128,6 +128,7 @@ const init = async (
   conversationIng: Ref<boolean>,
   isAudio: Ref<boolean>,
   hungup: () => void,
+  videoCallActionUploadReq: (num: number) => void,
 ) => {
   // 发送者
   const { session } = await (store.state.rongIm as any).call({
@@ -143,6 +144,8 @@ const init = async (
         const { userId } = sender;
         // 对方响铃
         info.value = '等待对方接听';
+        console.log('发起者', 'onRinging');
+        videoCallActionUploadReq(1);
       },
 
       /**
@@ -156,6 +159,7 @@ const init = async (
         // 开始倒计时
         startTimeOut();
         conversationIng.value = true;
+        console.log('发起者', 'onAccept');
       },
 
       /**
@@ -171,8 +175,9 @@ const init = async (
       ) {
         const { userId } = sender;
         // 对方挂断
-        console.log(sender, map[reason]);
+        console.log('发起者', 'onHungup', map[reason]);
         hungup();
+        videoCallActionUploadReq(5);
       },
 
       onAudioMuteChange: (muteUser: IMuteUser, session: RCCallSession) => {
@@ -210,8 +215,7 @@ const init = async (
           track.play(video);
         }
       },
-      onMediaModify: function (sender: any): void {
-        console.log('onMediaModify', sender);
+      onMediaModify: function (): void {
         isAudio.value = true;
       },
       onVideoMuteChange: function (muteUser: IMuteUser): void {
@@ -289,6 +293,7 @@ onMounted(async () => {
       conversationIng,
       isAudio,
       hungup,
+      videoCallActionUploadReq,
     );
   } else {
     // 接听方
@@ -306,6 +311,7 @@ onMounted(async () => {
       onRinging(sender: ISenderInfo) {
         const { userId } = sender;
         console.log(userId);
+        console.log('接听者', 'onRinging');
       },
 
       /**
@@ -317,6 +323,7 @@ onMounted(async () => {
         const { userId } = sender;
         startTimeOut();
         conversationIng.value = true;
+        console.log('接听者', 'onAccept');
       },
 
       /**
@@ -326,7 +333,7 @@ onMounted(async () => {
        * @param session 当前的 session 对象
        */
       onHungup(sender: ISenderInfo, reason: RCCallEndReason) {
-        console.log(sender, map[reason]);
+        console.log('接听者', 'onHungup', map[reason]);
         hungup();
       },
 
@@ -418,47 +425,26 @@ const accept = () => {
 };
 
 // 挂断
-const hungup = async () => {
+const hungup = async (num?: number) => {
   sessionRoot.value.hungup();
   close();
-  let actionType = 21;
-  // 是否是发起人
-  if (props.isCall) {
-    // 是否是通话中
-    if (conversationIng.value) {
-      // 在通话中 发起人挂断
-      actionType = 8;
-    } else {
-      // 是发起人 并且 还未接听 则是 发起人自动取消
-      actionType = 21;
-    }
-  } else {
-    // 是否是通话中
-    if (conversationIng.value) {
-      // 在通话中 非发起人挂断
-      actionType = 7;
-    } else {
-      // 不是发起人 并且 还未接听 则是 被呼叫人拒绝接听
-      actionType = 5;
-    }
-  }
+};
 
+const videoCallActionUploadReq = async (actionType: number) => {
+  // let actionType = 5;
   const query = {
     actionType: actionType,
     videoType: props.mediaType,
     talkUid: props.yUserInfo?.uid,
   };
 
-  console.log(query);
-
-  // const data = await store.dispatch('postMsg', {
-  //   query,
-  //   cmd: 2009,
-  //   encryption: 'Aoelailiao.Message.VideoCallActionUploadReq',
-  //   auth: true,
-  // });
+  const data = await store.dispatch('postMsg', {
+    query,
+    cmd: 2009,
+    encryption: 'Aoelailiao.Message.VideoCallActionUploadReq',
+    auth: true,
+  });
 };
-
 // 关闭弹框
 const close = () => {
   props.destroy && props.destroy();

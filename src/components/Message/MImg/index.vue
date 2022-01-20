@@ -1,7 +1,7 @@
 <template>
   <div class="mImg">
     <div style="flex: 1">
-      <div>
+      <div @contextmenu="contextmenu">
         <!-- <img :width="width" :height="height" :src="src" alt="" /> -->
         <SayHello v-if="src === 'emoji_1'" />
         <div class="imgBg" v-else>
@@ -13,7 +13,7 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, defineProps } from 'vue';
+import { defineComponent, defineProps, defineEmits } from 'vue';
 import SayHello from '../SayHello/index.vue';
 import IsRead from '@/components/IsRead/index.vue';
 export default defineComponent({
@@ -39,6 +39,13 @@ defineProps({
     default: 0,
   },
 });
+
+const emit = defineEmits(['menuClick']);
+
+const contextmenu = (e: any) => {
+  e.preventDefault();
+  emit('menuClick', e);
+};
 </script>
 <style lang="scss" scoped>
 @import '@/style/theme/index.scss';

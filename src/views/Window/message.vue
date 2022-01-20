@@ -127,6 +127,7 @@
             @clickCard="showUserInfo(item.msgContent.visitingCard.uid)"
             @click="showUserInfo(getUserInfo(item).uid)"
             :userInfo="getUserInfo(item)"
+            @menuClick="menuClick($event, item)"
             v-if="isShowHowComponent(item)"
             :item="item.msgContent.visitingCard"
           />
@@ -134,6 +135,7 @@
             v-else
             @clickCard="showUserInfo(item.msgContent.visitingCard.uid)"
             :item="item.msgContent.visitingCard"
+            @menuClick="menuClick($event, item)"
             :isRead="item.msgId <= readMsgId"
           />
         </div>
@@ -194,7 +196,11 @@
           >复制</span
         >
         <span @click="forward(copyItem.msgId)">转发</span>
-        <span>保存</span>
+        <span
+          @click="save(copyItem)"
+          v-if="['imageMsg', 'fileInfo'].includes(copyItem.type)"
+          >保存</span
+        >
         <span
           v-if="copyItem.fromId === store.state.userInfo.uid"
           @click="del(copyItem)"
@@ -244,7 +250,13 @@ import Iconfont from '../../iconfont/index.vue';
 import { useStore } from 'vuex';
 import { key } from '@/store';
 import { useI18n } from 'vue-i18n';
-import { IFireInfo, IMsgInfo, ImsgItem, IVisitingCard } from '@/types/msg';
+import {
+  IFireInfo,
+  IImageMsgInfo,
+  IMsgInfo,
+  ImsgItem,
+  IVisitingCard,
+} from '@/types/msg';
 import { formateTime } from '@/utils/utils';
 import { Etag } from '../Layout/index.vue';
 import {
@@ -473,8 +485,6 @@ const forward = (msgId: number) => {
   emit('changeTag', Etag.Forward);
 };
 
-// 发起音视频
-
 // 开始音视频
 const call = async (item: any) => {
   if (!store.state.rongIm) return Toast('融云服务初始化失败');
@@ -489,6 +499,19 @@ const call = async (item: any) => {
     // 群聊
     emit('selectGroupMember', item.videoType);
   }
+};
+
+// 保存
+const save = (item: IMsgInfo<IFireInfo | IImageMsgInfo>) => {
+  let url = '';
+  if (item.type === 'imageMsg') {
+    url = item.msgContent.imageMsg.imageUrl!;
+  } else {
+    url = item.msgContent.fileInfo.fileUrl!;
+  }
+  const a = document.createElement('a');
+  a.setAttribute('href', url);
+  a.click();
 };
 </script>
 <style lang="scss" scoped>

@@ -3,10 +3,13 @@
     <div @click.stop="$emit('click')">
       <img :src="userInfo?.icon" />
     </div>
-    <ImBg>
+    <ImBg v-bind="$attrs">
       <div class="imBgBox" @click.stop="$emit('call')">
         <div>
-          <span>{{ filterData[0].msgText }} </span>
+          <span v-if="data.callTime"
+            >{{ filterData[0].msgText + time(data.callTime) }}
+          </span>
+          <span v-else>{{ filterData[0].msgText }} </span>
           {{ data.needShowTime === 0 ? formateTime(data.callTime) : null }}
         </div>
         <div>
@@ -58,6 +61,14 @@ const filterData = computed(() =>
     e.userIds.includes(store.state.userInfo.uid),
   ),
 );
+
+const time = (num: number) => {
+  const m = parseInt((num / 60).toString());
+  const s = num - m * 60;
+  return ` ${m.toString().padStart(2, '0')}  分 ${s
+    .toString()
+    .padStart(2, '0')} 秒`;
+};
 
 // 格式化时间
 const formateTime = (s: number) => {
