@@ -3,7 +3,7 @@
     <div @click="$emit('click')">
       <img class="userImg" :src="userInfo?.icon" />
     </div>
-    <div>
+    <div @contextmenu="contextmenu">
       <!-- <img :width="width" :height="height" :src="src" alt="" /> -->
       <SayHello v-if="src === 'emoji_1'" />
       <div v-else class="imgBg">
@@ -57,7 +57,13 @@ defineProps({
 const { t } = useI18n();
 const store = useStore(key);
 const isGroup = computed(() => store.state.activeIsGroup);
-defineEmits(['click']);
+
+const emit = defineEmits(['menuClick', 'click']);
+
+const contextmenu = (e: any) => {
+  e.preventDefault();
+  emit('menuClick', e);
+};
 </script>
 <style lang="scss" scoped>
 @import '@/style/theme/index.scss';

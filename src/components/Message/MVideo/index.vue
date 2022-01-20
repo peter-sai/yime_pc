@@ -1,10 +1,10 @@
 <template>
   <div class="mmsg">
     <div style="flex: 1">
-      <ImBg isMe style="display: inline-block">
-        <div class="imBgBox">
+      <ImBg v-bind="$attrs" isMe style="display: inline-block">
+        <div class="imBgBox" @click="$emit('call')">
           <span
-            >{{ data.sendShowMsg[0].msgText
+            >{{ filterData[0].msgText
             }}{{
               data.needShowTime === 0 ? formateTime(data.callTime) : null
             }}</span
@@ -28,14 +28,25 @@
 import ImBg from '../ImgBg/index.vue';
 import Iconfont from '@/iconfont/index.vue';
 import IsRead from '@/components/IsRead/index.vue';
-import { defineComponent, defineProps, PropType } from 'vue';
+import {
+  defineComponent,
+  defineProps,
+  PropType,
+  defineEmits,
+  computed,
+} from 'vue';
 import { IVideoCallMsgInfo } from '@/types/msg';
+import { useStore } from 'vuex';
+import { key } from '@/store';
+import { Toast } from '@/plugin/Toast';
+import { MediaAudio } from '@/plugin/Audio';
 export default defineComponent({
   name: 'MVideo',
 });
 </script>
 <script lang="ts" setup>
-defineProps({
+defineEmits(['call']);
+const props = defineProps({
   isRead: {
     type: Boolean,
     default: false,
@@ -45,6 +56,14 @@ defineProps({
     required: true,
   },
 });
+
+const store = useStore(key);
+const filterData = computed(() =>
+  props.data.sendShowMsg.filter((e) =>
+    e.userIds.includes(store.state.userInfo.uid),
+  ),
+);
+
 const formateTime = (s: number) => {
   const minutes = parseInt((s / 60).toString()).toString();
   const seconds = (s - 60 * Number(minutes)).toString();

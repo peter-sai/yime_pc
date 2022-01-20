@@ -55,9 +55,9 @@
           </div>
         </div>
         <div class="child">
-          <div class="opeItem">
-            <Iconfont name="iconweizhi" size="20" color="#111111" />
-            <div>位置</div>
+          <div class="opeItem" @click.stop="$emit('sendFile')">
+            <Iconfont name="iconwenjian1" size="20" color="#111111" />
+            <div>文件</div>
           </div>
           <div
             class="opeItem"
@@ -67,13 +67,9 @@
             <Iconfont name="icontuijianhaoyou" size="20" color="#111111" />
             <div>推荐好友</div>
           </div>
-          <!-- <div class="opeItem" :style="style">
+          <div class="opeItem" :style="style">
             <Iconfont name="iconweizhi" size="20" color="#111111" />
             <div>位置</div>
-          </div> -->
-          <div class="opeItem" @click.stop="$emit('sendFile')">
-            <Iconfont name="iconwenjian1" size="20" color="#111111" />
-            <div>文件</div>
           </div>
         </div>
       </div>
@@ -283,6 +279,7 @@ const emit = defineEmits([
   'recommend',
   'sendImg',
   'sendFile',
+  'selectGroupMember',
 ]);
 // 是否显示操作弹框
 const showOpertion = ref(false);
@@ -363,8 +360,13 @@ onBeforeUnmount(() => {
 // 开始音视频
 const start = async (mediaType: number) => {
   if (!store.state.rongIm) return Toast('融云服务初始化失败');
-  MediaAudio({ isCall: true, mediaType, yUserInfo: props.yUserInfo });
-  await nextTick();
+  if (!store.state.activeIsGroup) {
+    // 单聊
+    MediaAudio({ isCall: true, mediaType, yUserInfo: props.yUserInfo });
+  } else {
+    // 群聊
+    emit('selectGroupMember', mediaType);
+  }
 };
 
 // 录音 语音消息

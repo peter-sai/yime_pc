@@ -64,12 +64,12 @@ export default defineComponent({
 </script>
 <script setup lang="ts">
 import { key } from '@/store';
-import { IContacts } from '@/types/user';
+import { IContacts, IGroupInfo } from '@/types/user';
 import { getTag } from '@/utils/utils';
 import { useI18n } from 'vue-i18n';
 import { useStore } from 'vuex';
 import { Toast } from '@/plugin/Toast';
-const emit = defineEmits(['toggleBox']);
+const emit = defineEmits(['toggleBox', 'changeTag']);
 
 const { t } = useI18n();
 const store = useStore(key);
@@ -87,12 +87,14 @@ const init = async () => {
       encryption: 'Aoelailiao.Login.UserGetFriendsAndGroupsListReq',
       auth: true,
     });
-
     list.value = data.body.friendInfos.filter(
       (e: IContacts) => Number(e.uid) !== Number(activeUid),
     );
-    list.value.forEach((e: IContacts) => {
-      e.name = (e.userAttachInfo && e.userAttachInfo.remarkName) || e.nickname;
+    list.value.forEach((e: any) => {
+      e.name =
+        (e.userAttachInfo && e.userAttachInfo.remarkName) ||
+        e.nickname ||
+        e.groupName;
       e.tag = getTag(e);
       if (Number(e.uid) === Number(userId)) {
         e.active = true;
@@ -108,7 +110,7 @@ const init = async () => {
 init();
 
 const newList = computed(() =>
-  list.value.filter((e) => e.name.includes(search.value)),
+  list.value.filter((e) => e?.name?.includes(search.value)),
 );
 
 // 切换选中状态

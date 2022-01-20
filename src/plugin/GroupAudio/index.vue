@@ -1,5 +1,5 @@
 <template>
-  <div class="midea">
+  <div class="groupAudio">
     <div id="videoBox">
       <div id="yVideo"></div>
     </div>
@@ -7,32 +7,29 @@
       <Iconfont name="iconnarrow_icon" size="20" color="#fff" />
     </div>
     <div class="call">
-      <div class="img" v-if="!conversationIng || mediaType !== 2">
+      <div class="img" v-if="!conversationIng && mediaType === 2">
         <img
-          v-if="yUserInfo?.icon"
+          v-if="groupDetailInfo?.groupIcon"
           style="width: 75px; height: 75px; border-radius: 50%"
-          :src="yUserInfo?.icon"
+          :src="groupDetailInfo?.groupIcon"
           alt=""
         />
-        <Iconfont
-          v-else
-          style="display: inline-block"
-          name="iconlianxiren"
-          size="75"
-        />
+        <span v-else>{{
+          groupDetailInfo?.groupName.substr(0, 1).toLocaleUpperCase()
+        }}</span>
       </div>
-      <div class="userName">{{ yUserInfo?.nickname }}</div>
+      <div class="userName">{{ groupDetailInfo?.groupName }}</div>
       <div class="status">{{ info }}</div>
     </div>
     <div class="btn">
-      <div
+      <!-- <div
         class="item changeAudio"
         v-if="mediaType === 2 && conversationIng && !isAudio"
         @click="changeAudio"
       >
         <Iconfont name="iconbianzu" size="30" color="#fff" />
         <span>切换到语音</span>
-      </div>
+      </div> -->
       <div
         class="item"
         v-if="mediaType === 2 && conversationIng && !isAudio"
@@ -58,8 +55,29 @@
     </div>
   </div>
 </template>
-
 <script lang="ts">
+import { initStore, key } from '@/store';
+import { IGroupInfo } from '@/types/user';
+import {
+  IMuteUser,
+  ISenderInfo,
+  RCCallEndReason,
+  RCCallSession,
+} from '@rongcloud/plugin-call';
+import { RCTrack } from '@rongcloud/plugin-rtc';
+import {
+  defineComponent,
+  defineProps,
+  onMounted,
+  PropType,
+  Ref,
+  ref,
+} from 'vue';
+import { Store, useStore } from 'vuex';
+import Iconfont from '../../iconfont/index.vue';
+export default defineComponent({
+  name: 'GroupAudio',
+});
 const map = {
   1: '己方取消已发出的通话请求',
   2: '己方拒绝收到的通话请求',
@@ -94,45 +112,22 @@ const map = {
   103: '己方被对方加入黑名单',
   104: '音视频服务未开通',
 };
-import { initStore, key } from '@/store';
-import { IUserInfo } from '@/types/user';
-import {
-  IMuteUser,
-  ISenderInfo,
-  RCCallEndReason,
-  RCCallSession,
-} from '@rongcloud/plugin-call';
-import { RCTrack } from '@rongcloud/plugin-rtc';
-import {
-  defineProps,
-  defineComponent,
-  onMounted,
-  ref,
-  Ref,
-  PropType,
-} from 'vue';
-import { useI18n } from 'vue-i18n';
-import { Store, useStore } from 'vuex';
-import Iconfont from '../../iconfont/index.vue';
-export default defineComponent({
-  name: 'Midea',
-});
 
 const init = async (
   store: Store<initStore>,
   mediaType: number,
   sessionRoot: Ref<RCCallSession>,
   info: Ref<string>,
-  videos: HTMLVideoElement[],
+  close: () => void,
   startTimeOut: () => void,
   conversationIng: Ref<boolean>,
   isAudio: Ref<boolean>,
-  hungup: () => void,
-  videoCallActionUploadReq: (num: number) => void,
+  userIds: [],
 ) => {
   // 发送者
-  const { session } = await (store.state.rongIm as any).call({
+  const { session } = await (store.state.rongIm as any).callInGroup({
     targetId: (store.state.activeUid || 0).toString(),
+    userIds: userIds,
     mediaType,
     listener: {
       /**
@@ -144,8 +139,6 @@ const init = async (
         const { userId } = sender;
         // 对方响铃
         info.value = '等待对方接听';
-        console.log('发起者', 'onRinging');
-        videoCallActionUploadReq(1);
       },
 
       /**
@@ -159,7 +152,6 @@ const init = async (
         // 开始倒计时
         startTimeOut();
         conversationIng.value = true;
-        console.log('发起者', 'onAccept');
       },
 
       /**
@@ -175,9 +167,8 @@ const init = async (
       ) {
         const { userId } = sender;
         // 对方挂断
-        console.log('发起者', 'onHungup', map[reason]);
-        hungup();
-        videoCallActionUploadReq(5);
+        console.log(sender, map[reason]);
+        close();
       },
 
       onAudioMuteChange: (muteUser: IMuteUser, session: RCCallSession) => {
@@ -211,11 +202,11 @@ const init = async (
             video.setAttribute('id', 'yVideo1');
             videoBox.append(video);
           }
-          videos.push(video);
           track.play(video);
         }
       },
-      onMediaModify: function (): void {
+      onMediaModify: function (sender: any): void {
+        console.log('onMediaModify', sender);
         isAudio.value = true;
       },
       onVideoMuteChange: function (muteUser: IMuteUser): void {
@@ -230,7 +221,7 @@ const init = async (
   sessionRoot.value = session;
 };
 </script>
-<script lang="ts" setup>
+<script setup lang="ts">
 const props = defineProps({
   destroy: {
     type: Function,
@@ -243,31 +234,116 @@ const props = defineProps({
     type: Number,
     detalut: 1,
   },
-  yUserInfo: {
-    type: Object as PropType<IUserInfo>,
+  groupDetailInfo: {
+    type: Object as PropType<IGroupInfo>,
   },
   session: {
     type: Object as PropType<RCCallSession>,
   },
+  userIds: {
+    type: [],
+  },
 });
 
-const { t } = useI18n();
-const videos: HTMLVideoElement[] = [];
 const store = useStore(key);
 //  是否通话中
 const conversationIng = ref(false);
-const sessionRoot = ref({}) as Ref<RCCallSession>;
-
 const info = ref(!props.isCall ? '邀请你语音通话' : '连接中…');
-let time = 0;
-const isAnswer = ref(false);
 const isAudio = ref(false);
-
-// 是否是静音
-const isMute = ref(false);
 // 是否关闭视频
 const isOpenVideo = ref(false);
+// 是否是静音
+const isMute = ref(false);
+const isAnswer = ref(false);
+const sessionRoot = ref({}) as Ref<RCCallSession>;
 
+// 关闭弹框
+const close = () => {
+  props.destroy && props.destroy();
+};
+
+// 转为语音
+const changeAudio = () => {
+  sessionRoot.value.descendAbility();
+  isAudio.value = true;
+};
+
+// 切换是否显示视频
+const toggleVideo = () => {
+  if (Object.keys(sessionRoot.value).length) {
+    if (!isOpenVideo.value) {
+      sessionRoot.value.disableVideoTrack();
+      const yVideo = document.getElementById('yVideo');
+      const yVideo1 = document.getElementById('yVideo1');
+      yVideo?.removeChild(yVideo1!);
+    } else {
+      sessionRoot.value.enableVideoTrack();
+    }
+    isOpenVideo.value = !isOpenVideo.value;
+  }
+};
+
+// 切换静音
+const toggleMute = () => {
+  if (Object.keys(sessionRoot.value).length) {
+    if (!isMute.value) {
+      sessionRoot.value.disableAudioTrack();
+    } else {
+      sessionRoot.value.enableAudioTrack();
+    }
+    isMute.value = !isMute.value;
+  }
+};
+
+// 挂断
+const hungup = async () => {
+  sessionRoot.value.hungup();
+  close();
+  let actionType = 21;
+  // 是否是发起人
+  if (props.isCall) {
+    // 是否是通话中
+    if (conversationIng.value) {
+      // 在通话中 发起人挂断
+      actionType = 8;
+    } else {
+      // 是发起人 并且 还未接听 则是 发起人自动取消
+      actionType = 21;
+    }
+  } else {
+    // 是否是通话中
+    if (conversationIng.value) {
+      // 在通话中 非发起人挂断
+      actionType = 7;
+    } else {
+      // 不是发起人 并且 还未接听 则是 被呼叫人拒绝接听
+      actionType = 5;
+    }
+  }
+
+  const query = {
+    actionType: actionType,
+    videoType: props.mediaType,
+    talkUid: props.groupDetailInfo?.groupId,
+  };
+
+  const data = await store.dispatch('postMsg', {
+    query,
+    cmd: 2009,
+    encryption: 'Aoelailiao.Message.VideoCallActionUploadReq',
+    auth: true,
+  });
+};
+
+// 接听
+const accept = () => {
+  sessionRoot.value.accept();
+  isAnswer.value = true;
+  conversationIng.value = true;
+  startTimeOut();
+};
+
+let time = 0;
 const startTimeOut = () => {
   time++;
   const m = time > 60 ? parseInt((time / 60).toString()) : 0;
@@ -288,12 +364,11 @@ onMounted(async () => {
       props.mediaType!,
       sessionRoot,
       info,
-      videos,
+      close,
       startTimeOut,
       conversationIng,
       isAudio,
-      hungup,
-      videoCallActionUploadReq,
+      props.userIds!,
     );
   } else {
     // 接听方
@@ -311,7 +386,6 @@ onMounted(async () => {
       onRinging(sender: ISenderInfo) {
         const { userId } = sender;
         console.log(userId);
-        console.log('接听者', 'onRinging');
       },
 
       /**
@@ -323,7 +397,6 @@ onMounted(async () => {
         const { userId } = sender;
         startTimeOut();
         conversationIng.value = true;
-        console.log('接听者', 'onAccept');
       },
 
       /**
@@ -333,8 +406,8 @@ onMounted(async () => {
        * @param session 当前的 session 对象
        */
       onHungup(sender: ISenderInfo, reason: RCCallEndReason) {
-        console.log('接听者', 'onHungup', map[reason]);
-        hungup();
+        console.log(sender, map[reason]);
+        close();
       },
 
       /**
@@ -364,7 +437,6 @@ onMounted(async () => {
             video.setAttribute('id', 'yVideo1');
             videoBox.append(video);
           }
-          videos.push(video);
           track.play(video);
         }
       },
@@ -388,84 +460,10 @@ onMounted(async () => {
     });
   }
 });
-
-// 切换静音
-const toggleMute = () => {
-  if (Object.keys(sessionRoot.value).length) {
-    if (!isMute.value) {
-      sessionRoot.value.disableAudioTrack();
-    } else {
-      sessionRoot.value.enableAudioTrack();
-    }
-    isMute.value = !isMute.value;
-  }
-};
-
-// 切换是否显示视频
-const toggleVideo = () => {
-  if (Object.keys(sessionRoot.value).length) {
-    if (!isOpenVideo.value) {
-      sessionRoot.value.disableVideoTrack();
-      const yVideo = document.getElementById('yVideo');
-      const yVideo1 = document.getElementById('yVideo1');
-      yVideo?.removeChild(yVideo1!);
-    } else {
-      sessionRoot.value.enableVideoTrack();
-    }
-    isOpenVideo.value = !isOpenVideo.value;
-  }
-};
-
-// 接听
-const accept = () => {
-  sessionRoot.value.accept();
-  isAnswer.value = true;
-  conversationIng.value = true;
-  startTimeOut();
-};
-
-// 挂断
-const hungup = async (num?: number) => {
-  sessionRoot.value.hungup();
-  close();
-};
-
-const videoCallActionUploadReq = async (actionType: number) => {
-  // let actionType = 5;
-  const query = {
-    actionType: actionType,
-    videoType: props.mediaType,
-    talkUid: props.yUserInfo?.uid,
-  };
-
-  const data = await store.dispatch('postMsg', {
-    query,
-    cmd: 2009,
-    encryption: 'Aoelailiao.Message.VideoCallActionUploadReq',
-    auth: true,
-  });
-};
-// 关闭弹框
-const close = () => {
-  props.destroy && props.destroy();
-};
-
-// 转为语音
-const changeAudio = () => {
-  sessionRoot.value.descendAbility();
-  isAudio.value = true;
-};
 </script>
-
-<style>
-#videoBox video {
-  width: 100%;
-  height: 100%;
-}
-</style>
 <style lang="scss" scoped>
 @import '@/style/base.scss';
-.midea {
+.groupAudio {
   width: 548px;
   height: 426px;
   background: linear-gradient(134deg, #98783e 0%, #996437 100%);
@@ -502,6 +500,17 @@ const changeAudio = () => {
     margin-top: 50px;
     position: relative;
     z-index: 99;
+    span {
+      width: 75px;
+      height: 75px;
+      border-radius: 50%;
+      color: #0085ff;
+      font-size: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #f0f0f0;
+    }
     .userName {
       font-size: 24px;
       font-family: PingFangSC-Semibold, PingFang SC;
@@ -553,5 +562,11 @@ const changeAudio = () => {
       }
     }
   }
+}
+</style>
+<style>
+#videoBox video {
+  width: 100%;
+  height: 100%;
 }
 </style>

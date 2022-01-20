@@ -20,12 +20,14 @@
         :groupDetailInfo="groupDetailInfo"
         @toggleBox="toggleBox"
         @changeTag="changeTag"
+        @selectGroupMember="ShowSelectGroupMember"
       />
     </div>
 
     <Bottom
       v-model="inputVal"
       @sendImg="sendImg('img')"
+      @selectGroupMember="ShowSelectGroupMember"
       @enter="enter"
       @sendFile="sendImg('file')"
     />
@@ -118,6 +120,20 @@
           <Forward @toggleBox="toggleBox" @changeTag="changeTag" />
         </div>
       </transition>
+      <!-- 选择群视频成员 -->
+      <transition name="fade-transform1" mode="out-in">
+        <div
+          v-if="showBox && tag === Etag.SelectGroupMemberVideos"
+          class="boxContent"
+        >
+          <SelectGroupMemberVideos
+            :groupDetailInfo="groupDetailInfo"
+            :mediaType="mediaType"
+            @toggleBox="toggleBox"
+            @changeTag="changeTag"
+          />
+        </div>
+      </transition>
     </div>
   </div>
 </template>
@@ -139,6 +155,7 @@ import UserInfo from '../Layout/Chat/userInfo.vue';
 import Recommend from '../Layout/Chat/recommend.vue';
 import CloudFile from '../Layout/Chat/cloudFile.vue';
 import CommonGroup from '../Layout/Chat/commonGroup.vue';
+import SelectGroupMemberVideos from '../Layout/GroupChat/selectGroupMemberVideos.vue';
 import Forward from '../Layout/Chat/Forward.vue';
 import Message from '../Window/message.vue';
 import { Store, useStore } from 'vuex';
@@ -190,6 +207,8 @@ async function getGroupInfo(store: Store<initStore>) {
 </script>
 <script setup lang="ts">
 defineEmits(['toggleBox', 'changeTag']);
+// 视频还是语音
+const mediaType = ref(1);
 const { t } = useI18n();
 const userInfo: Ref<IUserInfo> = ref({}) as Ref<IUserInfo>; // 需要显示详情用户的信息
 const userDetailInfo: Ref<IUserDetailInfo> = ref({}) as Ref<IUserDetailInfo>; // 需要显示详情用户的信息
@@ -249,6 +268,13 @@ onBeforeUnmount(() => {
   changUserImg.value!.removeEventListener('change', cbImg);
 });
 
+// 选择群成员进行音视频通话
+const ShowSelectGroupMember = (e: number) => {
+  mediaType.value = e;
+  toggleBox();
+  changeTag(Etag.SelectGroupMemberVideos);
+};
+
 // 发送消息
 const enter = useEnter(store, inputVal, 1, null, t);
 // 发送图片
@@ -263,7 +289,6 @@ const sendImg = useSendImg(store, 1, t, changUserImg, accept, nextTick);
     left: 0;
     right: 0;
     bottom: 50px;
-    overflow: auto;
     padding: 20px;
   }
   .box {

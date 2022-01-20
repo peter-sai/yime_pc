@@ -3,7 +3,7 @@
     <div @click="$emit('click')">
       <img :src="userInfo?.icon" />
     </div>
-    <div>
+    <div @contextmenu="contextmenu">
       <div class="title1" v-if="isGroup">{{ userInfo?.nickname }}</div>
       <div class="fileBg">
         <div class="left">
@@ -43,7 +43,6 @@ defineComponent({
 });
 </script>
 <script lang="ts" setup>
-defineEmits(['click']);
 const props = defineProps({
   userInfo: {
     type: Object as PropType<IUserInfo>,
@@ -86,6 +85,13 @@ if (res.length > 1) {
 
 const store = useStore(key);
 const isGroup = computed(() => store.state.activeIsGroup);
+
+const emit = defineEmits(['menuClick', 'click']);
+
+const contextmenu = (e: any) => {
+  e.preventDefault();
+  emit('menuClick', e);
+};
 </script>
 <style lang="scss" scoped>
 @import '@/style/theme/index.scss';

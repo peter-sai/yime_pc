@@ -106,6 +106,7 @@ import { useGoTo } from '@/hooks';
 import { useRouter } from 'vue-router';
 import { saveData } from '@/api/app';
 import { initRongConnect } from '@/hooks/window';
+import { initRonyun } from '@/App.vue';
 
 const { t } = useI18n();
 const store = useStore(key);
@@ -310,7 +311,8 @@ function useLoginCb(
     }
     store.dispatch('init');
     // 初始化融云
-    initRongConnect(store);
+    // initRongConnect(store);
+    initRonyun(store);
     return goTo('/Home/Message');
   }
   return Toast(t(data.body.resultString));
