@@ -2,12 +2,97 @@
   <router-view />
 </template>
 
+<script lang="ts">
+export async function initRonyun(store: Store<initStore>) {
+  // IM 客户端初始化
+  RongIMLib.init({
+    appkey: 'tdrvipkst22v5',
+  });
+  // RTC 客户端初始化
+  const rtcClient: RCRTCClient = RongIMLib.installPlugin(
+    rtcInstaller,
+    {},
+  ) as RCRTCClient;
+  const rongIm = RongIMLib.installPlugin(callInstaller, {
+    // rtcClient 实例 （必填）
+    rtcClient,
+    /**
+     * 被动收到邀请 （收到一个远端发起的新会话）, 会产生一个新的 session 对象 （必填）
+     */
+    async onSession(session: RCCallSession) {
+      const uid = session.getTargetId();
+      if (session.getConversationType() === 1) {
+        let userDetail = '';
+        if (store.state.msgList[Number(uid)]) {
+          userDetail = store.state.msgList[Number(uid)].userDetailInfo.userInfo;
+        } else {
+          const data = await await store.dispatch('postMsg', {
+            query: {
+              uid,
+            },
+            cmd: 1011,
+            encryption: 'Aoelailiao.Login.ClientGetUserInfoReq',
+            auth: true,
+          });
+          userDetail = data.body.userDetailInfo.userInfo;
+        }
+
+        // 单聊
+        MediaAudio({
+          yUserInfo: userDetail,
+          mediaType: session.getMediaType(),
+          session,
+        });
+      } else {
+        let groupDetailInfo = '';
+        if (store.state.msgList[Number(uid)]) {
+          groupDetailInfo = store.state.msgList[Number(uid)].groupDetailInfo;
+        } else {
+          const data = await await store.dispatch('postMsg', {
+            query: {
+              groupId: uid,
+            },
+            cmd: 1029,
+            encryption: 'Aoelailiao.Login.ClientGetGroupInfoReq',
+            auth: true,
+          });
+          groupDetailInfo = data.body.groupDetailInfo;
+        }
+        // 群聊
+        GroupMediaAudio({
+          groupDetailInfo: groupDetailInfo,
+          mediaType: session.getMediaType(),
+          session,
+        });
+      }
+    },
+
+    /**
+     *  以下三条只要满足一条，就会触发onSessionClose
+     *  1、本端用户自己主动挂断
+     *  2、服务端把本端用户踢出 RTC 房间
+     *  3、房间里小于2个人
+     *
+     *  @param {RCCallSession} session 被结束的 session 对象
+     *  @param summaryInfo 结束一个 session 的后汇总信息
+     */
+    onSessionClose(session: RCCallSession, summaryInfo?: IEndSummary) {
+      //
+    },
+  });
+  // store.commit('SET_RONGIM', rongIm);
+  // 如果以登录状态 则 连接融云
+  if (getUserToken()) {
+    initRongConnect(store, rongIm);
+  }
+}
+</script>
 <script lang="ts" setup>
 import { computed, onBeforeUnmount, watch } from 'vue';
-import { useStore } from 'vuex';
+import { Store, useStore } from 'vuex';
 import { getOssInfo } from './api';
 import { getToken as getUserToken } from './utils/utils';
-import { key } from './store';
+import { initStore, key } from './store';
 import { getStorage, setMsgList } from './utils/utils';
 import { initRongConnect, useClientSendMsgAckToServer } from './hooks/window';
 import { IMsgInfo } from './types/msg';
@@ -20,6 +105,7 @@ import {
 } from '@rongcloud/plugin-call';
 import messageAudio from './assets/audio/message.wav';
 import { MediaAudio } from './plugin/Audio';
+import { GroupMediaAudio } from './plugin/GroupAudio';
 const store = useStore(key);
 store.dispatch('init');
 
@@ -74,7 +160,7 @@ const init = async () => {
   }
 
   // 初始化融云服务
-  initRonyun();
+  initRonyun(store);
 };
 
 init();
@@ -281,65 +367,6 @@ window.onunload = () => {
   setMsgList(store.state.msgList);
   stop();
 };
-
-async function initRonyun() {
-  // IM 客户端初始化
-  RongIMLib.init({
-    appkey: 'tdrvipkst22v5',
-  });
-  // RTC 客户端初始化
-  const rtcClient: RCRTCClient = RongIMLib.installPlugin(
-    rtcInstaller,
-    {},
-  ) as RCRTCClient;
-  const rongIm = RongIMLib.installPlugin(callInstaller, {
-    // rtcClient 实例 （必填）
-    rtcClient,
-    /**
-     * 被动收到邀请 （收到一个远端发起的新会话）, 会产生一个新的 session 对象 （必填）
-     */
-    async onSession(session: RCCallSession) {
-      const uid = session.getTargetId();
-      let userDetail = '';
-      if (store.state.msgList[Number(uid)]) {
-        userDetail = store.state.msgList[Number(uid)].userDetailInfo.userInfo;
-      } else {
-        const data = await await store.dispatch('postMsg', {
-          query: {
-            uid,
-          },
-          cmd: 1011,
-          encryption: 'Aoelailiao.Login.ClientGetUserInfoReq',
-          auth: true,
-        });
-        userDetail = data.body.userDetailInfo.userInfo;
-      }
-      MediaAudio({
-        yUserInfo: userDetail,
-        mediaType: session.getMediaType(),
-        session,
-      });
-    },
-
-    /**
-     *  以下三条只要满足一条，就会触发onSessionClose
-     *  1、本端用户自己主动挂断
-     *  2、服务端把本端用户踢出 RTC 房间
-     *  3、房间里小于2个人
-     *
-     *  @param {RCCallSession} session 被结束的 session 对象
-     *  @param summaryInfo 结束一个 session 的后汇总信息
-     */
-    onSessionClose(session: RCCallSession, summaryInfo?: IEndSummary) {
-      //
-    },
-  });
-  // store.commit('SET_RONGIM', rongIm);
-  // 如果以登录状态 则 连接融云
-  if (getUserToken()) {
-    initRongConnect(store, rongIm);
-  }
-}
 </script>
 <style lang="scss">
 #app {

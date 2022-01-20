@@ -8,6 +8,7 @@ import {
   IMsgInfo,
   ImsgItem,
   ISystemNotifyInfo,
+  IVideoCallMsgInfo,
   TMsgContent,
 } from '@/types/msg';
 import { IGroupInfo, IUserDetailInfo, IUserInfo } from '@/types/user';
@@ -525,7 +526,13 @@ const switchMsg = (
     case 'cleanInfo':
       return t('[清理消息]');
     case 'videoCallInfo':
-      return t('[视频通话]');
+      if (
+        (item.msgContent.videoCallInfo as IVideoCallMsgInfo).videoType === 1
+      ) {
+        return t('[语音通话]');
+      } else {
+        return t('[视频通话]');
+      }
     case 'gpsMsgInfo':
       return t('[位置]');
     case 'groupAtInfo':

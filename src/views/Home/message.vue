@@ -73,7 +73,7 @@
             </div>
             <div class="userImg" v-else>
               <Iconfont
-                v-if="item?.userDetailInfo?.userInfo.isBotUser"
+                v-if="item?.userDetailInfo?.userInfo?.isBotUser"
                 style="display: inline-block"
                 name="iconbianzu16"
                 size="45"

@@ -1,16 +1,14 @@
 <template>
   <div class="mmsg">
-    <div @click="$emit('click')">
+    <div @click.stop="$emit('click')">
       <img :src="userInfo?.icon" />
     </div>
-    <ImBg @click="$emit('clickMsg')">
-      <div class="imBgBox">
-        <span
-          >{{ data.sendShowMsg[0].msgText }}
-          {{
-            data.needShowTime === 0 ? formateTime(data.callTime) : null
-          }}</span
-        >
+    <ImBg>
+      <div class="imBgBox" @click.stop="$emit('call')">
+        <div>
+          <span>{{ filterData[0].msgText }} </span>
+          {{ data.needShowTime === 0 ? formateTime(data.callTime) : null }}
+        </div>
         <div>
           <Iconfont
             v-if="Number(data.videoType) === 1"
@@ -28,14 +26,23 @@
 <script lang="ts">
 import ImBg from '../ImgBg/index.vue';
 import Iconfont from '@/iconfont/index.vue';
-import { defineComponent, defineProps, PropType } from 'vue';
+import {
+  computed,
+  defineComponent,
+  defineProps,
+  PropType,
+  defineEmits,
+} from 'vue';
 import { IVideoCallMsgInfo } from '@/types/msg';
+import { useStore } from 'vuex';
+import { key } from '@/store';
 export default defineComponent({
   name: 'YAudio',
 });
 </script>
 <script lang="ts" setup>
-defineProps({
+defineEmits(['click']);
+const props = defineProps({
   userInfo: {
     type: Object,
   },
@@ -44,6 +51,13 @@ defineProps({
     required: true,
   },
 });
+
+const store = useStore(key);
+const filterData = computed(() =>
+  props.data.sendShowMsg.filter((e) =>
+    e.userIds.includes(store.state.userInfo.uid),
+  ),
+);
 
 // 格式化时间
 const formateTime = (s: number) => {

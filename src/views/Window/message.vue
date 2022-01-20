@@ -1,201 +1,206 @@
 <template>
-  <!-- 无消息时显示 -->
-  <div
-    class="noMsg"
-    v-if="(!itemChat.readList || !itemChat.readList.length) && !activeIsGroup"
-  >
-    <Iconfont
-      style="display: inline-block"
-      v-if="yUserInfo?.isBotUser"
-      name="iconbianzu16"
-      size="90"
-    />
-    <img
-      class="userImg"
-      v-else-if="yUserInfo?.icon"
-      :src="yUserInfo?.icon"
-      alt=""
-    />
-    <Iconfont
-      style="display: inline-block"
-      v-else
-      name="iconlianxiren"
-      size="90"
-      color="#A8B5BE"
-    />
-    <div class="title">{{ yUserInfo?.nickname }}</div>
-    <div class="bg">
-      <!-- <img :src="sayHello" alt="" /> -->
-      <SayHello class="img" />
-      <div class="info">{{ t('打个招呼，开始聊天吧') }}</div>
-      <div class="btn" @click.stop="sendImg('sayHello')">
-        {{ t('打招呼') }}
+  <div ref="msgWindow" class="msgWindow">
+    <!-- 无消息时显示 -->
+    <div
+      class="noMsg"
+      v-if="(!itemChat.readList || !itemChat.readList.length) && !activeIsGroup"
+    >
+      <Iconfont
+        style="display: inline-block"
+        v-if="yUserInfo?.isBotUser"
+        name="iconbianzu16"
+        size="90"
+      />
+      <img
+        class="userImg"
+        v-else-if="yUserInfo?.icon"
+        :src="yUserInfo?.icon"
+        alt=""
+      />
+      <Iconfont
+        style="display: inline-block"
+        v-else
+        name="iconlianxiren"
+        size="90"
+        color="#A8B5BE"
+      />
+      <div class="title">{{ yUserInfo?.nickname }}</div>
+      <div class="bg">
+        <!-- <img :src="sayHello" alt="" /> -->
+        <SayHello class="img" />
+        <div class="info">{{ t('打个招呼，开始聊天吧') }}</div>
+        <div class="btn" @click.stop="sendImg('sayHello')">
+          {{ t('打招呼') }}
+        </div>
       </div>
     </div>
-  </div>
-  <div class="Message">
-    <div v-for="(item, key) in itemChat.readList || []" :key="item.id">
-      <Time v-if="isShowTime(key)">{{ formateTime(item.msgTime, t) }}</Time>
-      <!-- 普通消息 -->
-      <div class="item" v-if="item.type === 'stringContent'">
-        <!-- 阅后即焚 -->
-        <div v-if="item.msgShowType === 3">
-          <Ymsg
-            @click="showUserInfo(getUserInfo(item).uid)"
-            :userInfo="getUserInfo(item)"
-            v-if="isShowHowComponent(item)"
-          >
-            {{ t('请在App客户端, 查看阅后即焚消息') }}
-          </Ymsg>
-          <Mmsg :isRead="item.msgId <= readMsgId" v-else>
-            {{ t('请在App客户端, 查看阅后即焚消息') }}
-          </Mmsg>
-        </div>
+    <div class="Message">
+      <div v-for="(item, key) in itemChat.readList || []" :key="item.id">
+        <Time v-if="isShowTime(key)">{{ formateTime(item.msgTime, t) }}</Time>
         <!-- 普通消息 -->
-        <div v-else>
+        <div class="item" v-if="item.type === 'stringContent'">
+          <!-- 阅后即焚 -->
+          <div v-if="item.msgShowType === 3">
+            <Ymsg
+              @click="showUserInfo(getUserInfo(item).uid)"
+              :userInfo="getUserInfo(item)"
+              v-if="isShowHowComponent(item)"
+            >
+              {{ t('请在App客户端, 查看阅后即焚消息') }}
+            </Ymsg>
+            <Mmsg :isRead="item.msgId <= readMsgId" v-else>
+              {{ t('请在App客户端, 查看阅后即焚消息') }}
+            </Mmsg>
+          </div>
+          <!-- 普通消息 -->
+          <div v-else>
+            <Ymsg
+              @click="showUserInfo(getUserInfo(item).uid)"
+              @menuClick="menuClick($event, item)"
+              :userInfo="getUserInfo(item)"
+              v-if="isShowHowComponent(item)"
+            >
+              {{ item.msgContent.stringContent }}
+            </Ymsg>
+            <Mmsg
+              @menuClick="menuClick($event, item)"
+              :isRead="item.msgId <= readMsgId"
+              v-else
+            >
+              {{ item.msgContent.stringContent }}
+            </Mmsg>
+          </div>
+        </div>
+        <!-- at消息 -->
+        <div class="item" v-else-if="item.type === 'groupAtInfo'">
           <Ymsg
             @click="showUserInfo(getUserInfo(item).uid)"
             @menuClick="menuClick($event, item)"
             :userInfo="getUserInfo(item)"
             v-if="isShowHowComponent(item)"
           >
-            {{ item.msgContent.stringContent }}
+            {{ item.msgContent.groupAtInfo.stringContent }}
           </Ymsg>
           <Mmsg
             @menuClick="menuClick($event, item)"
             :isRead="item.msgId <= readMsgId"
             v-else
           >
-            {{ item.msgContent.stringContent }}
+            {{ item.msgContent.groupAtInfo.stringContent }}
           </Mmsg>
         </div>
-      </div>
-      <!-- at消息 -->
-      <div class="item" v-else-if="item.type === 'groupAtInfo'">
-        <Ymsg
-          @click="showUserInfo(getUserInfo(item).uid)"
-          @menuClick="menuClick($event, item)"
-          :userInfo="getUserInfo(item)"
-          v-if="isShowHowComponent(item)"
-        >
-          {{ item.msgContent.groupAtInfo.stringContent }}
-        </Ymsg>
-        <Mmsg
-          @menuClick="menuClick($event, item)"
-          :isRead="item.msgId <= readMsgId"
-          v-else
-        >
-          {{ item.msgContent.groupAtInfo.stringContent }}
-        </Mmsg>
-      </div>
-      <!-- 图片消息 -->
-      <div class="item" v-else-if="item.type === 'imageMsg'">
-        <YImg
-          @click="showUserInfo(getUserInfo(item).uid)"
-          v-if="isShowHowComponent(item)"
-          @menuClick="menuClick($event, item)"
-          :userInfo="getUserInfo(item)"
-          :src="item.msgContent.imageMsg.imageUrl"
-        />
-        <MImg
-          v-else
-          :isRead="item.msgId <= readMsgId"
-          @menuClick="menuClick($event, item)"
-          :src="item.msgContent.imageMsg.imageUrl"
-        />
-      </div>
-      <!-- 文件消息 -->
-      <div class="item" v-else-if="item.type === 'fileInfo'">
-        <YFile
-          @click="showUserInfo(getUserInfo(item).uid)"
-          v-if="isShowHowComponent(item)"
-          @menuClick="menuClick($event, item)"
-          :userInfo="getUserInfo(item)"
-          :item="item.msgContent.fileInfo"
-        />
-        <MFile
-          v-else
-          :isRead="item.msgId <= readMsgId"
-          @menuClick="menuClick($event, item)"
-          :item="item.msgContent.fileInfo"
-        />
-      </div>
-      <!-- 名片 -->
-      <div class="item" v-else-if="item.type === 'visitingCard'">
-        <YVisitingCard
-          @clickCard="showUserInfo(item.msgContent.visitingCard.uid)"
-          @click="showUserInfo(getUserInfo(item).uid)"
-          :userInfo="getUserInfo(item)"
-          v-if="isShowHowComponent(item)"
-          :item="item.msgContent.visitingCard"
-        />
-        <MVisitingCard
-          v-else
-          @clickCard="showUserInfo(item.msgContent.visitingCard.uid)"
-          :item="item.msgContent.visitingCard"
-          :isRead="item.msgId <= readMsgId"
-        />
-      </div>
-      <!-- 语音消息 -->
-      <div class="item" v-else-if="item.type === 'voiceMsg'">
-        <YAudio
-          @click="showUserInfo(getUserInfo(item).uid)"
-          v-if="isShowHowComponent(item)"
-          :userInfo="getUserInfo(item)"
-          :voiceMsg="item.msgContent.voiceMsg"
-        />
-        <MAudio
-          v-else
-          :isRead="item.msgId <= readMsgId"
-          :voiceMsg="item.msgContent.voiceMsg"
-        />
-      </div>
-      <!-- 音视频 -->
-      <div class="item" v-else-if="item.type === 'videoCallInfo'">
-        <YVideo
-          v-if="isShowHowComponent(item)"
-          :userInfo="getUserInfo(item)"
-          :data="item.msgContent.videoCallInfo"
-        />
-        <MVideo
-          v-else
-          :isRead="item.msgId <= readMsgId"
-          :data="item.msgContent.videoCallInfo"
-        />
-      </div>
-      <!-- 系统消息 -->
-      <div class="item" v-else-if="item.type === 'systemNotifyInfo'">
-        <div class="revoke">{{ systemNotifyInfo(item) }}</div>
-      </div>
-      <!-- 撤回消息 -->
-      <div class="item" v-else-if="item.type === 'revokeInfo'">
-        <div class="revoke">
-          {{ getRevokeName(item) }} {{ t('撤回了一条消息') }}
+        <!-- 图片消息 -->
+        <div class="item" v-else-if="item.type === 'imageMsg'">
+          <YImg
+            @click="showUserInfo(getUserInfo(item).uid)"
+            v-if="isShowHowComponent(item)"
+            @menuClick="menuClick($event, item)"
+            :userInfo="getUserInfo(item)"
+            :src="item.msgContent.imageMsg.imageUrl"
+          />
+          <MImg
+            v-else
+            :isRead="item.msgId <= readMsgId"
+            @menuClick="menuClick($event, item)"
+            :src="item.msgContent.imageMsg.imageUrl"
+          />
+        </div>
+        <!-- 文件消息 -->
+        <div class="item" v-else-if="item.type === 'fileInfo'">
+          <YFile
+            @click="showUserInfo(getUserInfo(item).uid)"
+            v-if="isShowHowComponent(item)"
+            @menuClick="menuClick($event, item)"
+            :userInfo="getUserInfo(item)"
+            :item="item.msgContent.fileInfo"
+          />
+          <MFile
+            v-else
+            :isRead="item.msgId <= readMsgId"
+            @menuClick="menuClick($event, item)"
+            :item="item.msgContent.fileInfo"
+          />
+        </div>
+        <!-- 名片 -->
+        <div class="item" v-else-if="item.type === 'visitingCard'">
+          <YVisitingCard
+            @clickCard="showUserInfo(item.msgContent.visitingCard.uid)"
+            @click="showUserInfo(getUserInfo(item).uid)"
+            :userInfo="getUserInfo(item)"
+            v-if="isShowHowComponent(item)"
+            :item="item.msgContent.visitingCard"
+          />
+          <MVisitingCard
+            v-else
+            @clickCard="showUserInfo(item.msgContent.visitingCard.uid)"
+            :item="item.msgContent.visitingCard"
+            :isRead="item.msgId <= readMsgId"
+          />
+        </div>
+        <!-- 语音消息 -->
+        <div class="item" v-else-if="item.type === 'voiceMsg'">
+          <YAudio
+            @click="showUserInfo(getUserInfo(item).uid)"
+            v-if="isShowHowComponent(item)"
+            :userInfo="getUserInfo(item)"
+            :voiceMsg="item.msgContent.voiceMsg"
+          />
+          <MAudio
+            v-else
+            :isRead="item.msgId <= readMsgId"
+            :voiceMsg="item.msgContent.voiceMsg"
+          />
+        </div>
+        <!-- 音视频 -->
+        <div class="item" v-else-if="item.type === 'videoCallInfo'">
+          <YVideo
+            @click="showUserInfo(getUserInfo(item).uid)"
+            v-if="isShowHowComponent(item)"
+            :userInfo="getUserInfo(item)"
+            :data="item.msgContent.videoCallInfo"
+            @call="call(item.msgContent.videoCallInfo)"
+          />
+          <MVideo
+            v-else
+            :isRead="item.msgId <= readMsgId"
+            :data="item.msgContent.videoCallInfo"
+            @call="call(item.msgContent.videoCallInfo)"
+          />
+        </div>
+        <!-- 系统消息 -->
+        <div class="item" v-else-if="item.type === 'systemNotifyInfo'">
+          <div class="revoke">{{ systemNotifyInfo(item) }}</div>
+        </div>
+        <!-- 撤回消息 -->
+        <div class="item" v-else-if="item.type === 'revokeInfo'">
+          <div class="revoke">
+            {{ getRevokeName(item) }} {{ t('撤回了一条消息') }}
+          </div>
+        </div>
+        <div class="item" v-else-if="item.type === 'fireInfo'">
+          <div class="revoke">{{ fireInfo(item) }}</div>
         </div>
       </div>
-      <div class="item" v-else-if="item.type === 'fireInfo'">
-        <div class="revoke">{{ fireInfo(item) }}</div>
+      <div
+        class="menu"
+        v-if="showMen"
+        @contextmenu="contextmenu"
+        :style="{ left: style.left + 'px', top: style.top + 'px' }"
+      >
+        <span
+          class="copyMsg"
+          v-if="copyItem.type === 'stringContent'"
+          :data-clipboard-text="copyItem.msgContent.stringContent"
+          >复制</span
+        >
+        <span @click="forward(copyItem.msgId)">转发</span>
+        <span>保存</span>
+        <span
+          v-if="copyItem.fromId === store.state.userInfo.uid"
+          @click="del(copyItem)"
+          >删除</span
+        >
       </div>
-    </div>
-    <div
-      class="menu"
-      v-if="showMen"
-      @contextmenu="contextmenu"
-      :style="{ left: style.left + 'px', top: style.top + 'px' }"
-    >
-      <span
-        class="copyMsg"
-        v-if="copyItem.type === 'stringContent'"
-        :data-clipboard-text="copyItem.msgContent.stringContent"
-        >复制</span
-      >
-      <span @click="forward(copyItem.msgId)">转发</span>
-      <span>保存</span>
-      <span
-        v-if="copyItem.fromId === store.state.userInfo.uid"
-        @click="del(copyItem)"
-        >删除</span
-      >
     </div>
   </div>
 </template>
@@ -213,6 +218,7 @@ import {
   PropType,
   watch,
   onUnmounted,
+  nextTick,
 } from 'vue';
 export default defineComponent({
   name: 'Message',
@@ -250,8 +256,10 @@ import {
 import { IGroupInfo, IUserInfo } from '@/types/user';
 import { Toast } from '@/plugin/Toast';
 import ClipboardJS from 'clipboard';
+import { MediaAudio } from '@/plugin/Audio';
 const store = useStore(key);
-const emit = defineEmits(['toggleBox', 'changeTag']);
+const emit = defineEmits(['toggleBox', 'changeTag', 'selectGroupMember']);
+const msgWindow: Ref<HTMLDivElement> = ref() as Ref<HTMLDivElement>;
 
 // 显示用户详情
 const showUserInfo = (uid: number) => {
@@ -267,6 +275,11 @@ const style = ref({
 const copyItem = ref({} as IMsgInfo<string>);
 let clipboard: any = null;
 
+const scroll = () => {
+  msgWindow.value.scrollIntoView();
+  msgWindow.value.scrollTop = msgWindow.value.scrollHeight;
+};
+
 onMounted(() => {
   // 复制
   clipboard = new ClipboardJS('.copyMsg');
@@ -278,6 +291,7 @@ onMounted(() => {
     // 不支持复制
     console.log('该浏览器不支持自动复制');
   });
+  scroll();
 });
 onUnmounted(() => {
   clipboard && clipboard.destroy();
@@ -308,7 +322,6 @@ const showMen = ref(false);
 
 const menuClick = (e: any, data: any) => {
   copyItem.value = data;
-  console.log(e);
 
   style.value.left = e.target.offsetLeft + 10;
   style.value.top = e.target.offsetTop + 10;
@@ -422,6 +435,10 @@ let stop = watch(
         readMsgId.value = msgHasReadedInfos[0].msgIdMax;
       }
     }
+    if (data.cmd === 2004) {
+      await nextTick;
+      scroll();
+    }
   },
 );
 
@@ -455,9 +472,36 @@ const forward = (msgId: number) => {
   emit('toggleBox');
   emit('changeTag', Etag.Forward);
 };
+
+// 发起音视频
+
+// 开始音视频
+const call = async (item: any) => {
+  if (!store.state.rongIm) return Toast('融云服务初始化失败');
+  if (!store.state.activeIsGroup) {
+    // 单聊
+    MediaAudio({
+      isCall: true,
+      mediaType: item.videoType,
+      yUserInfo: props.yUserInfo,
+    });
+  } else {
+    // 群聊
+    emit('selectGroupMember', item.videoType);
+  }
+};
 </script>
 <style lang="scss" scoped>
 @import '@/style/base.scss';
+.msgWindow {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  overflow-y: auto;
+  padding: 20px;
+}
 .Message {
   position: relative;
   .item {

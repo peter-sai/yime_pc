@@ -3,7 +3,7 @@
     <SystemWindowHeader :title="title" :icon="icon" />
     <!-- 消息内容 -->
     <div class="msg" v-if="store.state.activeUid === 1">
-      <div v-for="item in systemList" :key="item">
+      <div v-for="item in systemList" :key="item.time">
         <Time>{{ formateTime(item.time, t) }}</Time>
         <div class="mmsg">
           <div class="img">
@@ -12,6 +12,13 @@
           <div>
             <ImgBg>
               <span class="SystemWindowContent" v-html="item.text"></span>
+              <img
+                style="margin-top: 10px"
+                :src="src"
+                alt=""
+                v-for="src in item.img"
+                :key="src"
+              />
             </ImgBg>
           </div>
         </div>
@@ -53,7 +60,7 @@
 </template>
 <script lang="ts">
 import { initStore, key } from '@/store';
-import { computed, defineComponent, reactive, ref } from 'vue';
+import { computed, defineComponent, reactive, Ref, ref } from 'vue';
 import { Store, useStore } from 'vuex';
 import Mmsg from '@/components/Message/Mmsg/index.vue';
 import Ymsg from '@/components/Message/Ymsg/index.vue';
@@ -79,11 +86,16 @@ async function userGetSystemNoticeContent(store: Store<initStore>) {
 }
 </script>
 <script setup lang="ts">
+interface IsystemList {
+  text: string;
+  time: number;
+  img: string[];
+}
 import SystemWindowHeader from './header.vue';
 import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 const store = useStore(key);
-const systemList = ref([]);
+const systemList: Ref<IsystemList[]> = ref([]);
 const feedbackList = ref([]);
 const feedback = reactive({
   feedbackContent: '',
@@ -115,14 +127,17 @@ const init = async () => {
     systemList.value = data.map((e: any) => {
       let text = '';
       let time = 0;
+      let img = [];
       try {
         text = JSON.parse(e.systemNoticeMsg.systemNoticeContent).Jt;
+        img = JSON.parse(e.systemNoticeMsg.systemUserImage);
         time = e.updateTime;
       } catch (error) {
         text = '';
         time = 0;
+        img = [];
       }
-      return { text, time };
+      return { text, time, img };
     });
   } else {
     // 反馈

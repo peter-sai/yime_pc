@@ -53,6 +53,7 @@ export enum Etag {
   CreateGroupChat,
   AddGroupMembers,
   Forward,
+  SelectGroupMemberVideos,
 }
 export default defineComponent({
   name: 'Layout',

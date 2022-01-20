@@ -44,7 +44,7 @@ export default defineComponent({
 });
 </script>
 <script lang="ts" setup>
-defineEmits(['click']);
+defineEmits(['click', 'call']);
 const props = defineProps({
   userInfo: {
     type: Object,
