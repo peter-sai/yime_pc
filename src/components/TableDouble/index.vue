@@ -85,7 +85,6 @@ const slots = useSlots();
     overflow: hidden;
     .title {
       font-size: 16px;
-      line-height: 16px;
       color: #333;
       font-weight: 500;
       overflow: hidden;

@@ -105,8 +105,8 @@ import { hideLoading, showLoading } from '@/plugin/Loading/index';
 import { useGoTo } from '@/hooks';
 import { useRouter } from 'vue-router';
 import { saveData } from '@/api/app';
-import { initRongConnect } from '@/hooks/window';
 import { initRonyun } from '@/App.vue';
+import { getRoam, mergeData } from '../../hooks/window';
 
 const { t } = useI18n();
 const store = useStore(key);
@@ -270,7 +270,7 @@ function useLogin(
   };
 }
 
-function useLoginCb(
+async function useLoginCb(
   data: any,
   goTo: (e: string) => void,
   areaCode: Ref<number>,
@@ -311,8 +311,10 @@ function useLoginCb(
     }
     store.dispatch('init');
     // 初始化融云
-    // initRongConnect(store);
     initRonyun(store);
+    // 获取漫游数据合并数据
+    const roamList = await getRoam(store);
+    await mergeData([], store, roamList);
     return goTo('/Home/Message');
   }
   return Toast(t(data.body.resultString));

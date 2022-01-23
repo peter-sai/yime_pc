@@ -11,6 +11,7 @@ import { useGetOfflineMsg } from '@/api/app';
 import { IMsgInfo, ImsgItem, TMsgContent } from '@/types/msg';
 import { IUserDetailInfo } from '@/types/user';
 import { useClientSendMsgAckToServer, mergeData } from '@/hooks/window';
+import { RCCallSession } from '@rongcloud/plugin-call';
 
 const OSS = require('ali-oss');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -35,6 +36,7 @@ const initState = {
   ws: null,
   activeUid: undefined,
   activeIsGroup: false,
+  session: {} as RCCallSession, // 通话对象
   appAboutUsInfo: {
     Jt: '',
     Ft: '',
@@ -133,6 +135,9 @@ export type initStore = typeof initState;
 const sotreRoot = createStore({
   state: initState,
   mutations: {
+    SET_SESSION: (state, res) => {
+      state.session = res;
+    },
     SET_RONGIM: (state, res) => {
       state.rongIm = res;
     },
@@ -441,7 +446,7 @@ function getProtocolHeader(
   dv.setUint8(7, 1); // version
   dv.setUint32(8, userInfo ? userInfo.uid : 0); // uid
   dv.setUint8(12, 0); // encryptType
-  dv.setUint8(13, 5); // clientType
+  dv.setUint8(13, 7); // clientType
   dv.setUint16(14, v2List.includes(cmd) ? 2000 : 10); // clientVersion
   dv.setUint16(16, 10); // reserved
   dv.setUint32(18, tokenLength); // tokenLength
@@ -507,6 +512,12 @@ function getMessage(cmd: any, encryption: any, state: any) {
         if (ansCmd === 2024) {
           LogOutAns = protoRoot.lookup(
             'Aoelailiao.Message.ServerSendSystemNotifyMsg',
+          );
+        }
+
+        if (ansCmd === 2156) {
+          LogOutAns = protoRoot.lookup(
+            'Aoelailiao.Message.GroupCallNotifyToClient',
           );
         }
 
@@ -584,7 +595,7 @@ function getMessage(cmd: any, encryption: any, state: any) {
 }
 
 function onMessage() {
-  const cmdList = [2129, 2004, 2125, 2148, 2024];
+  const cmdList = [2129, 2004, 2125, 2148, 2024, 2156];
   ws.onmessage = (evt: any) => {
     if (sotreRoot.state.isOnLine !== '消息') {
       sotreRoot.commit('SET_ISONLINE', '消息');
@@ -597,7 +608,11 @@ function onMessage() {
       if (ansCmd === 2) {
         time = Date.now();
       }
-      cb[ansCmd - 1](evt);
+      try {
+        cb[ansCmd - 1](evt);
+      } catch (error) {
+        console.log(error, ansCmd);
+      }
     }
   };
 }

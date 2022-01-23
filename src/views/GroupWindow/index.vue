@@ -258,7 +258,7 @@ const inputVal = ref('');
 const accept = ref('image/*');
 const changUserImg: Ref<HTMLInputElement | null> = ref(null);
 
-const cbImg = useCbImg(store, accept, t);
+const cbImg = useCbImg(store, accept, t, 1);
 
 onMounted(async () => {
   changUserImg.value!.addEventListener('change', cbImg);

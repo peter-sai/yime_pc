@@ -204,13 +204,6 @@ import {
 } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useStore } from 'vuex';
-import {
-  IMuteUser,
-  ISenderInfo,
-  RCCallEndReason,
-  RCCallSession,
-} from '@rongcloud/plugin-call';
-import { RCTrack } from '@rongcloud/plugin-rtc';
 import { IUserInfo } from '@/types/user';
 export default defineComponent({
   name: 'bottom',
@@ -258,6 +251,7 @@ function useInput(
 const input: Ref<HTMLInputElement | null> = ref(null);
 const store = useStore(key);
 const { t } = useI18n();
+const audioObj = ref({});
 const style = {
   opacity: 0,
   cursor: 'auto',
@@ -359,6 +353,10 @@ onBeforeUnmount(() => {
 
 // 开始音视频
 const start = async (mediaType: number) => {
+  const mediaNode = document.getElementById('media')!;
+  if (mediaNode.hasChildNodes()) {
+    return Toast('正在通话中');
+  }
   if (!store.state.rongIm) return Toast('融云服务初始化失败');
   if (!store.state.activeIsGroup) {
     // 单聊
@@ -374,11 +372,12 @@ const start = async (mediaType: number) => {
 // 控制按住说话按钮的显示和隐藏
 const showAudio = ref(false);
 const toggleAudio = (isSend?: string) => {
+  const duration = audioTime.value;
   showAudio.value = !showAudio.value;
   if (showAudio.value) {
     startRec();
   } else if (isSend === 'send') {
-    sendRec();
+    sendRec(duration);
   } else {
     closeRec();
   }
@@ -435,52 +434,68 @@ async function startRec() {
   );
 }
 
+function stop() {
+  return new Promise((resovle, reject) => {
+    rec.stop(
+      function (blob: any, duration: number) {
+        const name = new Date().toLocaleString();
+        const audioFile = new File([blob], name);
+        resovle({ name, audioFile, duration });
+      },
+      function (msg: string) {
+        alert('录音失败:' + msg);
+      },
+    );
+  });
+}
+
 // 发送
-function sendRec() {
-  rec.stop(
-    async function (blob: any, duration: number) {
-      const name = new Date().toLocaleString();
-      const audioFile = new File([blob], name);
-      let info: any = await store.state.client.put(name, audioFile);
-      const userInfo = JSON.parse(getStorage('userInfo'));
-      const isGroupMsg = store.state.activeIsGroup ? 1 : 0;
+async function sendRec(duration: number) {
+  let obj: any = {};
+  if (audioTime.value <= 59) {
+    obj = await stop();
+  } else {
+    obj = audioObj.value;
+  }
 
-      const res = {
-        msgInfo: {
-          isGroupMsg,
-          fromId: userInfo.uid,
-          toId: Number(store.state.activeUid),
-          msgShowType: 1,
-          isEncrypt: 0,
-          msgContent: {
-            msgContentType: 3,
-            msgContent: 'voiceMsg',
-            voiceMsg: {
-              voiceTime: Math.ceil(duration / 1000),
-              voiceUrl: info.url,
-            },
-          },
-          type: 'voiceMsg',
-          // attachInfo: {
-          //   msgSource: route.query.msgSource,
-          // },
+  const { audioFile, name } = obj;
+
+  let info: any = await store.state.client.put(name, audioFile);
+  const userInfo = JSON.parse(getStorage('userInfo'));
+  const isGroupMsg = store.state.activeIsGroup ? 1 : 0;
+
+  const res = {
+    msgInfo: {
+      isGroupMsg,
+      fromId: userInfo.uid,
+      toId: Number(store.state.activeUid),
+      msgShowType: 1,
+      isEncrypt: 0,
+      msgContent: {
+        msgContentType: 3,
+        msgContent: 'voiceMsg',
+        voiceMsg: {
+          voiceTime: duration,
+          // voiceTime: Math.ceil(duration / 1000),
+          voiceUrl: info.url,
         },
-      };
+      },
+      type: 'voiceMsg',
+      // attachInfo: {
+      //   msgSource: route.query.msgSource,
+      // },
+    },
+  };
 
-      const data = await store.dispatch('postMsg', {
-        query: res,
-        cmd: 2001,
-        encryption: 'Aoelailiao.Message.ClientSendMsgToServerReq',
-        auth: true,
-      });
-      if (data.body.resultCode !== 0) {
-        Toast(t(data.body.resultString));
-      }
-    },
-    function (msg: string) {
-      alert('录音失败:' + msg);
-    },
-  );
+  const data = await store.dispatch('postMsg', {
+    query: res,
+    cmd: 2001,
+    encryption: 'Aoelailiao.Message.ClientSendMsgToServerReq',
+    auth: true,
+  });
+  if (data.body.resultCode !== 0) {
+    Toast(t(data.body.resultString));
+  }
 }
 
 // 取消发送
@@ -490,9 +505,12 @@ function closeRec() {
 }
 
 function startAudio() {
-  setTimeout(() => {
+  setTimeout(async () => {
     if (audioTime.value < 59 && showAudio.value) {
       startAudio();
+    }
+    if (audioTime.value >= 59) {
+      audioObj.value = await stop();
     }
     audioTime.value++;
     line.value = (audioTime.value / 60) * 100;

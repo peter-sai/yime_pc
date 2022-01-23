@@ -47,7 +47,7 @@
         <img v-else src="../../assets/img/audio.svg" alt="" />
         <span>静音</span>
       </div>
-      <div class="item" @click="hungup">
+      <div class="item" @click="hungup(1)">
         <Iconfont name="iconvideo_icon1" size="44" />
         <span>挂断</span>
       </div>
@@ -114,6 +114,7 @@ import {
 import { useI18n } from 'vue-i18n';
 import { Store, useStore } from 'vuex';
 import Iconfont from '../../iconfont/index.vue';
+import { Toast } from '../Toast';
 export default defineComponent({
   name: 'Midea',
 });
@@ -178,6 +179,7 @@ const init = async (
         console.log('发起者', 'onHungup', map[reason]);
         hungup();
         videoCallActionUploadReq(5);
+        if (reason === 14) return Toast(map[reason]);
       },
 
       onAudioMuteChange: (muteUser: IMuteUser, session: RCCallSession) => {
@@ -258,7 +260,7 @@ const store = useStore(key);
 const conversationIng = ref(false);
 const sessionRoot = ref({}) as Ref<RCCallSession>;
 
-const info = ref(!props.isCall ? '邀请你语音通话' : '连接中…');
+const info = ref(!props.isCall ? '邀请你通话' : '连接中…');
 let time = 0;
 const isAnswer = ref(false);
 const isAudio = ref(false);
@@ -310,7 +312,6 @@ onMounted(async () => {
        */
       onRinging(sender: ISenderInfo) {
         const { userId } = sender;
-        console.log(userId);
         console.log('接听者', 'onRinging');
       },
 
@@ -428,6 +429,9 @@ const accept = () => {
 const hungup = async (num?: number) => {
   sessionRoot.value.hungup();
   close();
+  if (props.isCall && !conversationIng.value && num === 1) {
+    videoCallActionUploadReq(21);
+  }
 };
 
 const videoCallActionUploadReq = async (actionType: number) => {

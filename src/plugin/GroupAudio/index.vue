@@ -125,7 +125,7 @@ const init = async (
   userIds: [],
 ) => {
   // 发送者
-  const { session } = await (store.state.rongIm as any).callInGroup({
+  const data = await (store.state.rongIm as any).callInGroup({
     targetId: (store.state.activeUid || 0).toString(),
     userIds: userIds,
     mediaType,
@@ -137,6 +137,7 @@ const init = async (
        */
       onRinging(sender: ISenderInfo, session: RCCallSession) {
         const { userId } = sender;
+        store.commit('SET_SESSION', session);
         // 对方响铃
         info.value = '等待对方接听';
       },
@@ -168,7 +169,7 @@ const init = async (
         const { userId } = sender;
         // 对方挂断
         console.log(sender, map[reason]);
-        close();
+        // close();
       },
 
       onAudioMuteChange: (muteUser: IMuteUser, session: RCCallSession) => {
@@ -180,7 +181,7 @@ const init = async (
        * @param track 本端资源或远端资源
        * @param session 当前的 session 对象
        */
-      onTrackReady(track: RCTrack) {
+      onTrackReady(track: RCTrack, session?: RCCallSession) {
         // 远程的音频直接播放, 为了减少回音，可不播放本端音频
         if (track.isAudioTrack() && !track.isLocalTrack()) {
           track.play();
@@ -188,18 +189,19 @@ const init = async (
 
         // 视频在对应的容器里播放
         if (track.isVideoTrack()) {
+          const userId = track.getUserId();
           const video = document.createElement('video');
-          if (document.getElementById('yVideo1')) {
+          if (Number(userId) === Number(store.state.userInfo.uid)) {
             const videoBox = document.getElementById(
               'videoBox',
             ) as HTMLVideoElement;
-            video.setAttribute('id', 'videoBox1');
+            video.setAttribute('id', userId);
             videoBox.append(video);
           } else {
             const videoBox = document.getElementById(
               'yVideo',
             ) as HTMLVideoElement;
-            video.setAttribute('id', 'yVideo1');
+            video.setAttribute('id', userId);
             videoBox.append(video);
           }
           track.play(video);
@@ -218,7 +220,8 @@ const init = async (
       },
     },
   });
-  sessionRoot.value = session;
+
+  sessionRoot.value = data.session;
 };
 </script>
 <script setup lang="ts">
@@ -248,7 +251,7 @@ const props = defineProps({
 const store = useStore(key);
 //  是否通话中
 const conversationIng = ref(false);
-const info = ref(!props.isCall ? '邀请你语音通话' : '连接中…');
+const info = ref(!props.isCall ? '邀请你通话' : '连接中…');
 const isAudio = ref(false);
 // 是否关闭视频
 const isOpenVideo = ref(false);
@@ -299,40 +302,6 @@ const toggleMute = () => {
 const hungup = async () => {
   sessionRoot.value.hungup();
   close();
-  let actionType = 21;
-  // 是否是发起人
-  if (props.isCall) {
-    // 是否是通话中
-    if (conversationIng.value) {
-      // 在通话中 发起人挂断
-      actionType = 8;
-    } else {
-      // 是发起人 并且 还未接听 则是 发起人自动取消
-      actionType = 21;
-    }
-  } else {
-    // 是否是通话中
-    if (conversationIng.value) {
-      // 在通话中 非发起人挂断
-      actionType = 7;
-    } else {
-      // 不是发起人 并且 还未接听 则是 被呼叫人拒绝接听
-      actionType = 5;
-    }
-  }
-
-  const query = {
-    actionType: actionType,
-    videoType: props.mediaType,
-    talkUid: props.groupDetailInfo?.groupId,
-  };
-
-  const data = await store.dispatch('postMsg', {
-    query,
-    cmd: 2009,
-    encryption: 'Aoelailiao.Message.VideoCallActionUploadReq',
-    auth: true,
-  });
 };
 
 // 接听
@@ -407,7 +376,7 @@ onMounted(async () => {
        */
       onHungup(sender: ISenderInfo, reason: RCCallEndReason) {
         console.log(sender, map[reason]);
-        close();
+        // close();
       },
 
       /**
@@ -415,7 +384,7 @@ onMounted(async () => {
        * @param track 本端资源或远端资源
        * @param session 当前的 session 对象
        */
-      onTrackReady(track: RCTrack): void {
+      onTrackReady(track: RCTrack, session?: RCCallSession): void {
         // 远程的音频直接播放, 为了减少回音，可不播放本端音频
         if (track.isAudioTrack() && !track.isLocalTrack()) {
           track.play();
@@ -423,18 +392,19 @@ onMounted(async () => {
 
         // 视频在对应的容器里播放
         if (track.isVideoTrack()) {
+          const userId = track.getUserId();
           const video = document.createElement('video');
-          if (document.getElementById('yVideo1')) {
+          if (Number(userId) === Number(store.state.userInfo.uid)) {
             const videoBox = document.getElementById(
               'videoBox',
             ) as HTMLVideoElement;
-            video.setAttribute('id', 'videoBox1');
+            video.setAttribute('id', userId);
             videoBox.append(video);
           } else {
             const videoBox = document.getElementById(
               'yVideo',
             ) as HTMLVideoElement;
-            video.setAttribute('id', 'yVideo1');
+            video.setAttribute('id', userId);
             videoBox.append(video);
           }
           track.play(video);

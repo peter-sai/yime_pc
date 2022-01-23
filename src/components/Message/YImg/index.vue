@@ -3,10 +3,10 @@
     <div @click="$emit('click')">
       <img class="userImg" :src="userInfo?.icon" />
     </div>
-    <div @contextmenu="contextmenu">
+    <div>
       <!-- <img :width="width" :height="height" :src="src" alt="" /> -->
       <SayHello v-if="src === 'emoji_1'" />
-      <div v-else class="imgBg">
+      <div v-else class="imgBg" @contextmenu="contextmenu">
         <div class="title" v-if="isGroup">{{ userInfo?.nickname }}</div>
         <img style="max-width: 100%; max-height: 100%" :src="src" alt="" />
       </div>

@@ -23,7 +23,7 @@
           </div>
           <div class="uid">
             <div class="icon">ID</div>
-            {{ yUserInfo?.uid }}
+            {{ yUserInfo?.imAccount }}
           </div>
           <!-- 按钮 -->
           <div class="btn" @click="send">发消息</div>

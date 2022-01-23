@@ -15,7 +15,7 @@
         </div>
         <div class="uid">
           <div class="icon">ID</div>
-          {{ userInfo.uid }}
+          {{ userInfo.imAccount }}
         </div>
       </div>
       <div class="list">

@@ -38,22 +38,22 @@
       <div v-for="(item, key) in itemChat.readList || []" :key="item.id">
         <Time v-if="isShowTime(key)">{{ formateTime(item.msgTime, t) }}</Time>
         <!-- 普通消息 -->
-        <div class="item" v-if="item.type === 'stringContent'">
-          <!-- 阅后即焚 -->
-          <div v-if="item.msgShowType === 3">
-            <Ymsg
-              @click="showUserInfo(getUserInfo(item).uid)"
-              :userInfo="getUserInfo(item)"
-              v-if="isShowHowComponent(item)"
-            >
-              {{ t('请在App客户端, 查看阅后即焚消息') }}
-            </Ymsg>
-            <Mmsg :isRead="item.msgId <= readMsgId" v-else>
-              {{ t('请在App客户端, 查看阅后即焚消息') }}
-            </Mmsg>
-          </div>
+        <!-- 阅后即焚 -->
+        <div v-if="item.msgShowType === 3" class="item">
+          <Ymsg
+            @click="showUserInfo(getUserInfo(item).uid)"
+            :userInfo="getUserInfo(item)"
+            v-if="isShowHowComponent(item)"
+          >
+            {{ t('请在App客户端, 查看阅后即焚消息') }}
+          </Ymsg>
+          <Mmsg :isRead="item.msgId <= readMsgId" v-else>
+            {{ t('请在App客户端, 查看阅后即焚消息') }}
+          </Mmsg>
+        </div>
+        <div class="item" v-else-if="item.type === 'stringContent'">
           <!-- 普通消息 -->
-          <div v-else>
+          <div>
             <Ymsg
               @click="showUserInfo(getUserInfo(item).uid)"
               @menuClick="menuClick($event, item)"

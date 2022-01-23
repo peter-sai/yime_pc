@@ -62,7 +62,7 @@ const changUserImg: Ref<any> = ref(null);
 const goBack = useGoBack(useRouter);
 
 const query = reactive({
-  id: userInfo.value.uid,
+  id: userInfo.value.imAccount,
   nickName: userInfo.value.nickname,
   introduction: userDetailInfo.userSign,
   icon: userInfo.value.icon,

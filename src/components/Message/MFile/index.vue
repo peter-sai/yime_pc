@@ -79,7 +79,7 @@ const contextmenu = (e: any) => {
     border-radius: 14px 0px 14px 14px;
     .left {
       .title {
-        width: 100px;
+        width: 140px;
         height: 44px;
         font-size: 16px;
         color: #333;
@@ -87,6 +87,7 @@ const contextmenu = (e: any) => {
         display: -webkit-box;
         -webkit-box-orient: vertical;
         overflow: hidden;
+        word-wrap: break-word;
         -webkit-line-clamp: 2;
       }
       .size {

@@ -1,10 +1,10 @@
 <template>
   <div class="mImg">
     <div style="flex: 1">
-      <div @contextmenu="contextmenu">
+      <div>
         <!-- <img :width="width" :height="height" :src="src" alt="" /> -->
         <SayHello v-if="src === 'emoji_1'" />
-        <div class="imgBg" v-else>
+        <div class="imgBg" v-else @contextmenu="contextmenu">
           <img style="max-width: 100%; max-height: 100%" :src="src" alt="" />
         </div>
       </div>

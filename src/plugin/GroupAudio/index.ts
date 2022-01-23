@@ -19,8 +19,8 @@ const GroupMediaAudio = (props: any) => {
   app.mount('#media');
 };
 
-const hidePush = () => {
-  app.unmount();
+const hideGroupMediaAudio = () => {
+  app && app.unmount();
 };
 
-export { GroupMediaAudio, hidePush };
+export { GroupMediaAudio, hideGroupMediaAudio };

@@ -45,6 +45,7 @@
       </div>
       <div class="list">
         <div v-if="active === 0">
+          <Errors v-if="!contactsList.length" id="2" />
           <TableDouble
             v-for="item in contactsList"
             :key="item.id"
@@ -66,6 +67,7 @@
           </TableDouble>
         </div>
         <div v-else>
+          <Errors v-if="!contactsList.length" id="2" />
           <TableDouble
             v-for="item in groupList"
             :key="item.id"
@@ -101,6 +103,7 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, Ref, watch } from 'vue';
 import TableDouble from '@/components/TableDouble/index.vue';
+import Errors from '../Errors/index.vue';
 
 export default defineComponent({
   name: 'header',
@@ -255,6 +258,8 @@ watch(val, (res) => {
   .tabBox {
     display: flex;
     padding: 8px 0;
+    position: relative;
+    z-index: 99;
     .tabItem {
       flex: 1;
       text-align: center;
