@@ -12,7 +12,11 @@ import {
   TMsgContent,
 } from '@/types/msg';
 import { IGroupInfo, IUserDetailInfo, IUserInfo } from '@/types/user';
-import { getMsgList, setMsgList } from '@/utils/utils';
+import {
+  getMsgList,
+  setMsgList,
+  getToken as getUserToken,
+} from '@/utils/utils';
 import { getToken } from '../api';
 import { number } from '@intlify/core-base';
 import moment from 'moment';
@@ -279,6 +283,7 @@ const useCbImg = (
   store: Store<initStore>,
   accept: Ref<string>,
   t: { (key: string | number): string },
+  isGroupMsg = 0,
 ) => {
   return async (e: any) => {
     const file = e.target.files[0];
@@ -291,7 +296,7 @@ const useCbImg = (
       const size = (await getSize(file)) as { width: number; height: number };
       res = {
         msgInfo: {
-          isGroupMsg: 0,
+          isGroupMsg,
           fromId: store.state.userInfo.uid,
           toId: store.state.activeUid,
           msgShowType: 1,
@@ -311,7 +316,7 @@ const useCbImg = (
       // 文件
       res = {
         msgInfo: {
-          isGroupMsg: 0,
+          isGroupMsg,
           fromId: store.state.userInfo.uid,
           toId: store.state.activeUid,
           msgShowType: 1,
@@ -721,6 +726,25 @@ const initRongConnect = async (
   });
 };
 
+// 漫游数据
+async function getRoam(store: Store<initStore>) {
+  if (getUserToken()) {
+    const res = await store.dispatch('postMsg', {
+      query: {
+        type: 0,
+        uid: store.state.userInfo.uid,
+      },
+      cmd: 5001,
+      encryption: 'Aoelailiao.Message.AtInfo',
+      auth: true,
+    });
+    console.log(res.body);
+
+    return res.body.msgInfos || [];
+  }
+  return [];
+}
+
 export {
   useUserOperateGroupInfo,
   useBeforeSwitch,
@@ -739,4 +763,5 @@ export {
   useRevoke,
   useFormateTime,
   initRongConnect,
+  getRoam,
 };

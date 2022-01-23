@@ -370,8 +370,6 @@ const init = async () => {
   // 一、 获取离线数据
   const { offlineMsgInfos } = await useGetOfflineMsg(store);
 
-  const roamList = await getRoam();
-
   // 发送ack
   clientSendMsgAckToServer(offlineMsgInfos);
 
@@ -382,29 +380,9 @@ const init = async () => {
     store.commit('ADD_NOTIFY', { id: e.msgClassId, res: e });
   });
   // 合并数据
-  await mergeData(offlineMsgInfos, store, roamList);
+  await mergeData(offlineMsgInfos, store, []);
 };
 init();
-
-// 漫游数据
-async function getRoam() {
-  const msgList = getMsgList();
-
-  if (!Object.keys(msgList).length) {
-    const res = await store.dispatch('postMsg', {
-      query: {
-        type: 0,
-        uid: store.state.userInfo.uid,
-      },
-      cmd: 5001,
-      encryption: 'Aoelailiao.Message.AtInfo',
-      auth: true,
-    });
-
-    return res.body.msgInfos;
-  }
-  return [];
-}
 
 // 设置已读
 const read = (item: ImsgItem) => {
@@ -420,6 +398,14 @@ const beforeMsgNotdisturb = useBeforeSwitchChat(store, 1005, t);
 // 退出群聊
 const userOperateGroupInfo = useUserOperateGroupInfo(store);
 const quitGroupChat = async (item: ImsgItem) => {
+  if (
+    Number(item.groupDetailInfo.groupMemberLists.rootUid) ===
+    Number(store.state.userInfo.uid)
+  ) {
+    // 是群主 无法直接 退出群聊 需要解散
+    return Toast(t('请解散群聊'));
+  }
+
   const query = {
     groupId: item.id,
   };

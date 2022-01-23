@@ -17,8 +17,7 @@ export default {
   '<spile>删除了一个文件': '<spile> deleted a file',
   '<spile>加入了群聊': '<spile> joins the group chat',
   '<spile>发起了群聊': '<spile> started a group chat',
-  '<spile>发起了语音通话':
-    '<spile> initiated a voice call. Please download the app to use this function',
+  '<spile>发起了语音通话': '<spile> initiated a voice call.',
   '<spile>取消用户管理员权限': '<spile> to cancel user admin privileges',
   '<spile>在群聊中@了你': '<spile> @you in group chat',
   '<spile>将用户移出了群聊': '<spile> removes the user from group chat',
@@ -452,6 +451,7 @@ export default {
   星期日: 'Sunday ',
   昨天: 'Yesterday',
   '是否确定解散群聊?': 'Are you sure to dismiss the group chat?',
+  请解散群聊: 'Please break up the group chat',
   '是否确认注销账号?': 'Do you confirm the destruction account?',
   昵称: 'Nickname',
   昵称长度不合法: 'The nickname length is illegal',

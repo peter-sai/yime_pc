@@ -126,7 +126,7 @@ const contextmenu = (e: any) => {
     border-radius: 0px 14px 14px 14px;
     .left {
       .title {
-        width: 100px;
+        width: 140px;
         height: 44px;
         font-size: 16px;
         color: #333;
@@ -135,6 +135,7 @@ const contextmenu = (e: any) => {
         -webkit-box-orient: vertical;
         overflow: hidden;
         -webkit-line-clamp: 2;
+        word-wrap: break-word;
       }
       .size {
         font-size: 12px;

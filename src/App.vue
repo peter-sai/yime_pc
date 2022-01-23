@@ -9,18 +9,31 @@ import { getOssInfo } from './api';
 import { getToken as getUserToken } from './utils/utils';
 import { initStore, key } from './store';
 import { getStorage, setMsgList } from './utils/utils';
-import { initRongConnect, useClientSendMsgAckToServer } from './hooks/window';
+import {
+  getRoam,
+  initRongConnect,
+  useClientSendMsgAckToServer,
+  mergeData,
+} from './hooks/window';
 import { IMsgInfo } from './types/msg';
 import * as RongIMLib from '@rongcloud/imlib-next';
-import { installer as rtcInstaller, RCRTCClient } from '@rongcloud/plugin-rtc';
+import {
+  installer as rtcInstaller,
+  RCRTCClient,
+  RCTrack,
+} from '@rongcloud/plugin-rtc';
 import {
   installer as callInstaller,
   RCCallSession,
   IEndSummary,
+  ISenderInfo,
+  RCCallEndReason,
+  IMuteUser,
 } from '@rongcloud/plugin-call';
 import messageAudio from './assets/audio/message.wav';
 import { MediaAudio } from './plugin/Audio';
-import { GroupMediaAudio } from './plugin/GroupAudio';
+import { GroupMediaAudio, hideGroupMediaAudio } from './plugin/GroupAudio';
+import { Toast } from './plugin/Toast';
 export async function initRonyun(store: Store<initStore>) {
   // IM 客户端初始化
   RongIMLib.init({
@@ -38,7 +51,66 @@ export async function initRonyun(store: Store<initStore>) {
      * 被动收到邀请 （收到一个远端发起的新会话）, 会产生一个新的 session 对象 （必填）
      */
     async onSession(session: RCCallSession) {
+      store.commit('SET_SESSION', session);
       const uid = session.getTargetId();
+      const mediaNode = document.getElementById('media')!;
+      if (mediaNode.hasChildNodes()) {
+        // 当前正在通话中
+        session.registerSessionListener({
+          /**
+           * 当远端用户已开始响铃，表示对方已收到呼叫请求
+           * @param sender 已响铃的用户
+           * @param session 当前的 session 对象
+           */
+          onRinging(sender: ISenderInfo) {
+            const { userId } = sender;
+            console.log('接听者', 'onRinging');
+          },
+
+          /**
+           * 当远端用户同意接听
+           * @param sender 远端用户
+           * @param session 当前的 session 对象
+           */
+          onAccept(sender: ISenderInfo) {
+            const { userId } = sender;
+            console.log('接听者', 'onAccept');
+          },
+
+          /**
+           * 当有远端用户挂断
+           * @param sender 远端用户
+           * @param reason 挂断的原因
+           * @param session 当前的 session 对象
+           */
+          onHungup(sender: ISenderInfo, reason: RCCallEndReason) {
+            console.log('接听者挂断', 'onHungup', reason);
+          },
+
+          /**
+           * 本端资源或远端资源已获取，track为本地音频或音视频, track不可设置成 Vue 组件的响应式数据
+           * @param track 本端资源或远端资源
+           * @param session 当前的 session 对象
+           */
+          onTrackReady(track: RCTrack): void {
+            // 远程的音频直接播放, 为了减少回音，可不播放本端音频
+            console.log(track);
+          },
+          onMemberModify: function (sender: any): void {
+            console.log('onMemberModify', sender);
+          },
+          onMediaModify: function (sender: any): void {
+            console.log('onMediaModify', sender);
+          },
+          onAudioMuteChange: function (muteUser: IMuteUser): void {
+            console.log('onAudioMuteChange', muteUser);
+          },
+          onVideoMuteChange: function (muteUser: IMuteUser): void {
+            console.log(muteUser);
+          },
+        });
+        return;
+      }
       if (session.getConversationType() === 1) {
         let userDetail = '';
         if (store.state.msgList[Number(uid)]) {
@@ -95,9 +167,10 @@ export async function initRonyun(store: Store<initStore>) {
      *  @param summaryInfo 结束一个 session 的后汇总信息
      */
     onSessionClose(session: RCCallSession, summaryInfo?: IEndSummary) {
-      //
+      hideGroupMediaAudio();
     },
   });
+
   // store.commit('SET_RONGIM', rongIm);
   // 如果以登录状态 则 连接融云
   if (getUserToken()) {
@@ -166,6 +239,13 @@ const init = async () => {
 
   // 初始化融云服务
   initRonyun(store);
+  setTimeout(async () => {
+    // 获取漫游数据并且合并
+    const roamList = await getRoam(store);
+
+    // 合并数据
+    await mergeData([], store, roamList);
+  }, 2000);
 };
 
 init();

@@ -164,7 +164,7 @@ const useGetDetail = async (
     msgItem = data.body;
   }
 
-  if (msgItem.userDetailInfo.userInfo.isBotUser) {
+  if (msgItem?.userDetailInfo?.userInfo?.isBotUser) {
     isBotUser.value = true;
   } else {
     isBotUser.value = false;
@@ -201,6 +201,7 @@ async function init(
   yUserInfo: Ref<IUserInfo>,
   onlineInfo: Ref<IUserInfo>,
 ) {
+  console.log(store.state.session.getState());
   // 获取用户详细资料
   await useGetDetail(store, userDetailInfo, isBotUser, yUserInfo);
   // 获取用户登录状态

@@ -1,6 +1,6 @@
 <template>
   <div class="Forward">
-    <NavigationBar title="选择好友" hide-left disable-left>
+    <NavigationBar title="转发" hide-left disable-left>
       <template v-slot:left>
         <Iconfont
           name="iconfork"
@@ -23,7 +23,17 @@
             {{ item.tag }}
           </div>
           <Table :title="item.name" hideMore @click="toggleActive(item)">
-            <template v-slot:left>
+            <template v-slot:left v-if="item.groupId">
+              <img v-if="item.groupIcon" :src="item.groupIcon" alt="" />
+              <span class="userImg" v-else>
+                {{
+                  item.groupName
+                    ? item.groupName.substr(0, 1).toLocaleUpperCase()
+                    : ''
+                }}
+              </span>
+            </template>
+            <template v-slot:left v-else>
               <img v-if="item.icon" :src="item.icon" alt="" />
               <Iconfont v-else name="iconlianxiren" size="30" color="#A8B5BE" />
             </template>
@@ -87,16 +97,21 @@ const init = async () => {
       encryption: 'Aoelailiao.Login.UserGetFriendsAndGroupsListReq',
       auth: true,
     });
-    list.value = data.body.friendInfos.filter(
+    console.log(data.body);
+
+    const friendInfos = data.body.friendInfos.filter(
       (e: IContacts) => Number(e.uid) !== Number(activeUid),
     );
+
+    list.value = friendInfos.concat(data.body.groupInfos || []);
+
     list.value.forEach((e: any) => {
       e.name =
         (e.userAttachInfo && e.userAttachInfo.remarkName) ||
         e.nickname ||
         e.groupName;
       e.tag = getTag(e);
-      if (Number(e.uid) === Number(userId)) {
+      if (Number(e.uid || e.groupId) === Number(userId)) {
         e.active = true;
       } else {
         e.active = false;
@@ -122,11 +137,12 @@ const toggleActive = (item: IContacts) => {
 // 确定
 const submit = async () => {
   const activeList = newList.value.filter((e) => e.active);
+
   if (!activeList.length) return;
   const forwardMsg = activeList.map((e) => {
     return {
-      isGroupMsg: 0,
-      toId: e.uid,
+      isGroupMsg: e.uid ? 0 : 1,
+      toId: e.uid || e.groupId,
     };
   });
   const res = {
@@ -153,6 +169,22 @@ const submit = async () => {
   height: 100%;
   display: flex;
   flex-direction: column;
+  .userImg {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #f0f0f0;
+    display: inline-flex;
+    align-items: center;
+    color: #0085ff;
+    font-size: 30px;
+    justify-content: center;
+    img {
+      width: 100%;
+      height: 100%;
+    }
+  }
   .main {
     height: 100%;
     position: relative;

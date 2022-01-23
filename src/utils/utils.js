@@ -115,15 +115,21 @@ export const isCurrentChat = (msgInfos, yUid, uid) => {
 
 // 获取tag
 export function getTag(e) {
-  const res = cnchar
-    .spell(
-      (e.userAttachInfo && e.userAttachInfo.remarkName) || e.nickname,
-      'first',
-    )
-    .substr(0, 1);
-  if (res.charCodeAt() >= 65 && res.charCodeAt() <= 122) {
-    return res;
-  } else {
+  try {
+    const res = cnchar
+      .spell(
+        (e.userAttachInfo && e.userAttachInfo.remarkName) ||
+          e.nickname ||
+          e.groupName,
+        'first',
+      )
+      .substr(0, 1);
+    if (res.charCodeAt() >= 65 && res.charCodeAt() <= 122) {
+      return res;
+    } else {
+      return '#';
+    }
+  } catch (error) {
     return '#';
   }
 }

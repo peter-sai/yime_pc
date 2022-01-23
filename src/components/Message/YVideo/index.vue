@@ -7,9 +7,9 @@
       <div class="imBgBox" @click.stop="$emit('call')">
         <div>
           <span v-if="data.callTime"
-            >{{ filterData[0].msgText + time(data.callTime) }}
+            >{{ t(filterData[0].msgText) + time(data.callTime) }}
           </span>
-          <span v-else>{{ filterData[0].msgText }} </span>
+          <span v-else>{{ t(filterData[0].msgText) }} </span>
           {{ data.needShowTime === 0 ? formateTime(data.callTime) : null }}
         </div>
         <div>
@@ -39,12 +39,13 @@ import {
 import { IVideoCallMsgInfo } from '@/types/msg';
 import { useStore } from 'vuex';
 import { key } from '@/store';
+import { useI18n } from 'vue-i18n';
 export default defineComponent({
   name: 'YAudio',
 });
 </script>
 <script lang="ts" setup>
-defineEmits(['click']);
+defineEmits(['click', 'call']);
 const props = defineProps({
   userInfo: {
     type: Object,
@@ -54,6 +55,8 @@ const props = defineProps({
     required: true,
   },
 });
+
+const { t } = useI18n();
 
 const store = useStore(key);
 const filterData = computed(() =>
@@ -65,9 +68,7 @@ const filterData = computed(() =>
 const time = (num: number) => {
   const m = parseInt((num / 60).toString());
   const s = num - m * 60;
-  return ` ${m.toString().padStart(2, '0')}  分 ${s
-    .toString()
-    .padStart(2, '0')} 秒`;
+  return ` ${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')} `;
 };
 
 // 格式化时间
