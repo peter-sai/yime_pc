@@ -2,7 +2,7 @@
   <div class="changeLang">
     <NavigationBar
       title="切换语言"
-      right-text="确认"
+      :right-text="t('确认')"
       @rigthClick="rigthClick"
     />
     <div style="flex: 1">

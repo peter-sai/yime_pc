@@ -36,9 +36,12 @@ import { GroupMediaAudio, hideGroupMediaAudio } from './plugin/GroupAudio';
 import { Toast } from './plugin/Toast';
 export async function initRonyun(store: Store<initStore>) {
   // IM 客户端初始化
-  RongIMLib.init({
+  const RongCallLib = RongIMLib.init({
     appkey: 'tdrvipkst22v5',
   });
+  // 监听消息 用来处理是否显示加入音视频按钮
+  console.log(RongCallLib);
+
   // RTC 客户端初始化
   const rtcClient: RCRTCClient = RongIMLib.installPlugin(
     rtcInstaller,
@@ -51,7 +54,6 @@ export async function initRonyun(store: Store<initStore>) {
      * 被动收到邀请 （收到一个远端发起的新会话）, 会产生一个新的 session 对象 （必填）
      */
     async onSession(session: RCCallSession) {
-      store.commit('SET_SESSION', session);
       const uid = session.getTargetId();
       const mediaNode = document.getElementById('media')!;
       if (mediaNode.hasChildNodes()) {
@@ -281,6 +283,10 @@ const clientSendMsgAckToServer = (msgInfos: IMsgInfo<string>[]) => {
 const stop = watch(
   computed(() => store.state.msgInfo),
   async (data: any) => {
+    // 假如音视频通话申请
+    if (data.cmd === 2162) {
+      console.log(data);
+    }
     if (data.cmd === 2024) {
       try {
         const notifyContent = JSON.parse(data.body.notifyContent);

@@ -140,7 +140,7 @@
         <div class="box" v-if="showMenu === item.id">
           <div class="item" @click="read(item)">
             <Iconfont name="iconbianzu9" size="15" />
-            <span>已读</span>
+            <span>{{ t('已读') }}</span>
           </div>
           <div
             class="item"
@@ -155,8 +155,8 @@
             <Iconfont name="iconxitongjingyin" size="12" />
             <span>{{
               item.groupDetailInfo?.groupAttachInfo?.groupMsgMute
-                ? '取消静音'
-                : '静音'
+                ? t('取消静音')
+                : t('静音')
             }}</span>
             >
           </div>
@@ -173,13 +173,13 @@
             <Iconfont name="iconxitongjingyin" size="12" />
             <span>{{
               item.userDetailInfo?.userInfo?.userAttachInfo?.msgMute
-                ? '取消静音'
-                : '静音'
+                ? t('取消静音')
+                : t('静音')
             }}</span>
           </div>
           <div class="item" v-if="item.isGroup" @click="quitGroupChat(item)">
             <Iconfont name="icontuichu" size="12" />
-            <span>退出群聊</span>
+            <span>{{ t('退出群聊') }}</span>
           </div>
         </div>
       </div>
@@ -484,12 +484,12 @@ const quitGroupChat = async (item: ImsgItem) => {
   position: relative;
   .box {
     position: absolute;
-    width: 106px;
+    // width: 106px;
     background: #f9f9f9;
     border-radius: 5px;
     box-shadow: 0px 0px 26px 0px rgba(0, 0, 0, 0.2);
     z-index: 99;
-    padding: 13px 5px;
+    padding: 5px;
     box-sizing: border-box;
     top: 75%;
     right: 13px;

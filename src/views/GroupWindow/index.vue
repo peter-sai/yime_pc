@@ -26,10 +26,12 @@
 
     <Bottom
       v-model="inputVal"
+      :groupDetailInfo="groupDetailInfo.groupId ? groupDetailInfo : undefined"
       @sendImg="sendImg('img')"
       @selectGroupMember="ShowSelectGroupMember"
-      @enter="enter"
+      @enter="enter(atUserInfoList)"
       @sendFile="sendImg('file')"
+      @atUserInfoList="getAtUserInfoList"
     />
     <!-- 文件 和 图片选择 -->
     <input ref="changUserImg" type="file" hidden :accept="accept" />
@@ -209,6 +211,7 @@ async function getGroupInfo(store: Store<initStore>) {
 defineEmits(['toggleBox', 'changeTag']);
 // 视频还是语音
 const mediaType = ref(1);
+const atUserInfoList: Ref<IUserInfo[]> = ref([]);
 const { t } = useI18n();
 const userInfo: Ref<IUserInfo> = ref({}) as Ref<IUserInfo>; // 需要显示详情用户的信息
 const userDetailInfo: Ref<IUserDetailInfo> = ref({}) as Ref<IUserDetailInfo>; // 需要显示详情用户的信息
@@ -248,6 +251,18 @@ const groupDetailInfo: ComputedRef<IGroupInfo> = computed(
 );
 const store = useStore(key);
 async function init() {
+  // 查询 群 通话状态
+  const data = await store.dispatch('postMsg', {
+    query: {
+      groupCallState: {
+        groupId: store.state.activeUid,
+      },
+    },
+    cmd: 2153,
+    encryption: 'Aoelailiao.Message.GroupCallStateNotifyToServserReq',
+    auth: true,
+  });
+  console.log(data);
   await getGroupInfo(store);
 }
 init();
@@ -279,6 +294,11 @@ const ShowSelectGroupMember = (e: number) => {
 const enter = useEnter(store, inputVal, 1, null, t);
 // 发送图片
 const sendImg = useSendImg(store, 1, t, changUserImg, accept, nextTick);
+
+// 获取at 用户列表
+const getAtUserInfoList = (userInfoList: IUserInfo[]) => {
+  atUserInfoList.value = userInfoList;
+};
 </script>
 <style lang="scss" scoped>
 @import '@/style/base.scss';
@@ -290,6 +310,7 @@ const sendImg = useSendImg(store, 1, t, changUserImg, accept, nextTick);
     right: 0;
     bottom: 50px;
     padding: 20px;
+    z-index: -1;
   }
   .box {
     position: absolute;

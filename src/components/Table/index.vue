@@ -2,7 +2,7 @@
   <div class="table">
     <div class="left">
       <div class="icon" v-if="slots.left"><slot name="left"></slot></div>
-      <div class="text">{{ title }}</div>
+      <div class="text">{{ t(title || '') }}</div>
       <div class="text"><slot name="title" /></div>
     </div>
     <div class="right">
@@ -26,6 +26,7 @@ export default {
 </script>
 <script setup lang="ts">
 import Iconfont from '@/iconfont/index.vue';
+import { useI18n } from 'vue-i18n';
 defineProps({
   title: {
     type: String,
@@ -35,6 +36,7 @@ defineProps({
     type: Boolean,
   },
 });
+const { t } = useI18n();
 const slots = useSlots();
 </script>
 

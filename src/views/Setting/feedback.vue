@@ -2,7 +2,7 @@
   <div class="feedback">
     <NavigationBar title="意见反馈" right-text="提交" @rigth-click="submit" />
     <div style="flex: 1" class="introduction">
-      <textarea placeholder="请输入您的简介" v-model="query.msg"></textarea>
+      <textarea :placeholder="t('请输入')" v-model="query.msg"></textarea>
       <div class="box">
         <div v-if="!imgUrl" class="plus" @click="upLoad"></div>
         <div class="img" v-else @click="upLoad">
@@ -62,7 +62,7 @@ const cbImg = async (e: any) => {
 // 提交
 const submit = async () => {
   if (!query.msg) {
-    return Toast('请输入内容');
+    return Toast(t('请输入内容'));
   }
   showLoading();
   const res = {

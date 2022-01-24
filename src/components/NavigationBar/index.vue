@@ -14,7 +14,7 @@
           :class="{ rightTextDef: rightTextDef }"
           @click="$emit('rigthClick')"
           v-if="rightText"
-          >{{ rightText }}</span
+          >{{ t(rightText) }}</span
         >
         <div style="display: inline-block">
           <slot name="right" />

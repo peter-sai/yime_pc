@@ -1,7 +1,10 @@
 <template>
   <div class="groupAudio">
     <div id="videoBox">
-      <div id="yVideo"></div>
+      <div
+        id="yVideoGroup"
+        :style="{ background: conversationIng ? '#000' : 'transparent' }"
+      ></div>
     </div>
     <div class="miniSize">
       <Iconfont name="iconnarrow_icon" size="20" color="#fff" />
@@ -57,7 +60,7 @@
 </template>
 <script lang="ts">
 import { initStore, key } from '@/store';
-import { IGroupInfo } from '@/types/user';
+import { IGroupInfo, IUserInfo } from '@/types/user';
 import {
   IMuteUser,
   ISenderInfo,
@@ -72,6 +75,7 @@ import {
   PropType,
   Ref,
   ref,
+  nextTick,
 } from 'vue';
 import { Store, useStore } from 'vuex';
 import Iconfont from '../../iconfont/index.vue';
@@ -123,7 +127,14 @@ const init = async (
   conversationIng: Ref<boolean>,
   isAudio: Ref<boolean>,
   userIds: [],
+  userInfos: Ref<IUserInfo[]>,
+  nextTick: any,
 ) => {
+  const videoBox = document.getElementById('videoBox') as HTMLVideoElement;
+  const yVideoGroup = document.getElementById(
+    'yVideoGroup',
+  ) as HTMLVideoElement;
+
   // 发送者
   const data = await (store.state.rongIm as any).callInGroup({
     targetId: (store.state.activeUid || 0).toString(),
@@ -137,7 +148,6 @@ const init = async (
        */
       onRinging(sender: ISenderInfo, session: RCCallSession) {
         const { userId } = sender;
-        store.commit('SET_SESSION', session);
         // 对方响铃
         info.value = '等待对方接听';
       },
@@ -181,7 +191,25 @@ const init = async (
        * @param track 本端资源或远端资源
        * @param session 当前的 session 对象
        */
-      onTrackReady(track: RCTrack, session?: RCCallSession) {
+      async onTrackReady(track: RCTrack, session?: RCCallSession) {
+        const users = session?.getRemoteUsers() || [];
+        users.forEach((e) => {
+          if (!document.getElementById(`div_${e.userId}`)) {
+            // 创建div 并添加 头像 然后追加到dom
+            const div = document.createElement('div');
+            const img = document.createElement('img');
+            const userInfo = userInfos.value.find(
+              (v) => Number(v.uid) === Number(e.userId),
+            );
+            img.setAttribute('src', userInfo?.icon || '');
+            div.setAttribute('id', `div_${e.userId}`);
+            div.append(img);
+            yVideoGroup.append(div);
+          }
+        });
+
+        await nextTick();
+
         // 远程的音频直接播放, 为了减少回音，可不播放本端音频
         if (track.isAudioTrack() && !track.isLocalTrack()) {
           track.play();
@@ -191,18 +219,18 @@ const init = async (
         if (track.isVideoTrack()) {
           const userId = track.getUserId();
           const video = document.createElement('video');
-          if (Number(userId) === Number(store.state.userInfo.uid)) {
-            const videoBox = document.getElementById(
-              'videoBox',
-            ) as HTMLVideoElement;
-            video.setAttribute('id', userId);
-            videoBox.append(video);
-          } else {
-            const videoBox = document.getElementById(
-              'yVideo',
-            ) as HTMLVideoElement;
-            video.setAttribute('id', userId);
-            videoBox.append(video);
+          // 如果已经追加过 则 不再重新追加
+          if (!document.getElementById(userId)) {
+            if (Number(userId) === Number(store.state.userInfo.uid)) {
+              video.setAttribute('id', userId);
+              videoBox.append(video);
+            } else {
+              video.setAttribute('id', userId);
+              const div_userID = document.getElementById(`div_${userId}`);
+              if (div_userID) {
+                div_userID.append(video);
+              }
+            }
           }
           track.play(video);
         }
@@ -213,9 +241,11 @@ const init = async (
       },
       onVideoMuteChange: function (muteUser: IMuteUser): void {
         if (muteUser.muted) {
-          const videoBox = document.getElementById('videoBox');
-          const videoBox1 = document.getElementById('videoBox1');
-          videoBox?.removeChild(videoBox1!);
+          const div_userId = document.getElementById(`div_${muteUser.userId}`);
+          const userVideo = document.getElementById(muteUser.userId);
+          if (userVideo) {
+            div_userId?.removeChild(userVideo);
+          }
         }
       },
     },
@@ -248,6 +278,7 @@ const props = defineProps({
   },
 });
 
+const userInfos: Ref<IUserInfo[]> = ref([]);
 const store = useStore(key);
 //  是否通话中
 const conversationIng = ref(false);
@@ -276,9 +307,11 @@ const toggleVideo = () => {
   if (Object.keys(sessionRoot.value).length) {
     if (!isOpenVideo.value) {
       sessionRoot.value.disableVideoTrack();
-      const yVideo = document.getElementById('yVideo');
-      const yVideo1 = document.getElementById('yVideo1');
-      yVideo?.removeChild(yVideo1!);
+      const videoBox = document.getElementById('videoBox');
+      const meVideo = document.getElementById(
+        store.state.userInfo.uid.toString(),
+      );
+      videoBox?.removeChild(meVideo!);
     } else {
       sessionRoot.value.enableVideoTrack();
     }
@@ -325,6 +358,20 @@ const startTimeOut = () => {
   }, 1000);
 };
 
+const getGroupMemberUserInfos = async () => {
+  const groupMemberUids =
+    props.groupDetailInfo?.groupMemberLists.memberUserInfos.map(
+      (e) => e.memberUid,
+    );
+  const res = await store.dispatch('postMsg', {
+    query: { uid: groupMemberUids },
+    cmd: 1115,
+    encryption: 'Aoelailiao.Login.ClientGetUserInfoListReq',
+    auth: true,
+  });
+  userInfos.value = res.body.userInfo;
+};
+getGroupMemberUserInfos();
 onMounted(async () => {
   if (props.isCall) {
     // 呼叫方
@@ -338,8 +385,14 @@ onMounted(async () => {
       conversationIng,
       isAudio,
       props.userIds!,
+      userInfos,
+      nextTick,
     );
   } else {
+    const videoBox = document.getElementById('videoBox') as HTMLVideoElement;
+    const yVideoGroup = document.getElementById(
+      'yVideoGroup',
+    ) as HTMLVideoElement;
     // 接听方
     sessionRoot.value = props.session!;
     /**
@@ -364,8 +417,10 @@ onMounted(async () => {
        */
       onAccept(sender: ISenderInfo) {
         const { userId } = sender;
-        startTimeOut();
-        conversationIng.value = true;
+        if (Number(userId) === Number(store.state.userInfo.uid)) {
+          startTimeOut();
+          conversationIng.value = true;
+        }
       },
 
       /**
@@ -384,7 +439,24 @@ onMounted(async () => {
        * @param track 本端资源或远端资源
        * @param session 当前的 session 对象
        */
-      onTrackReady(track: RCTrack, session?: RCCallSession): void {
+      async onTrackReady(track: RCTrack, session?: RCCallSession): void {
+        const users = session?.getRemoteUsers() || [];
+        users.forEach((e) => {
+          if (!document.getElementById(`div_${e.userId}`)) {
+            // 创建div 并添加 头像 然后追加到dom
+            const div = document.createElement('div');
+            const img = document.createElement('img');
+            const userInfo = userInfos.value.find(
+              (v) => Number(v.uid) === Number(e.userId),
+            );
+            img.setAttribute('src', userInfo?.icon || '');
+            div.setAttribute('id', `div_${e.userId}`);
+            div.append(img);
+            yVideoGroup.append(div);
+          }
+        });
+
+        await nextTick();
         // 远程的音频直接播放, 为了减少回音，可不播放本端音频
         if (track.isAudioTrack() && !track.isLocalTrack()) {
           track.play();
@@ -394,18 +466,18 @@ onMounted(async () => {
         if (track.isVideoTrack()) {
           const userId = track.getUserId();
           const video = document.createElement('video');
-          if (Number(userId) === Number(store.state.userInfo.uid)) {
-            const videoBox = document.getElementById(
-              'videoBox',
-            ) as HTMLVideoElement;
-            video.setAttribute('id', userId);
-            videoBox.append(video);
-          } else {
-            const videoBox = document.getElementById(
-              'yVideo',
-            ) as HTMLVideoElement;
-            video.setAttribute('id', userId);
-            videoBox.append(video);
+          // 如果已经追加过 则 不再重新追加
+          if (!document.getElementById(userId)) {
+            if (Number(userId) === Number(store.state.userInfo.uid)) {
+              video.setAttribute('id', userId);
+              videoBox.append(video);
+            } else {
+              video.setAttribute('id', userId);
+              const div_userID = document.getElementById(`div_${userId}`);
+              if (div_userID) {
+                div_userID.append(video);
+              }
+            }
           }
           track.play(video);
         }
@@ -422,9 +494,11 @@ onMounted(async () => {
       },
       onVideoMuteChange: function (muteUser: IMuteUser): void {
         if (muteUser.muted) {
-          const videoBox = document.getElementById('videoBox');
-          const videoBox1 = document.getElementById('videoBox1');
-          videoBox?.removeChild(videoBox1!);
+          const div_userId = document.getElementById(`div_${muteUser.userId}`);
+          const userVideo = document.getElementById(muteUser.userId);
+          if (userVideo) {
+            div_userId?.removeChild(userVideo);
+          }
         }
       },
     });
@@ -451,12 +525,15 @@ onMounted(async () => {
     right: 0;
     top: 0;
     bottom: 0;
-    #yVideo {
-      width: 122px;
-      height: 70px;
+    #yVideoGroup {
+      width: 170px;
+      height: 100%;
       position: absolute;
-      right: 10px;
-      bottom: 100px;
+      right: 0;
+      bottom: 0;
+      padding: 10px 10px;
+      box-sizing: border-box;
+      background: #000;
     }
   }
   .miniSize {
@@ -538,5 +615,28 @@ onMounted(async () => {
 #videoBox video {
   width: 100%;
   height: 100%;
+  object-fit: cover;
+}
+#yVideoGroup video {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+#yVideoGroup div {
+  height: 70px;
+  width: 70px;
+  display: inline-block;
+  position: relative;
+}
+#yVideoGroup div:nth-child(even) {
+  margin-left: 10px;
+}
+#yVideoGroup div img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
 }
 </style>

@@ -2,7 +2,8 @@
   <div class="mmsg">
     <div class="img" @click="$emit('click')">
       <Iconfont v-if="userInfo?.isBotUser" name="iconbianzu16" size="44" />
-      <img v-else :src="userInfo?.icon" />
+      <img v-else-if="userInfo?.icon" :src="userInfo.icon" />
+      <Iconfont v-else name="iconlianxiren" size="46" color="#A8B5BE" />
     </div>
     <div>
       <div class="title" v-if="isGroup">{{ userInfo?.nickname }}</div>

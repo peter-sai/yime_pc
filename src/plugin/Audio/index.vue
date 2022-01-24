@@ -124,7 +124,6 @@ const init = async (
   mediaType: number,
   sessionRoot: Ref<RCCallSession>,
   info: Ref<string>,
-  videos: HTMLVideoElement[],
   startTimeOut: () => void,
   conversationIng: Ref<boolean>,
   isAudio: Ref<boolean>,
@@ -213,7 +212,6 @@ const init = async (
             video.setAttribute('id', 'yVideo1');
             videoBox.append(video);
           }
-          videos.push(video);
           track.play(video);
         }
       },
@@ -254,7 +252,6 @@ const props = defineProps({
 });
 
 const { t } = useI18n();
-const videos: HTMLVideoElement[] = [];
 const store = useStore(key);
 //  是否通话中
 const conversationIng = ref(false);
@@ -290,7 +287,6 @@ onMounted(async () => {
       props.mediaType!,
       sessionRoot,
       info,
-      videos,
       startTimeOut,
       conversationIng,
       isAudio,
@@ -365,7 +361,6 @@ onMounted(async () => {
             video.setAttribute('id', 'yVideo1');
             videoBox.append(video);
           }
-          videos.push(video);
           track.play(video);
         }
       },
@@ -465,6 +460,7 @@ const changeAudio = () => {
 #videoBox video {
   width: 100%;
   height: 100%;
+  object-fit: cover;
 }
 </style>
 <style lang="scss" scoped>

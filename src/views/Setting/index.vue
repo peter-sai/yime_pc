@@ -89,7 +89,7 @@ const goLink = (url: string) => {
 
 const logOut = () => {
   Dialog({
-    title: '确定退出登录?',
+    title: t('退出登录') + '?',
     callBack: async () => {
       store.dispatch('logout');
       location.reload();

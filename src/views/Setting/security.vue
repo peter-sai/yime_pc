@@ -24,8 +24,8 @@
           />
         </template>
       </Table>
-      <div class="info">开启后，对方将显示你的消息读取状态</div>
-      <div class="btn" @click="cancellation">注销账号</div>
+      <div class="info">{{ t('开启后，对方将显示你的消息读取状态') }}</div>
+      <div class="btn" @click="cancellation">{{ t('注销账号') }}</div>
     </div>
   </div>
 </template>

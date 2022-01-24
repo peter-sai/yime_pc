@@ -2,7 +2,7 @@
   <div class="userInfo">
     <NavigationBar hide-left title="">
       <template v-slot:left>
-        <div class="title">用户资料</div>
+        <div class="title">{{ t('用户资料') }}</div>
       </template>
       <template v-slot:right>
         <Iconfont @click="$emit('toggleBox')" name="iconfork" size="20" />
@@ -26,7 +26,7 @@
             {{ yUserInfo?.imAccount }}
           </div>
           <!-- 按钮 -->
-          <div class="btn" @click="send">发消息</div>
+          <div class="btn" @click="send">{{ t('发消息') }}</div>
         </div>
       </div>
       <div class="main">
@@ -84,7 +84,7 @@
           </template>
         </Table>
         <div v-if="!yUserInfo?.isBotUser">
-          <p class="info">群聊</p>
+          <p class="info">{{ t('群聊') }}</p>
           <Table title="共同群聊" @click="$emit('changeTag', Etag.CommonGroup)">
             <template v-slot:left>
               <Iconfont name="iconqunliao" size="15" />

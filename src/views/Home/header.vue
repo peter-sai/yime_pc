@@ -18,11 +18,11 @@
     <div class="box" v-if="showBox">
       <div class="item" @click="goTo('/Home/addContact')">
         <Iconfont name="iconyaoqinghaoyoubeifen" size="15" />
-        <span>添加好友</span>
+        <span>{{ t('添加好友') }}</span>
       </div>
       <div class="item" @click="goTo('/Home/addGroup')">
         <Iconfont name="iconyaoqinghaoyou" size="12" />
-        <span>新建群聊</span>
+        <span>{{ t('新建群聊') }}</span>
       </div>
     </div>
     <!-- 搜索结果 -->
@@ -211,7 +211,6 @@ watch(val, (res) => {
   position: relative;
   .box {
     position: absolute;
-    width: 106px;
     background: #f9f9f9;
     border-radius: 5px;
     box-shadow: 0px 0px 26px 0px rgba(0, 0, 0, 0.2);

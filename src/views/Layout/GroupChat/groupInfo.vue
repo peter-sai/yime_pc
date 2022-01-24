@@ -126,13 +126,13 @@
             </template>
           </Table>
         </div>
-        <div class="info">邀请链接复制后60分钟有效</div>
+        <div class="info">{{ t('邀请链接复制后60分钟有效') }}</div>
         <!-- button -->
-        <div class="btn" @click="quitGroupChat">退出群聊</div>
+        <div class="btn" @click="quitGroupChat">{{ t('退出群聊') }}</div>
         <!-- groupInfo -->
         <div class="groupInfo">
           <div class="title">
-            <div class="titleLeft">群成员</div>
+            <div class="titleLeft">{{ t('群成员') }}</div>
             <div
               class="titleRight"
               @click="$emit('changeTag', Etag.AddGroupMembers)"
@@ -148,7 +148,7 @@
           <div class="groupList">
             <TableDouble
               :title="item?.userAttachInfo?.remarkName || item.nickname"
-              :sub-title="item.onlineState ? '当前在线' : '离线'"
+              :sub-title="item.onlineState ? t('在线') : t('离线')"
               v-for="item in groupMemberUserInfos"
               :key="item.uid"
             >
@@ -165,7 +165,7 @@
                 v-slot:right
                 v-if="(isRoot || isAdmin) && !item.isRoot && !item.isAdmin"
               >
-                <div class="del" @click="del(item)">删除</div>
+                <div class="del" @click="del(item)">{{ t('删除') }}</div>
               </template>
             </TableDouble>
           </div>
@@ -320,7 +320,7 @@ const quitGroupChat = async () => {
     return Toast(t('请前往解散群'));
   }
   Dialog({
-    title: '确认退出群聊?',
+    title: t('退出群聊') + '?',
     callBack: async () => {
       const query = {
         groupId: store.state.activeUid,

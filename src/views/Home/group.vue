@@ -2,6 +2,7 @@
   <div class="group">
     <NavigationBar title="群组" />
     <div class="content">
+      <Errors v-if="!list.length" id="4" />
       <Table
         :title="item.groupName"
         :class="{ active: activeUid === item.groupId }"
@@ -40,6 +41,7 @@ import { key } from '@/store';
 import { ref, Ref, computed } from 'vue';
 import { IGroupListItem } from '@/types/group';
 import { useI18n } from 'vue-i18n';
+import Errors from '../Errors/index.vue';
 
 const { t } = useI18n();
 
