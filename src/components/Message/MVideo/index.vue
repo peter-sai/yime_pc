@@ -4,7 +4,7 @@
       <ImBg v-bind="$attrs" isMe style="display: inline-block">
         <div class="imBgBox" @click="$emit('call')">
           <span
-            >{{ filterData[0].msgText
+            >{{ t(filterData[0].msgText)
             }}{{
               data.needShowTime === 0 ? formateTime(data.callTime) : null
             }}</span
@@ -40,12 +40,14 @@ import { useStore } from 'vuex';
 import { key } from '@/store';
 import { Toast } from '@/plugin/Toast';
 import { MediaAudio } from '@/plugin/Audio';
+import { useI18n } from 'vue-i18n';
 export default defineComponent({
   name: 'MVideo',
 });
 </script>
 <script lang="ts" setup>
 defineEmits(['call']);
+const { t } = useI18n();
 const props = defineProps({
   isRead: {
     type: Boolean,

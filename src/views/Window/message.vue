@@ -193,18 +193,18 @@
           class="copyMsg"
           v-if="copyItem.type === 'stringContent'"
           :data-clipboard-text="copyItem.msgContent.stringContent"
-          >复制</span
+          >{{ t('复制') }}</span
         >
-        <span @click="forward(copyItem.msgId)">转发</span>
+        <span @click="forward(copyItem.msgId)">{{ t('转发') }}</span>
         <span
           @click="save(copyItem)"
           v-if="['imageMsg', 'fileInfo'].includes(copyItem.type)"
-          >保存</span
+          >{{ t('保存') }}</span
         >
         <span
           v-if="copyItem.fromId === store.state.userInfo.uid"
           @click="del(copyItem)"
-          >删除</span
+          >{{ t('删除') }}</span
         >
       </div>
     </div>

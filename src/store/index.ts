@@ -11,7 +11,6 @@ import { useGetOfflineMsg } from '@/api/app';
 import { IMsgInfo, ImsgItem, TMsgContent } from '@/types/msg';
 import { IUserDetailInfo } from '@/types/user';
 import { useClientSendMsgAckToServer, mergeData } from '@/hooks/window';
-import { RCCallSession } from '@rongcloud/plugin-call';
 
 const OSS = require('ali-oss');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -36,7 +35,6 @@ const initState = {
   ws: null,
   activeUid: undefined,
   activeIsGroup: false,
-  session: {} as RCCallSession, // 通话对象
   appAboutUsInfo: {
     Jt: '',
     Ft: '',
@@ -135,9 +133,6 @@ export type initStore = typeof initState;
 const sotreRoot = createStore({
   state: initState,
   mutations: {
-    SET_SESSION: (state, res) => {
-      state.session = res;
-    },
     SET_RONGIM: (state, res) => {
       state.rongIm = res;
     },
@@ -521,6 +516,12 @@ function getMessage(cmd: any, encryption: any, state: any) {
           );
         }
 
+        if (ansCmd === 2162) {
+          LogOutAns = protoRoot.lookup(
+            'Aoelailiao.Message.GroupCallApplyJoinToClient',
+          );
+        }
+
         const query = {
           length: dataview.getUint32(0),
           serviceId: dataview.getUint8(4),
@@ -595,7 +596,7 @@ function getMessage(cmd: any, encryption: any, state: any) {
 }
 
 function onMessage() {
-  const cmdList = [2129, 2004, 2125, 2148, 2024, 2156];
+  const cmdList = [2129, 2004, 2125, 2148, 2024, 2156, 2162];
   ws.onmessage = (evt: any) => {
     if (sotreRoot.state.isOnLine !== '消息') {
       sotreRoot.commit('SET_ISONLINE', '消息');

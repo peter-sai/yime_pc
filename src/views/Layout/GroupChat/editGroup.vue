@@ -72,7 +72,7 @@ const { t } = useI18n();
 const userOperateGroupInfo = useUserOperateGroupInfo(store);
 
 const submit = async () => {
-  if (!groupName.value && !notice.value) return Toast('请输入内容');
+  if (!groupName.value && !notice.value) return Toast(t('请输入'));
   if (groupName.value !== props.groupDetailInfo?.groupName && groupName.value) {
     try {
       // 群名

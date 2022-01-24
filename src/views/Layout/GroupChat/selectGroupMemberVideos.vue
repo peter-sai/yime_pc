@@ -11,7 +11,7 @@
       </template>
     </NavigationBar>
     <div style="margin: 15px 10px">
-      <Search placeholder="搜索" v-model="search" :width="60" />
+      <Search :placeholder="t('搜索')" v-model="search" :width="60" />
     </div>
 
     <div class="main">
@@ -53,7 +53,7 @@
         }"
         @click="submit"
       >
-        确定
+        {{ t('确定') }}
       </div>
     </div>
   </div>
@@ -79,6 +79,7 @@ import { getTag } from '@/utils/utils';
 import { GroupMediaAudio } from '../../../plugin/GroupAudio';
 import Errors from '../../Errors/index.vue';
 import Table from '@/components/Table/index.vue';
+import { useI18n } from 'vue-i18n';
 
 export default defineComponent({
   name: 'selectGroupMemberVideos',
@@ -141,6 +142,7 @@ const props = defineProps({
     type: Number,
   },
 });
+const { t } = useI18n();
 const store = useStore(key);
 const search = ref('');
 const groupMemberUserInfos: Ref<IContacts[]> = ref([]);

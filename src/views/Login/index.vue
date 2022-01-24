@@ -161,7 +161,7 @@ function useGetCode(
 ) {
   return async () => {
     if (!query.phone) {
-      return Toast('请输入手机号');
+      return Toast(t('请输入手机号'));
     }
     if (codeMsg.value === t('获取验证码')) {
       showLoading();

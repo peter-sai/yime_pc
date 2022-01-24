@@ -8,31 +8,35 @@
         <Iconfont name="iconxiangji" size="20" color="#fff" />
       </div>
       <div class="group">
-        <div class="title">IM号</div>
-        <div class="input">
-          <input type="text" v-model="query.id" placeholder="请输入您的IM号" />
-        </div>
-      </div>
-      <div class="group">
-        <div class="title">昵称</div>
+        <div class="title">{{ t('IM号') }}</div>
         <div class="input">
           <input
             type="text"
-            v-model="query.nickName"
-            placeholder="请输入您的昵称"
+            v-model="query.id"
+            :placeholder="t('请输入您的IM号')"
           />
         </div>
       </div>
       <div class="group">
-        <div class="title">简介</div>
+        <div class="title">{{ t('昵称') }}</div>
+        <div class="input">
+          <input
+            type="text"
+            v-model="query.nickName"
+            :placeholder="t('请输入昵称')"
+          />
+        </div>
+      </div>
+      <div class="group">
+        <div class="title">{{ t('简介') }}</div>
         <div class="input noborder">
           <textarea
-            placeholder="请输入您的简介"
+            :placeholder="t('请输入您的简介')"
             v-model="query.introduction"
           ></textarea>
         </div>
       </div>
-      <div class="btn" @click="submit">保存</div>
+      <div class="btn" @click="submit">{{ t('保存') }}</div>
     </div>
     <input ref="changUserImg" type="file" hidden accept="image/*" />
   </div>
@@ -54,7 +58,8 @@ import { Toast } from '@/plugin/Toast';
 import { upDateUser } from '@/api/user';
 import { useGoBack } from '@/hooks';
 import { useRouter } from 'vue-router';
-
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 const store = useStore(key);
 let userInfo = computed(() => store.state.userInfo);
 const userDetailInfo = store.state.userDetailInfo;
@@ -129,7 +134,7 @@ const submit = async () => {
     });
   }
   if (!res.itemInfos.length) {
-    return Toast('请输入内容');
+    return Toast(t('请输入'));
   }
 
   const data = await store.dispatch('postMsg', {

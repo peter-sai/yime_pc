@@ -2,7 +2,7 @@
   <div class="findMe">
     <NavigationBar title="找到我的方式" />
     <div style="flex: 1">
-      <div class="info">可以通过以下方式找到我</div>
+      <div class="info">{{ t('可通过以下方式找到我') }}</div>
       <div>
         <Table title="手机号" hide-more>
           <template v-slot:right>
@@ -36,9 +36,11 @@
             />
           </template>
         </Table>
-        <div class="msg">关闭后，其他用户将不能通过上述信息找到你</div>
+        <div class="msg">
+          {{ t('关闭后，其他用户将不能通过上述信息找到你') }}
+        </div>
       </div>
-      <div class="info">可通过以下方式私聊我</div>
+      <div class="info">{{ t('可通过以下方式私聊我') }}</div>
       <div>
         <Table title="群聊" hide-more>
           <template v-slot:right>

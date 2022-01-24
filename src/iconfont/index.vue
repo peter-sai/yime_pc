@@ -45,6 +45,7 @@ import iconnarrow_icon from './iconnarrow_icon.vue';
 import iconpaishe from './iconpaishe.vue';
 import iconpdf from './iconpdf.vue';
 import iconplay1 from './iconplay1.vue';
+import iconquanburenyuan from './iconquanburenyuan.vue';
 import iconqunliao from './iconqunliao.vue';
 import iconradio from './iconradio.vue';
 import iconright from './iconright.vue';
@@ -133,6 +134,7 @@ export default {
     iconpaishe,
     iconpdf,
     iconplay1,
+    iconquanburenyuan,
     iconqunliao,
     iconradio,
     iconright,

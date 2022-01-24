@@ -1,5 +1,12 @@
 <template>
   <div class="groupChatHeader">
+    <div class="addGroup">
+      <div class="left"></div>
+      <div class="middle">{{ t('加入群通话') }}</div>
+      <div class="right">
+        <span>{{ t('加入') }}</span>
+      </div>
+    </div>
     <div class="header">
       <div class="headerLeft">
         <div class="userImg">
@@ -28,6 +35,7 @@ export default defineComponent({
 <script setup lang="ts">
 import Iconfont from '@/iconfont/index.vue';
 import { Etag } from '../Layout/index.vue';
+import { useI18n } from 'vue-i18n';
 const emit = defineEmits(['toggleBox', 'changeTag']);
 const rightClick = () => {
   emit('toggleBox');
@@ -44,10 +52,47 @@ defineProps({
     type: String,
   },
 });
+const { t } = useI18n();
 </script>
 <style lang="scss" scoped>
 @import '@/style/base.scss';
 .groupChatHeader {
+  .addGroup {
+    height: 50px;
+    background: #0085ff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    div {
+      flex: 1;
+    }
+    .middle {
+      font-size: 14px;
+      font-family: PingFangSC-Regular, PingFang SC;
+      font-weight: 400;
+      color: #ffffff;
+      text-align: center;
+    }
+    .right {
+      text-align: right;
+      span {
+        font-size: 12px;
+        font-family: PingFangSC-Regular, PingFang SC;
+        font-weight: 400;
+        color: #ffffff;
+        width: 50px;
+        height: 22px;
+        border-radius: 4px;
+        border: 1px solid #ffffff;
+        text-align: center;
+        display: inline-flex;
+        align-items: center;
+        cursor: pointer;
+        justify-content: center;
+      }
+    }
+  }
   .header {
     display: flex;
     justify-content: space-between;
@@ -55,6 +100,7 @@ defineProps({
     align-items: center;
     padding: 0 21px;
     border-bottom: 1px solid #eaebea;
+    background: #fff;
     .headerLeft {
       display: flex;
       .userImg {

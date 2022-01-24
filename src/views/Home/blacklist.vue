@@ -2,6 +2,7 @@
   <div class="blacklist">
     <NavigationBar title="黑名单" />
     <div style="flex: 1">
+      <Errors v-if="!list.length" id="4" />
       <Table
         v-for="(item, key) in list"
         @click="setWindow(item)"
@@ -37,6 +38,7 @@ import { key } from '@/store';
 import { ref, Ref } from 'vue';
 import { IUserInfo } from '@/types/user';
 import { useI18n } from 'vue-i18n';
+import Errors from '../Errors/index.vue';
 import { IContacts } from '@/types/user';
 import { Toast } from '@/plugin/Toast';
 const { t } = useI18n();

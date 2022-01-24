@@ -43,21 +43,21 @@
         <div class="child">
           <div class="opeItem" @click.stop="$emit('sendImg')">
             <Iconfont name="iconxiangce" size="20" color="#111111" />
-            <div>相册</div>
+            <div>{{t('相册')}}</div>
           </div>
           <div class="opeItem" @click="start(1)">
             <Iconfont name="iconicon_yuyinshipin1" size="20" color="#111111" />
-            <div>语音</div>
+            <div>{{t('语音')}}</div>
           </div>
           <div class="opeItem" @click="start(2)">
             <Iconfont name="iconshipintonghua" size="24" color="#111111" />
-            <div>视频</div>
+            <div>{{t('视频')}}</div>
           </div>
         </div>
         <div class="child">
           <div class="opeItem" @click.stop="$emit('sendFile')">
             <Iconfont name="iconwenjian1" size="20" color="#111111" />
-            <div>文件</div>
+            <div>{{t('文件')}}</div>
           </div>
           <div
             class="opeItem"
@@ -65,11 +65,11 @@
             @click="$emit('recommend')"
           >
             <Iconfont name="icontuijianhaoyou" size="20" color="#111111" />
-            <div>推荐好友</div>
+            <div>{{t('推荐好友')}}</div>
           </div>
           <div class="opeItem" :style="style">
             <Iconfont name="iconweizhi" size="20" color="#111111" />
-            <div>位置</div>
+            <div>{{t('位置')}}</div>
           </div>
         </div>
       </div>
@@ -88,6 +88,21 @@
           </div>
         </div>
       </div>
+    </div>
+    <!-- at 消息 -->
+    <div v-if="showAtBox" class="at">
+      <Table
+        v-for="item in newAtUserInfoList"
+        :key="item.uid"
+        hide-more
+        :title="item.nickname"
+        @click="selectAtInfo(item)"
+      >
+        <template v-slot:left>
+          <img :src="item.icon" v-if="item.icon" alt="" />
+          <Iconfont v-else color="#0A0A0A" size="25" name="iconquanburenyuan" />
+        </template>
+      </Table>
     </div>
     <!-- 录音 语音消息 -->
     <div v-show="showAudio" class="audioBox">
@@ -201,10 +216,11 @@ import {
   watch,
   nextTick,
   PropType,
+  computed,
 } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useStore } from 'vuex';
-import { IUserInfo } from '@/types/user';
+import { IGroupInfo, IUserInfo } from '@/types/user';
 export default defineComponent({
   name: 'bottom',
 });
@@ -248,10 +264,28 @@ function useInput(
 }
 </script>
 <script setup lang="ts">
+import Table from '@/components/Table/index.vue';
 const input: Ref<HTMLInputElement | null> = ref(null);
 const store = useStore(key);
 const { t } = useI18n();
 const audioObj = ref({});
+const showAtBox = ref(false);
+const atUserInfoList: Ref<IUserInfo[]> = ref([]);
+const newAtUserInfoList = computed(() => {
+  const ats = props.modelValue.split('@');
+
+  const list = atUserInfoList.value.filter((e) =>
+    e.nickname
+      .toLocaleLowerCase()
+      .includes(ats[ats.length - 1].toLocaleLowerCase()),
+  );
+  if (ats.length <= 1) {
+    // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+    showAtBox.value = false;
+  }
+
+  return list || [];
+});
 const style = {
   opacity: 0,
   cursor: 'auto',
@@ -264,11 +298,14 @@ const props = defineProps({
   yUserInfo: {
     type: Object as PropType<IUserInfo>,
   },
+  groupDetailInfo: {
+    type: Object as PropType<IGroupInfo>,
+  },
 });
 const showExpres = ref(false);
 const emit = defineEmits([
   'update:modelValue',
-  'remind',
+  'atUserInfoList',
   'enter',
   'recommend',
   'sendImg',
@@ -324,12 +361,37 @@ const expressionList = reactive(expression);
 // 输入框
 const { select, del } = useInput(emit, emojiList, input);
 
-const onInput = (e: any) => {
+const onInput = async (e: any) => {
   emit('update:modelValue', e.target.value);
   if (e.data === '@') {
-    emit('remind');
+    showAtBox.value = true;
+    if (!atUserInfoList.value.length) {
+      await getGroupMemberUserInfos();
+    }
   }
 };
+
+// 获取群成员详情
+async function getGroupMemberUserInfos() {
+  const groupMemberUids =
+    props.groupDetailInfo?.groupMemberLists.memberUserInfos.map(
+      (e) => e.memberUid,
+    );
+  const res = await store.dispatch('postMsg', {
+    query: { uid: groupMemberUids },
+    cmd: 1115,
+    encryption: 'Aoelailiao.Login.ClientGetUserInfoListReq',
+    auth: true,
+  });
+  atUserInfoList.value = (res.body.userInfo || []).filter(
+    (e: IUserInfo) => Number(e.uid) !== Number(store.state.userInfo.uid),
+  );
+  atUserInfoList.value.unshift({
+    uid: 0,
+    nickname: 'All',
+  } as IUserInfo);
+  emit('atUserInfoList', atUserInfoList.value);
+}
 
 const toggleExpres = () => {
   showExpres.value = !showExpres.value;
@@ -353,17 +415,30 @@ onBeforeUnmount(() => {
 
 // 开始音视频
 const start = async (mediaType: number) => {
-  const mediaNode = document.getElementById('media')!;
-  if (mediaNode.hasChildNodes()) {
-    return Toast('正在通话中');
-  }
-  if (!store.state.rongIm) return Toast('融云服务初始化失败');
-  if (!store.state.activeIsGroup) {
-    // 单聊
-    MediaAudio({ isCall: true, mediaType, yUserInfo: props.yUserInfo });
+  const data = await store.dispatch('postMsg', {
+    query: {
+      functionId: 20010,
+      objectId: store.state.activeUid,
+    },
+    cmd: 1189,
+    encryption: 'Aoelailiao.Login.UserCheckFunctionPrivilegeReq',
+    auth: true,
+  });
+
+  if (data?.body?.functionState === 1) {
+    const mediaNode = document.getElementById('media')!;
+    if (mediaNode.hasChildNodes()) {
+      return Toast(t('正在通话中'));
+    }
+    if (!store.state.rongIm) return Toast('融云服务初始化失败');
+    if (!store.state.activeIsGroup) {
+      MediaAudio({ isCall: true, mediaType, yUserInfo: props.yUserInfo });
+    } else {
+      // 群聊
+      emit('selectGroupMember', mediaType);
+    }
   } else {
-    // 群聊
-    emit('selectGroupMember', mediaType);
+    return Toast(t('发送者无权限'));
   }
 };
 
@@ -476,7 +551,6 @@ async function sendRec(duration: number) {
         msgContent: 'voiceMsg',
         voiceMsg: {
           voiceTime: duration,
-          // voiceTime: Math.ceil(duration / 1000),
           voiceUrl: info.url,
         },
       },
@@ -503,6 +577,14 @@ function closeRec() {
   //停止录音，得到了录音文件blob二进制对象，想干嘛就干嘛
   rec.close();
 }
+
+// 选择at消息
+const selectAtInfo = (item: IUserInfo) => {
+  showAtBox.value = false;
+  const msgSplitList = props.modelValue.split('@');
+  msgSplitList[msgSplitList.length - 1] = item.nickname;
+  emit('update:modelValue', msgSplitList.join('@'));
+};
 
 function startAudio() {
   setTimeout(async () => {
@@ -655,6 +737,35 @@ function startAudio() {
         color: #0085ff;
         border: 1px solid #0085ff;
       }
+    }
+  }
+}
+.at {
+  width: 307px;
+  max-height: 315px;
+  background: #ffffff;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.07);
+  border-radius: 8px;
+  position: absolute;
+  border-radius: 8px;
+  bottom: 100%;
+  margin-bottom: 10px;
+  left: 20px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  .table {
+    padding: 5px 15px;
+    cursor: pointer;
+    img {
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+    }
+    &:last-child {
+      padding-bottom: 15px;
+    }
+    &:first-child {
+      padding-top: 15px;
     }
   }
 }

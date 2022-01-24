@@ -6,7 +6,7 @@
       @left-click="$emit('changeTag', Etag.GroupInfo)"
     />
     <div style="margin: 15px 10px">
-      <Search placeholder="搜索好友" v-model="search" :width="60" />
+      <Search :placeholder="t('搜索')" v-model="search" :width="60" />
     </div>
     <div class="main">
       <div class="content">

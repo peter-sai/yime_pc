@@ -141,7 +141,7 @@ const useEnter = (
     // eslint-disable-next-line no-useless-escape
     /^((https?|ftp|file):\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
   const userInfo = store.state.userInfo;
-  return async (groupList = []) => {
+  return async (groupList: IUserInfo[] = []) => {
     const isUrl = urlP.test(search.value);
     const res: any = {
       msgInfo: {
@@ -175,20 +175,21 @@ const useEnter = (
 
     // 处理@消息
     const atList = search.value.match(/@(\S*) /g) || [];
+
     if (atList.length && groupList.length) {
       const ats = atList.map((e) => {
         const item = e.replace('@', '').replace(' ', '');
-        if (item === t('所有人')) {
+        if (item === 'All') {
           return {
             type: 1,
             uid: null,
             name: t('所有人'),
           };
         } else {
-          const info: any = groupList.find((e: any) => e.name === item);
+          const info: any = groupList.find((e: any) => e.nickname === item);
           return {
             uid: info.uid,
-            name: info.name,
+            name: info.nickname,
             type: 0,
           };
         }
@@ -406,8 +407,10 @@ const useSystemNotifyInfo = (
             lastMsg.appointUserNotifyInfo.replaceMsgItems || [];
           // 格式化消息
           const res = formatMsg(msgText, t);
-          if (res.includes(spileText)) {
+          if (res.includes(spileText) && replaceMsgItems.length) {
             str = res.replace(spileText, replaceMsgItems[0].showContent);
+          } else {
+            str = res;
           }
         }
       } else {
