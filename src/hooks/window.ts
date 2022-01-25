@@ -415,9 +415,9 @@ const useSystemNotifyInfo = (
         }
       } else {
         const replaceMsgItems =
-          systemNotifyInfo.otherUserNotifyInfo.replaceMsgItems;
-        const spileText = systemNotifyInfo.otherUserNotifyInfo.spileText;
-        const msgText = t(systemNotifyInfo.otherUserNotifyInfo.msgText);
+          systemNotifyInfo?.otherUserNotifyInfo?.replaceMsgItems;
+        const spileText = systemNotifyInfo?.otherUserNotifyInfo?.spileText;
+        const msgText = t(systemNotifyInfo?.otherUserNotifyInfo?.msgText || '');
         if (replaceMsgItems && replaceMsgItems.length) {
           return msgText.replace(spileText, replaceMsgItems[0].showContent);
         } else {

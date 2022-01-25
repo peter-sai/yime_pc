@@ -407,6 +407,7 @@ export default {
   接收方不合法: 'The recipient is not legal',
   推荐: 'Recommend',
   推荐好友: 'Recommend',
+  消息已焚毁: 'The news has been burned',
   推荐好友名片: 'Recommend friends contact',
   提交: 'Submit',
   提示: 'Tips',
@@ -778,6 +779,8 @@ export default {
     'To enable address book permissions, please go to Settings -> Privacy and open address book permissions',
   震动: 'Breeze',
   静音: 'Mute',
+  挂断: 'Hang up',
+  摄像头: 'camera',
   非本群成员无法发送消息:
     'Messages cannot be sent if they are not members of the group',
   非群成员不允许发送群消息:
@@ -936,4 +939,16 @@ export default {
   群资料: 'Group data',
   群聊名称: 'Group chat name',
   请输入群聊名称: 'Please enter group chat name',
+  '对方启用了阅后即焚，消息被阅读 1 分钟后自动销毁':
+    'the other party has enabled burn after reading, and the message will be automatically destroyed after reading for 1 minute',
+  '对方启用了阅后即焚，消息被阅读 10 分钟后自动销毁':
+    'the other party enables burn after reading, and the message will be automatically destroyed after reading for 10 minutes',
+  '对方启用了阅后即焚，消息被阅读 1 小时后自动销毁':
+    'the other party has enabled burn after reading, and the message will be automatically destroyed after reading for 1 hour',
+  '对方启用了阅后即焚，消息被阅读 30 秒后自动销毁':
+    'the other party enables burn after reading, and the message will be automatically destroyed 30 seconds after reading',
+  '对方启用了阅后即焚，消息被阅读 1 天后自动销毁':
+    'the other party has enabled burn after reading, and the message will be automatically destroyed after reading for 1 day',
+  '对方关闭了阅后即焚，消息将持续保存':
+    'if the other party turns off burning after reading, the message will continue to be saved',
 };

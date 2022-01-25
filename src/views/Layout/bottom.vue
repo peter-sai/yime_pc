@@ -11,7 +11,7 @@
         <input
           type="text"
           ref="input"
-          placeholder="输入消息"
+          :placeholder="t('输入消息')"
           :value="modelValue"
           @click.stop=""
           @input="onInput"
@@ -43,21 +43,21 @@
         <div class="child">
           <div class="opeItem" @click.stop="$emit('sendImg')">
             <Iconfont name="iconxiangce" size="20" color="#111111" />
-            <div>{{t('相册')}}</div>
+            <div>{{ t('相册') }}</div>
           </div>
           <div class="opeItem" @click="start(1)">
             <Iconfont name="iconicon_yuyinshipin1" size="20" color="#111111" />
-            <div>{{t('语音')}}</div>
+            <div>{{ t('语音') }}</div>
           </div>
           <div class="opeItem" @click="start(2)">
             <Iconfont name="iconshipintonghua" size="24" color="#111111" />
-            <div>{{t('视频')}}</div>
+            <div>{{ t('视频') }}</div>
           </div>
         </div>
         <div class="child">
           <div class="opeItem" @click.stop="$emit('sendFile')">
             <Iconfont name="iconwenjian1" size="20" color="#111111" />
-            <div>{{t('文件')}}</div>
+            <div>{{ t('文件') }}</div>
           </div>
           <div
             class="opeItem"
@@ -65,11 +65,11 @@
             @click="$emit('recommend')"
           >
             <Iconfont name="icontuijianhaoyou" size="20" color="#111111" />
-            <div>{{t('推荐好友')}}</div>
+            <div>{{ t('推荐好友') }}</div>
           </div>
           <div class="opeItem" :style="style">
             <Iconfont name="iconweizhi" size="20" color="#111111" />
-            <div>{{t('位置')}}</div>
+            <div>{{ t('位置') }}</div>
           </div>
         </div>
       </div>

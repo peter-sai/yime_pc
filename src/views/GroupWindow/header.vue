@@ -1,12 +1,12 @@
 <template>
   <div class="groupChatHeader">
-    <div class="addGroup">
+    <!-- <div class="addGroup">
       <div class="left"></div>
       <div class="middle">{{ t('加入群通话') }}</div>
       <div class="right">
         <span>{{ t('加入') }}</span>
       </div>
-    </div>
+    </div> -->
     <div class="header">
       <div class="headerLeft">
         <div class="userImg">

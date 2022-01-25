@@ -26,8 +26,8 @@
     </div>
     <!-- 用户反馈 -->
     <div class="msg" v-else>
-      <div v-for="item in feedbackList" :key="item.msgId">
-        <Time>{{ formateTime(item.userFeedbackMsg.feedbackTime, t) }}</Time>
+      <div v-for="item in feedbackList" :key="item.feedbackTime">
+        <Time>{{ formateTime(item.feedbackTime, t) }}</Time>
         <div
           style="
             flex: 1;
@@ -38,19 +38,27 @@
           "
         >
           <div class="box">
-            <ImgBg isMe>{{ item.userFeedbackMsg.feedbackContent }}</ImgBg>
+            <ImgBg isMe
+              >{{ item.feedbackContent }}
+              <div style="margin-top: 10px">
+                <img
+                  v-for="src in item.noticeImage"
+                  :key="src"
+                  :src="src"
+                  alt=""
+                />
+              </div>
+            </ImgBg>
           </div>
         </div>
-        <Time>{{ formateTime(item.userFeedbackMsg.replyTime, t) }}</Time>
+        <Time>{{ formateTime(item.replyTime, t) }}</Time>
         <div class="mmsg">
           <div class="img">
             <img src="img/feedback.svg" />
           </div>
           <div>
             <ImgBg>
-              <span class="SystemWindowContent">{{
-                item.userFeedbackMsg.replyContent
-              }}</span>
+              <span class="SystemWindowContent">{{ item.replyContent }}</span>
             </ImgBg>
           </div>
         </div>
@@ -81,6 +89,7 @@ async function userGetSystemNoticeContent(store: Store<initStore>) {
     encryption: 'Aoelailiao.Message.UserGetSystemNoticeContentListReq',
     auth: true,
   });
+  console.log(data.body);
 
   return data.body.msgContent;
 }
@@ -142,11 +151,7 @@ const init = async () => {
   } else {
     // 反馈
     if (data.length) {
-      feedbackList.value = data;
-      // feedback.feedbackContent = data[0].userFeedbackMsg.feedbackContent;
-      // feedback.feedbackTime = data[0].userFeedbackMsg.feedbackTime;
-      // feedback.replyContent = data[0].userFeedbackMsg.replyContent;
-      // feedback.replyTime = data[0].userFeedbackMsg.replyTime;
+      feedbackList.value = data.map((e: any) => e.userFeedbackMsg);
     }
   }
 };
