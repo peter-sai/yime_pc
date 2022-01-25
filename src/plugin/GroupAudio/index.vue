@@ -40,20 +40,20 @@
       >
         <img v-if="isOpenVideo" src="../../assets/img/videoActive.svg" alt="" />
         <img v-else src="../../assets/img/video.svg" alt="" />
-        <span>摄像头</span>
+        <span>{{ t('摄像头') }}</span>
       </div>
       <div class="item" @click="toggleMute" v-if="conversationIng">
         <img v-if="isMute" src="../../assets/img/audioActive.svg" alt="" />
         <img v-else src="../../assets/img/audio.svg" alt="" />
-        <span>静音</span>
+        <span>{{ t('静音') }}</span>
       </div>
       <div class="item" @click="hungup">
         <Iconfont name="iconvideo_icon1" size="44" />
-        <span>挂断</span>
+        <span>{{ t('挂断') }}</span>
       </div>
       <div class="item" v-if="!isCall && !isAnswer" @click="accept">
         <Iconfont name="iconvideo_icon7" size="44" />
-        <span>接听</span>
+        <span>{{ t('接听') }}</span>
       </div>
     </div>
   </div>
@@ -77,6 +77,7 @@ import {
   ref,
   nextTick,
 } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { Store, useStore } from 'vuex';
 import Iconfont from '../../iconfont/index.vue';
 export default defineComponent({
@@ -179,6 +180,11 @@ const init = async (
         const { userId } = sender;
         // 对方挂断
         console.log(sender, map[reason]);
+        const tar = document.getElementById(`div_${sender.userId}`);
+        const yVideoGroup = document.getElementById('yVideoGroup');
+        if (tar && yVideoGroup) {
+          yVideoGroup.removeChild(tar);
+        }
         // close();
       },
 
@@ -255,6 +261,7 @@ const init = async (
 };
 </script>
 <script setup lang="ts">
+const { t } = useI18n();
 const props = defineProps({
   destroy: {
     type: Function,
@@ -388,6 +395,7 @@ onMounted(async () => {
       userInfos,
       nextTick,
     );
+    videoCallActionUploadReq(1);
   } else {
     const videoBox = document.getElementById('videoBox') as HTMLVideoElement;
     const yVideoGroup = document.getElementById(
@@ -431,6 +439,11 @@ onMounted(async () => {
        */
       onHungup(sender: ISenderInfo, reason: RCCallEndReason) {
         console.log(sender, map[reason]);
+        const tar = document.getElementById(`div_${sender.userId}`);
+        const yVideoGroup = document.getElementById('yVideoGroup');
+        if (tar && yVideoGroup) {
+          yVideoGroup.removeChild(tar);
+        }
         // close();
       },
 
@@ -504,6 +517,20 @@ onMounted(async () => {
     });
   }
 });
+
+const videoCallActionUploadReq = async (actionType: number) => {
+  const query = {
+    actionType,
+    groupId: props.groupDetailInfo?.groupId,
+  };
+
+  const data = await store.dispatch('postMsg', {
+    query,
+    cmd: 2065,
+    encryption: 'Aoelailiao.Message.GroupVideoCallActionUploadReq',
+    auth: true,
+  });
+};
 </script>
 <style lang="scss" scoped>
 @import '@/style/base.scss';

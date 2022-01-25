@@ -31,7 +31,7 @@
         @click="changeAudio"
       >
         <Iconfont name="iconbianzu" size="30" color="#fff" />
-        <span>切换到语音</span>
+        <span>{{ t('切换到语音') }}</span>
       </div>
       <div
         class="item"
@@ -40,20 +40,20 @@
       >
         <img v-if="isOpenVideo" src="../../assets/img/videoActive.svg" alt="" />
         <img v-else src="../../assets/img/video.svg" alt="" />
-        <span>摄像头</span>
+        <span>{{ t('摄像头') }}</span>
       </div>
       <div class="item" @click="toggleMute" v-if="conversationIng">
         <img v-if="isMute" src="../../assets/img/audioActive.svg" alt="" />
         <img v-else src="../../assets/img/audio.svg" alt="" />
-        <span>静音</span>
+        <span>{{ t('静音') }}</span>
       </div>
       <div class="item" @click="hungup(1)">
         <Iconfont name="iconvideo_icon1" size="44" />
-        <span>挂断</span>
+        <span>{{ t('挂断') }}</span>
       </div>
       <div class="item" v-if="!isCall && !isAnswer" @click="accept">
         <Iconfont name="iconvideo_icon7" size="44" />
-        <span>接听</span>
+        <span>{{ t('接听') }}</span>
       </div>
     </div>
   </div>
@@ -430,7 +430,6 @@ const hungup = async (num?: number) => {
 };
 
 const videoCallActionUploadReq = async (actionType: number) => {
-  // let actionType = 5;
   const query = {
     actionType: actionType,
     videoType: props.mediaType,
