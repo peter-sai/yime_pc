@@ -37,8 +37,8 @@
           size="20"
           color="#2B2C33"
         />
-        <div class="send" @click.stop="$emit('enter')">
-          {{ t('发送') }}
+        <div v-if="modelValue" class="send" @click.stop="$emit('enter')">
+          <img src="../../assets/img/send.svg" alt="" />
         </div>
       </div>
       <!-- 操作弹框 -->
@@ -836,6 +836,11 @@ function startAudio() {
     font-size: 14px;
     margin-left: 20px;
     cursor: pointer;
+    display: flex;
+    img {
+      width: 22px;
+      height: 22px;
+    }
   }
 }
 </style>

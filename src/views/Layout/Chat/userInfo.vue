@@ -19,7 +19,7 @@
           <div class="userName">{{ yUserInfo?.nickname }}</div>
           <div class="phone">
             <Iconfont name="iconshoujihaoma" size="10" color="#929292" />
-            {{ userDetailInfo?.phone }}
+            {{ t(userDetailInfo?.phone || '') }}
           </div>
           <div class="uid">
             <div class="icon">ID</div>
