@@ -8,7 +8,9 @@
     <div>
       <div class="title" v-if="isGroup">{{ userInfo?.nickname }}</div>
       <ImBg v-bind="$attrs">
-        <p v-for="item in list" :key="item" class="text">{{ item }}</p>
+        <p v-for="item in list" :key="item" class="text">
+          {{ item.replace(/\u0001/g, '') }}
+        </p>
       </ImBg>
     </div>
   </div>
@@ -53,7 +55,7 @@ const list = slots.default()[0].children
   display: flex;
   max-width: 80%;
   .title {
-    font-size: 10px;
+    font-size: 16px;
     font-family: SourceHanSansCN-Regular, SourceHanSansCN;
     font-weight: 400;
     color: #999999;

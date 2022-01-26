@@ -703,7 +703,7 @@ export default {
   请用听筒接听: 'Please talk to the receiver',
   请确认密码: 'Please confirm your password',
   请输入: 'Please enter',
-  浏览器通知: 'Browser notification',
+  浏览器通知: 'notification',
   请输入您的IM号: 'Please enter your IM number',
   '请输入6-15位新密码': 'Please enter 6-15 new password',
   请输入原有的手机号: 'Please enter the original phone number',
@@ -951,4 +951,13 @@ export default {
     'the other party has enabled burn after reading, and the message will be automatically destroyed after reading for 1 day',
   '对方关闭了阅后即焚，消息将持续保存':
     'if the other party turns off burning after reading, the message will continue to be saved',
+  电话已经屏蔽: 'The phone is blocked',
+  邀请你通话: 'invite you to call',
+  '连接中…': 'connecting...',
+  添加群成员: 'Add group members',
+  邀请链接复制后60分钟有效:
+    'The invitation link is valid for 60 minutes after copying',
+  取消静音: 'Unmute',
+  密码登录: 'Password login',
+  未注册请使用验证码登录: 'Not registered, please login with verification code',
 };

@@ -66,14 +66,14 @@
         @click="goTo('/ForgetPassword')"
         v-if="btns.active !== 0"
       >
-        忘记密码?
+        {{ t('忘记密码') }}?
       </div>
       <!-- button -->
       <div class="button" @click="login" :class="{ isPwd: btns.active !== 0 }">
-        登录
+        {{ t('登录') }}
       </div>
       <!-- info -->
-      <div class="info">未注册请使用验证码登录</div>
+      <div class="info">{{ t('未注册请使用验证码登录') }}</div>
     </div>
   </div>
 </template>
@@ -116,8 +116,8 @@ const goTo = useGoTo(useRouter);
 // 导航按钮
 const btns = reactive<ILoginBtns>({
   list: [
-    { id: 0, name: '验证码登录' },
-    { id: 1, name: '密码登录' },
+    { id: 0, name: t('验证码登录') },
+    { id: 1, name: t('密码登录') },
   ],
   active: 0,
 });
@@ -343,7 +343,7 @@ onUnmounted(() => {
   }
   .main {
     margin: 0 auto;
-    width: 300px;
+    width: 350px;
     .nav {
       display: flex;
       justify-content: center;
@@ -419,7 +419,6 @@ onUnmounted(() => {
       }
     }
     .button {
-      width: 299px;
       height: 40px;
       background: #0085ff;
       border-radius: 4px;

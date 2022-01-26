@@ -32,6 +32,8 @@ import { computed } from 'vue';
 import { Toast } from '@/plugin/Toast';
 import { useGoBack } from '@/hooks';
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 
 const goBack = useGoBack(useRouter);
 const store = useStore(key);
@@ -61,7 +63,7 @@ const submit = async () => {
   });
 
   if (data.body.resultCode === 0) {
-    Toast(data.body.resultString);
+    Toast(t(data.body.resultString));
     goBack();
   }
 };

@@ -149,6 +149,7 @@
           />
           <MAudio
             v-else
+            @menuClick="menuClick($event, item)"
             :isRead="item.msgId <= readMsgId"
             :voiceMsg="item.msgContent.voiceMsg"
           />
@@ -195,7 +196,11 @@
           :data-clipboard-text="copyItem.msgContent.stringContent"
           >{{ t('复制') }}</span
         >
-        <span @click="forward(copyItem.msgId)">{{ t('转发') }}</span>
+        <span
+          v-if="copyItem.type !== 'voiceMsg'"
+          @click="forward(copyItem.msgId)"
+          >{{ t('转发') }}</span
+        >
         <span
           @click="save(copyItem)"
           v-if="['imageMsg', 'fileInfo'].includes(copyItem.type)"

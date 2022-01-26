@@ -201,6 +201,7 @@ import {
   useBeforeSwitch,
 } from '@/hooks/window';
 import { Dialog } from '@/plugin/Dialog';
+import { IGroupListItem } from '@/types/group';
 export default defineComponent({
   name: 'groupInfo',
 });
@@ -347,6 +348,15 @@ const quitGroupChat = async () => {
           cmd: 1009,
           encryption: 'Aoelailiao.Login.UserGetFriendsAndGroupsListReq',
           auth: true,
+        });
+
+        data1.body.groupInfos.forEach((e: IGroupListItem) => {
+          if (e.groupMemberLists.rootUid === Number(userInfo.uid)) {
+            e.root = true;
+          }
+          if (e.groupMemberLists.adminUidList.includes(Number(userInfo.uid))) {
+            e.admin = true;
+          }
         });
 
         store.commit('SET_GROUPINFOS', data1.body.groupInfos);

@@ -147,7 +147,7 @@ const submit = async () => {
     await upDateUser(store);
     goBack();
   }
-  return Toast(data.body.resultString, 2000);
+  return Toast(t(data.body.resultString));
 };
 </script>
 <style lang="scss" scoped>

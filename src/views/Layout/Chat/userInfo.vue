@@ -139,6 +139,7 @@ import { useI18n } from 'vue-i18n';
 import { getMsgList, getTag, setMsgList } from '@/utils/utils';
 import { hideLoading, showLoading } from '@/plugin/Loading';
 import { Dialog } from '@/plugin/Dialog';
+import { IGroupListItem } from '@/types/group';
 
 export default defineComponent({
   name: 'userInfo',
@@ -250,6 +251,7 @@ async function upDateStore(
 
 // 删除/添加好友后更新联系人列表
 async function upDateContact(store: Store<initStore>, val: boolean) {
+  const userInfo = store.state.userInfo;
   const item = store.state.msgList[store.state.activeUid!];
   if (item) {
     item.userDetailInfo.isFriend = val ? 1 : 0;
@@ -261,6 +263,15 @@ async function upDateContact(store: Store<initStore>, val: boolean) {
     cmd: 1009,
     encryption: 'Aoelailiao.Login.UserGetFriendsAndGroupsListReq',
     auth: true,
+  });
+
+  data.body.groupInfos.forEach((e: IGroupListItem) => {
+    if (e.groupMemberLists.rootUid === Number(userInfo.uid)) {
+      e.root = true;
+    }
+    if (e.groupMemberLists.adminUidList.includes(Number(userInfo.uid))) {
+      e.admin = true;
+    }
   });
 
   store.commit('SET_GROUPINFOS', data.body.groupInfos);

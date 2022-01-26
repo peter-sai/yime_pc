@@ -289,7 +289,7 @@ const userInfos: Ref<IUserInfo[]> = ref([]);
 const store = useStore(key);
 //  是否通话中
 const conversationIng = ref(false);
-const info = ref(!props.isCall ? '邀请你通话' : '连接中…');
+const info = ref(!props.isCall ? t('邀请你通话') : t('连接中…'));
 const isAudio = ref(false);
 // 是否关闭视频
 const isOpenVideo = ref(false);
