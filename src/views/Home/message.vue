@@ -216,6 +216,7 @@ import {
 import { hideLoading, showLoading } from '@/plugin/Loading';
 import { Toast } from '@/plugin/Toast';
 import { getMsgList } from '@/utils/utils';
+import { IGroupListItem } from '@/types/group';
 export default defineComponent({
   name: 'message',
 });
@@ -395,6 +396,8 @@ const read = (item: ImsgItem) => {
 // 设置静音
 const beforeMsgNotdisturb = useBeforeSwitchChat(store, 1005, t);
 
+const userInfo = store.state.userInfo;
+
 // 退出群聊
 const userOperateGroupInfo = useUserOperateGroupInfo(store);
 const quitGroupChat = async (item: ImsgItem) => {
@@ -418,6 +421,16 @@ const quitGroupChat = async (item: ImsgItem) => {
       encryption: 'Aoelailiao.Login.UserGetFriendsAndGroupsListReq',
       auth: true,
     });
+
+    data.body.groupInfos.forEach((e: IGroupListItem) => {
+      if (e.groupMemberLists.rootUid === Number(userInfo.uid)) {
+        e.root = true;
+      }
+      if (e.groupMemberLists.adminUidList.includes(Number(userInfo.uid))) {
+        e.admin = true;
+      }
+    });
+
     store.commit('SET_GROUPINFOS', data.body.groupInfos);
     store.commit('DEL_MSGITEM', item.id);
   }

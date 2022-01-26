@@ -257,7 +257,7 @@ const store = useStore(key);
 const conversationIng = ref(false);
 const sessionRoot = ref({}) as Ref<RCCallSession>;
 
-const info = ref(!props.isCall ? '邀请你通话' : '连接中…');
+const info = ref(!props.isCall ? t('邀请你通话') : t('连接中…'));
 let time = 0;
 const isAnswer = ref(false);
 const isAudio = ref(false);

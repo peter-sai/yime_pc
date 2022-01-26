@@ -47,7 +47,7 @@
         }"
         @click="submit"
       >
-        确定
+        {{ t('确定') }}
       </div>
     </div>
   </div>

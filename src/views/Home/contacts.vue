@@ -59,6 +59,7 @@ import { useStore } from 'vuex';
 import { getTag } from '@/utils/utils';
 import { key } from '@/store';
 import { IContacts } from '@/types/user';
+import { IGroupListItem } from '@/types/group';
 export default defineComponent({
   name: 'contacts',
 });
@@ -77,6 +78,8 @@ const changeIsSearch = (res: boolean) => {
   isSearch.value = res;
 };
 
+const userInfo = store.state.userInfo;
+
 // 获取列表
 const init = async () => {
   try {
@@ -87,6 +90,15 @@ const init = async () => {
         cmd: 1009,
         encryption: 'Aoelailiao.Login.UserGetFriendsAndGroupsListReq',
         auth: true,
+      });
+
+      data.body.groupInfos.forEach((e: IGroupListItem) => {
+        if (e.groupMemberLists.rootUid === Number(userInfo.uid)) {
+          e.root = true;
+        }
+        if (e.groupMemberLists.adminUidList.includes(Number(userInfo.uid))) {
+          e.admin = true;
+        }
       });
 
       store.commit('SET_GROUPINFOS', data.body.groupInfos);

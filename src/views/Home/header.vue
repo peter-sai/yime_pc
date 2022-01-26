@@ -33,14 +33,14 @@
           @click="active = 0"
           :class="{ active: active === 0 }"
         >
-          <span>联系人</span>
+          <span>{{ t('联系人') }}</span>
         </div>
         <div
           class="tabItem"
           @click="active = 1"
           :class="{ active: active === 1 }"
         >
-          <span>群组</span>
+          <span>{{ t('群组') }}</span>
         </div>
       </div>
       <div class="list">

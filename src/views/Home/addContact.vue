@@ -38,7 +38,7 @@
         />
       </template>
       <template v-slot:right>
-        <span class="btn" @click="goWindow(item)">发起聊天</span>
+        <span class="btn" @click="goWindow(item)">{{ t('发起聊天') }}</span>
       </template>
     </Table>
   </div>

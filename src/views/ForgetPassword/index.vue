@@ -2,7 +2,7 @@
   <div class="forgetPassword">
     <div class="boBack" @click="goBack">
       <Iconfont name="iconleft" size="15" />
-      <span>返回</span>
+      <span>{{ t('返回') }}</span>
     </div>
     <!-- logo -->
     <div class="logo">
@@ -56,7 +56,7 @@
         ></InputGroup>
       </div>
       <!-- button -->
-      <div class="button" @click="submit">确认</div>
+      <div class="button" @click="submit">{{ t('确认') }}</div>
     </div>
   </div>
 </template>
@@ -220,7 +220,7 @@ function timeout() {
   }
   .main {
     margin: 0 auto;
-    width: 300px;
+    width: 350px;
     .nav {
       display: flex;
       justify-content: center;
@@ -295,7 +295,6 @@ function timeout() {
       }
     }
     .button {
-      width: 299px;
       height: 40px;
       background: #0085ff;
       border-radius: 4px;

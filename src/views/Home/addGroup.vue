@@ -1,7 +1,7 @@
 <template>
   <div class="addGroup">
     <NavigationBar
-      title="添加成员"
+      title="添加群成员"
       right-text="确认"
       @rigth-click="submit"
       :rightTextDef="filterList.length <= 1"

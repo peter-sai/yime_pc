@@ -65,7 +65,7 @@ const inputFocus = () => {
   margin-bottom: 15px;
   border-bottom-color: #eaeaea;
   transition: all 0.3s;
-  width: 300px;
+  width: 350px;
   &.active {
     border-bottom-color: #0085ff;
   }
