@@ -9,7 +9,7 @@
       <div class="title" v-if="isGroup">{{ userInfo?.nickname }}</div>
       <ImBg v-bind="$attrs">
         <p v-for="item in list" :key="item" class="text">
-          {{ item.replace(/\u0001/g, '') }}
+          {{ item.replace(/\u0000/g, '') }}
         </p>
       </ImBg>
     </div>
