@@ -58,7 +58,7 @@
               >@{{ getType(item.lastMsg, item) }}</span
             >
             <span class="subTitle" v-else>{{
-              getType(item.lastMsg, item)
+              (getType(item.lastMsg, item) || '').replace(/\u0000/g, '')
             }}</span>
           </template>
           <template v-slot:userImg>
