@@ -130,6 +130,7 @@ const init = async (
   userIds: [],
   userInfos: Ref<IUserInfo[]>,
   nextTick: any,
+  t: { (key: string | number): string },
 ) => {
   const videoBox = document.getElementById('videoBox') as HTMLVideoElement;
   const yVideoGroup = document.getElementById(
@@ -150,7 +151,7 @@ const init = async (
       onRinging(sender: ISenderInfo, session: RCCallSession) {
         const { userId } = sender;
         // 对方响铃
-        info.value = '等待对方接听';
+        info.value = t('等待对方接听');
       },
 
       /**
@@ -394,6 +395,7 @@ onMounted(async () => {
       props.userIds!,
       userInfos,
       nextTick,
+      t,
     );
     videoCallActionUploadReq(1);
   } else {

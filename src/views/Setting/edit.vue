@@ -115,7 +115,7 @@ const submit = async () => {
       itemValue: query.icon,
     });
   }
-  if (query.id && query.id !== userInfo.value.uid) {
+  if (query.id && query.id !== userInfo.value.imAccount) {
     res.itemInfos.push({
       itemNo: 7,
       itemValue: query.id.toString(),

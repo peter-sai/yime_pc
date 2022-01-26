@@ -126,7 +126,12 @@
             </template>
           </Table>
         </div>
-        <div class="info">{{ t('邀请链接复制后60分钟有效') }}</div>
+        <div
+          class="info"
+          v-if="props.groupDetailInfo?.groupAttachInfo.groupInviteState !== 2"
+        >
+          {{ t('邀请链接复制后60分钟有效') }}
+        </div>
         <!-- button -->
         <div class="btn" @click="quitGroupChat">{{ t('退出群聊') }}</div>
         <!-- groupInfo -->
@@ -485,7 +490,6 @@ const del = async (e: IUserInfo) => {
       }
     }
     .info {
-      height: 17px;
       font-size: 12px;
       font-family: PingFangSC, PingFangSC-Regular;
       font-weight: 400;

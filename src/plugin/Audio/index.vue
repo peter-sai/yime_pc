@@ -129,6 +129,7 @@ const init = async (
   isAudio: Ref<boolean>,
   hungup: () => void,
   videoCallActionUploadReq: (num: number) => void,
+  t: { (key: string | number): string },
 ) => {
   // 发送者
   const { session } = await (store.state.rongIm as any).call({
@@ -143,7 +144,7 @@ const init = async (
       onRinging(sender: ISenderInfo, session: RCCallSession) {
         const { userId } = sender;
         // 对方响铃
-        info.value = '等待对方接听';
+        info.value = t('等待对方接听');
         console.log('发起者', 'onRinging');
         videoCallActionUploadReq(1);
       },
@@ -292,6 +293,7 @@ onMounted(async () => {
       isAudio,
       hungup,
       videoCallActionUploadReq,
+      t,
     );
   } else {
     // 接听方
