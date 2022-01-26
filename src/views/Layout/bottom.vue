@@ -583,7 +583,7 @@ const selectAtInfo = (item: IUserInfo) => {
   showAtBox.value = false;
   const msgSplitList = props.modelValue.split('@');
   msgSplitList[msgSplitList.length - 1] = item.nickname;
-  emit('update:modelValue', msgSplitList.join('@'));
+  emit('update:modelValue', msgSplitList.join('@') + ' ');
 };
 
 function startAudio() {
