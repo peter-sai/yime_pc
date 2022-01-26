@@ -37,6 +37,9 @@
           size="20"
           color="#2B2C33"
         />
+        <div class="send" @click.stop="$emit('enter')">
+          {{ t('发送') }}
+        </div>
       </div>
       <!-- 操作弹框 -->
       <div class="boxOperation" v-if="showOpertion">
@@ -828,6 +831,11 @@ function startAudio() {
   .iconfont {
     cursor: pointer;
     margin-left: 20px;
+  }
+  .send {
+    font-size: 14px;
+    margin-left: 20px;
+    cursor: pointer;
   }
 }
 </style>
