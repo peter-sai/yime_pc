@@ -170,6 +170,22 @@
             @call="call(item.msgContent.videoCallInfo)"
           />
         </div>
+        <!-- link消息 -->
+        <div class="item" v-else-if="item.type === 'linkUrlInfo'">
+          <Ylink
+            v-if="isShowHowComponent(item)"
+            @menuClick="menuClick($event, item)"
+            :userInfo="getUserInfo(item)"
+            :groupDetailInfo="groupDetailInfo"
+            :url="item.msgContent.linkUrlInfo.url"
+          />
+          <Mlink
+            v-else
+            @menuClick="menuClick($event, item)"
+            :isRead="item.msgId <= readMsgId"
+            :url="item.msgContent.linkUrlInfo.url"
+          />
+        </div>
         <!-- 系统消息 -->
         <div class="item" v-else-if="item.type === 'systemNotifyInfo'">
           <div class="revoke">{{ systemNotifyInfo(item) }}</div>
@@ -192,8 +208,13 @@
       >
         <span
           class="copyMsg"
-          v-if="copyItem.type === 'stringContent'"
-          :data-clipboard-text="copyItem.msgContent.stringContent"
+          v-if="
+            copyItem.type === 'stringContent' || copyItem.type === 'linkUrlInfo'
+          "
+          :data-clipboard-text="
+            copyItem.msgContent.stringContent ||
+            copyItem.msgContent.linkUrlInfo.url
+          "
           >{{ t('复制') }}</span
         >
         <span
@@ -251,6 +272,8 @@ import YAudio from '@/components/Message/YAudio/index.vue';
 import MAudio from '@/components/Message/MAudio/index.vue';
 import MVideo from '@/components/Message/MVideo/index.vue';
 import YVideo from '@/components/Message/YVideo/index.vue';
+import Ylink from '@/components/Message/Ylink/index.vue';
+import Mlink from '@/components/Message/Mlink/index.vue';
 import Iconfont from '../../iconfont/index.vue';
 import { useStore } from 'vuex';
 import { key } from '@/store';
