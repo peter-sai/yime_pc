@@ -5,6 +5,9 @@ import store, { key } from './store';
 import './style/reset.css';
 import VueI18n from '@/lang';
 import './router/permission';
+window.onerror = (e) => {
+  console.log(e);
+};
 
 document.documentElement.style.fontSize = '16px';
 
