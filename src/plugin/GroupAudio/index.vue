@@ -76,6 +76,8 @@ import {
   Ref,
   ref,
   nextTick,
+  watch,
+  computed,
 } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Store, useStore } from 'vuex';
@@ -131,6 +133,7 @@ const init = async (
   userInfos: Ref<IUserInfo[]>,
   nextTick: any,
   t: { (key: string | number): string },
+  videoCallActionUploadReq: (num: number, str: string) => void,
 ) => {
   const videoBox = document.getElementById('videoBox') as HTMLVideoElement;
   const yVideoGroup = document.getElementById(
@@ -142,6 +145,7 @@ const init = async (
     targetId: (store.state.activeUid || 0).toString(),
     userIds: userIds,
     mediaType,
+    channelId: (store.state.activeUid || 0).toString(),
     listener: {
       /**
        * 当远端用户已开始响铃，表示对方已收到呼叫请求 （必填）
@@ -151,6 +155,7 @@ const init = async (
       onRinging(sender: ISenderInfo, session: RCCallSession) {
         const { userId } = sender;
         // 对方响铃
+
         info.value = t('等待对方接听');
       },
 
@@ -185,6 +190,9 @@ const init = async (
         const yVideoGroup = document.getElementById('yVideoGroup');
         if (tar && yVideoGroup) {
           yVideoGroup.removeChild(tar);
+        }
+        if (!session.getRemoteUsers().length) {
+          videoCallActionUploadReq(4, session.getChannelId());
         }
         // close();
       },
@@ -302,6 +310,7 @@ const sessionRoot = ref({}) as Ref<RCCallSession>;
 // 关闭弹框
 const close = () => {
   props.destroy && props.destroy();
+  store.commit('SET_CONVERSATIONING', false);
 };
 
 // 转为语音
@@ -343,6 +352,7 @@ const toggleMute = () => {
 const hungup = async () => {
   sessionRoot.value.hungup();
   close();
+  videoCallActionUploadReq(4, sessionRoot.value.getChannelId());
 };
 
 // 接听
@@ -351,6 +361,7 @@ const accept = () => {
   isAnswer.value = true;
   conversationIng.value = true;
   startTimeOut();
+  videoCallActionUploadReq(3, sessionRoot.value.getChannelId());
 };
 
 let time = 0;
@@ -381,9 +392,10 @@ const getGroupMemberUserInfos = async () => {
 };
 getGroupMemberUserInfos();
 onMounted(async () => {
+  store.commit('SET_CONVERSATIONING', true);
   if (props.isCall) {
     // 呼叫方
-    init(
+    await init(
       store,
       props.mediaType!,
       sessionRoot,
@@ -396,8 +408,9 @@ onMounted(async () => {
       userInfos,
       nextTick,
       t,
+      videoCallActionUploadReq,
     );
-    videoCallActionUploadReq(1);
+    videoCallActionUploadReq(1, sessionRoot.value.getChannelId());
   } else {
     const videoBox = document.getElementById('videoBox') as HTMLVideoElement;
     const yVideoGroup = document.getElementById(
@@ -425,7 +438,7 @@ onMounted(async () => {
        * @param sender 远端用户
        * @param session 当前的 session 对象
        */
-      onAccept(sender: ISenderInfo) {
+      onAccept(sender: ISenderInfo, session) {
         const { userId } = sender;
         if (Number(userId) === Number(store.state.userInfo.uid)) {
           startTimeOut();
@@ -439,12 +452,19 @@ onMounted(async () => {
        * @param reason 挂断的原因
        * @param session 当前的 session 对象
        */
-      onHungup(sender: ISenderInfo, reason: RCCallEndReason) {
+      onHungup(
+        sender: ISenderInfo,
+        reason: RCCallEndReason,
+        session: RCCallSession,
+      ) {
         console.log(sender, map[reason]);
         const tar = document.getElementById(`div_${sender.userId}`);
         const yVideoGroup = document.getElementById('yVideoGroup');
         if (tar && yVideoGroup) {
           yVideoGroup.removeChild(tar);
+        }
+        if (!session.getRemoteUsers().length) {
+          videoCallActionUploadReq(4, session.getChannelId());
         }
         // close();
       },
@@ -520,11 +540,17 @@ onMounted(async () => {
   }
 });
 
-const videoCallActionUploadReq = async (actionType: number) => {
+const videoCallActionUploadReq = async (
+  actionType: number,
+  channelId: string,
+) => {
   const query = {
     actionType,
     groupId: props.groupDetailInfo?.groupId,
+    channelId: channelId,
   };
+
+  console.log(query);
 
   const data = await store.dispatch('postMsg', {
     query,
@@ -533,6 +559,17 @@ const videoCallActionUploadReq = async (actionType: number) => {
     auth: true,
   });
 };
+
+// 处理申请加入群聊消息
+watch(
+  computed(() => store.state.msgInfo),
+  async (data: any) => {
+    // 加入音视频通话申请
+    if (data.cmd === 2162) {
+      sessionRoot.value.invite([data.body.userId.toString()]);
+    }
+  },
+);
 </script>
 <style lang="scss" scoped>
 @import '@/style/base.scss';

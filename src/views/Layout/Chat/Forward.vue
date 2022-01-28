@@ -97,8 +97,6 @@ const init = async () => {
       encryption: 'Aoelailiao.Login.UserGetFriendsAndGroupsListReq',
       auth: true,
     });
-    console.log(data.body);
-
     const friendInfos = data.body.friendInfos.filter(
       (e: IContacts) => Number(e.uid) !== Number(activeUid),
     );

@@ -126,6 +126,7 @@ const initState = {
   },
   msgList: {} as { [key: number]: ImsgItem },
   playAudio: '', // 当前正在播放的音频
+  conversationIng: false, // 是否在通话中
 };
 
 export type initStore = typeof initState;
@@ -135,6 +136,9 @@ const sotreRoot = createStore({
   mutations: {
     SET_RONGIM: (state, res) => {
       state.rongIm = res;
+    },
+    SET_CONVERSATIONING: (state, res) => {
+      state.conversationIng = res;
     },
     SET_FORWARDMSGID: (state, res) => {
       state.forwardMsgId = res;

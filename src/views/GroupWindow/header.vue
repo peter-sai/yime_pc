@@ -1,12 +1,12 @@
 <template>
   <div class="groupChatHeader">
-    <!-- <div class="addGroup">
+    <div class="addGroup" v-if="groupCallState?.callState && !conversationing">
       <div class="left"></div>
       <div class="middle">{{ t('加入群通话') }}</div>
       <div class="right">
-        <span>{{ t('加入') }}</span>
+        <span @click="addGroupChat">{{ t('加入') }}</span>
       </div>
-    </div> -->
+    </div>
     <div class="header">
       <div class="headerLeft">
         <div class="userImg">
@@ -27,7 +27,13 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, defineEmits, defineProps } from 'vue';
+import {
+  computed,
+  defineComponent,
+  defineEmits,
+  defineProps,
+  PropType,
+} from 'vue';
 export default defineComponent({
   name: 'groupChatHeader',
 });
@@ -36,12 +42,14 @@ export default defineComponent({
 import Iconfont from '@/iconfont/index.vue';
 import { Etag } from '../Layout/index.vue';
 import { useI18n } from 'vue-i18n';
+import { useStore } from 'vuex';
+import { key } from '@/store';
 const emit = defineEmits(['toggleBox', 'changeTag']);
 const rightClick = () => {
   emit('toggleBox');
   emit('changeTag', Etag.GroupInfo);
 };
-defineProps({
+const props = defineProps({
   title: {
     type: String,
   },
@@ -51,8 +59,27 @@ defineProps({
   icon: {
     type: String,
   },
+  groupCallState: {
+    type: Object as PropType<{
+      callState: number;
+      groupId: number;
+      userId: number[];
+    }>,
+  },
 });
 const { t } = useI18n();
+const store = useStore(key);
+const addGroupChat = async () => {
+  const data = await store.dispatch('postMsg', {
+    query: {
+      groupId: store.state.activeUid,
+    },
+    cmd: 2159,
+    encryption: 'Aoelailiao.Message.GroupCallApplyJoinToServserReq',
+    auth: true,
+  });
+};
+const conversationing = computed(() => store.state.conversationIng);
 </script>
 <style lang="scss" scoped>
 @import '@/style/base.scss';

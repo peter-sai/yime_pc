@@ -170,6 +170,8 @@ export async function initRonyun(store: Store<initStore>) {
      */
     onSessionClose(session: RCCallSession, summaryInfo?: IEndSummary) {
       hideGroupMediaAudio();
+      // 设置当前不在通话中 用于是否显示加入按钮
+      store.commit('SET_CONVERSATIONING', false);
     },
   });
 
@@ -194,9 +196,9 @@ if (Notification.permission !== 'granted') {
 }
 
 const init = async () => {
-  // const url = 'wss://ws-test.yime.app';
+  const url = 'wss://ws-test.yime.app';
   // const url = 'ws://16.163.55.202:8002';
-  const url = 'wss://ws.yime.app';
+  // const url = 'wss://ws.yime.app';
   let ws = new WebSocket(url);
   store.commit('SET_ISONLINE', '连接中...');
   store.commit('SET_WS', ws);
@@ -283,14 +285,6 @@ const clientSendMsgAckToServer = (msgInfos: IMsgInfo<string>[]) => {
 const stop = watch(
   computed(() => store.state.msgInfo),
   async (data: any) => {
-    // 加入音视频通话申请
-    if (data.cmd === 2162) {
-      console.log(data);
-    }
-    // GroupCallNotifyToClient
-    if (data.cmd === 2156) {
-      console.log(data, 2156);
-    }
     if (data.cmd === 2024) {
       try {
         const notifyContent = JSON.parse(data.body.notifyContent);
