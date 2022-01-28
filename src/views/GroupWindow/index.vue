@@ -3,6 +3,7 @@
     <!-- 群 -->
     <GroupChatHeader
       :title="groupDetailInfo.groupName"
+      :groupCallState="groupCallState"
       :subTitle="
         groupDetailInfo.groupMemberLists
           ? groupDetailInfo.groupMemberLists.memberUserInfos.length.toString()
@@ -152,6 +153,7 @@ import {
   onBeforeUnmount,
   computed,
   ComputedRef,
+  watch,
 } from 'vue';
 import UserInfo from '../Layout/Chat/userInfo.vue';
 import Recommend from '../Layout/Chat/recommend.vue';
@@ -215,6 +217,15 @@ const atUserInfoList: Ref<IUserInfo[]> = ref([]);
 const { t } = useI18n();
 const userInfo: Ref<IUserInfo> = ref({}) as Ref<IUserInfo>; // 需要显示详情用户的信息
 const userDetailInfo: Ref<IUserDetailInfo> = ref({}) as Ref<IUserDetailInfo>; // 需要显示详情用户的信息
+const groupCallState: Ref<{
+  callState: number;
+  groupId: number;
+  userId: number[];
+}> = ref({}) as Ref<{
+  callState: number;
+  groupId: number;
+  userId: number[];
+}>;
 // 是否显示右侧
 const showBox = ref(false);
 const toggleBox = async (uid?: number) => {
@@ -251,6 +262,7 @@ const groupDetailInfo: ComputedRef<IGroupInfo> = computed(
 );
 const store = useStore(key);
 async function init() {
+  getGroupInfo(store);
   // 查询 群 通话状态
   const data = await store.dispatch('postMsg', {
     query: {
@@ -262,10 +274,20 @@ async function init() {
     encryption: 'Aoelailiao.Message.GroupCallStateNotifyToServserReq',
     auth: true,
   });
-  console.log(data);
-  await getGroupInfo(store);
+  groupCallState.value = data.body.groupCallState;
 }
 init();
+
+watch(
+  computed(() => store.state.msgInfo),
+  async (data: any) => {
+    // GroupCallNotifyToClient
+    if (data.cmd === 2156) {
+      console.log(data.body);
+      groupCallState.value = data.body.groupCallState;
+    }
+  },
+);
 
 const inputVal = ref('');
 
