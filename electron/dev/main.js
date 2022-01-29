@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { app, BrowserWindow, systemPreferences } = require('electron');
+const { app, BrowserWindow, systemPreferences, Menu } = require('electron');
 console.log(systemPreferences.getMediaAccessStatus('microphone'));
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require('path');
@@ -9,6 +9,7 @@ const winURL =
     ? `http://localhost:8000`
     : path.join('file://', __dirname, 'index.html');
 function createWindow() {
+  Menu.setApplicationMenu(Menu.buildFromTemplate([]));
   // 创建浏览器窗口
   const win = new BrowserWindow({
     icon: path.join(__dirname, 'img/ico.ico'),
@@ -23,7 +24,7 @@ function createWindow() {
   win.loadURL(winURL);
 
   // 打开开发者工具
-  win.webContents.openDevTools();
+  // win.webContents.openDevTools();
 }
 
 // Electron会在初始化完成并且准备好创建浏览器窗口时调用这个方法
