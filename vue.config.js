@@ -17,7 +17,7 @@ module.exports = {
   chainWebpack: (config) => {
     //设置标题  默认不设置的话是项目名字
     config.plugin('html').tap((args) => {
-      args[0].title = 'YIME';
+      args[0].title = 'MOMO';
       return args;
     });
   },
