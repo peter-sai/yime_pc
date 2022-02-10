@@ -1,8 +1,8 @@
 {
-  "name": "yime_pc",
+  "name": "DUOLIAO_pc",
   "version": "0.1.0",
   "private": true,
-  "main": "electron/dev/main.js",
+  "main": "build/vue-build/main.js",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
@@ -13,7 +13,7 @@
     "electron-build": "vue-cli-service build && node electron/config/electron-build-pro.js && electron-builder --dir"
   },
   "build": {
-    "productName": "YIME",
+    "productName": "DUOLIAO",
     "appId": "com.test",
     "asar": false,
     "directories": {
