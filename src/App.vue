@@ -435,7 +435,7 @@ function msgNotice(item: any) {
     if (store.state.switchSettingInfo.newMessage && !isMsgMute) {
       // 浏览器弹框
       if (Notification.permission === 'granted') {
-        const res = new Notification('YIME', {
+        const res = new Notification('DUOLIAO', {
           body: t('您收到一条消息'),
           data: {
             id: item.isGroupMsg ? item.toId : item.fromId,
