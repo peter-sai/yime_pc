@@ -34,6 +34,7 @@ import messageAudio from './assets/audio/message.wav';
 import { MediaAudio } from './plugin/Audio';
 import { GroupMediaAudio, hideGroupMediaAudio } from './plugin/GroupAudio';
 import { Toast } from './plugin/Toast';
+import { useI18n } from 'vue-i18n';
 export async function initRonyun(store: Store<initStore>) {
   // IM 客户端初始化
   const RongCallLib = RongIMLib.init({
@@ -189,6 +190,7 @@ export default defineComponent({
 <script lang="ts" setup>
 const store = useStore(key);
 store.dispatch('init');
+const { t } = useI18n();
 
 // 获取浏览器弹框权限
 if (Notification.permission !== 'granted') {
@@ -199,8 +201,8 @@ const init = async () => {
   // const url = 'ws://16.163.55.202:8002'; // yime测试
   // const url = 'ws://18.167.158.191:8003'; // duomi正式
   // const url = 'wss://ws.yime.app';
-  // const url = 'wss://ws-test.yime.app'; // yime 测试
-  const url = 'ws://ws.mm089.com'; // momo 正式
+  const url = 'wss://ws-test.yime.app'; // yime 测试
+  // const url = 'ws://ws.mm089.com'; // momo 正式
   let ws = new WebSocket(url);
   store.commit('SET_ISONLINE', '连接中...');
   store.commit('SET_WS', ws);
@@ -435,7 +437,7 @@ function msgNotice(item: any) {
       // 浏览器弹框
       if (Notification.permission === 'granted') {
         const res = new Notification('YIME', {
-          body: '您收到一条消息',
+          body: t('您收到一条消息'),
           data: {
             id: item.isGroupMsg ? item.toId : item.fromId,
             isGroupMsg: Boolean(item.isGroupMsg),
