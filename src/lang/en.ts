@@ -961,4 +961,5 @@ export default {
   密码登录: 'Password login',
   未注册请使用验证码登录: 'Not registered, please login with verification code',
   等待对方接听: 'Waiting for the other party to answer',
+  您收到一条消息: 'You received a message',
 };

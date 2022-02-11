@@ -53,44 +53,46 @@
           >
             <template v-slot:title>
               <div class="title">
-                <span>{{ item.userDetailInfo?.userInfo?.nickname }}</span>
+                <span>{{
+                  item.userDetailInfo?.userInfo?.nickname || item.nickname
+                }}</span>
               </div>
             </template>
             <template v-slot:subTitle>
-              <span class="subTitle">{{ getType(item.msg, item) }}</span>
+              <span class="subTitle">{{ getType(item) }}</span>
             </template>
             <template v-slot:userImg>
               <div class="userImg">
-                <img :src="item?.userDetailInfo?.userInfo?.icon" />
+                <img :src="item?.userDetailInfo?.userInfo?.icon || item.icon" />
               </div>
             </template>
           </TableDouble>
         </div>
         <div v-else>
-          <Errors v-if="!contactsList.length" id="2" />
+          <Errors v-if="!groupList.length" id="2" />
           <TableDouble
             v-for="item in groupList"
-            :key="item.id"
+            :key="item?.id"
             @click="goToWindow(item)"
           >
             <template v-slot:title>
               <div class="title">
                 <span>
-                  {{ item.groupDetailInfo?.groupName }}
+                  {{ item?.groupDetailInfo?.groupName || item?.groupName }}
                 </span>
               </div>
             </template>
             <template v-slot:subTitle>
-              <span class="subTitle">{{ getType(item.msg, item) }}</span>
+              <span class="subTitle">{{ getType(item) }}</span>
             </template>
             <template v-slot:userImg>
               <div class="userImg">
                 {{
-                  item.groupDetailInfo.groupName
-                    ? item.groupDetailInfo.groupName
+                  item?.groupDetailInfo?.groupName
+                    ? item?.groupDetailInfo?.groupName
                         .substr(0, 1)
                         .toLocaleUpperCase()
-                    : ''
+                    : item?.groupName.substr(0, 1).toLocaleUpperCase()
                 }}
               </div>
             </template>
@@ -101,7 +103,14 @@
   </div>
 </template>
 <script lang="ts">
-import { computed, defineComponent, onMounted, Ref, watch } from 'vue';
+import {
+  computed,
+  ComputedRef,
+  defineComponent,
+  onMounted,
+  Ref,
+  watch,
+} from 'vue';
 import TableDouble from '@/components/TableDouble/index.vue';
 import Errors from '../Errors/index.vue';
 
@@ -120,7 +129,9 @@ import { useStore } from 'vuex';
 import { key } from '@/store';
 import { IMsgInfo, ImsgItem, TMsgContent } from '@/types/msg';
 import { switchMsg } from '@/hooks/window';
-import { IUserInfo } from '@/types/user';
+import { IGroupInfo, IUserInfo } from '@/types/user';
+import { IGroupListItem } from '@/types/group';
+import { getTag } from '@/utils/utils';
 const emit = defineEmits(['isSearch']);
 const goTo = useGoTo(useRouter);
 const showBox = ref(false);
@@ -129,6 +140,11 @@ const val = ref('');
 const active = ref(0);
 const store = useStore(key);
 const list = computed(() => store.state.msgList);
+// 群组
+const groupInfos = computed(() => store.state.groupInfos);
+// 个人
+const contact = computed(() => store.state.contact);
+const userInfo = store.state.userInfo;
 const contactsList: Ref<ImsgItem[]> = ref([]);
 const groupList: Ref<ImsgItem[]> = ref([]);
 const showSearch = ref(false);
@@ -136,11 +152,14 @@ onMounted(() => {
   emit('isSearch', false);
 });
 
-const getType = (lastMsg: IMsgInfo<TMsgContent>, item: ImsgItem) => {
-  if (lastMsg.isGroupMsg) {
-    return switchMsg(lastMsg, t, store, {} as IUserInfo, [], item);
-  } else {
-    return switchMsg(lastMsg, t, store, item.userDetailInfo.userInfo);
+const getType = (item: ImsgItem) => {
+  const lastMsg = item.msg;
+  if (lastMsg) {
+    if (lastMsg.isGroupMsg) {
+      return switchMsg(lastMsg, t, store, {} as IUserInfo, [], item);
+    } else {
+      return switchMsg(lastMsg, t, store, item.userDetailInfo.userInfo);
+    }
   }
 };
 
@@ -200,7 +219,62 @@ watch(val, (res) => {
       groupList.value.push(val);
     }
   }
+  // 整合群组和个人
+  groupInfos.value.forEach((e: IGroupInfo) => {
+    if (
+      e.groupName.toLocaleLowerCase().includes(res.toLocaleLowerCase()) &&
+      groupList.value.every((v) => v.id !== e.groupId)
+    ) {
+      groupList.value.push(e);
+    }
+  });
+  contact.value.forEach((e: IUserInfo) => {
+    if (
+      e.nickname.toLocaleLowerCase().includes(res.toLocaleLowerCase()) &&
+      contactsList.value.every((v) => v.id !== e.uid)
+    ) {
+      contactsList.value.push(e);
+    }
+  });
 });
+
+// 获取列表
+const init = async () => {
+  try {
+    const storeList = store.state.contact;
+    if (!storeList.length) {
+      const data = await store.dispatch('postMsg', {
+        query: {},
+        cmd: 1009,
+        encryption: 'Aoelailiao.Login.UserGetFriendsAndGroupsListReq',
+        auth: true,
+      });
+
+      data.body.groupInfos.forEach((e: IGroupListItem) => {
+        if (e.groupMemberLists.rootUid === Number(userInfo.uid)) {
+          e.root = true;
+        }
+        if (e.groupMemberLists.adminUidList.includes(Number(userInfo.uid))) {
+          e.admin = true;
+        }
+      });
+
+      store.commit('SET_GROUPINFOS', data.body.groupInfos);
+      const list = data.body.friendInfos;
+      list.forEach((e: any) => {
+        e.name =
+          (e.userAttachInfo && e.userAttachInfo.remarkName) || e.nickname;
+        e.tag = getTag(e);
+      });
+      list.sort((a: any, b: any) => a.tag.charCodeAt(0) - b.tag.charCodeAt(0));
+      store.commit('SET_CONTACT', list);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+init();
 </script>
 <style lang="scss" scoped>
 @import '@/style/base.scss';
