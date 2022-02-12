@@ -44,9 +44,7 @@
           @click="toggleSelect"
         />
         {{ t('本人接受') }}
-        <span @click="goTo('agreement')" class="agreement">{{
-          t('《MOMO协议》')
-        }}</span>
+        <span @click="openLink" class="agreement">{{ t('《MOMO协议》') }}</span>
       </div>
     </div>
   </div>
@@ -91,6 +89,10 @@ const toggleSelect = () => {
 };
 
 const goTo = useGoTo(useRouter);
+
+const openLink = () => {
+  window.open('https://mm089.com/userAgreements');
+};
 
 // 注册
 const reg = useReg(goTo, store, query, agreement, route, t);
