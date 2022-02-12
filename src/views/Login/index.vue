@@ -337,8 +337,8 @@ onUnmounted(() => {
     width: 120px;
     margin: 76px auto 36px;
     img {
-      width: 100%;
-      height: 100%;
+      // width: 100%;
+      // height: 100%;
     }
   }
   .main {
