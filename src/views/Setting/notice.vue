@@ -10,7 +10,7 @@
           />
         </template>
       </Table>
-      <Table title="浏览器通知" hide-more>
+      <Table title="系统通知" hide-more>
         <template v-slot:right>
           <Switch
             :beforeChange="newMessage"
