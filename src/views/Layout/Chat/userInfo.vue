@@ -32,11 +32,20 @@
       <div class="main">
         <Table
           v-if="!yUserInfo?.isBotUser"
-          :title="onlineInfo?.onlineState ? '在线' : '离线'"
+          :title="
+            onlineInfo?.onlineState || onLineStatus.onlineState
+              ? '在线'
+              : '离线'
+          "
           hide-more
         >
           <template v-slot:left>
-            <div class="point" :class="{ onLine: onlineInfo?.onlineState }" />
+            <div
+              class="point"
+              :class="{
+                onLine: onlineInfo?.onlineState || onLineStatus.onlineState,
+              }"
+            />
           </template>
         </Table>
         <Table title="保存联系人" hide-more>
@@ -125,7 +134,15 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, defineEmits, defineProps, PropType } from 'vue';
+import {
+  computed,
+  defineComponent,
+  defineEmits,
+  defineProps,
+  PropType,
+  Ref,
+  ref,
+} from 'vue';
 import { Store, useStore } from 'vuex';
 import { initStore, key } from '@/store';
 import { Toast } from '@/plugin/Toast';
@@ -323,6 +340,7 @@ const props = defineProps({
 
 const store = useStore(key);
 const { t } = useI18n();
+const onLineStatus: Ref<IUserInfo> = ref({}) as Ref<IUserInfo>;
 
 // 添加好友和删除好友
 const toggleFriend = useToggleFriend(store, t, props.yUserInfo);
@@ -370,6 +388,25 @@ const send = () => {
   store.commit('SET_ACTIVEUID', props.yUserInfo?.uid);
   store.commit('SET_ACTIVEISGROUP', false);
 };
+
+// 获取用户在线状态
+const getOnLineStatus = async () => {
+  const res = {
+    userOnlineState: {
+      uid: props.yUserInfo.uid,
+    },
+  };
+  const data = await store.dispatch('postMsg', {
+    query: res,
+    cmd: 2127,
+    encryption: 'Aoelailiao.Message.UserOnlineStateNotifyReq',
+    auth: true,
+  });
+  onLineStatus.value = data.body?.userOnlineState || {};
+};
+if (!props.onlineInfo) {
+  getOnLineStatus();
+}
 </script>
 <style lang="scss" scoped>
 @import '@/style/base.scss';
