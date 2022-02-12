@@ -10,7 +10,7 @@
       <div class="input">
         <InputGroup
           type="text"
-          :placeholder="t('请输入账号')"
+          :placeholder="t('请输入昵称')"
           v-model="query.nickname"
         ></InputGroup>
         <InputGroup
@@ -62,7 +62,6 @@ import InputGroup from '@/components/InputGroup/index.vue';
 import logo from '@/assets/logo.svg';
 import Iconfont from '@/iconfont/index.vue';
 import { useI18n } from 'vue-i18n';
-const { t } = useI18n();
 import { reactive, ref, Ref } from 'vue';
 import { useGoTo } from '@/hooks';
 import { RouteLocationNormalizedLoaded, useRoute, useRouter } from 'vue-router';
@@ -71,6 +70,7 @@ import { md5 } from '@/utils/utils';
 import { saveData } from '@/api/app';
 import { Store, useStore } from 'vuex';
 import { initStore, key } from '@/store';
+const { t } = useI18n();
 
 const store = useStore(key);
 const route = useRoute();
