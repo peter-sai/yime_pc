@@ -703,7 +703,6 @@ export default {
   请用听筒接听: 'Please talk to the receiver',
   请确认密码: 'Please confirm your password',
   请输入: 'Please enter',
-  浏览器通知: 'notification',
   请输入您的IM号: 'Please enter your IM number',
   '请输入6-15位新密码': 'Please enter 6-15 new password',
   请输入原有的手机号: 'Please enter the original phone number',
