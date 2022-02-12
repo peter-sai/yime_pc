@@ -109,11 +109,7 @@ const init = async () => {
         e.nickname ||
         e.groupName;
       e.tag = getTag(e);
-      if (Number(e.uid || e.groupId) === Number(userId)) {
-        e.active = true;
-      } else {
-        e.active = false;
-      }
+      e.active = false;
     });
     list.value.sort((a, b) => a.tag.charCodeAt(0) - b.tag.charCodeAt(0));
   } catch (error) {
@@ -148,6 +144,8 @@ const submit = async () => {
     forwardMsgIds: [store.state.forwardMsgId],
     forwardMsg,
   };
+  console.log(res);
+
   const data = await store.dispatch('postMsg', {
     query: res,
     cmd: 2055,
