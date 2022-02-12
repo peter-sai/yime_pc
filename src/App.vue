@@ -198,10 +198,6 @@ if (Notification.permission !== 'granted') {
 }
 
 const init = async () => {
-  // const url = 'ws://16.163.55.202:8002'; // yime测试
-  // const url = 'ws://18.167.158.191:8003'; // duomi正式
-  // const url = 'wss://ws.yime.app';
-  // const url = 'wss://ws-test.yime.app'; // yime 测试
   const url = 'wss://ws.mm089.com'; // momo 正式
   let ws = new WebSocket(url);
   store.commit('SET_ISONLINE', '连接中...');

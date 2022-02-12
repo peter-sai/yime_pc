@@ -4,7 +4,7 @@
     <div class="input">
       <Search
         v-model="query"
-        :placeholder="t('YIME ID，昵称，手机号')"
+        :placeholder="t('MOMO ID，昵称，手机号')"
         @enter="enter"
       />
     </div>

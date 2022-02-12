@@ -45,7 +45,7 @@
         />
         {{ t('本人接受') }}
         <span @click="goTo('agreement')" class="agreement">{{
-          t('《YiMe协议》')
+          t('《MOMO协议》')
         }}</span>
       </div>
     </div>

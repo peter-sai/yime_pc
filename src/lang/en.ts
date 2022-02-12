@@ -61,17 +61,17 @@ export default {
   '<spile>邀请您进行视频通话': '<spile> invites you for a video call',
   '<spile>邀请您进行语音通话': '<spile> invites you for a voice call',
   '<spile>邀请用户加入了群聊': '<spile> invited users to join the group chat',
-  IM号: 'YIME ID',
+  IM号: 'MOMO ID',
   'IM未打开时，消息后台提醒通知，如果不起作用，请前往手机设置打开软件通知权限':
     'When the IM is not opened, the message background will remind you of the notification. If it does not work, please go to the mobile phone to set the permissions to open the software notification',
   'MM月dd日HH:mm': 'HH:mm MMM dd',
-  'YIME ID': 'YIME ID',
-  'YIME ID，昵称，手机号': 'YIME ID, Nickname, Phone number',
-  'YIME是一款安全稳定的聊天交友软件,可以随时随地收发讯息，与好友语音、视频通话，支持一-对一单聊、多人群聊，具有阅后即焚、双向撤回、消息回执、预设密信、匿名群聊、账号销毁、截屏提醒等特色功能。\nIMAPP致力于保护用户的隐私安全，不获取任何与软件使用无关的用户信息，不对任何聊天记录进行云端存储。注册即生成私钥，开启端对端加密通信，防破解,防篡改，为您杜绝通讯风险，让您的聊天更加安全放心。':
-    'YIME is a safe and stable chat and dating software. It can send and receive messages anytime and anywhere, and make voice and video calls with friends. It supports one-to-one single chat and multi-group chat, with features such as burning after reading, two-way withdrawal, message receipt, preset secret letter, anonymous group chat, account destruction, screenshot reminder and so on.\n ImApp is committed to protecting the privacy of its users. NimApp does not obtain any user information unrelated to the use of the software and does not store any chat records in the cloud. Register to generate private key, open end-to-end encrypted communication, anti-cracking, tamper-proof, eliminate communication risks for you, let your chat more secure and assured.',
-  'YIME是什么？': 'What is YIME?',
-  'YIME未打开时，消息后台提醒通知，如果不起作用，请前往手机设置打开软件通知权限':
-    'Please go to setting to turn on the notification if you can not received message when your YIME is not working.',
+  'MOMO ID': 'MOMO ID',
+  'MOMO ID，昵称，手机号': 'MOMO ID, Nickname, Phone number',
+  'MOMO是一款安全稳定的聊天交友软件,可以随时随地收发讯息，与好友语音、视频通话，支持一-对一单聊、多人群聊，具有阅后即焚、双向撤回、消息回执、预设密信、匿名群聊、账号销毁、截屏提醒等特色功能。\nIMAPP致力于保护用户的隐私安全，不获取任何与软件使用无关的用户信息，不对任何聊天记录进行云端存储。注册即生成私钥，开启端对端加密通信，防破解,防篡改，为您杜绝通讯风险，让您的聊天更加安全放心。':
+    'MOMO is a safe and stable chat and dating software. It can send and receive messages anytime and anywhere, and make voice and video calls with friends. It supports one-to-one single chat and multi-group chat, with features such as burning after reading, two-way withdrawal, message receipt, preset secret letter, anonymous group chat, account destruction, screenshot reminder and so on.\n ImApp is committed to protecting the privacy of its users. NimApp does not obtain any user information unrelated to the use of the software and does not store any chat records in the cloud. Register to generate private key, open end-to-end encrypted communication, anti-cracking, tamper-proof, eliminate communication risks for you, let your chat more secure and assured.',
+  'MOMO是什么？': 'What is MOMO?',
+  'MOMO未打开时，消息后台提醒通知，如果不起作用，请前往手机设置打开软件通知权限':
+    'Please go to setting to turn on the notification if you can not received message when your MOMO is not working.',
   '[位置]': '[Location]',
   '[位置消息]': '[Location message]',
   '[名片]': '[business]',
@@ -95,7 +95,7 @@ export default {
   '[链接]': '[link]',
   google地图: 'Google maps',
   iCloud中的文件: 'iCloud files',
-  '《YIME协议》': "'YIME Agreement'",
+  '《MOMO协议》': "'MOMO Agreement'",
   上传图片失败: 'Image upload failed',
   上午: 'AM',
   上拉加载更多: 'Pull up to refresh',
@@ -172,7 +172,7 @@ export default {
   保存成功: 'Save success',
   保存联系人: 'Save contacts',
   保存通讯录: 'Save to address book',
-  '修改YIME ID': 'Modify YIME ID',
+  '修改MOMO ID': 'Modify MOMO ID',
   修改昵称: 'Modify Nickname',
   修改备注: 'Edit remark',
   修改成功: 'Modify the success',
@@ -189,7 +189,7 @@ export default {
   入群申请发送失败: 'The group application failed to be sent',
   入群确认: 'Join confirmation',
   共同群聊: 'Common groups',
-  关于YIME: 'About YIME',
+  关于MOMO: 'About MOMO',
   '关闭后，其他用户将不能通过上述信息找到你':
     'After turn it off, you will not be find by other users through the above information.',
   其他添加联系人的方式: 'Other ways to add contacts',
@@ -230,8 +230,8 @@ export default {
   加密消息: 'Encrypt message',
   加群方式: 'Join group method',
   '加载中...': 'Loading...',
-  '匹配通讯录需同意上传您的通讯录查看是否有好友在使用YIME,本应用并不会保存您的通讯录信息,相关规定请查看《隐私政策》':
-    'To match your address book, you must agree to upload your address book to check if there are any friends using YIME. The app will not save your address book information. Please refer to the Privacy Policy for relevant regulations.',
+  '匹配通讯录需同意上传您的通讯录查看是否有好友在使用MOMO,本应用并不会保存您的通讯录信息,相关规定请查看《隐私政策》':
+    'To match your address book, you must agree to upload your address book to check if there are any friends using MOMO. The app will not save your address book information. Please refer to the Privacy Policy for relevant regulations.',
   协商失败: 'Negotiation fails',
   协商成功: 'Successful negotiation',
   原图: 'Original image',
@@ -339,7 +339,7 @@ export default {
     'Unable to send messages when full staff ban is enabled',
   '开启后，对方将显示你的消息读取状态':
     'After turn on, other party will see your message reading status',
-  '开启后，将为您推荐已经注册YIME通讯录好友，同时也会将你推荐给通讯录好友。':
+  '开启后，将为您推荐已经注册MOMO通讯录好友，同时也会将你推荐给通讯录好友。':
     'Once turn it on, you will be share to your friends, and also you can find your friends contact.',
   开通成功: 'Opened successfully',
   当前使用: 'Currently use',
@@ -768,7 +768,7 @@ export default {
   邀请你加入群语音聊天: 'Invites you to join the group voice chat',
   邀请你视频通话: 'Invite you to a video call',
   邀请加入IM: 'Invitation to join IM',
-  邀请加入YIME: 'Invite to join YIME',
+  邀请加入MOMO: 'Invite to join MOMO',
   邀请好友: 'Invite friends',
   重登录成功: 'Relog in successfully',
   重置登录密码失败: 'Failed to reset login password',
@@ -848,7 +848,7 @@ export default {
   '连接中...': 'Connecting',
   用户搜索: 'Users search',
   新对话: 'New Session',
-  请同意协议: 'Please agree to the YIME Agreement',
+  请同意协议: 'Please agree to the MOMO Agreement',
 
   在线: 'Online',
   离线: 'Offline',
@@ -869,7 +869,7 @@ export default {
   添加机器人到群组: 'Add a robot to the group',
   '%@分享名片': '%@ Share business cards',
   手机号搜索: 'Mobile phone number search',
-  YIME号搜索: 'YIME number search',
+  MOMO号搜索: 'MOMO number search',
   昵称搜索: 'Nickname search',
   '对方通过%@发来消息': 'The other person sends a message via {0}',
   继续聊天: 'Continue to chat',
