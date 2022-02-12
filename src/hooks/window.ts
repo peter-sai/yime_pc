@@ -431,7 +431,10 @@ const useSystemNotifyInfo = (
 };
 
 // 格式化消息并替换
-const formatMsg = (msgText: string, t: { (key: string | number): string }) => {
+export const formatMsg = (
+  msgText: string,
+  t: { (key: string | number): string },
+) => {
   const [fristMsg, ...msgs] = msgText.split('#');
   const msg = t(fristMsg);
   if (msgs.length) {

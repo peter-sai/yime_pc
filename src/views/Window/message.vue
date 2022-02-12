@@ -190,6 +190,12 @@
         <div class="item" v-else-if="item.type === 'systemNotifyInfo'">
           <div class="revoke">{{ systemNotifyInfo(item) }}</div>
         </div>
+        <!-- 清理消息 -->
+        <div class="item" v-else-if="item.type === 'cleanInfo'">
+          <div class="revoke">
+            {{ cleanInfof(item.msgContent.cleanInfo) }}
+          </div>
+        </div>
         <!-- 撤回消息 -->
         <div class="item" v-else-if="item.type === 'revokeInfo'">
           <div class="revoke">
@@ -292,6 +298,7 @@ import {
   useSystemNotifyInfo,
   useUserGetConversationHasReadedMsgInfo,
   useRevoke,
+  formatMsg,
 } from '@/hooks/window';
 import { IGroupInfo, IUserInfo } from '@/types/user';
 import { Toast } from '@/plugin/Toast';
@@ -336,6 +343,11 @@ onMounted(() => {
 onUnmounted(() => {
   clipboard && clipboard.destroy();
 });
+
+// 清空消息
+const cleanInfof = (cleanInfo: any) => {
+  return formatMsg(cleanInfo.stringContent, t);
+};
 
 // 已读最大msgid
 const readMsgId = ref(0);
