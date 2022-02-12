@@ -89,7 +89,6 @@
           <UserInfo
             :userDetailInfo="userDetailInfo"
             :yUserInfo="userInfo"
-            :onlineInfo="onlineInfo"
             @toggleBox="toggleBox"
             @changeTag="changeTag"
           />

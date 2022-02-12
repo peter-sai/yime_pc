@@ -464,7 +464,7 @@ const del = async (e: IUserInfo) => {
     }
     .subTitle {
       width: 252px;
-      height: 51px;
+      // height: 51px;
       font-size: 12px;
       font-family: PingFangSC, PingFangSC-Regular;
       font-weight: 400;
