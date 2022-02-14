@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const request = axios.create({
   baseURL:
-    process.env.NODE_ENV === 'development' ? '' : 'http://18.166.162.101:3000/',
+    process.env.NODE_ENV === 'development' ? '' : 'http://18.166.162.101:3000',
   // baseURL: process.env.NODE_ENV === 'development' ? '' : 'https://web.yime.app',
   timeout: 5000,
 });
