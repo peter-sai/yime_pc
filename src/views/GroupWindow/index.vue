@@ -28,6 +28,11 @@
     <Bottom
       v-model="inputVal"
       :groupDetailInfo="groupDetailInfo.groupId ? groupDetailInfo : undefined"
+      :isGroupMember="
+        groupDetailInfo.groupMemberLists.memberUserInfos.some(
+          (e) => Number(e.memberUid) === Number(store.state.userInfo.uid),
+        )
+      "
       @sendImg="sendImg('img')"
       @selectGroupMember="ShowSelectGroupMember"
       @enter="enter(atUserInfoList)"
