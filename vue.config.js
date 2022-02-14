@@ -6,8 +6,7 @@ module.exports = {
   devServer: {
     port: 8000,
     // https: true,
-    // proxy: 'http://18.167.158.191:3000',
-    proxy: 'http://localhost:3000',
+    proxy: 'http://18.167.158.191:3000',
   },
   configureWebpack: {
     externals: {
