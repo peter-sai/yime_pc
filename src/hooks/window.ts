@@ -392,7 +392,7 @@ const useSystemNotifyInfo = (
     const { systemNotifyInfo } = item.msgContent;
 
     const frestMsg = systemNotifyInfo.appointUserSystemNotifyInfos[0];
-    if (frestMsg.userIds.includes(store.state.userInfo.uid)) {
+    if ((frestMsg.userIds || []).includes(store.state.userInfo.uid)) {
       const msg = frestMsg.appointUserNotifyInfo.msgText || '';
       // 格式化消息
       return formatMsg(msg, t);
@@ -723,14 +723,19 @@ const initRongConnect = async (
     type: 'domi',
   });
 
-  RongIMLib.connect(res.token).then((res: any) => {
-    if (res.code === 0) {
-      console.log('链接成功, 链接用户 id 为: ', res.data.userId);
-      store.commit('SET_RONGIM', rongIm);
-    } else {
-      console.warn('链接失败, code:', res.code);
-    }
-  });
+  RongIMLib.connect(res.token).then(
+    (res: any) => {
+      if (res.code === 0) {
+        console.log('链接成功, 链接用户 id 为: ', res.data.userId);
+        store.commit('SET_RONGIM', rongIm);
+      } else {
+        console.warn('链接失败, code:', res.code);
+      }
+    },
+    (err) => {
+      console.log(err);
+    },
+  );
 };
 
 // 漫游数据

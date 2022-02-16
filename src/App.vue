@@ -352,6 +352,8 @@ const stop = watch(
         msgInfos[0].msgContent.msgContent === 'systemNotifyInfo'
       ) {
         const item = msgInfos[0];
+        const res = store.state.msgList[item.toId];
+        if (!res) return;
         // 群聊获取群详情
         const data = await store.dispatch('postMsg', {
           query: { groupId: item.toId },
@@ -360,7 +362,6 @@ const stop = watch(
           auth: true,
         });
         const groupDetailInfo = data.body.groupDetailInfo;
-        const res = store.state.msgList[item.toId];
         res.groupDetailInfo = groupDetailInfo;
 
         store.commit('SET_MSGLISTITEM', {
