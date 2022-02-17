@@ -65,6 +65,16 @@
           />
         </div>
       </transition>
+      <!-- 群资料 -->
+      <transition name="fade-transform1" mode="out-in">
+        <div v-if="showBox && tag === Etag.GroupInfo" class="boxContent">
+          <GroupInfo
+            @toggleBox="toggleBox"
+            @changeTag="changeTag"
+            :groupDetailInfo="groupDetailInfo"
+          />
+        </div>
+      </transition>
       <!-- 共同群聊 -->
       <transition name="fade-transform1" mode="out-in">
         <div v-if="showBox && tag === Etag.CommonGroup" class="boxContent">
@@ -108,7 +118,7 @@
 </template>
 <script lang="ts">
 import { initStore, key } from '@/store';
-import { IUserDetailInfo, IUserInfo } from '@/types/user';
+import { IGroupInfo, IUserDetailInfo, IUserInfo } from '@/types/user';
 import {
   defineComponent,
   ref,
@@ -120,6 +130,7 @@ import {
   watch,
   computed,
   onUnmounted,
+  ComputedRef,
 } from 'vue';
 import Message from './message.vue';
 import { useI18n } from 'vue-i18n';
@@ -131,6 +142,7 @@ import CloudFile from '../Layout/Chat/cloudFile.vue';
 import CommonGroup from '../Layout/Chat/commonGroup.vue';
 import Recommend from '../Layout/Chat/recommend.vue';
 import { useEnter, useCbImg, useSendImg } from '@/hooks/window';
+import GroupInfo from '../Layout/GroupChat/groupInfo.vue';
 import ChatHeader from './header.vue';
 import Bottom from '../Layout/bottom.vue';
 import { Etag } from '../Layout/index.vue';
@@ -139,6 +151,7 @@ import { ImsgItem } from '@/types/msg';
 export default defineComponent({
   name: 'window',
 });
+
 // 获取详情
 const useGetDetail = async (
   store: Store<initStore>,
@@ -148,7 +161,7 @@ const useGetDetail = async (
 ) => {
   if (!store.state.activeUid) return;
 
-  let msgItem: ImsgItem = store.state.msgList[store.state.activeUid!];
+  let msgItem: ImsgItem = store.state.msgList[store.state.userUid!];
 
   // 如果不存在则获取 (单聊不在聊天列表中会没有信息)
   if (!msgItem) {
@@ -218,6 +231,10 @@ const userInfo: Ref<IUserInfo> = ref({}) as Ref<IUserInfo>; // 需要显示详�
 const userDetailInfo: Ref<IUserDetailInfo> = ref({}) as Ref<IUserDetailInfo>; // 需要显示详情用户的信息
 const isBotUser = ref(false);
 const onlineInfo: Ref<IUserInfo> = ref({}) as Ref<IUserInfo>;
+
+const groupDetailInfo: ComputedRef<IGroupInfo> = computed(
+  () => store.state.msgList[store.state.userUid]?.groupDetailInfo || {},
+);
 
 // 文件选择类型
 const accept = ref('image/*');
