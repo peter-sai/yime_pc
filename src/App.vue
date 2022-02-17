@@ -198,7 +198,7 @@ if (Notification.permission !== 'granted') {
 }
 
 const init = async () => {
-  const url = 'wss://ws.mm089.com'; // momo 正式
+  const url = 'wss://ws.momo886.com'; // momo 正式
   let ws = new WebSocket(url);
   store.commit('SET_ISONLINE', '连接中...');
   store.commit('SET_WS', ws);
