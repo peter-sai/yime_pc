@@ -336,6 +336,7 @@ const stop = watch(
         );
         msgList[store.state.activeUid!].readList = newList;
         store.commit('SET_MSGLIST', msgList);
+        setMsgList(store.state.msgList);
       }
       console.log('推送消息', data);
       // 发送ack
@@ -352,6 +353,8 @@ const stop = watch(
         msgInfos[0].msgContent.msgContent === 'systemNotifyInfo'
       ) {
         const item = msgInfos[0];
+        const res = store.state.msgList[item.toId];
+        if (!res) return;
         // 群聊获取群详情
         const data = await store.dispatch('postMsg', {
           query: { groupId: item.toId },
@@ -360,7 +363,6 @@ const stop = watch(
           auth: true,
         });
         const groupDetailInfo = data.body.groupDetailInfo;
-        const res = store.state.msgList[item.toId];
         res.groupDetailInfo = groupDetailInfo;
 
         store.commit('SET_MSGLISTITEM', {

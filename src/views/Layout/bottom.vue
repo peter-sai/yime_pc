@@ -44,7 +44,7 @@
       <!-- 操作弹框 -->
       <div class="boxOperation" v-if="showOpertion">
         <div class="child">
-          <div class="opeItem" @click.stop="$emit('sendImg')">
+          <div class="opeItem" @click.stop="onEmit('sendImg')">
             <Iconfont name="iconxiangce" size="20" color="#111111" />
             <div>{{ t('相册') }}</div>
           </div>
@@ -58,14 +58,14 @@
           </div>
         </div>
         <div class="child">
-          <div class="opeItem" @click.stop="$emit('sendFile')">
+          <div class="opeItem" @click.stop="onEmit('sendFile')">
             <Iconfont name="iconwenjian1" size="20" color="#111111" />
             <div>{{ t('文件') }}</div>
           </div>
           <div
             class="opeItem"
             :style="store.state.activeIsGroup && style"
-            @click="$emit('recommend')"
+            @click="onEmit('recommend')"
           >
             <Iconfont name="icontuijianhaoyou" size="20" color="#111111" />
             <div>{{ t('推荐好友') }}</div>
@@ -304,6 +304,10 @@ const props = defineProps({
   groupDetailInfo: {
     type: Object as PropType<IGroupInfo>,
   },
+  isGroupMember: {
+    type: Boolean,
+    default: true,
+  },
 });
 const showExpres = ref(false);
 const emit = defineEmits([
@@ -315,6 +319,11 @@ const emit = defineEmits([
   'sendFile',
   'selectGroupMember',
 ]);
+
+const onEmit = (res: any) => {
+  if (!props.isGroupMember) return Toast(t('非群成员无法操作'));
+  emit(res);
+};
 // 是否显示操作弹框
 const showOpertion = ref(false);
 
@@ -418,6 +427,7 @@ onBeforeUnmount(() => {
 
 // 开始音视频
 const start = async (mediaType: number) => {
+  if (!props.isGroupMember) return Toast(t('非群成员无法操作'));
   const data = await store.dispatch('postMsg', {
     query: {
       functionId: 20010,
