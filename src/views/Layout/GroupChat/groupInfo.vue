@@ -282,6 +282,8 @@ const props = defineProps({
     type: Object as PropType<IGroupInfo>,
   },
 });
+console.log(props.groupDetailInfo);
+
 const emit = defineEmits(['changeTag', 'toggleBox']);
 
 const isRoot = ref(false);

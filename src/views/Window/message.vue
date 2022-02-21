@@ -124,7 +124,12 @@
         <!-- 名片 -->
         <div class="item" v-else-if="item.type === 'visitingCard'">
           <YVisitingCard
-            @clickCard="showUserInfo(item.msgContent.visitingCard.uid)"
+            @clickCard="
+              showUserInfo(
+                item.msgContent.visitingCard.uid,
+                item.msgContent.visitingCard.type,
+              )
+            "
             @click="showUserInfo(getUserInfo(item).uid)"
             :userInfo="getUserInfo(item)"
             @menuClick="menuClick($event, item)"
@@ -133,7 +138,12 @@
           />
           <MVisitingCard
             v-else
-            @clickCard="showUserInfo(item.msgContent.visitingCard.uid)"
+            @clickCard="
+              showUserInfo(
+                item.msgContent.visitingCard.uid,
+                item.msgContent.visitingCard.type,
+              )
+            "
             :item="item.msgContent.visitingCard"
             @menuClick="menuClick($event, item)"
             :isRead="item.msgId <= readMsgId"
@@ -281,8 +291,8 @@ import YVideo from '@/components/Message/YVideo/index.vue';
 import Ylink from '@/components/Message/Ylink/index.vue';
 import Mlink from '@/components/Message/Mlink/index.vue';
 import Iconfont from '../../iconfont/index.vue';
-import { useStore } from 'vuex';
-import { key } from '@/store';
+import { Store, useStore } from 'vuex';
+import { initStore, key } from '@/store';
 import { useI18n } from 'vue-i18n';
 import {
   IFireInfo,
@@ -304,14 +314,55 @@ import { IGroupInfo, IUserInfo } from '@/types/user';
 import { Toast } from '@/plugin/Toast';
 import ClipboardJS from 'clipboard';
 import { MediaAudio } from '@/plugin/Audio';
+
+async function getGroupInfo(store: Store<initStore>, uid: number) {
+  if (!uid) return;
+
+  let msgItem: Ref<ImsgItem> = ref(store.state.msgList[uid]);
+  // 如果不存在则获取 (群聊不在聊天列表中会没有信息)
+  if (!msgItem.value) {
+    const data = await store.dispatch('postMsg', {
+      query: {
+        groupId: uid,
+      },
+      cmd: 1029,
+      encryption: 'Aoelailiao.Login.ClientGetGroupInfoReq',
+      auth: true,
+    });
+
+    msgItem.value = data.body;
+
+    const item = {
+      id: data.body.groupDetailInfo.groupId,
+      isBotUser: false,
+      isGroup: true,
+      readList: [],
+      unReadNum: 0,
+      userDetailInfo: {},
+      lastMsg: {},
+      groupDetailInfo: data.body.groupDetailInfo,
+    };
+
+    store.commit('SET_MSGLISTITEM', { res: item });
+  }
+}
+
 const store = useStore(key);
 const emit = defineEmits(['toggleBox', 'changeTag', 'selectGroupMember']);
 const msgWindow: Ref<HTMLDivElement> = ref() as Ref<HTMLDivElement>;
 
 // 显示用户详情
-const showUserInfo = (uid: number) => {
-  emit('toggleBox', uid);
-  emit('changeTag', Etag.UserInfo);
+const showUserInfo = async (uid: number, type?: number) => {
+  // 群名片
+  if (type) {
+    console.log(uid);
+    await getGroupInfo(store, uid);
+    emit('toggleBox', uid);
+    emit('changeTag', Etag.GroupInfo);
+  } else {
+    emit('toggleBox', uid);
+    emit('changeTag', Etag.UserInfo);
+  }
 };
 const { t } = useI18n();
 const style = ref({
