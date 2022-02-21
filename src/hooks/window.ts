@@ -237,8 +237,6 @@ const useSendImg = (
   nextTick?: any,
 ) => {
   return async (type: string) => {
-    console.log(type);
-
     if (type === 'sayHello') {
       const res = {
         msgInfo: {
@@ -548,6 +546,8 @@ const switchMsg = (
       return t('[位置]');
     case 'groupAtInfo':
       return (item.msgContent.groupAtInfo as IGroupAtInfo).stringContent;
+    case 'videoMsgInfo':
+      return t('[视频]');
     default:
       return '';
   }
