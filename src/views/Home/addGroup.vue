@@ -33,7 +33,6 @@
 </template>
 <script lang="ts">
 import { computed, defineComponent } from 'vue';
-import { cloneDeep } from 'lodash';
 import Table from '@/components/Table/index.vue';
 import Iconfont from '../../iconfont/index.vue';
 import { ref, Ref } from 'vue';
@@ -86,7 +85,46 @@ async function useGetContactList(store: Store<initStore>) {
     list.sort((a: any, b: any) => a.tag.charCodeAt() - b.tag.charCodeAt());
     store.commit('SET_CONTACT', list);
   }
-  return [...list].map((e: any) => cloneDeep(e));
+  return [...list].map((e: any) => deepClone(e));
+}
+
+function deepClone(obj: any) {
+  var _toString = Object.prototype.toString;
+  // null, undefined, non-object, function
+  if (!obj || typeof obj !== 'object') {
+    return obj;
+  }
+  // DOM Node
+  if (obj.nodeType && 'cloneNode' in obj) {
+    return obj.cloneNode(true);
+  }
+  // Date
+  if (_toString.call(obj) === '[object Date]') {
+    return new Date(obj.getTime());
+  }
+  // RegExp
+  if (_toString.call(obj) === '[object RegExp]') {
+    var flags = [];
+    if (obj.global) {
+      flags.push('g');
+    }
+    if (obj.multiline) {
+      flags.push('m');
+    }
+    if (obj.ignoreCase) {
+      flags.push('i');
+    }
+    return new RegExp(obj.source, flags.join(''));
+  }
+  var result = Array.isArray(obj)
+    ? []
+    : obj.constructor
+    ? new obj.constructor()
+    : {};
+  for (var key in obj) {
+    result[key] = deepClone(obj[key]);
+  }
+  return result;
 }
 
 // 确定
