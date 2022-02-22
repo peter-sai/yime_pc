@@ -3,6 +3,7 @@ module.exports = {
   publicPath: './',
   // 输出文件目录
   outputDir: 'build/vue-build',
+  productionSourceMap: false,
   devServer: {
     port: 8000,
     // https: true,

@@ -335,7 +335,7 @@ const getType = (lastMsg: IMsgInfo<TMsgContent>, item: ImsgItem) => {
   if (lastMsg.isGroupMsg) {
     return switchMsg(lastMsg, t, store, {} as IUserInfo, [], item);
   } else {
-    return switchMsg(lastMsg, t, store, item.userDetailInfo.userInfo);
+    return switchMsg(lastMsg, t, store, item?.userDetailInfo?.userInfo || []);
   }
 };
 

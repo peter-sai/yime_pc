@@ -333,6 +333,7 @@ const stop = watch(
         );
         msgList[store.state.activeUid!].readList = newList;
         store.commit('SET_MSGLIST', msgList);
+        setMsgList(store.state.msgList);
       }
       console.log('推送消息', data);
       // 发送ack
