@@ -142,10 +142,10 @@ function useReg(
     });
 
     if (data.body.resultCode === 0) {
-      // 初始化融云
-      initRonyun(store);
       // 保存数据到本地
       saveData(data, store);
+      // 初始化融云
+      initRonyun(store);
 
       return goTo('/Home/Message');
     }
