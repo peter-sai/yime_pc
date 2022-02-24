@@ -594,17 +594,34 @@ const forward = (msgId: number) => {
 
 // 开始音视频
 const call = async (item: any) => {
-  if (!store.state.rongIm) return Toast('融云服务初始化失败');
-  if (!store.state.activeIsGroup) {
-    // 单聊
-    MediaAudio({
-      isCall: true,
-      mediaType: item.videoType,
-      yUserInfo: props.yUserInfo,
-    });
+  const data = await store.dispatch('postMsg', {
+    query: {
+      functionId: 20010,
+      objectId: store.state.activeUid,
+    },
+    cmd: 1189,
+    encryption: 'Aoelailiao.Login.UserCheckFunctionPrivilegeReq',
+    auth: true,
+  });
+  if (data?.body?.functionState === 1) {
+    const mediaNode = document.getElementById('media')!;
+    if (mediaNode.hasChildNodes()) {
+      return Toast(t('正在通话中'));
+    }
+    if (!store.state.rongIm) return Toast('融云服务初始化失败');
+    if (!store.state.activeIsGroup) {
+      // 单聊
+      MediaAudio({
+        isCall: true,
+        mediaType: item.videoType,
+        yUserInfo: props.yUserInfo,
+      });
+    } else {
+      // 群聊
+      emit('selectGroupMember', item.videoType);
+    }
   } else {
-    // 群聊
-    emit('selectGroupMember', item.videoType);
+    return Toast(t('发送者无权限'));
   }
 };
 

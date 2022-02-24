@@ -144,8 +144,6 @@ const submit = async () => {
     forwardMsgIds: [store.state.forwardMsgId],
     forwardMsg,
   };
-  console.log(res);
-
   const data = await store.dispatch('postMsg', {
     query: res,
     cmd: 2055,

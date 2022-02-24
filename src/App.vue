@@ -198,10 +198,7 @@ if (Notification.permission !== 'granted') {
 }
 
 const init = async () => {
-  // const url = 'ws://16.163.55.202:8002'; // yime测试
-  // const url = 'ws://18.167.158.191:8003'; // duomi正式
-  // const url = 'wss://ws.yime.app';
-  const url = 'wss://ws-test.yime.app'; // yime 测试
+  const url = 'ws://18.167.158.191:8003'; // duomi正式
   let ws = new WebSocket(url);
   store.commit('SET_ISONLINE', '连接中...');
   store.commit('SET_WS', ws);
@@ -321,10 +318,14 @@ const stop = watch(
       // 处理撤回消息
       if (msgInfos[0].msgContent.msgContent === 'revokeInfo') {
         const { revokeMsgId } = msgInfos[0].msgContent.revokeInfo;
-        const revokeKey = msgList[msgInfos[0].toId].readList.findIndex(
+        let readList =
+          msgList[msgInfos[0].toId]?.readList ||
+          msgList[msgInfos[0].fromId]?.readList ||
+          [];
+        const revokeKey = readList.findIndex(
           (e: any) => Number(e.msgId) === Number(revokeMsgId),
         );
-        msgList[msgInfos[0].toId].readList.splice(revokeKey, 1);
+        readList.splice(revokeKey, 1);
         store.commit('SET_MSGLIST', msgList);
       }
 

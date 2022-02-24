@@ -32,18 +32,14 @@
       <div class="main">
         <Table
           v-if="!yUserInfo?.isBotUser"
-          :title="
-            onlineInfo?.onlineState || onLineStatus.onlineState
-              ? '在线'
-              : '离线'
-          "
+          :title="onLineStatus.onlineState ? '在线' : '离线'"
           hide-more
         >
           <template v-slot:left>
             <div
               class="point"
               :class="{
-                onLine: onlineInfo?.onlineState || onLineStatus.onlineState,
+                onLine: onLineStatus.onlineState,
               }"
             />
           </template>
@@ -333,9 +329,6 @@ const props = defineProps({
     type: Object as PropType<IUserInfo>,
     required: true,
   },
-  onlineInfo: {
-    type: Object as PropType<IUserInfo>,
-  },
 });
 
 const store = useStore(key);
@@ -391,6 +384,8 @@ const send = () => {
 
 // 获取用户在线状态
 const getOnLineStatus = async () => {
+  console.log(props.yUserInfo);
+
   const res = {
     userOnlineState: {
       uid: props.yUserInfo.uid,
@@ -404,9 +399,7 @@ const getOnLineStatus = async () => {
   });
   onLineStatus.value = data.body?.userOnlineState || {};
 };
-if (!props.onlineInfo) {
-  getOnLineStatus();
-}
+getOnLineStatus();
 </script>
 <style lang="scss" scoped>
 @import '@/style/base.scss';

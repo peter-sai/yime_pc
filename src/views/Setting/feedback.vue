@@ -10,7 +10,7 @@
         </div>
       </div>
     </div>
-    <input ref="changUserImg" type="file" hidden accept="image/*" />
+    <input ref="changUserImg" type="file" hidden accept="image/*,video/*" />
   </div>
 </template>
 <script lang="ts">

@@ -9,7 +9,33 @@ const winURL =
     ? `http://localhost:8000`
     : path.join('file://', __dirname, 'index.html');
 function createWindow() {
-  Menu.setApplicationMenu(Menu.buildFromTemplate([]));
+  // Menu.setApplicationMenu(Menu.buildFromTemplate([]));
+  if (process.platform === 'darwin') {
+    const template = [
+      {
+        label: 'Application',
+        submenu: [
+          {
+            label: 'Quit',
+            accelerator: 'Command+Q',
+            click: function () {
+              app.quit();
+            },
+          },
+        ],
+      },
+      {
+        label: 'Edit',
+        submenu: [
+          { label: 'Copy', accelerator: 'CmdOrCtrl+C', selector: 'copy:' },
+          { label: 'Paste', accelerator: 'CmdOrCtrl+V', selector: 'paste:' },
+        ],
+      },
+    ];
+    Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+  } else {
+    Menu.setApplicationMenu(null);
+  }
   // 创建浏览器窗口
   const win = new BrowserWindow({
     icon: path.join(__dirname, 'img/ico.ico'),
