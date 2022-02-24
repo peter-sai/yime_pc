@@ -718,7 +718,6 @@ const initRongConnect = async (
     uid: userInfo.uid,
     name: userInfo.nickname,
     portrait: userInfo.icon,
-    type: 'domi',
   });
 
   RongIMLib.connect(res.token).then(
