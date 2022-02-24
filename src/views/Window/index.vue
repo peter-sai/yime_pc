@@ -58,7 +58,7 @@
           <!-- 用户资料 -->
           <UserInfo
             :userDetailInfo="userDetailInfo"
-            :yUserInfo="userInfo"
+            :yUserInfo="yUserInfo"
             :onlineInfo="onlineInfo"
             @toggleBox="toggleBox"
             @changeTag="changeTag"
@@ -161,7 +161,7 @@ const useGetDetail = async (
 ) => {
   if (!store.state.activeUid) return;
 
-  let msgItem: ImsgItem = store.state.msgList[store.state.userUid!];
+  let msgItem: ImsgItem = store.state.msgList[store.state.activeUid!];
 
   // 如果不存在则获取 (单聊不在聊天列表中会没有信息)
   if (!msgItem) {
@@ -227,7 +227,6 @@ const { t } = useI18n();
 const writeState = ref(0); //0--结束输入(未输入), 1--正在输入
 const store = useStore(key);
 const yUserInfo: Ref<IUserInfo> = ref({}) as Ref<IUserInfo>; // 当前聊天用户信息
-const userInfo: Ref<IUserInfo> = ref({}) as Ref<IUserInfo>; // 需要显示详情用户的信息
 const userDetailInfo: Ref<IUserDetailInfo> = ref({}) as Ref<IUserDetailInfo>; // 需要显示详情用户的信息
 const isBotUser = ref(false);
 const onlineInfo: Ref<IUserInfo> = ref({}) as Ref<IUserInfo>;
@@ -237,7 +236,7 @@ const groupDetailInfo: ComputedRef<IGroupInfo> = computed(
 );
 
 // 文件选择类型
-const accept = ref('image/*');
+const accept = ref('image/*,video/*');
 const changUserImg: Ref<HTMLInputElement | null> = ref(null);
 
 // 是否显示右侧
@@ -263,9 +262,10 @@ const toggleBox = async (uid?: number) => {
     msgItem = data.body;
   }
   userDetailInfo.value = msgItem?.userDetailInfo || {};
-  userInfo.value = msgItem?.userDetailInfo?.userInfo || {};
+  yUserInfo.value = msgItem?.userDetailInfo?.userInfo || {};
   showBox.value = !showBox.value;
   const newMsgItem: ImsgItem = store.state.msgList[store.state.userUid!];
+  if (!newMsgItem) return;
   newMsgItem.userDetailInfo = msgItem?.userDetailInfo;
   store.commit('SET_MSGLISTITEM', {
     uid: store.state.userUid,

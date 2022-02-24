@@ -62,14 +62,19 @@
             }}</span>
           </template>
           <template v-slot:userImg>
-            <div class="userImg" v-if="item.isGroup">
-              {{
-                item.groupDetailInfo.groupName
-                  ? item.groupDetailInfo.groupName
-                      .substr(0, 1)
-                      .toLocaleUpperCase()
-                  : ''
-              }}
+            <div v-if="item.isGroup">
+              <div class="userImg" v-if="item.groupDetailInfo.groupIcon">
+                <img :src="item.groupDetailInfo.groupIcon" alt="" />
+              </div>
+              <div class="userImg" v-else>
+                {{
+                  item.groupDetailInfo.groupName
+                    ? item.groupDetailInfo.groupName
+                        .substr(0, 1)
+                        .toLocaleUpperCase()
+                    : ''
+                }}
+              </div>
             </div>
             <div class="userImg" v-else>
               <Iconfont

@@ -318,10 +318,14 @@ const stop = watch(
       // 处理撤回消息
       if (msgInfos[0].msgContent.msgContent === 'revokeInfo') {
         const { revokeMsgId } = msgInfos[0].msgContent.revokeInfo;
-        const revokeKey = msgList[msgInfos[0].toId].readList.findIndex(
+        let readList =
+          msgList[msgInfos[0].toId]?.readList ||
+          msgList[msgInfos[0].fromId]?.readList ||
+          [];
+        const revokeKey = readList.findIndex(
           (e: any) => Number(e.msgId) === Number(revokeMsgId),
         );
-        msgList[msgInfos[0].toId].readList.splice(revokeKey, 1);
+        readList.splice(revokeKey, 1);
         store.commit('SET_MSGLIST', msgList);
       }
 

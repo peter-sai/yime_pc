@@ -12,6 +12,7 @@
       :icon="groupDetailInfo.groupIcon"
       @toggleBox="toggleBox"
       @changeTag="changeTag"
+      :isShowRight="groupDetailInfo.groupState === 1"
     />
 
     <!-- 消息内容 -->
@@ -26,10 +27,11 @@
     </div>
 
     <Bottom
+      v-if="groupDetailInfo.groupState === 1"
       v-model="inputVal"
       :groupDetailInfo="groupDetailInfo.groupId ? groupDetailInfo : undefined"
       :isGroupMember="
-        groupDetailInfo.groupMemberLists.memberUserInfos.some(
+        (groupDetailInfo?.groupMemberLists?.memberUserInfos || []).some(
           (e) => Number(e.memberUid) === Number(store.state.userInfo.uid),
         )
       "
@@ -198,6 +200,7 @@ async function getGroupInfo(store: Store<initStore>) {
 
     msgItem.value = data.body;
 
+    console.log(data.body.groupDetailInfo);
     const item = {
       id: data.body.groupDetailInfo.groupId,
       isBotUser: false,
@@ -296,7 +299,7 @@ watch(
 const inputVal = ref('');
 
 // 文件选择类型
-const accept = ref('image/*');
+const accept = ref('image/*,video/*');
 const changUserImg: Ref<HTMLInputElement | null> = ref(null);
 
 const cbImg = useCbImg(store, accept, t, 1);

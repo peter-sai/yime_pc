@@ -20,7 +20,7 @@
           <div class="subTitle">{{ subTitle }}</div>
         </div>
       </div>
-      <div class="headerRight">
+      <div class="headerRight" v-if="isShowRight">
         <Iconfont @click="rightClick" name="icondiandian" size="20" />
       </div>
     </div>
@@ -65,6 +65,9 @@ const props = defineProps({
       groupId: number;
       userId: number[];
     }>,
+  },
+  isShowRight: {
+    type: Boolean,
   },
 });
 const { t } = useI18n();

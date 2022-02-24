@@ -185,6 +185,7 @@
           <Ylink
             v-if="isShowHowComponent(item)"
             @menuClick="menuClick($event, item)"
+            @click="showUserInfo(getUserInfo(item).uid)"
             :userInfo="getUserInfo(item)"
             :groupDetailInfo="groupDetailInfo"
             :url="item.msgContent.linkUrlInfo.url"
@@ -194,6 +195,20 @@
             @menuClick="menuClick($event, item)"
             :isRead="item.msgId <= readMsgId"
             :url="item.msgContent.linkUrlInfo.url"
+          />
+        </div>
+        <!-- 视频文件 -->
+        <div class="item" v-else-if="item.type === 'videoMsgInfo'">
+          <YVideoFile
+            v-if="isShowHowComponent(item)"
+            @click="showUserInfo(getUserInfo(item).uid)"
+            :userInfo="getUserInfo(item)"
+            :videoMsgInfo="item.msgContent.videoMsgInfo"
+          />
+          <MVideoFile
+            v-else
+            :isRead="item.msgId <= readMsgId"
+            :videoMsgInfo="item.msgContent.videoMsgInfo"
           />
         </div>
         <!-- 系统消息 -->
@@ -290,6 +305,8 @@ import MVideo from '@/components/Message/MVideo/index.vue';
 import YVideo from '@/components/Message/YVideo/index.vue';
 import Ylink from '@/components/Message/Ylink/index.vue';
 import Mlink from '@/components/Message/Mlink/index.vue';
+import YVideoFile from '@/components/Message/YVideoFile/index.vue';
+import MVideoFile from '@/components/Message/MVideoFile/index.vue';
 import Iconfont from '../../iconfont/index.vue';
 import { Store, useStore } from 'vuex';
 import { initStore, key } from '@/store';
@@ -355,7 +372,6 @@ const msgWindow: Ref<HTMLDivElement> = ref() as Ref<HTMLDivElement>;
 const showUserInfo = async (uid: number, type?: number) => {
   // 群名片
   if (type) {
-    console.log(uid);
     await getGroupInfo(store, uid);
     emit('toggleBox', uid);
     emit('changeTag', Etag.GroupInfo);
@@ -578,17 +594,34 @@ const forward = (msgId: number) => {
 
 // 开始音视频
 const call = async (item: any) => {
-  if (!store.state.rongIm) return Toast('融云服务初始化失败');
-  if (!store.state.activeIsGroup) {
-    // 单聊
-    MediaAudio({
-      isCall: true,
-      mediaType: item.videoType,
-      yUserInfo: props.yUserInfo,
-    });
+  const data = await store.dispatch('postMsg', {
+    query: {
+      functionId: 20010,
+      objectId: store.state.activeUid,
+    },
+    cmd: 1189,
+    encryption: 'Aoelailiao.Login.UserCheckFunctionPrivilegeReq',
+    auth: true,
+  });
+  if (data?.body?.functionState === 1) {
+    const mediaNode = document.getElementById('media')!;
+    if (mediaNode.hasChildNodes()) {
+      return Toast(t('正在通话中'));
+    }
+    if (!store.state.rongIm) return Toast('融云服务初始化失败');
+    if (!store.state.activeIsGroup) {
+      // 单聊
+      MediaAudio({
+        isCall: true,
+        mediaType: item.videoType,
+        yUserInfo: props.yUserInfo,
+      });
+    } else {
+      // 群聊
+      emit('selectGroupMember', item.videoType);
+    }
   } else {
-    // 群聊
-    emit('selectGroupMember', item.videoType);
+    return Toast(t('发送者无权限'));
   }
 };
 

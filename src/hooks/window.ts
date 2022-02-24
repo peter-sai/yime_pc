@@ -210,8 +210,6 @@ const useEnter = (
         },
       };
     }
-    console.log(res);
-
     const data = await store.dispatch('postMsg', {
       query: res,
       cmd: 2001,
@@ -237,8 +235,6 @@ const useSendImg = (
   nextTick?: any,
 ) => {
   return async (type: string) => {
-    console.log(type);
-
     if (type === 'sayHello') {
       const res = {
         msgInfo: {
@@ -268,11 +264,11 @@ const useSendImg = (
         Toast(t(data.body.resultString));
       }
     } else if (type === 'img') {
-      accept!.value = 'image/*';
+      accept!.value = 'image/*,video/*';
       await nextTick();
       changUserImg.value.click();
     } else if (type === 'file') {
-      accept!.value = '.xls,.doc,.docx,.txt,.pdf';
+      accept!.value = '.xls,.doc,.docx,.txt,.pdf,video/*';
       await nextTick();
       changUserImg.value.click();
     }
@@ -292,7 +288,7 @@ const useCbImg = (
       url: string;
     } | null;
     let res = {};
-    if (accept.value === 'image/*') {
+    if (accept.value === 'image/*,video/*') {
       // 图片
       const size = (await getSize(file)) as { width: number; height: number };
       res = {
@@ -548,6 +544,8 @@ const switchMsg = (
       return t('[位置]');
     case 'groupAtInfo':
       return (item.msgContent.groupAtInfo as IGroupAtInfo).stringContent;
+    case 'videoMsgInfo':
+      return t('[视频]');
     default:
       return '';
   }
@@ -720,6 +718,7 @@ const initRongConnect = async (
     uid: userInfo.uid,
     name: userInfo.nickname,
     portrait: userInfo.icon,
+    type: 'domi',
   });
 
   RongIMLib.connect(res.token).then(

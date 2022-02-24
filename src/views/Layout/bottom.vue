@@ -385,10 +385,9 @@ const onInput = async (e: any) => {
 
 // 获取群成员详情
 async function getGroupMemberUserInfos() {
-  const groupMemberUids =
-    props.groupDetailInfo?.groupMemberLists.memberUserInfos.map(
-      (e) => e.memberUid,
-    );
+  const groupMemberUids = (
+    props.groupDetailInfo?.groupMemberLists?.memberUserInfos || []
+  ).map((e) => e.memberUid);
   const res = await store.dispatch('postMsg', {
     query: { uid: groupMemberUids },
     cmd: 1115,
