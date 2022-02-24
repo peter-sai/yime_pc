@@ -35,7 +35,7 @@
         <div class="title">{{ groupDetailInfo?.groupName }}</div>
         <div class="subTitle">
           {{
-            groupDetailInfo?.groupNoticeInfo.groupNoticeContent ||
+            groupDetailInfo?.groupNoticeInfo?.groupNoticeContent ||
             t('暂无群公告')
           }}
         </div>
@@ -51,7 +51,7 @@
               <Switch
                 :beforeChange="beforeMsgNotdisturb"
                 :switch="
-                  !Boolean(groupDetailInfo?.groupAttachInfo.groupMsgMute)
+                  !Boolean(groupDetailInfo?.groupAttachInfo?.groupMsgMute)
                 "
               />
             </template>
@@ -63,7 +63,7 @@
             <template v-slot:right>
               <Switch
                 :beforeChange="beforeTop"
-                :switch="Boolean(groupDetailInfo?.groupAttachInfo.groupTop)"
+                :switch="Boolean(groupDetailInfo?.groupAttachInfo?.groupTop)"
               />
             </template>
           </Table>
@@ -85,8 +85,8 @@
           </Table>
           <Table
             v-if="
-              props.groupDetailInfo?.groupAttachInfo.groupInviteState !== 1 &&
-              props.groupDetailInfo?.groupAttachInfo.groupInviteState !== 2
+              props.groupDetailInfo?.groupAttachInfo?.groupInviteState !== 1 &&
+              props.groupDetailInfo?.groupAttachInfo?.groupInviteState !== 2
             "
             title="群链接"
             class="copyGroup"
@@ -101,7 +101,9 @@
           </Table>
           <Table
             title="邀请链接"
-            v-if="props.groupDetailInfo?.groupAttachInfo.groupInviteState !== 2"
+            v-if="
+              props.groupDetailInfo?.groupAttachInfo?.groupInviteState !== 2
+            "
           >
             <template v-slot:left>
               <Iconfont name="iconbianzu6" size="15" />
@@ -128,7 +130,7 @@
         </div>
         <div
           class="info"
-          v-if="props.groupDetailInfo?.groupAttachInfo.groupInviteState !== 2"
+          v-if="props.groupDetailInfo?.groupAttachInfo?.groupInviteState !== 2"
         >
           {{ t('邀请链接复制后60分钟有效') }}
         </div>
@@ -201,7 +203,7 @@ import ClipboardJS from 'clipboard';
 import { Toast } from '@/plugin/Toast';
 import { getMsgList, getStorage, getTag, setMsgList } from '@/utils/utils';
 import {
-  groupInviteState,
+  groupInviteState as getGroupInviteState,
   useUserOperateGroupInfo,
   useBeforeSwitch,
 } from '@/hooks/window';
@@ -219,7 +221,7 @@ async function getGroupMemberUserInfos(
   }>,
 ) {
   const groupMemberUids =
-    props.groupDetailInfo?.groupMemberLists.memberUserInfos.map(
+    props.groupDetailInfo?.groupMemberLists?.memberUserInfos.map(
       (e) => e.memberUid,
     );
   const res = await store.dispatch('postMsg', {
@@ -282,7 +284,6 @@ const props = defineProps({
     type: Object as PropType<IGroupInfo>,
   },
 });
-console.log(props.groupDetailInfo);
 
 const emit = defineEmits(['changeTag', 'toggleBox']);
 
@@ -296,18 +297,19 @@ const inGroupType = ref('');
 const groupAttachInfo: Ref<IGroupAttachInfo> = ref({}) as Ref<IGroupAttachInfo>;
 groupAttachInfo.value = props.groupDetailInfo
   ?.groupAttachInfo as IGroupAttachInfo;
-inGroupType.value = groupInviteState(
-  props.groupDetailInfo?.groupAttachInfo.groupInviteState,
+inGroupType.value = getGroupInviteState(
+  props.groupDetailInfo?.groupAttachInfo?.groupInviteState,
   t,
 );
 
 // 群管理员
-const adminUidList = props.groupDetailInfo?.groupMemberLists.adminUidList || [];
+const adminUidList =
+  props.groupDetailInfo?.groupMemberLists?.adminUidList || [];
 // 判断是否是群主
 const userInfo = store.state.userInfo;
 if (
   Number(userInfo.uid) ===
-  Number(props.groupDetailInfo?.groupMemberLists.rootUid)
+  Number(props.groupDetailInfo?.groupMemberLists?.rootUid)
 ) {
   isRoot.value = true;
 }

@@ -70,6 +70,7 @@ import { md5 } from '@/utils/utils';
 import { saveData } from '@/api/app';
 import { Store, useStore } from 'vuex';
 import { initStore, key } from '@/store';
+import { initRonyun } from '@/App.vue';
 const { t } = useI18n();
 
 const store = useStore(key);
@@ -139,6 +140,8 @@ function useReg(
     });
 
     if (data.body.resultCode === 0) {
+      // 初始化融云
+      initRonyun(store);
       // 保存数据到本地
       saveData(data, store);
 

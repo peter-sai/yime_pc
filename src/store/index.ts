@@ -11,6 +11,7 @@ import { useGetOfflineMsg } from '@/api/app';
 import { IMsgInfo, ImsgItem, TMsgContent } from '@/types/msg';
 import { IUserDetailInfo } from '@/types/user';
 import { useClientSendMsgAckToServer, mergeData } from '@/hooks/window';
+import { hideLoading } from '@/plugin/Loading';
 
 const OSS = require('ali-oss');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -587,9 +588,12 @@ function getMessage(cmd: any, encryption: any, state: any) {
 
         if (query.cmd - cmd === 1) {
           resolve(query);
+        } else {
+          hideLoading();
         }
       } catch (error) {
         console.log(error);
+        hideLoading();
         reject(error);
       }
     };
