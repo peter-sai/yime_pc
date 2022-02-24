@@ -161,7 +161,7 @@ const useGetDetail = async (
 ) => {
   if (!store.state.activeUid) return;
 
-  let msgItem: ImsgItem = store.state.msgList[store.state.userUid!];
+  let msgItem: ImsgItem = store.state.msgList[store.state.activeUid!];
 
   // 如果不存在则获取 (单聊不在聊天列表中会没有信息)
   if (!msgItem) {
@@ -237,7 +237,7 @@ const groupDetailInfo: ComputedRef<IGroupInfo> = computed(
 );
 
 // 文件选择类型
-const accept = ref('image/*');
+const accept = ref('image/*,video/*');
 const changUserImg: Ref<HTMLInputElement | null> = ref(null);
 
 // 是否显示右侧
@@ -266,6 +266,7 @@ const toggleBox = async (uid?: number) => {
   userInfo.value = msgItem?.userDetailInfo?.userInfo || {};
   showBox.value = !showBox.value;
   const newMsgItem: ImsgItem = store.state.msgList[store.state.userUid!];
+  if (!newMsgItem) return;
   newMsgItem.userDetailInfo = msgItem?.userDetailInfo;
   store.commit('SET_MSGLISTITEM', {
     uid: store.state.userUid,

@@ -38,7 +38,7 @@ import { useI18n } from 'vue-i18n';
 export async function initRonyun(store: Store<initStore>) {
   // IM 客户端初始化
   const RongCallLib = RongIMLib.init({
-    appkey: 'tdrvipkst22v5',
+    appkey: 'pgyu6atqpunsu',
   });
   // 监听消息 用来处理是否显示加入音视频按钮
   console.log(RongCallLib);
@@ -322,10 +322,14 @@ const stop = watch(
       // 处理撤回消息
       if (msgInfos[0].msgContent.msgContent === 'revokeInfo') {
         const { revokeMsgId } = msgInfos[0].msgContent.revokeInfo;
-        const revokeKey = msgList[msgInfos[0].toId].readList.findIndex(
+        let readList =
+          msgList[msgInfos[0].toId]?.readList ||
+          msgList[msgInfos[0].fromId]?.readList ||
+          [];
+        const revokeKey = readList.findIndex(
           (e: any) => Number(e.msgId) === Number(revokeMsgId),
         );
-        msgList[msgInfos[0].toId].readList.splice(revokeKey, 1);
+        readList.splice(revokeKey, 1);
         store.commit('SET_MSGLIST', msgList);
       }
 
