@@ -39,15 +39,12 @@
             <Iconfont name="iconzhihangfankui" size="20" color="#2B2C33" />
           </template>
         </Table>
-        <Table :title="t('关于MOMO')" @click="goLink('https://mm089.com/home')">
+        <Table :title="t('关于MOMO')" @click="goLink('https://momo886.com')">
           <template v-slot:left>
             <Iconfont name="iconguanyu" size="20" color="#2B2C33" />
           </template>
         </Table>
-        <Table
-          :title="t('下载手机APP')"
-          @click="goLink('https://mm089.com/home')"
-        >
+        <Table :title="t('下载手机APP')" @click="goLink('http://momo886.com')">
           <template v-slot:left>
             <Iconfont name="iconshoujihaoma1" size="20" color="#2B2C33" />
           </template>

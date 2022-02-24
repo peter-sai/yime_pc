@@ -10,7 +10,7 @@
     "iconfont-create": "npx iconfont-create && npm run lint",
     "electron": "cross-env NODE_ENV=development electron .",
     "electron-dev": "nodemon electron/config/electron-run-dev.js",
-    "electron-build": "vue-cli-service build && node electron/config/electron-build-pro.js && electron-builder --dir"
+    "electron-build": "vue-cli-service build && node electron/config/electron-build-pro.js && electron-builder --dir -mw"
   },
   "build": {
     "productName": "MOMO",
