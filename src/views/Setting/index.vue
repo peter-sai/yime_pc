@@ -39,15 +39,12 @@
             <Iconfont name="iconzhihangfankui" size="20" color="#2B2C33" />
           </template>
         </Table>
-        <Table :title="t('关于YIME')" @click="goLink('https://yime.app/home')">
+        <Table :title="t('关于YIME')" @click="goLink('https://yime.app')">
           <template v-slot:left>
             <Iconfont name="iconguanyu" size="20" color="#2B2C33" />
           </template>
         </Table>
-        <Table
-          :title="t('下载手机APP')"
-          @click="goLink('https://yime.app/home')"
-        >
+        <Table :title="t('下载手机APP')" @click="goLink('https://yime.app')">
           <template v-slot:left>
             <Iconfont name="iconshoujihaoma1" size="20" color="#2B2C33" />
           </template>

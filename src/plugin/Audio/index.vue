@@ -18,6 +18,7 @@
           v-else
           style="display: inline-block"
           name="iconlianxiren"
+          color="#A8B5BE"
           size="75"
         />
       </div>
@@ -110,11 +111,13 @@ import {
   ref,
   Ref,
   PropType,
+  onUnmounted,
 } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Store, useStore } from 'vuex';
 import Iconfont from '../../iconfont/index.vue';
 import { Toast } from '../Toast';
+import basicTones from '../../assets/audio/basic_tones.mp3';
 export default defineComponent({
   name: 'Midea',
 });
@@ -130,6 +133,7 @@ const init = async (
   hungup: () => void,
   videoCallActionUploadReq: (num: number) => void,
   t: { (key: string | number): string },
+  pause: () => void,
 ) => {
   // 发送者
   const { session } = await (store.state.rongIm as any).call({
@@ -159,6 +163,7 @@ const init = async (
         // 对方接听
         // 开始倒计时
         startTimeOut();
+        pause();
         conversationIng.value = true;
         console.log('发起者', 'onAccept');
       },
@@ -232,6 +237,10 @@ const init = async (
 };
 </script>
 <script lang="ts" setup>
+const audio = new Audio();
+audio.src = basicTones;
+audio.loop = true;
+audio.play();
 const props = defineProps({
   destroy: {
     type: Function,
@@ -294,6 +303,7 @@ onMounted(async () => {
       hungup,
       videoCallActionUploadReq,
       t,
+      pause,
     );
   } else {
     // 接听方
@@ -322,6 +332,7 @@ onMounted(async () => {
         const { userId } = sender;
         startTimeOut();
         conversationIng.value = true;
+        pause();
         console.log('接听者', 'onAccept');
       },
 
@@ -420,12 +431,14 @@ const accept = () => {
   isAnswer.value = true;
   conversationIng.value = true;
   startTimeOut();
+  pause();
 };
 
 // 挂断
 const hungup = async (num?: number) => {
   sessionRoot.value.hungup();
   close();
+  pause();
   if (props.isCall && !conversationIng.value && num === 1) {
     videoCallActionUploadReq(21);
   }
@@ -454,6 +467,14 @@ const close = () => {
 const changeAudio = () => {
   sessionRoot.value.descendAbility();
   isAudio.value = true;
+};
+
+onUnmounted(() => {
+  pause();
+});
+
+const pause = () => {
+  audio.pause();
 };
 </script>
 

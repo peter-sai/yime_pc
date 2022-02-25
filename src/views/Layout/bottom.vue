@@ -207,6 +207,8 @@ import { getStorage, setStorage } from '@/utils/utils';
 import send from '/public/img/send.svg';
 import { MediaAudio } from '@/plugin/Audio';
 import Recorder from 'Recorder';
+import { initRonyun } from '@/App.vue';
+import { initOss } from '../../hooks/window';
 import {
   defineComponent,
   ref,
@@ -268,6 +270,7 @@ function useInput(
 </script>
 <script setup lang="ts">
 import Table from '@/components/Table/index.vue';
+import { hideLoading, showLoading } from '@/plugin/Loading';
 const input: Ref<HTMLInputElement | null> = ref(null);
 const store = useStore(key);
 const { t } = useI18n();
@@ -442,12 +445,28 @@ const start = async (mediaType: number) => {
     if (mediaNode.hasChildNodes()) {
       return Toast(t('正在通话中'));
     }
-    if (!store.state.rongIm) return Toast('融云服务初始化失败');
-    if (!store.state.activeIsGroup) {
-      MediaAudio({ isCall: true, mediaType, yUserInfo: props.yUserInfo });
+    if (!store.state.rongIm) {
+      try {
+        showLoading();
+        await initRonyun(store);
+        if (!store.state.activeIsGroup) {
+          MediaAudio({ isCall: true, mediaType, yUserInfo: props.yUserInfo });
+        } else {
+          // 群聊
+          emit('selectGroupMember', mediaType);
+        }
+      } catch (error) {
+        console.log(error);
+        return Toast(t('服务初始化失败'));
+      }
+      hideLoading();
     } else {
-      // 群聊
-      emit('selectGroupMember', mediaType);
+      if (!store.state.activeIsGroup) {
+        MediaAudio({ isCall: true, mediaType, yUserInfo: props.yUserInfo });
+      } else {
+        // 群聊
+        emit('selectGroupMember', mediaType);
+      }
     }
   } else {
     return Toast(t('发送者无权限'));
@@ -538,6 +557,9 @@ function stop() {
 
 // 发送
 async function sendRec(duration: number) {
+  if (!store.state.client.userAgent) {
+    await initOss(store);
+  }
   let obj: any = {};
   if (audioTime.value <= 59) {
     obj = await stop();
@@ -546,42 +568,46 @@ async function sendRec(duration: number) {
   }
 
   const { audioFile, name } = obj;
+  showLoading();
+  try {
+    let info: any = await store.state.client.put(name, audioFile);
+    const userInfo = JSON.parse(getStorage('userInfo'));
+    const isGroupMsg = store.state.activeIsGroup ? 1 : 0;
 
-  let info: any = await store.state.client.put(name, audioFile);
-  const userInfo = JSON.parse(getStorage('userInfo'));
-  const isGroupMsg = store.state.activeIsGroup ? 1 : 0;
-
-  const res = {
-    msgInfo: {
-      isGroupMsg,
-      fromId: userInfo.uid,
-      toId: Number(store.state.activeUid),
-      msgShowType: 1,
-      isEncrypt: 0,
-      msgContent: {
-        msgContentType: 3,
-        msgContent: 'voiceMsg',
-        voiceMsg: {
-          voiceTime: duration,
-          voiceUrl: info.url,
+    const res = {
+      msgInfo: {
+        isGroupMsg,
+        fromId: userInfo.uid,
+        toId: Number(store.state.activeUid),
+        msgShowType: 1,
+        isEncrypt: 0,
+        msgContent: {
+          msgContentType: 3,
+          msgContent: 'voiceMsg',
+          voiceMsg: {
+            voiceTime: duration,
+            voiceUrl: info.url,
+          },
         },
+        type: 'voiceMsg',
+        // attachInfo: {
+        //   msgSource: route.query.msgSource,
+        // },
       },
-      type: 'voiceMsg',
-      // attachInfo: {
-      //   msgSource: route.query.msgSource,
-      // },
-    },
-  };
-
-  const data = await store.dispatch('postMsg', {
-    query: res,
-    cmd: 2001,
-    encryption: 'Aoelailiao.Message.ClientSendMsgToServerReq',
-    auth: true,
-  });
-  if (data.body.resultCode !== 0) {
-    Toast(t(data.body.resultString));
+    };
+    const data = await store.dispatch('postMsg', {
+      query: res,
+      cmd: 2001,
+      encryption: 'Aoelailiao.Message.ClientSendMsgToServerReq',
+      auth: true,
+    });
+    if (data.body.resultCode !== 0) {
+      Toast(t(data.body.resultString));
+    }
+  } catch (error) {
+    console.log(error);
   }
+  hideLoading();
 }
 
 // 取消发送

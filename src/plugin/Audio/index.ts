@@ -9,7 +9,7 @@ const MediaAudio = (props: any) => {
   const option = {
     ...props,
     destroy: () => {
-      app.unmount();
+      app && app.unmount();
     },
   };
   app = createApp(dialogApp, option);
@@ -20,7 +20,7 @@ const MediaAudio = (props: any) => {
 };
 
 const hidePush = () => {
-  app.unmount();
+  app && app.unmount();
 };
 
 export { MediaAudio, hidePush };

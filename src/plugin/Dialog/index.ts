@@ -9,7 +9,7 @@ const Dialog = (props: { title: string; callBack: () => Promise<void> }) => {
   const option = {
     ...props,
     destroy: () => {
-      app.unmount();
+      app && app.unmount();
     },
   };
   app = createApp(dialogApp, option);
@@ -20,7 +20,7 @@ const Dialog = (props: { title: string; callBack: () => Promise<void> }) => {
 };
 
 const hidePush = () => {
-  app.unmount();
+  app && app.unmount();
 };
 
 export { Dialog, hidePush };

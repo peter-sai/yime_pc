@@ -9,7 +9,7 @@ const FireInfo = (props = {}, time = 3000) => {
   const query = {
     ...props,
     destroy: () => {
-      app.unmount();
+      app && app.unmount();
     },
   };
   app = createApp(fireInfo, query);
@@ -20,7 +20,7 @@ const FireInfo = (props = {}, time = 3000) => {
 };
 
 const hideFireInfo = () => {
-  app.unmount();
+  app && app.unmount();
 };
 
 export { FireInfo, hideFireInfo };

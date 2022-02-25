@@ -8,7 +8,7 @@ const Toast = (msg: string, time = 2000) => {
     title: msg,
     time,
     destroy: () => {
-      app.unmount();
+      app && app.unmount();
     },
   };
   app = createApp(toastIndex, option);

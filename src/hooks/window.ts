@@ -1,4 +1,4 @@
-import { showLoading } from '@/plugin/Loading';
+import { hideLoading, showLoading } from '@/plugin/Loading';
 import { Toast } from '@/plugin/Toast';
 import { initStore } from '@/store';
 import * as RongIMLib from '@rongcloud/imlib-next';
@@ -17,7 +17,7 @@ import {
   setMsgList,
   getToken as getUserToken,
 } from '@/utils/utils';
-import { getToken } from '../api';
+import { getOssInfo, getToken } from '../api';
 import { number } from '@intlify/core-base';
 import moment from 'moment';
 import { ComputedRef, Ref } from 'vue';
@@ -26,6 +26,15 @@ import { stringifyQuery } from 'vue-router';
 import { Store } from 'vuex';
 import { RCCallClient } from '@rongcloud/plugin-call';
 
+// 获取阿里存储信息
+export async function initOss(store: Store<initStore>) {
+  try {
+    const config: any = await getOssInfo();
+    store.commit('SET_CREDENTIALS', config.Credentials);
+  } catch (error) {
+    console.log(error);
+  }
+}
 // 群操作
 const useUserOperateGroupInfo = (store: Store<initStore>) => {
   return async (type: number, groupInfo: any) => {
@@ -283,54 +292,57 @@ const useCbImg = (
   isGroupMsg = 0,
 ) => {
   return async (e: any) => {
-    const file = e.target.files[0];
-    const info = (await store.state.client.put(file.name, file)) as {
-      url: string;
-    } | null;
-    let res = {};
-    if (accept.value === 'image/*,video/*') {
-      // 图片
-      const size = (await getSize(file)) as { width: number; height: number };
-      res = {
-        msgInfo: {
-          isGroupMsg,
-          fromId: store.state.userInfo.uid,
-          toId: store.state.activeUid,
-          msgShowType: 1,
-          isEncrypt: 0,
-          msgContent: {
-            msgContentType: 2,
-            msgContent: 'imageMsg',
-            imageMsg: {
-              imageUrl: info?.url,
-              imageWidth: size.width,
-              imageHeight: size.height,
-            },
-          },
-        },
-      };
-    } else {
-      // 文件
-      res = {
-        msgInfo: {
-          isGroupMsg,
-          fromId: store.state.userInfo.uid,
-          toId: store.state.activeUid,
-          msgShowType: 1,
-          isEncrypt: 0,
-          msgContent: {
-            msgContentType: 19,
-            msgContent: 'fileInfo',
-            fileInfo: {
-              fileName: file.name,
-              fileSize: file.size,
-              fileUrl: info?.url,
-            },
-          },
-        },
-      };
+    if (!store.state.client.userAgent) {
+      await initOss(store);
     }
     try {
+      const file = e.target.files[0];
+      const info = (await store.state.client.put(file.name, file)) as {
+        url: string;
+      } | null;
+      let res = {};
+      if (accept.value === 'image/*,video/*') {
+        // 图片
+        const size = (await getSize(file)) as { width: number; height: number };
+        res = {
+          msgInfo: {
+            isGroupMsg,
+            fromId: store.state.userInfo.uid,
+            toId: store.state.activeUid,
+            msgShowType: 1,
+            isEncrypt: 0,
+            msgContent: {
+              msgContentType: 2,
+              msgContent: 'imageMsg',
+              imageMsg: {
+                imageUrl: info?.url,
+                imageWidth: size.width,
+                imageHeight: size.height,
+              },
+            },
+          },
+        };
+      } else {
+        // 文件
+        res = {
+          msgInfo: {
+            isGroupMsg,
+            fromId: store.state.userInfo.uid,
+            toId: store.state.activeUid,
+            msgShowType: 1,
+            isEncrypt: 0,
+            msgContent: {
+              msgContentType: 19,
+              msgContent: 'fileInfo',
+              fileInfo: {
+                fileName: file.name,
+                fileSize: file.size,
+                fileUrl: info?.url,
+              },
+            },
+          },
+        };
+      }
       const data = await store.dispatch('postMsg', {
         query: res,
         cmd: 2001,
@@ -661,7 +673,7 @@ const useRevoke = (
         isGroupMsg: isGroupMsg,
         fromId: userInfo.uid,
         toId: Number(store.state.activeUid),
-        msgShowType: 1,
+        msgShowType: 4,
         isEncrypt: 0,
         msgContent: {
           msgContentType: 8,
@@ -713,26 +725,25 @@ const initRongConnect = async (
   store: Store<initStore>,
   rongIm: RCCallClient | null,
 ) => {
-  const userInfo = store.state.userInfo;
-  const res: any = await getToken({
-    uid: userInfo.uid,
-    name: userInfo.nickname,
-    portrait: userInfo.icon,
-  });
-
-  RongIMLib.connect(res.token).then(
-    (res: any) => {
-      if (res.code === 0) {
-        console.log('链接成功, 链接用户 id 为: ', res.data.userId);
-        store.commit('SET_RONGIM', rongIm);
-      } else {
-        console.warn('链接失败, code:', res.code);
-      }
-    },
-    (err) => {
-      console.log(err);
-    },
-  );
+  try {
+    const userInfo = store.state.userInfo;
+    const res: any = await getToken({
+      uid: userInfo.uid,
+      name: userInfo.nickname,
+      portrait: userInfo.icon,
+    });
+    const data: any = await RongIMLib.connect(res.token);
+    if (data.code === 0) {
+      console.log('链接成功, 链接用户 id 为: ', data.data.userId);
+      store.commit('SET_RONGIM', rongIm);
+    } else {
+      console.warn('链接失败, code:', data.code);
+      throw new Error('链接失败, code:' + data.code);
+    }
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
 };
 
 // 漫游数据
