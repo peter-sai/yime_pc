@@ -9,7 +9,7 @@ const GroupNotic = (props) => {
   const option = {
     ...props,
     destroy: () => {
-      app.unmount();
+      app && app.unmount();
     },
   };
   app = createApp(groupNotic, option);
@@ -20,7 +20,7 @@ const GroupNotic = (props) => {
 };
 
 const hideGroupNotic = () => {
-  app.unmount();
+  app && app.unmount();
 };
 
 export { GroupNotic, hideGroupNotic };

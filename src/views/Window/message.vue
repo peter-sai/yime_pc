@@ -113,12 +113,14 @@
             @menuClick="menuClick($event, item)"
             :userInfo="getUserInfo(item)"
             :item="item.msgContent.fileInfo"
+            @download="download(item.msgContent.fileInfo)"
           />
           <MFile
             v-else
             :isRead="item.msgId <= readMsgId"
             @menuClick="menuClick($event, item)"
             :item="item.msgContent.fileInfo"
+            @download="download(item.msgContent.fileInfo)"
           />
         </div>
         <!-- 名片 -->
@@ -295,6 +297,7 @@ import { Store, useStore } from 'vuex';
 import { initStore, key } from '@/store';
 import { useI18n } from 'vue-i18n';
 import {
+  IFileInfo,
   IFireInfo,
   IImageMsgInfo,
   IMsgInfo,
@@ -303,6 +306,7 @@ import {
 } from '@/types/msg';
 import { formateTime } from '@/utils/utils';
 import { Etag } from '../Layout/index.vue';
+import { initRonyun } from '@/App.vue';
 import {
   useSendImg,
   useSystemNotifyInfo,
@@ -314,6 +318,7 @@ import { IGroupInfo, IUserInfo } from '@/types/user';
 import { Toast } from '@/plugin/Toast';
 import ClipboardJS from 'clipboard';
 import { MediaAudio } from '@/plugin/Audio';
+import { hideLoading, showLoading } from '@/plugin/Loading';
 
 async function getGroupInfo(store: Store<initStore>, uid: number) {
   if (!uid) return;
@@ -557,7 +562,8 @@ const getRevokeName = (item: IMsgInfo<string>) => {
   if (Number(item.fromId) === Number(store.state.activeUid)) {
     const msgList = store.state.msgList;
     if (msgList) {
-      const userInfo = msgList[store.state.activeUid!].userDetailInfo.userInfo;
+      const userInfo =
+        msgList[store.state.activeUid!]?.userDetailInfo?.userInfo || {};
       const userAttachInfo = userInfo.userAttachInfo || {};
       return userAttachInfo.remarkName || userInfo.nickname;
     }
@@ -588,11 +594,6 @@ const call = async (item: any) => {
     auth: true,
   });
   if (data?.body?.functionState === 1) {
-    const mediaNode = document.getElementById('media')!;
-    if (mediaNode.hasChildNodes()) {
-      return Toast(t('正在通话中'));
-    }
-    if (!store.state.rongIm) return Toast('融云服务初始化失败');
     if (!store.state.activeIsGroup) {
       // 单聊
       MediaAudio({
@@ -603,6 +604,43 @@ const call = async (item: any) => {
     } else {
       // 群聊
       emit('selectGroupMember', item.videoType);
+    }
+
+    const mediaNode = document.getElementById('media')!;
+    if (mediaNode.hasChildNodes()) {
+      return Toast(t('正在通话中'));
+    }
+    if (!store.state.rongIm) {
+      try {
+        showLoading();
+        await initRonyun(store);
+        if (!store.state.activeIsGroup) {
+          // 单聊
+          MediaAudio({
+            isCall: true,
+            mediaType: item.videoType,
+            yUserInfo: props.yUserInfo,
+          });
+        } else {
+          // 群聊
+          emit('selectGroupMember', item.videoType);
+        }
+      } catch (error) {
+        console.log(error);
+        return Toast(t('服务初始化失败'));
+      }
+      hideLoading();
+    } else {
+      if (!store.state.activeIsGroup) {
+        MediaAudio({
+          isCall: true,
+          mediaType: item.videoType,
+          yUserInfo: props.yUserInfo,
+        });
+      } else {
+        // 群聊
+        emit('selectGroupMember', item.videoType);
+      }
     }
   } else {
     return Toast(t('发送者无权限'));
@@ -619,6 +657,13 @@ const save = (item: IMsgInfo<IFireInfo | IImageMsgInfo>) => {
   }
   const a = document.createElement('a');
   a.setAttribute('href', url);
+  a.click();
+};
+
+// 下载
+const download = (item: IFileInfo) => {
+  const a = document.createElement('a');
+  a.setAttribute('href', item.fileUrl);
   a.click();
 };
 </script>

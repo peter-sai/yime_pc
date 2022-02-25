@@ -38,6 +38,8 @@ import {
   defineProps,
   defineEmits,
 } from 'vue';
+import { useStore } from 'vuex';
+import { key } from '@/store';
 export default defineComponent({
   name: 'MLink',
 });
@@ -58,6 +60,7 @@ const props = defineProps({
   },
 });
 const { t } = useI18n();
+const store = useStore(key);
 // 复制
 let clipboard: any = null;
 const urlClass = 'copy' + new Date().getTime().toString();
@@ -73,18 +76,46 @@ onUnmounted(() => {
 
 const host = props.url.split('/')[0];
 
-const go = (e: any) => {
-  const classList = ['url', 'imgBgBox', 'span', 'host'];
-  classList.forEach((v) => {
-    if (Array.from(e.target.classList).includes(v)) {
-      if (props.url.includes('http')) {
-        window.open(props.url);
-      } else {
-        window.open(`http://${props.url}`);
-      }
-      return;
-    }
+const go = async (e: any) => {
+  const data = await store.dispatch('postMsg', {
+    query: {
+      encodeString: props.url,
+    },
+    cmd: 1023,
+    encryption: 'Aoelailiao.Login.UserDecodeConentReq',
+    auth: true,
   });
+
+  if (data.body.resultCode === 0) {
+    const decodeResultInfo = data.body.decodeResultInfo;
+    if (decodeResultInfo.jumpType === 3 || decodeResultInfo.jumpType === 0) {
+      // 外部链接
+      const classList = ['url', 'imgBgBox', 'span', 'host'];
+      classList.forEach((v) => {
+        if (Array.from(e.target.classList).includes(v)) {
+          if (props.url.includes('http')) {
+            window.open(props.url);
+          } else {
+            window.open(`http://${props.url}`);
+          }
+          return;
+        }
+      });
+    } else if (decodeResultInfo.jumpType === 1) {
+      // 用户资料
+      const userId = decodeResultInfo.jumpContent.userId;
+      // 单聊
+      store.commit('SET_ACTIVEUID', userId);
+      store.commit('SET_ACTIVEISGROUP', false);
+    } else if (decodeResultInfo.jumpType === 2) {
+      // 群资料
+      const groupId = decodeResultInfo.jumpContent.groupId;
+      store.commit('SET_ACTIVEUID', groupId);
+      store.commit('SET_ACTIVEISGROUP', true);
+    }
+  } else {
+    return Toast(data.body.resultString);
+  }
 };
 
 const emit = defineEmits(['menuClick']);

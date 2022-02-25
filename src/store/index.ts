@@ -124,6 +124,7 @@ const initState = {
   msgInfo: {},
   client: {
     put: (fileName: any, file: any) => null,
+    userAgent: null,
   },
   msgList: {} as { [key: number]: ImsgItem },
   playAudio: '', // 当前正在播放的音频
@@ -346,7 +347,6 @@ const sotreRoot = createStore({
             heartbeat(dispatch, ws);
           }, 10000);
           console.log('open');
-
           ws.send(data);
         };
       } else {
@@ -588,12 +588,9 @@ function getMessage(cmd: any, encryption: any, state: any) {
 
         if (query.cmd - cmd === 1) {
           resolve(query);
-        } else {
-          hideLoading();
         }
       } catch (error) {
         console.log(error);
-        hideLoading();
         reject(error);
       }
     };
@@ -604,7 +601,7 @@ function getMessage(cmd: any, encryption: any, state: any) {
 }
 
 function onMessage() {
-  const cmdList = [2129, 2004, 2125, 2148, 2024, 2156, 2162];
+  const cmdList = [2129, 2004, 2125, 2148, 2024, 2156, 2162, 5002, 2054];
   ws.onmessage = (evt: any) => {
     if (sotreRoot.state.isOnLine !== '消息') {
       sotreRoot.commit('SET_ISONLINE', '消息');
@@ -619,6 +616,7 @@ function onMessage() {
       }
       try {
         cb[ansCmd - 1](evt);
+        delete cb[ansCmd - 1];
       } catch (error) {
         console.log(error, ansCmd);
       }
@@ -630,7 +628,7 @@ function onMessage() {
 async function heartbeat(dispatch: any, ws: any) {
   const strarTime: number = Date.now();
   try {
-    if (num <= 2) {
+    if (num <= 3) {
       setTimeout(() => {
         heartbeat(dispatch, ws);
       }, 10000);
@@ -638,6 +636,7 @@ async function heartbeat(dispatch: any, ws: any) {
       console.log('close');
       // 重新连接
       ws.close();
+      hideLoading();
     }
     setTimeout(() => {
       if (!time || time - strarTime > 3000 || time - strarTime < 0) {
