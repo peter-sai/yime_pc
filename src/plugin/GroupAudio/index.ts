@@ -9,7 +9,7 @@ const GroupMediaAudio = (props: any) => {
   const option = {
     ...props,
     destroy: () => {
-      app.unmount();
+      app && app.unmount();
     },
   };
   app = createApp(dialogApp, option);

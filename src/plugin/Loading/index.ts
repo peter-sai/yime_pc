@@ -9,7 +9,7 @@ const loading = () => {
   };
 
   const hideLoading = () => {
-    app.unmount();
+    app && app.unmount();
   };
   return { showLoading, hideLoading };
 };

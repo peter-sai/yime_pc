@@ -34,7 +34,9 @@ import messageAudio from './assets/audio/message.wav';
 import { MediaAudio } from './plugin/Audio';
 import { GroupMediaAudio, hideGroupMediaAudio } from './plugin/GroupAudio';
 import { Toast } from './plugin/Toast';
+import { initOss } from './hooks/window';
 import { useI18n } from 'vue-i18n';
+import { hideLoading } from './plugin/Loading';
 export async function initRonyun(store: Store<initStore>) {
   // IM 客户端初始化
   const RongCallLib = RongIMLib.init({
@@ -175,11 +177,14 @@ export async function initRonyun(store: Store<initStore>) {
       store.commit('SET_CONVERSATIONING', false);
     },
   });
-
-  // store.commit('SET_RONGIM', rongIm);
   // 如果以登录状态 则 连接融云
   if (getUserToken()) {
-    initRongConnect(store, rongIm);
+    try {
+      await initRongConnect(store, rongIm);
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
   }
 }
 
@@ -207,6 +212,7 @@ const init = async () => {
   ws.onclose = function () {
     console.log('close');
     store.commit('SET_ISONLINE', '网络状态不佳');
+    hideLoading();
     reconnect();
   };
   ws.onerror = function () {
@@ -224,6 +230,7 @@ const init = async () => {
       ws.onclose = function () {
         console.log('close');
         store.commit('SET_ISONLINE', '网络状态不佳');
+        hideLoading();
         reconnect();
       };
       ws.onerror = function () {
@@ -233,13 +240,8 @@ const init = async () => {
     }, 1000);
   }
 
-  try {
-    // 获取阿里存储信息
-    const config: any = await getOssInfo();
-    store.commit('SET_CREDENTIALS', config.Credentials);
-  } catch (error) {
-    console.log(error);
-  }
+  // 获取阿里存储信息
+  initOss(store);
 
   // 初始化融云服务
   initRonyun(store);
@@ -326,6 +328,8 @@ const stop = watch(
           (e: any) => Number(e.msgId) === Number(revokeMsgId),
         );
         readList.splice(revokeKey, 1);
+        console.log(readList, msgList);
+
         store.commit('SET_MSGLIST', msgList);
       }
 

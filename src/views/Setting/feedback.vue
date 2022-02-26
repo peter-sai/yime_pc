@@ -24,11 +24,12 @@ import NavigationBar from '@/components/NavigationBar/index.vue';
 import { ref, onMounted, onBeforeUnmount, Ref, reactive } from 'vue';
 import { useStore } from 'vuex';
 import { key } from '@/store';
-import { showLoading } from '@/plugin/Loading';
+import { hideLoading, showLoading } from '@/plugin/Loading';
 import { Toast } from '@/plugin/Toast';
 import { useI18n } from 'vue-i18n';
 import { useGoBack } from '@/hooks';
 import { useRouter } from 'vue-router';
+import { initOss } from '../../hooks/window';
 const imgUrl = ref('');
 const changUserImg: Ref<any> = ref(null);
 const store = useStore(key);
@@ -54,9 +55,18 @@ onBeforeUnmount(() => {
 });
 
 const cbImg = async (e: any) => {
-  const file = e.target.files[0];
-  let info: any = await store.state.client.put(file.name, file);
-  imgUrl.value = info.url;
+  if (!store.state.client.userAgent) {
+    await initOss(store);
+  }
+  showLoading();
+  try {
+    const file = e.target.files[0];
+    let info: any = await store.state.client.put(file.name, file);
+    imgUrl.value = info.url;
+  } catch (error) {
+    console.log(error);
+  }
+  hideLoading();
 };
 
 // 提交

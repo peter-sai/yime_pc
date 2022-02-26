@@ -3,8 +3,16 @@
     <div class="header">
       <div class="headerLeft">
         <div class="userImg">
-          <img v-if="!isBotUser" :src="icon" alt="" />
-          <Iconfont v-else name="iconbianzu16" size="30" />
+          <Iconfont
+            v-if="isBotUser"
+            name="iconbianzu16"
+            color="#A8B5BE"
+            size="38"
+          />
+          <div v-else>
+            <img v-if="icon" :src="icon" alt="" />
+            <Iconfont v-else name="iconlianxiren" color="#A8B5BE" size="38" />
+          </div>
         </div>
         <div class="userInfo">
           <div class="name">{{ title }}</div>

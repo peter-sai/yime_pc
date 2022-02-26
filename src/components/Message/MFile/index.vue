@@ -1,7 +1,7 @@
 <template>
   <div class="mmsg">
-    <div style="flex: 1" @contextmenu="contextmenu">
-      <div class="fileBg">
+    <div style="flex: 1">
+      <div class="fileBg" @contextmenu="contextmenu" @click="$emit('download')">
         <div class="left">
           <div class="title">{{ item?.fileName }}</div>
           <div class="size">{{ size }}</div>
@@ -53,7 +53,7 @@ if (res.length > 1) {
 
 const size = getSize(props.item!.fileSize);
 
-const emit = defineEmits(['menuClick']);
+const emit = defineEmits(['menuClick', 'download']);
 
 const contextmenu = (e: any) => {
   e.preventDefault();
