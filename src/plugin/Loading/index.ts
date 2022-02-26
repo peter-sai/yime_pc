@@ -6,6 +6,9 @@ const loading = () => {
   const showLoading = (msg?: string) => {
     app = createApp(toastIndex, { title: msg });
     app.mount('#use');
+    setTimeout(() => {
+      hideLoading();
+    }, 8000);
   };
 
   const hideLoading = () => {
