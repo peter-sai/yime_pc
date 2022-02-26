@@ -187,6 +187,7 @@
           <Ylink
             v-if="isShowHowComponent(item)"
             @menuClick="menuClick($event, item)"
+            @click="showUserInfo(getUserInfo(item).uid)"
             :userInfo="getUserInfo(item)"
             :groupDetailInfo="groupDetailInfo"
             :url="item.msgContent.linkUrlInfo.url"
