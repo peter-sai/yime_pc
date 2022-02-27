@@ -43,7 +43,6 @@ export async function initRonyun(store: Store<initStore>) {
     appkey: 'tdrvipkst22v5',
   });
   // 监听消息 用来处理是否显示加入音视频按钮
-  console.log(RongCallLib);
 
   // RTC 客户端初始化
   const rtcClient: RCRTCClient = RongIMLib.installPlugin(
@@ -213,7 +212,7 @@ const init = async () => {
   ws.binaryType = 'arraybuffer';
 
   ws.onclose = function () {
-    console.log('close');
+    console.log('onclose');
     store.commit('SET_ISONLINE', '网络状态不佳');
     hideLoading();
     reconnect();
@@ -231,7 +230,7 @@ const init = async () => {
       ws.binaryType = 'arraybuffer';
       store.commit('SET_WS', ws);
       ws.onclose = function () {
-        console.log('close');
+        console.log('onclose');
         store.commit('SET_ISONLINE', '网络状态不佳');
         hideLoading();
         reconnect();
