@@ -7,6 +7,7 @@ import {
   IGroupAtInfo,
   IMsgInfo,
   ImsgItem,
+  IRevokeInfo,
   ISystemNotifyInfo,
   IVideoCallMsgInfo,
   TMsgContent,
@@ -443,20 +444,24 @@ export const formatMsg = (
   msgText: string,
   t: { (key: string | number): string },
 ) => {
-  const [fristMsg, ...msgs] = msgText.split('#');
-  const msg = t(fristMsg);
-  if (msgs.length) {
-    let newMsg = '';
-    msgs.forEach((e, k) => {
-      if (k === 0) {
-        newMsg = msg.replace('<spile>', e);
-      } else {
-        newMsg = newMsg.replace(`<spile${k}>`, e);
-      }
-    });
-    return newMsg;
-  } else {
-    return t(msgText);
+  try {
+    const [fristMsg, ...msgs] = msgText.split('#');
+    const msg = t(fristMsg);
+    if (msgs.length) {
+      let newMsg = '';
+      msgs.forEach((e, k) => {
+        if (k === 0) {
+          newMsg = msg.replace('<spile>', e);
+        } else {
+          newMsg = newMsg.replace(`<spile${k}>`, e);
+        }
+      });
+      return newMsg;
+    } else {
+      return t(msgText);
+    }
+  } catch (error) {
+    return '';
   }
 };
 
@@ -470,7 +475,7 @@ const switchMsg = (
 ) => {
   // 格式化 systemNotifyInfo
   const systemNotifyInfo = useSystemNotifyInfo(store, t);
-  let userName = '';
+  const userName = '';
   // let fireInfo, infoList;
   // 阅后即焚
   if (Number(item.msgShowType) === 3 && item.type === 'stringContent') {
@@ -514,26 +519,10 @@ const switchMsg = (
     //   infoList = fireInfo.substr(7, fireInfo.length).split('#');
     //   return infoList[1] + infoList[0];
     case 'revokeInfo':
-      // 处理群
-      if (item.isGroupMsg) {
-        const res = groupUserInfos!.find(
-          (e: any) => Number(e.uid) === Number(item.fromId),
-        );
-        if (res) {
-          return res.nickname + t('撤回了一条消息');
-        }
-        return t('撤回了一条消息');
-        // 个人消息
-      } else {
-        if (item.fromId !== store.state.userInfo.uid) {
-          userName =
-            yUserInfo?.userAttachInfo?.remarkName || yUserInfo!.nickname;
-        } else {
-          const userInfo = store.state.userInfo;
-          userName = userInfo?.userAttachInfo?.remarkName || userInfo.nickname;
-        }
-        return userName + t('撤回了一条消息');
-      }
+      return formatMsg(
+        (item.msgContent.revokeInfo as IRevokeInfo).stringContent,
+        t,
+      );
     case 'systemNotifyInfo':
       return systemNotifyInfo(item as IMsgInfo<ISystemNotifyInfo>);
     case 'visitingCard':
@@ -556,6 +545,8 @@ const switchMsg = (
       return t('[位置]');
     case 'groupAtInfo':
       return (item.msgContent.groupAtInfo as IGroupAtInfo).stringContent;
+    case 'videoMsgInfo':
+      return t('[视频]');
     default:
       return '';
   }
@@ -658,7 +649,6 @@ const useUserGetConversationHasReadedMsgInfo = (store: Store<initStore>) => {
 const useRevoke = (
   store: Store<initStore>,
   t: { (key: string | number): string },
-  isGroupMsg = 0,
 ) => {
   return async (msg: any) => {
     // 时间多于两分钟的不可以撤回
@@ -668,7 +658,7 @@ const useRevoke = (
     const userInfo = store.state.userInfo;
     const res = {
       msgInfo: {
-        isGroupMsg: isGroupMsg,
+        isGroupMsg: store.state.activeIsGroup ? 1 : 0,
         fromId: userInfo.uid,
         toId: Number(store.state.activeUid),
         msgShowType: 4,
@@ -678,6 +668,8 @@ const useRevoke = (
           msgContent: 'revokeInfo',
           revokeInfo: {
             revokeMsgId: msg.msgId,
+            stringContent:
+              '<spile>撤回了一条消息#' + store.state.userInfo.nickname,
           },
         },
       },
@@ -756,11 +748,37 @@ async function getRoam(store: Store<initStore>) {
       encryption: 'Aoelailiao.Message.AtInfo',
       auth: true,
     });
-    console.log(res.body);
-
     return res.body.msgInfos || [];
   }
   return [];
+}
+
+//下载文件
+function saveAs(blob: Blob, filename: string) {
+  const link = document.createElement('a');
+  link.href = window.URL.createObjectURL(blob);
+  link.download = filename;
+  link.click();
+}
+
+function getBlob(url: string) {
+  return new Promise((resolve) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.responseType = 'blob';
+    xhr.onload = () => {
+      if (xhr.status === 200) {
+        resolve(xhr.response);
+      }
+    };
+
+    xhr.send();
+  });
+}
+
+async function downloadFile(file: { url: string; name: string }) {
+  const blob: any = await getBlob(file.url);
+  saveAs(blob, file.name);
 }
 
 export {
@@ -782,4 +800,5 @@ export {
   useFormateTime,
   initRongConnect,
   getRoam,
+  downloadFile,
 };
