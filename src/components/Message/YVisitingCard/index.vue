@@ -74,11 +74,14 @@ const contextmenu = (e: any) => {
     border-radius: 14px 0px 14px 14px;
     .left {
       .title {
-        width: 100px;
+        width: 180px;
         font-size: 16px;
         margin-bottom: 5px;
         color: #333;
         line-height: 22px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
       }
       .content {
         display: flex;
@@ -100,6 +103,10 @@ const contextmenu = (e: any) => {
           font-size: 14px;
           color: #666;
           line-height: 17px;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+          width: 150px;
         }
       }
     }

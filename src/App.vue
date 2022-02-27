@@ -43,7 +43,6 @@ export async function initRonyun(store: Store<initStore>) {
     appkey: 'z3v5yqkbz5em0',
   });
   // 监听消息 用来处理是否显示加入音视频按钮
-  console.log(RongCallLib);
 
   // RTC 客户端初始化
   const rtcClient: RCRTCClient = RongIMLib.installPlugin(
@@ -210,7 +209,7 @@ const init = async () => {
   ws.binaryType = 'arraybuffer';
 
   ws.onclose = function () {
-    console.log('close');
+    console.log('onclose');
     store.commit('SET_ISONLINE', '网络状态不佳');
     hideLoading();
     reconnect();
@@ -228,7 +227,7 @@ const init = async () => {
       ws.binaryType = 'arraybuffer';
       store.commit('SET_WS', ws);
       ws.onclose = function () {
-        console.log('close');
+        console.log('onclose');
         store.commit('SET_ISONLINE', '网络状态不佳');
         hideLoading();
         reconnect();
@@ -248,6 +247,7 @@ const init = async () => {
   setTimeout(async () => {
     // 获取漫游数据并且合并
     const roamList = await getRoam(store);
+    console.log(roamList);
 
     // 合并数据
     await mergeData([], store, roamList);
@@ -328,7 +328,6 @@ const stop = watch(
           (e: any) => Number(e.msgId) === Number(revokeMsgId),
         );
         readList.splice(revokeKey, 1);
-        console.log(readList, msgList);
 
         store.commit('SET_MSGLIST', msgList);
       }

@@ -101,6 +101,7 @@ import { initStore, key } from '@/store';
 import { getLang, getStorage, md5, setStorage } from '@/utils/utils';
 import Iconfont from '@/iconfont/index.vue';
 import { Toast } from '@/plugin/Toast/index';
+import { Toast as Toast1 } from '@/plugin/Toast1/index';
 import { hideLoading, showLoading } from '@/plugin/Loading/index';
 import { useGoTo } from '@/hooks';
 import { useRouter } from 'vue-router';
@@ -290,8 +291,8 @@ async function useLoginCb(
     });
   }
   if (data.body.resultCode === 0) {
-    hideLoading();
-
+    // showLoading(t('获取取数据中'));
+    Toast1('登录成功正在获取数据');
     // 设置切换账号
     const userList = JSON.parse(getStorage('userList')) || {};
     // 保存数据到本地
@@ -311,10 +312,11 @@ async function useLoginCb(
     }
     store.dispatch('init');
     // 初始化融云
-    initRonyun(store);
+    await initRonyun(store);
     // 获取漫游数据合并数据
     const roamList = await getRoam(store);
     await mergeData([], store, roamList);
+    hideLoading();
     return goTo('/Home/Message');
   }
   return Toast(t(data.body.resultString));
