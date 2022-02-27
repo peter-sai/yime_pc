@@ -78,10 +78,12 @@ import {
   nextTick,
   watch,
   computed,
+  onUnmounted,
 } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Store, useStore } from 'vuex';
 import Iconfont from '../../iconfont/index.vue';
+import basicTones from '../../assets/audio/basic_tones.mp3';
 export default defineComponent({
   name: 'GroupAudio',
 });
@@ -134,6 +136,7 @@ const init = async (
   nextTick: any,
   t: { (key: string | number): string },
   videoCallActionUploadReq: (num: number, str: string) => void,
+  pause: () => void,
 ) => {
   const videoBox = document.getElementById('videoBox') as HTMLVideoElement;
   const yVideoGroup = document.getElementById(
@@ -168,6 +171,7 @@ const init = async (
         const { userId } = sender;
         // 对方接听
         // 开始倒计时
+        pause();
         startTimeOut();
         conversationIng.value = true;
       },
@@ -194,7 +198,6 @@ const init = async (
         if (!session.getRemoteUsers().length) {
           videoCallActionUploadReq(4, session.getChannelId());
         }
-        // close();
       },
 
       onAudioMuteChange: (muteUser: IMuteUser, session: RCCallSession) => {
@@ -271,6 +274,10 @@ const init = async (
 </script>
 <script setup lang="ts">
 const { t } = useI18n();
+const audio = new Audio();
+audio.src = basicTones;
+audio.loop = true;
+audio.play();
 const props = defineProps({
   destroy: {
     type: Function,
@@ -311,6 +318,7 @@ const sessionRoot = ref({}) as Ref<RCCallSession>;
 const close = () => {
   props.destroy && props.destroy();
   store.commit('SET_CONVERSATIONING', false);
+  console.log(11);
 };
 
 // 转为语音
@@ -350,13 +358,15 @@ const toggleMute = () => {
 
 // 挂断
 const hungup = async () => {
-  sessionRoot.value.hungup();
   close();
+  pause();
+  sessionRoot.value.hungup();
   videoCallActionUploadReq(4, sessionRoot.value.getChannelId());
 };
 
 // 接听
 const accept = () => {
+  pause();
   sessionRoot.value.accept();
   isAnswer.value = true;
   conversationIng.value = true;
@@ -409,6 +419,7 @@ onMounted(async () => {
       nextTick,
       t,
       videoCallActionUploadReq,
+      pause,
     );
     videoCallActionUploadReq(1, sessionRoot.value.getChannelId());
   } else {
@@ -440,6 +451,7 @@ onMounted(async () => {
        */
       onAccept(sender: ISenderInfo, session) {
         const { userId } = sender;
+        pause();
         if (Number(userId) === Number(store.state.userInfo.uid)) {
           startTimeOut();
           conversationIng.value = true;
@@ -466,7 +478,6 @@ onMounted(async () => {
         if (!session.getRemoteUsers().length) {
           videoCallActionUploadReq(4, session.getChannelId());
         }
-        // close();
       },
 
       /**
@@ -550,14 +561,20 @@ const videoCallActionUploadReq = async (
     channelId: channelId,
   };
 
-  console.log(query);
-
   const data = await store.dispatch('postMsg', {
     query,
     cmd: 2065,
     encryption: 'Aoelailiao.Message.GroupVideoCallActionUploadReq',
     auth: true,
   });
+};
+
+onUnmounted(() => {
+  pause();
+});
+
+const pause = () => {
+  audio.pause();
 };
 
 // 处理申请加入群聊消息

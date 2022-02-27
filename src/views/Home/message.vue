@@ -316,17 +316,15 @@ const msgList: ComputedRef<TMsgItem[]> = computed(() => {
   list
     .filter((e: TMsgItem) => e.msgClassId! || (e.lastMsg && e.lastMsg.msgId))
     .forEach((e: TMsgItem) => {
-      if (!e.isDel) {
-        if (e.isGroup && e.groupDetailInfo?.groupAttachInfo?.groupTop) {
-          topList.push(e);
-        } else if (
-          !e.isGroup &&
-          e?.userDetailInfo?.userInfo?.userAttachInfo?.msgTop
-        ) {
-          topList.push(e);
-        } else {
-          defList.push(e);
-        }
+      if (e.isGroup && e.groupDetailInfo?.groupAttachInfo?.groupTop) {
+        topList.push(e);
+      } else if (
+        !e.isGroup &&
+        e?.userDetailInfo?.userInfo?.userAttachInfo?.msgTop
+      ) {
+        topList.push(e);
+      } else {
+        defList.push(e);
       }
     });
 
@@ -449,10 +447,9 @@ const quitGroupChat = async (item: ImsgItem) => {
 };
 
 // 删除
-const del = (item) => {
-  console.log(item, store.state.msgList);
+const del = (item: any) => {
   if (store.state.msgList[item.id]) {
-    store.state.msgList[item.id].isDel = true;
+    delete store.state.msgList[item.id];
   }
 };
 </script>
