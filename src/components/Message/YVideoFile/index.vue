@@ -81,7 +81,10 @@ const play = async () => {
     video = document.createElement('video');
     video.setAttribute('src', props.videoMsgInfo!.url);
     video.setAttribute('controls', true);
-    video.setAttribute('style', 'width: 100%;height: 100%');
+    video.setAttribute(
+      'style',
+      'width: 100%;height: 100%;position:relative;z-index:99',
+    );
     imgBox.value.append(video);
     await nextTick();
     video.play();
