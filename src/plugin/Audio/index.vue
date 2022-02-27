@@ -427,18 +427,18 @@ const toggleVideo = () => {
 
 // 接听
 const accept = () => {
+  pause();
   sessionRoot.value.accept();
   isAnswer.value = true;
   conversationIng.value = true;
   startTimeOut();
-  pause();
 };
 
 // 挂断
 const hungup = async (num?: number) => {
-  sessionRoot.value.hungup();
   close();
   pause();
+  sessionRoot.value.hungup();
   if (props.isCall && !conversationIng.value && num === 1) {
     videoCallActionUploadReq(21);
   }

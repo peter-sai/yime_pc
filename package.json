@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "serve": "vue-cli-service serve --mode dev",
+    "build": "vue-cli-service build --mode dev",
     "lint": "vue-cli-service lint",
-    "iconfont-create": "npx iconfont-create && npm run lint"
+    "iconfont-create": "npx iconfont-create && npm run lint",
+    "proto": "pbjs -t json-module -w commonjs -o src/protoBuild/proto.js  src/proto/*.proto"
   },
   "dependencies": {
     "@rongcloud/imlib-next": "^5.1.0",

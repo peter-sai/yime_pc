@@ -1,7 +1,8 @@
 <template>
   <div class="ymsg">
     <div @click="$emit('click')">
-      <img :src="userInfo?.icon" />
+      <img v-if="userInfo?.icon" :src="userInfo?.icon" />
+      <Iconfont v-else name="iconlianxiren" size="46" color="#A8B5BE" />
     </div>
     <div>
       <div class="title1" v-if="isGroup">{{ userInfo?.nickname }}</div>

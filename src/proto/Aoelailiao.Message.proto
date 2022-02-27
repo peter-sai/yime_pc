@@ -2,7 +2,8 @@ syntax = "proto2";
 package Aoelailiao.Message;
 import "Aoelailiao.Common.proto";
 option java_package = "com.aoetech.aoelailiao.protobuf";
-option optimize_for = LITE_RUNTIME;
+option java_multiple_files = true;
+option go_package = "github.com/protocolbuffers/protobuf/aoelailiao/go/protocolpb";
 
 message MsgInfo{
 	optional uint64 msg_id = 1;
@@ -222,6 +223,24 @@ message ClientSendMsgToServerAns{
     optional uint32 random_num = 4;
 	optional bytes attach_data = 32;
 }
+
+//changed by yichen
+message ClientPullChatsFromServerReq{
+	//cmd id:3001
+    optional MsgInfo msg_info = 1;
+    optional uint32 random_num = 2;
+	optional bytes attach_data = 32;
+}
+
+message ClientPullChatsFromServerAns{
+	//cmd id:3002
+    optional uint32 result_code = 1;
+    optional string result_string = 2 ;
+    repeated MsgInfo msg_info = 3;
+    optional uint32 random_num = 4;
+	optional bytes attach_data = 32;
+}
+//finished by yichen
 
 
 message ServerSendMsgToClientNotify{
@@ -735,7 +754,9 @@ message ServerSendMsgHasReadedInfoToClientNotify{
 message UserUpdateConversationHasReadedMsgInfoReq{
 	//cmd id:2149
 	optional MsgHasReadedInfo msg_has_readed_info =1;
-  optional string device_brand = 2;
+	//changed by yichen
+    optional string device_brand = 2;
+	//finished by yichen
 	optional bytes attach_data = 32;     //后台服务器专业字段
 }
 
@@ -811,4 +832,46 @@ message GroupCallApplyJoinToClient {
     optional uint64 group_id = 1; //群id
     optional uint64 user_id = 2; //用户id
     optional bytes attach_data = 32;
+}
+
+//隐藏或删除会话
+message HideConversationReq {
+	// cmd id 2163
+	optional uint32 is_group_msg = 1;	// 操作对象类型 0 --> 用户, 1 --> 群
+	optional uint32 object_id = 2; 			// 群或用户id
+	optional uint32 opt = 3; 			// 0 隐藏, 1 删除
+	optional bytes attach_data = 32;
+}
+
+//隐藏或删除会话后, 对应的 好友或群 的设置
+message HideConversationAns {
+	// cmd id 2164
+	optional uint32 result_code = 1;
+    optional string result_string = 2 ;
+	optional uint32 is_group_msg = 3;	// 操作对象类型 0 --> 用户, 1 --> 群
+	optional uint32 object_id = 4; 			// 群或用户id
+	optional uint32 opt = 5; 			// 0 隐藏, 1 删除
+	optional bytes attach_data = 32;
+}
+
+/*
+	客户端  -----文件----> 服务器 -------加密-------> oss
+	客户端 <-----url-----  服务器 <--------url------ oss
+	客户端  ------后续命令使用(url)-------> 服务器  
+ */
+
+//上传文件
+message UploadReq {
+	// cmd id 2165
+	optional string ext = 1;    // 文件扩展名
+	optional bytes content = 2; // 未加密内容
+	optional bytes attach_data = 32;
+}
+
+message UploadAns {
+	// cmd id 2166
+	optional uint32 result_code = 1;
+    optional string result_string = 2 ;
+	optional string url = 3; // oss 地址(内容加密)
+	optional bytes attach_data = 32;
 }

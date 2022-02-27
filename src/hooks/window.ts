@@ -274,7 +274,7 @@ const useSendImg = (
         Toast(t(data.body.resultString));
       }
     } else if (type === 'img') {
-      accept!.value = 'image/*,video/*';
+      accept!.value = 'image/*';
       await nextTick();
       changUserImg.value.click();
     } else if (type === 'file') {
@@ -293,16 +293,18 @@ const useCbImg = (
   isGroupMsg = 0,
 ) => {
   return async (e: any) => {
+    console.log(accept.value);
     if (!store.state.client.userAgent) {
       await initOss(store);
     }
+
     try {
       const file = e.target.files[0];
       const info = (await store.state.client.put(file.name, file)) as {
         url: string;
       } | null;
       let res = {};
-      if (accept.value === 'image/*,video/*') {
+      if (accept.value === 'image/*') {
         // 图片
         const size = (await getSize(file)) as { width: number; height: number };
         res = {
