@@ -251,6 +251,7 @@ const init = async () => {
   setTimeout(async () => {
     // 获取漫游数据并且合并
     const roamList = await getRoam(store);
+    console.log(roamList);
 
     // 合并数据
     await mergeData([], store, roamList);
@@ -331,7 +332,6 @@ const stop = watch(
           (e: any) => Number(e.msgId) === Number(revokeMsgId),
         );
         readList.splice(revokeKey, 1);
-        console.log(readList, msgList);
 
         store.commit('SET_MSGLIST', msgList);
       }

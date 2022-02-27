@@ -290,8 +290,6 @@ async function useLoginCb(
     });
   }
   if (data.body.resultCode === 0) {
-    hideLoading();
-
     // 设置切换账号
     const userList = JSON.parse(getStorage('userList')) || {};
     // 保存数据到本地
@@ -311,10 +309,13 @@ async function useLoginCb(
     }
     store.dispatch('init');
     // 初始化融云
-    initRonyun(store);
-    // 获取漫游数据合并数据
-    const roamList = await getRoam(store);
-    await mergeData([], store, roamList);
+    await initRonyun(store);
+    setTimeout(async () => {
+      // 获取漫游数据合并数据
+      const roamList = await getRoam(store);
+      await mergeData([], store, roamList);
+    }, 100);
+    hideLoading();
     return goTo('/Home/Message');
   }
   return Toast(t(data.body.resultString));

@@ -384,8 +384,6 @@ const send = () => {
 
 // 获取用户在线状态
 const getOnLineStatus = async () => {
-  console.log(props.yUserInfo);
-
   const res = {
     userOnlineState: {
       uid: props.yUserInfo.uid,

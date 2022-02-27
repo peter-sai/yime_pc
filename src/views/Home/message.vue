@@ -186,6 +186,10 @@
             <Iconfont name="icontuichu" size="12" />
             <span>{{ t('退出群聊') }}</span>
           </div>
+          <div class="item" @click="del(item)">
+            <Iconfont name="icontuichu" size="12" />
+            <span>{{ t('删除') }}</span>
+          </div>
         </div>
       </div>
     </div>
@@ -305,21 +309,24 @@ const contextmenu = (e: any, item: ImsgItem) => {
 const store = useStore(key);
 const msgList: ComputedRef<TMsgItem[]> = computed(() => {
   const list: TMsgItem[] = Object.values(store.state.msgList) as TMsgItem[];
+
   // 区分置顶和非置顶
   let topList: TMsgItem[] = [];
   let defList: TMsgItem[] = [];
   list
     .filter((e: TMsgItem) => e.msgClassId! || (e.lastMsg && e.lastMsg.msgId))
     .forEach((e: TMsgItem) => {
-      if (e.isGroup && e.groupDetailInfo?.groupAttachInfo?.groupTop) {
-        topList.push(e);
-      } else if (
-        !e.isGroup &&
-        e?.userDetailInfo?.userInfo?.userAttachInfo?.msgTop
-      ) {
-        topList.push(e);
-      } else {
-        defList.push(e);
+      if (!e.isDel) {
+        if (e.isGroup && e.groupDetailInfo?.groupAttachInfo?.groupTop) {
+          topList.push(e);
+        } else if (
+          !e.isGroup &&
+          e?.userDetailInfo?.userInfo?.userAttachInfo?.msgTop
+        ) {
+          topList.push(e);
+        } else {
+          defList.push(e);
+        }
       }
     });
 
@@ -438,6 +445,14 @@ const quitGroupChat = async (item: ImsgItem) => {
 
     store.commit('SET_GROUPINFOS', data.body.groupInfos);
     store.commit('DEL_MSGITEM', item.id);
+  }
+};
+
+// 删除
+const del = (item) => {
+  console.log(item, store.state.msgList);
+  if (store.state.msgList[item.id]) {
+    store.state.msgList[item.id].isDel = true;
   }
 };
 </script>

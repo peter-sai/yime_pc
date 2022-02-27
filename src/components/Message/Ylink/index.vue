@@ -1,6 +1,6 @@
 <template>
   <div class="mmsg" @contextmenu="contextmenu">
-    <div>
+    <div @click="$emit('click')">
       <img :src="userInfo?.icon" />
     </div>
     <div class="imgBgBox" @click="goLink">
@@ -37,6 +37,7 @@ import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { useStore } from 'vuex';
 import { getTag } from '@/utils/utils';
+import { key } from '@/store';
 export default defineComponent({
   name: 'MLink',
 });
@@ -55,7 +56,7 @@ const props = defineProps({
   },
 });
 
-const store = useStore();
+const store = useStore(key);
 const { t } = useI18n();
 const goTo = useGoTo(useRouter);
 const urlClass = 'copy' + new Date().getTime().toString();
@@ -73,21 +74,49 @@ onUnmounted(() => {
 
 const host = props.url.split('/')[0];
 
-const goLink = (e: any) => {
-  const classList = ['url', 'imgBgBox', 'span', 'host'];
-  classList.forEach((v) => {
-    if (Array.from(e.target.classList).includes(v)) {
-      if (props.url.includes('http')) {
-        window.open(props.url);
-      } else {
-        window.open(`http://${props.url}`);
-      }
-      return;
-    }
+const goLink = async (e: any) => {
+  const data = await store.dispatch('postMsg', {
+    query: {
+      encodeString: props.url,
+    },
+    cmd: 1023,
+    encryption: 'Aoelailiao.Login.UserDecodeConentReq',
+    auth: true,
   });
+
+  if (data.body.resultCode === 0) {
+    const decodeResultInfo = data.body.decodeResultInfo;
+    if (decodeResultInfo.jumpType === 3 || decodeResultInfo.jumpType === 0) {
+      // 外部链接
+      const classList = ['url', 'imgBgBox', 'span', 'host'];
+      classList.forEach((v) => {
+        if (Array.from(e.target.classList).includes(v)) {
+          if (props.url.includes('http')) {
+            window.open(props.url);
+          } else {
+            window.open(`http://${props.url}`);
+          }
+          return;
+        }
+      });
+    } else if (decodeResultInfo.jumpType === 1) {
+      // 用户资料
+      const userId = decodeResultInfo.userId;
+      // 单聊
+      store.commit('SET_ACTIVEUID', userId);
+      store.commit('SET_ACTIVEISGROUP', false);
+    } else if (decodeResultInfo.jumpType === 2) {
+      // 群资料
+      const groupId = decodeResultInfo.groupId;
+      store.commit('SET_ACTIVEUID', groupId);
+      store.commit('SET_ACTIVEISGROUP', true);
+    }
+  } else {
+    return Toast(data.body.resultString);
+  }
 };
 
-const emit = defineEmits(['menuClick']);
+const emit = defineEmits(['menuClick', 'click']);
 
 const contextmenu = (e: any) => {
   e.preventDefault();
