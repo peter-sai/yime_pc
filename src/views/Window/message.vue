@@ -312,8 +312,6 @@ import MVideo from '@/components/Message/MVideo/index.vue';
 import YVideo from '@/components/Message/YVideo/index.vue';
 import Ylink from '@/components/Message/Ylink/index.vue';
 import Mlink from '@/components/Message/Mlink/index.vue';
-import YVideoFile from '@/components/Message/YVideoFile/index.vue';
-import MVideoFile from '@/components/Message/MVideoFile/index.vue';
 import Iconfont from '../../iconfont/index.vue';
 import YVideoFile from '@/components/Message/YVideoFile/index.vue';
 import MVideoFile from '@/components/Message/MVideoFile/index.vue';
