@@ -13,7 +13,7 @@ const Toast = (msg: string, time = 2000) => {
   };
   app = createApp(toastIndex, option);
   app.use(store);
-  app.mount('#use');
+  app.mount('#toast');
 };
 
 export { Toast };

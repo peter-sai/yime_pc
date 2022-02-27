@@ -224,6 +224,7 @@ export interface ImsgItem {
   userDetailInfo: IUserDetailInfo;
   lastMsg: IMsgInfo;
   groupDetailInfo: IGroupInfo;
+  isDel: boolean;
 }
 
 export interface INotifyClassMsgListInfo {

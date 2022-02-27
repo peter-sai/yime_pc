@@ -113,12 +113,14 @@
             @menuClick="menuClick($event, item)"
             :userInfo="getUserInfo(item)"
             :item="item.msgContent.fileInfo"
+            @download="download(item.msgContent.fileInfo)"
           />
           <MFile
             v-else
             :isRead="item.msgId <= readMsgId"
             @menuClick="menuClick($event, item)"
             :item="item.msgContent.fileInfo"
+            @download="download(item.msgContent.fileInfo)"
           />
         </div>
         <!-- 名片 -->
@@ -132,7 +134,6 @@
             "
             @click="showUserInfo(getUserInfo(item).uid)"
             :userInfo="getUserInfo(item)"
-            @menuClick="menuClick($event, item)"
             v-if="isShowHowComponent(item)"
             :item="item.msgContent.visitingCard"
           />
@@ -203,11 +204,13 @@
             v-if="isShowHowComponent(item)"
             @click="showUserInfo(getUserInfo(item).uid)"
             :userInfo="getUserInfo(item)"
+            @menuClick="menuClick($event, item)"
             :videoMsgInfo="item.msgContent.videoMsgInfo"
           />
           <MVideoFile
             v-else
             :isRead="item.msgId <= readMsgId"
+            @menuClick="menuClick($event, item)"
             :videoMsgInfo="item.msgContent.videoMsgInfo"
           />
         </div>
@@ -224,7 +227,7 @@
         <!-- 撤回消息 -->
         <div class="item" v-else-if="item.type === 'revokeInfo'">
           <div class="revoke">
-            {{ getRevokeName(item) }} {{ t('撤回了一条消息') }}
+            {{ getRevokeName(item) }}
           </div>
         </div>
         <div class="item" v-else-if="item.type === 'fireInfo'">
@@ -249,13 +252,17 @@
           >{{ t('复制') }}</span
         >
         <span
-          v-if="copyItem.type !== 'voiceMsg'"
+          v-if="
+            copyItem.type !== 'voiceMsg' && copyItem.type !== 'visitingCard'
+          "
           @click="forward(copyItem.msgId)"
           >{{ t('转发') }}</span
         >
         <span
           @click="save(copyItem)"
-          v-if="['imageMsg', 'fileInfo'].includes(copyItem.type)"
+          v-if="
+            ['imageMsg', 'fileInfo', 'videoMsgInfo'].includes(copyItem.type)
+          "
           >{{ t('保存') }}</span
         >
         <span
@@ -305,13 +312,14 @@ import MVideo from '@/components/Message/MVideo/index.vue';
 import YVideo from '@/components/Message/YVideo/index.vue';
 import Ylink from '@/components/Message/Ylink/index.vue';
 import Mlink from '@/components/Message/Mlink/index.vue';
+import Iconfont from '../../iconfont/index.vue';
 import YVideoFile from '@/components/Message/YVideoFile/index.vue';
 import MVideoFile from '@/components/Message/MVideoFile/index.vue';
-import Iconfont from '../../iconfont/index.vue';
 import { Store, useStore } from 'vuex';
 import { initStore, key } from '@/store';
 import { useI18n } from 'vue-i18n';
 import {
+  IFileInfo,
   IFireInfo,
   IImageMsgInfo,
   IMsgInfo,
@@ -320,17 +328,20 @@ import {
 } from '@/types/msg';
 import { formateTime } from '@/utils/utils';
 import { Etag } from '../Layout/index.vue';
+import { initRonyun } from '@/App.vue';
 import {
   useSendImg,
   useSystemNotifyInfo,
   useUserGetConversationHasReadedMsgInfo,
   useRevoke,
   formatMsg,
+  downloadFile,
 } from '@/hooks/window';
 import { IGroupInfo, IUserInfo } from '@/types/user';
 import { Toast } from '@/plugin/Toast';
 import ClipboardJS from 'clipboard';
 import { MediaAudio } from '@/plugin/Audio';
+import { hideLoading, showLoading } from '@/plugin/Loading';
 
 async function getGroupInfo(store: Store<initStore>, uid: number) {
   if (!uid) return;
@@ -372,9 +383,9 @@ const msgWindow: Ref<HTMLDivElement> = ref() as Ref<HTMLDivElement>;
 const showUserInfo = async (uid: number, type?: number) => {
   // 群名片
   if (type) {
-    await getGroupInfo(store, uid);
-    emit('toggleBox', uid);
-    emit('changeTag', Etag.GroupInfo);
+    // await getGroupInfo(store, uid);
+    store.commit('SET_ACTIVEUID', uid);
+    store.commit('SET_ACTIVEISGROUP', true);
   } else {
     emit('toggleBox', uid);
     emit('changeTag', Etag.UserInfo);
@@ -570,18 +581,8 @@ const del = useRevoke(store, t);
 
 // 获取撤回消息人
 const getRevokeName = (item: IMsgInfo<string>) => {
-  if (Number(item.fromId) === Number(store.state.activeUid)) {
-    const msgList = store.state.msgList;
-    if (msgList) {
-      const userInfo = msgList[store.state.activeUid!].userDetailInfo.userInfo;
-      const userAttachInfo = userInfo.userAttachInfo || {};
-      return userAttachInfo.remarkName || userInfo.nickname;
-    }
-  } else {
-    const userAttachInfo = userInfo.value.userAttachInfo || {};
-    return userAttachInfo.remarkName || userInfo.value.nickname;
-  }
-  return '';
+  const res = formatMsg(item.msgContent.revokeInfo.stringContent!, t);
+  return res;
 };
 
 // 转发
@@ -604,11 +605,6 @@ const call = async (item: any) => {
     auth: true,
   });
   if (data?.body?.functionState === 1) {
-    const mediaNode = document.getElementById('media')!;
-    if (mediaNode.hasChildNodes()) {
-      return Toast(t('正在通话中'));
-    }
-    if (!store.state.rongIm) return Toast('融云服务初始化失败');
     if (!store.state.activeIsGroup) {
       // 单聊
       MediaAudio({
@@ -620,6 +616,43 @@ const call = async (item: any) => {
       // 群聊
       emit('selectGroupMember', item.videoType);
     }
+
+    const mediaNode = document.getElementById('media')!;
+    if (mediaNode.hasChildNodes()) {
+      return Toast(t('正在通话中'));
+    }
+    if (!store.state.rongIm) {
+      try {
+        showLoading();
+        await initRonyun(store);
+        if (!store.state.activeIsGroup) {
+          // 单聊
+          MediaAudio({
+            isCall: true,
+            mediaType: item.videoType,
+            yUserInfo: props.yUserInfo,
+          });
+        } else {
+          // 群聊
+          emit('selectGroupMember', item.videoType);
+        }
+      } catch (error) {
+        console.log(error);
+        return Toast(t('服务初始化失败'));
+      }
+      hideLoading();
+    } else {
+      if (!store.state.activeIsGroup) {
+        MediaAudio({
+          isCall: true,
+          mediaType: item.videoType,
+          yUserInfo: props.yUserInfo,
+        });
+      } else {
+        // 群聊
+        emit('selectGroupMember', item.videoType);
+      }
+    }
   } else {
     return Toast(t('发送者无权限'));
   }
@@ -627,15 +660,32 @@ const call = async (item: any) => {
 
 // 保存
 const save = (item: IMsgInfo<IFireInfo | IImageMsgInfo>) => {
-  let url = '';
+  const file = {
+    url: '',
+    name: '',
+  };
   if (item.type === 'imageMsg') {
-    url = item.msgContent.imageMsg.imageUrl!;
+    file.url = item.msgContent.imageMsg.imageUrl!;
+  } else if (item.type === 'fileInfo') {
+    file.url = item.msgContent.fileInfo.fileUrl!;
+    file.name = item.msgContent.fileInfo.fileName!;
+  } else if (item.type === 'videoMsgInfo') {
+    file.url = item.msgContent.videoMsgInfo.url!;
+    file.name = item.msgContent.videoMsgInfo.name!;
   } else {
-    url = item.msgContent.fileInfo.fileUrl!;
+    file.url = '';
   }
-  const a = document.createElement('a');
-  a.setAttribute('href', url);
-  a.click();
+
+  downloadFile(file);
+};
+
+// 下载
+const download = (item: IFileInfo) => {
+  const file = {
+    url: item.fileUrl,
+    name: item.fileName,
+  };
+  downloadFile(file);
 };
 </script>
 <style lang="scss" scoped>

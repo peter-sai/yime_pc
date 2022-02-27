@@ -1,7 +1,8 @@
 <template>
   <div class="yImg">
     <div @click="$emit('click')">
-      <img class="userImg" :src="userInfo?.icon" />
+      <img v-if="userInfo?.icon" class="userImg" :src="userInfo?.icon" />
+      <Iconfont v-else name="iconlianxiren" size="46" color="#A8B5BE" />
     </div>
     <div>
       <div class="imgBg" @contextmenu="contextmenu">
@@ -110,7 +111,7 @@ const play = async () => {
       max-height: 100%;
       max-width: 100%;
     }
-    &::after {
+    &::before {
       position: absolute;
       left: 0;
       right: 0;

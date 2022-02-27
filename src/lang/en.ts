@@ -961,4 +961,8 @@ export default {
   未注册请使用验证码登录: 'Not registered, please login with verification code',
   等待对方接听: 'Waiting for the other party to answer',
   您收到一条消息: 'You received a message',
+  服务初始化失败: 'Service initialization failed',
+  获取取数据中: 'Getting data',
+  登录成功正在获取数据: 'Login succeeded, getting data',
+  '你被踢出群:<spile>': 'You were kicked out of the group:<spile>',
 };

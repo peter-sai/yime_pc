@@ -1,4 +1,4 @@
-import { showLoading } from '@/plugin/Loading';
+import { hideLoading, showLoading } from '@/plugin/Loading';
 import { Toast } from '@/plugin/Toast';
 import { initStore } from '@/store';
 import * as RongIMLib from '@rongcloud/imlib-next';
@@ -7,6 +7,7 @@ import {
   IGroupAtInfo,
   IMsgInfo,
   ImsgItem,
+  IRevokeInfo,
   ISystemNotifyInfo,
   IVideoCallMsgInfo,
   TMsgContent,
@@ -17,7 +18,7 @@ import {
   setMsgList,
   getToken as getUserToken,
 } from '@/utils/utils';
-import { getToken } from '../api';
+import { getOssInfo, getToken } from '../api';
 import { number } from '@intlify/core-base';
 import moment from 'moment';
 import { ComputedRef, Ref } from 'vue';
@@ -26,6 +27,15 @@ import { stringifyQuery } from 'vue-router';
 import { Store } from 'vuex';
 import { RCCallClient } from '@rongcloud/plugin-call';
 
+// 获取阿里存储信息
+export async function initOss(store: Store<initStore>) {
+  try {
+    const config: any = await getOssInfo();
+    store.commit('SET_CREDENTIALS', config.Credentials);
+  } catch (error) {
+    console.log(error);
+  }
+}
 // 群操作
 const useUserOperateGroupInfo = (store: Store<initStore>) => {
   return async (type: number, groupInfo: any) => {
@@ -264,7 +274,7 @@ const useSendImg = (
         Toast(t(data.body.resultString));
       }
     } else if (type === 'img') {
-      accept!.value = 'image/*,video/*';
+      accept!.value = 'image/*';
       await nextTick();
       changUserImg.value.click();
     } else if (type === 'file') {
@@ -283,54 +293,59 @@ const useCbImg = (
   isGroupMsg = 0,
 ) => {
   return async (e: any) => {
-    const file = e.target.files[0];
-    const info = (await store.state.client.put(file.name, file)) as {
-      url: string;
-    } | null;
-    let res = {};
-    if (accept.value === 'image/*,video/*') {
-      // 图片
-      const size = (await getSize(file)) as { width: number; height: number };
-      res = {
-        msgInfo: {
-          isGroupMsg,
-          fromId: store.state.userInfo.uid,
-          toId: store.state.activeUid,
-          msgShowType: 1,
-          isEncrypt: 0,
-          msgContent: {
-            msgContentType: 2,
-            msgContent: 'imageMsg',
-            imageMsg: {
-              imageUrl: info?.url,
-              imageWidth: size.width,
-              imageHeight: size.height,
-            },
-          },
-        },
-      };
-    } else {
-      // 文件
-      res = {
-        msgInfo: {
-          isGroupMsg,
-          fromId: store.state.userInfo.uid,
-          toId: store.state.activeUid,
-          msgShowType: 1,
-          isEncrypt: 0,
-          msgContent: {
-            msgContentType: 19,
-            msgContent: 'fileInfo',
-            fileInfo: {
-              fileName: file.name,
-              fileSize: file.size,
-              fileUrl: info?.url,
-            },
-          },
-        },
-      };
+    console.log(accept.value);
+    if (!store.state.client.userAgent) {
+      await initOss(store);
     }
+
     try {
+      const file = e.target.files[0];
+      const info = (await store.state.client.put(file.name, file)) as {
+        url: string;
+      } | null;
+      let res = {};
+      if (accept.value === 'image/*') {
+        // 图片
+        const size = (await getSize(file)) as { width: number; height: number };
+        res = {
+          msgInfo: {
+            isGroupMsg,
+            fromId: store.state.userInfo.uid,
+            toId: store.state.activeUid,
+            msgShowType: 1,
+            isEncrypt: 0,
+            msgContent: {
+              msgContentType: 2,
+              msgContent: 'imageMsg',
+              imageMsg: {
+                imageUrl: info?.url,
+                imageWidth: size.width,
+                imageHeight: size.height,
+              },
+            },
+          },
+        };
+      } else {
+        // 文件
+        res = {
+          msgInfo: {
+            isGroupMsg,
+            fromId: store.state.userInfo.uid,
+            toId: store.state.activeUid,
+            msgShowType: 1,
+            isEncrypt: 0,
+            msgContent: {
+              msgContentType: 19,
+              msgContent: 'fileInfo',
+              fileInfo: {
+                fileName: file.name,
+                fileSize: file.size,
+                fileUrl: info?.url,
+              },
+            },
+          },
+        };
+      }
       const data = await store.dispatch('postMsg', {
         query: res,
         cmd: 2001,
@@ -431,20 +446,24 @@ export const formatMsg = (
   msgText: string,
   t: { (key: string | number): string },
 ) => {
-  const [fristMsg, ...msgs] = msgText.split('#');
-  const msg = t(fristMsg);
-  if (msgs.length) {
-    let newMsg = '';
-    msgs.forEach((e, k) => {
-      if (k === 0) {
-        newMsg = msg.replace('<spile>', e);
-      } else {
-        newMsg = newMsg.replace(`<spile${k}>`, e);
-      }
-    });
-    return newMsg;
-  } else {
-    return t(msgText);
+  try {
+    const [fristMsg, ...msgs] = msgText.split('#');
+    const msg = t(fristMsg);
+    if (msgs.length) {
+      let newMsg = '';
+      msgs.forEach((e, k) => {
+        if (k === 0) {
+          newMsg = msg.replace('<spile>', e);
+        } else {
+          newMsg = newMsg.replace(`<spile${k}>`, e);
+        }
+      });
+      return newMsg;
+    } else {
+      return t(msgText);
+    }
+  } catch (error) {
+    return '';
   }
 };
 
@@ -458,7 +477,7 @@ const switchMsg = (
 ) => {
   // 格式化 systemNotifyInfo
   const systemNotifyInfo = useSystemNotifyInfo(store, t);
-  let userName = '';
+  const userName = '';
   // let fireInfo, infoList;
   // 阅后即焚
   if (Number(item.msgShowType) === 3 && item.type === 'stringContent') {
@@ -502,26 +521,10 @@ const switchMsg = (
     //   infoList = fireInfo.substr(7, fireInfo.length).split('#');
     //   return infoList[1] + infoList[0];
     case 'revokeInfo':
-      // 处理群
-      if (item.isGroupMsg) {
-        const res = groupUserInfos!.find(
-          (e: any) => Number(e.uid) === Number(item.fromId),
-        );
-        if (res) {
-          return res.nickname + t('撤回了一条消息');
-        }
-        return t('撤回了一条消息');
-        // 个人消息
-      } else {
-        if (item.fromId !== store.state.userInfo.uid) {
-          userName =
-            yUserInfo?.userAttachInfo?.remarkName || yUserInfo!.nickname;
-        } else {
-          const userInfo = store.state.userInfo;
-          userName = userInfo?.userAttachInfo?.remarkName || userInfo.nickname;
-        }
-        return userName + t('撤回了一条消息');
-      }
+      return formatMsg(
+        (item.msgContent.revokeInfo as IRevokeInfo).stringContent,
+        t,
+      );
     case 'systemNotifyInfo':
       return systemNotifyInfo(item as IMsgInfo<ISystemNotifyInfo>);
     case 'visitingCard':
@@ -648,7 +651,6 @@ const useUserGetConversationHasReadedMsgInfo = (store: Store<initStore>) => {
 const useRevoke = (
   store: Store<initStore>,
   t: { (key: string | number): string },
-  isGroupMsg = 0,
 ) => {
   return async (msg: any) => {
     // 时间多于两分钟的不可以撤回
@@ -658,16 +660,18 @@ const useRevoke = (
     const userInfo = store.state.userInfo;
     const res = {
       msgInfo: {
-        isGroupMsg: isGroupMsg,
+        isGroupMsg: store.state.activeIsGroup ? 1 : 0,
         fromId: userInfo.uid,
         toId: Number(store.state.activeUid),
-        msgShowType: 1,
+        msgShowType: 4,
         isEncrypt: 0,
         msgContent: {
           msgContentType: 8,
           msgContent: 'revokeInfo',
           revokeInfo: {
             revokeMsgId: msg.msgId,
+            stringContent:
+              '<spile>撤回了一条消息#' + store.state.userInfo.nickname,
           },
         },
       },
@@ -713,27 +717,26 @@ const initRongConnect = async (
   store: Store<initStore>,
   rongIm: RCCallClient | null,
 ) => {
-  const userInfo = store.state.userInfo;
-  const res: any = await getToken({
-    uid: userInfo.uid,
-    name: userInfo.nickname,
-    portrait: userInfo.icon,
-    type: 'domi',
-  });
-
-  RongIMLib.connect(res.token).then(
-    (res: any) => {
-      if (res.code === 0) {
-        console.log('链接成功, 链接用户 id 为: ', res.data.userId);
-        store.commit('SET_RONGIM', rongIm);
-      } else {
-        console.warn('链接失败, code:', res.code);
-      }
-    },
-    (err) => {
-      console.log(err);
-    },
-  );
+  try {
+    const userInfo = store.state.userInfo;
+    const res: any = await getToken({
+      uid: userInfo.uid,
+      name: userInfo.nickname,
+      portrait: userInfo.icon,
+      type: 'domi',
+    });
+    const data: any = await RongIMLib.connect(res.token);
+    if (data.code === 0) {
+      console.log('链接成功, 链接用户 id 为: ', data.data.userId);
+      store.commit('SET_RONGIM', rongIm);
+    } else {
+      console.warn('链接失败, code:', data.code);
+      throw new Error('链接失败, code:' + data.code);
+    }
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
 };
 
 // 漫游数据
@@ -748,11 +751,37 @@ async function getRoam(store: Store<initStore>) {
       encryption: 'Aoelailiao.Message.AtInfo',
       auth: true,
     });
-    console.log(res.body);
-
     return res.body.msgInfos || [];
   }
   return [];
+}
+
+//下载文件
+function saveAs(blob: Blob, filename: string) {
+  const link = document.createElement('a');
+  link.href = window.URL.createObjectURL(blob);
+  link.download = filename;
+  link.click();
+}
+
+function getBlob(url: string) {
+  return new Promise((resolve) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.responseType = 'blob';
+    xhr.onload = () => {
+      if (xhr.status === 200) {
+        resolve(xhr.response);
+      }
+    };
+
+    xhr.send();
+  });
+}
+
+async function downloadFile(file: { url: string; name: string }) {
+  const blob: any = await getBlob(file.url);
+  saveAs(blob, file.name);
 }
 
 export {
@@ -774,4 +803,5 @@ export {
   useFormateTime,
   initRongConnect,
   getRoam,
+  downloadFile,
 };

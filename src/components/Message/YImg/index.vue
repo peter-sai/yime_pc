@@ -1,7 +1,8 @@
 <template>
   <div class="yImg">
     <div @click="$emit('click')">
-      <img class="userImg" :src="userInfo?.icon" />
+      <img v-if="userInfo?.icon" class="userImg" :src="userInfo?.icon" />
+      <Iconfont v-else name="iconlianxiren" size="46" color="#A8B5BE" />
     </div>
     <div>
       <!-- <img :width="width" :height="height" :src="src" alt="" /> -->
@@ -21,6 +22,7 @@ import {
   PropType,
   defineEmits,
 } from 'vue';
+import Iconfont from '@/iconfont/index.vue';
 import SayHello from '../SayHello/index.vue';
 import { useI18n } from 'vue-i18n';
 import { IUserInfo } from '@/types/user';

@@ -12,7 +12,10 @@
       :icon="groupDetailInfo.groupIcon"
       @toggleBox="toggleBox"
       @changeTag="changeTag"
-      :isShowRight="groupDetailInfo.groupState === 1"
+      :isShowRight="
+        groupDetailInfo.groupState === 1 &&
+        memberUserInfos.includes(store.state.userInfo.uid)
+      "
     />
 
     <!-- 消息内容 -->
@@ -27,7 +30,10 @@
     </div>
 
     <Bottom
-      v-if="groupDetailInfo.groupState === 1"
+      v-if="
+        groupDetailInfo.groupState === 1 &&
+        memberUserInfos.includes(store.state.userInfo.uid)
+      "
       v-model="inputVal"
       :groupDetailInfo="groupDetailInfo.groupId ? groupDetailInfo : undefined"
       :isGroupMember="
@@ -41,6 +47,16 @@
       @sendFile="sendImg('file')"
       @atUserInfoList="getAtUserInfoList"
     />
+
+    <div
+      class="btnBox"
+      v-if="
+        groupDetailInfo.groupState === 1 &&
+        !memberUserInfos.includes(store.state.userInfo.uid)
+      "
+    >
+      <div @click="addGroup" class="btn">{{ t('加入群聊') }}</div>
+    </div>
     <!-- 文件 和 图片选择 -->
     <input ref="changUserImg" type="file" hidden :accept="accept" />
 
@@ -179,6 +195,7 @@ import { Etag } from '../Layout/index.vue';
 import { useEnter, useCbImg, useSendImg } from '@/hooks/window';
 import { useI18n } from 'vue-i18n';
 import { ImsgItem } from '@/types/msg';
+import { Toast } from '@/plugin/Toast';
 export default defineComponent({
   name: 'groupWindow',
 });
@@ -200,7 +217,6 @@ async function getGroupInfo(store: Store<initStore>) {
 
     msgItem.value = data.body;
 
-    console.log(data.body.groupDetailInfo);
     const item = {
       id: data.body.groupDetailInfo.groupId,
       isBotUser: false,
@@ -263,11 +279,19 @@ const tag = ref<Etag>(Etag['UserInfo']);
 const changeTag = (val: Etag) => {
   tag.value = val;
 };
+const store = useStore(key);
 
 const groupDetailInfo: ComputedRef<IGroupInfo> = computed(
   () => store.state.msgList[store.state.activeUid!]?.groupDetailInfo || {},
 );
-const store = useStore(key);
+
+const memberUserInfos = computed(
+  () =>
+    groupDetailInfo.value?.groupMemberLists?.memberUserInfos?.map(
+      (e) => e.memberUid,
+    ) || [],
+);
+
 async function init() {
   getGroupInfo(store);
   // 查询 群 通话状态
@@ -290,7 +314,6 @@ watch(
   async (data: any) => {
     // GroupCallNotifyToClient
     if (data.cmd === 2156) {
-      console.log(data.body);
       groupCallState.value = data.body.groupCallState;
     }
   },
@@ -299,7 +322,7 @@ watch(
 const inputVal = ref('');
 
 // 文件选择类型
-const accept = ref('image/*,video/*');
+const accept = ref('image/*');
 const changUserImg: Ref<HTMLInputElement | null> = ref(null);
 
 const cbImg = useCbImg(store, accept, t, 1);
@@ -327,6 +350,34 @@ const sendImg = useSendImg(store, 1, t, changUserImg, accept, nextTick);
 // 获取at 用户列表
 const getAtUserInfoList = (userInfoList: IUserInfo[]) => {
   atUserInfoList.value = userInfoList;
+};
+
+// 加入群聊
+const addGroup = async () => {
+  const query = {
+    operateType: 2,
+    groupInfo: {
+      groupId: store.state.activeUid,
+      groupMemberLists: {
+        ...groupDetailInfo.value.groupMemberLists,
+        memberUserInfos: [
+          ...groupDetailInfo.value.groupMemberLists.memberUserInfos,
+        ],
+      },
+    },
+  };
+  query.groupInfo.groupMemberLists.memberUserInfos.push({
+    memberUid: store.state.userInfo.uid,
+    joinType: 3,
+    inviteUid: query.groupInfo.groupMemberLists.rootUid,
+  });
+  const data = await store.dispatch('postMsg', {
+    query,
+    cmd: 1027,
+    encryption: 'Aoelailiao.Login.UserOperateGroupInfoReq',
+    auth: true,
+  });
+  Toast(t(data.body.resultString));
 };
 </script>
 <style lang="scss" scoped>
@@ -356,6 +407,28 @@ const getAtUserInfoList = (userInfoList: IUserInfo[]) => {
     bottom: 0;
     width: 320px;
     background: #fff;
+  }
+  .btnBox {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    cursor: pointer;
+    .btn {
+      height: 22px;
+      font-size: 16px;
+      font-weight: 400;
+      text-align: center;
+      line-height: 22px;
+      color: #fff;
+      width: 142px;
+      height: 44px;
+      background: linear-gradient(130deg, #2999ff 8%, #0064c1 96%);
+      border-radius: 22px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
   }
 }
 </style>

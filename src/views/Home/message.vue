@@ -186,6 +186,10 @@
             <Iconfont name="icontuichu" size="12" />
             <span>{{ t('退出群聊') }}</span>
           </div>
+          <div class="item" @click="del(item)">
+            <Iconfont name="icontuichu" size="12" />
+            <span>{{ t('删除') }}</span>
+          </div>
         </div>
       </div>
     </div>
@@ -305,6 +309,7 @@ const contextmenu = (e: any, item: ImsgItem) => {
 const store = useStore(key);
 const msgList: ComputedRef<TMsgItem[]> = computed(() => {
   const list: TMsgItem[] = Object.values(store.state.msgList) as TMsgItem[];
+
   // 区分置顶和非置顶
   let topList: TMsgItem[] = [];
   let defList: TMsgItem[] = [];
@@ -438,6 +443,13 @@ const quitGroupChat = async (item: ImsgItem) => {
 
     store.commit('SET_GROUPINFOS', data.body.groupInfos);
     store.commit('DEL_MSGITEM', item.id);
+  }
+};
+
+// 删除
+const del = (item: any) => {
+  if (store.state.msgList[item.id]) {
+    delete store.state.msgList[item.id];
   }
 };
 </script>

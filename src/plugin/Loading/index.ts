@@ -4,12 +4,16 @@ import toastIndex from './index.vue';
 const loading = () => {
   let app: any = null;
   const showLoading = (msg?: string) => {
+    hideLoading();
     app = createApp(toastIndex, { title: msg });
     app.mount('#use');
+    setTimeout(() => {
+      hideLoading();
+    }, 8000);
   };
 
   const hideLoading = () => {
-    app.unmount();
+    app && app.unmount();
   };
   return { showLoading, hideLoading };
 };

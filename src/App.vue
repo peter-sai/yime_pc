@@ -34,20 +34,23 @@ import messageAudio from './assets/audio/message.wav';
 import { MediaAudio } from './plugin/Audio';
 import { GroupMediaAudio, hideGroupMediaAudio } from './plugin/GroupAudio';
 import { Toast } from './plugin/Toast';
+import { initOss } from './hooks/window';
 import { useI18n } from 'vue-i18n';
+import { hideLoading } from './plugin/Loading';
 export async function initRonyun(store: Store<initStore>) {
   // IM 客户端初始化
   const RongCallLib = RongIMLib.init({
-    appkey: 'pgyu6atqpunsu',
+    appkey: 'tdrvipkst22v5',
   });
   // 监听消息 用来处理是否显示加入音视频按钮
-  console.log(RongCallLib);
 
   // RTC 客户端初始化
   const rtcClient: RCRTCClient = RongIMLib.installPlugin(
     rtcInstaller,
     {},
   ) as RCRTCClient;
+  // 正在通话中的uid
+  let callUid = '';
   const rongIm = RongIMLib.installPlugin(callInstaller, {
     // rtcClient 实例 （必填）
     rtcClient,
@@ -57,6 +60,7 @@ export async function initRonyun(store: Store<initStore>) {
     async onSession(session: RCCallSession) {
       const uid = session.getTargetId();
       const mediaNode = document.getElementById('media')!;
+
       if (mediaNode.hasChildNodes()) {
         // 当前正在通话中
         session.registerSessionListener({
@@ -114,6 +118,9 @@ export async function initRonyun(store: Store<initStore>) {
         });
         return;
       }
+
+      callUid = session.getTargetId();
+
       if (session.getConversationType() === 1) {
         let userDetail = '';
         if (store.state.msgList[Number(uid)]) {
@@ -170,22 +177,50 @@ export async function initRonyun(store: Store<initStore>) {
      *  @param summaryInfo 结束一个 session 的后汇总信息
      */
     onSessionClose(session: RCCallSession, summaryInfo?: IEndSummary) {
-      hideGroupMediaAudio();
-      // 设置当前不在通话中 用于是否显示加入按钮
-      store.commit('SET_CONVERSATIONING', false);
+      if (callUid === session.getTargetId()) {
+        hideGroupMediaAudio();
+        // 设置当前不在通话中 用于是否显示加入按钮
+        store.commit('SET_CONVERSATIONING', false);
+      }
     },
   });
-
-  // store.commit('SET_RONGIM', rongIm);
   // 如果以登录状态 则 连接融云
   if (getUserToken()) {
-    initRongConnect(store, rongIm);
+    try {
+      await initRongConnect(store, rongIm);
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
   }
 }
 
 export default defineComponent({
   name: 'App',
 });
+
+export function reconnect(store: Store<initStore>) {
+  if (store.state.ws) return;
+  setTimeout(function () {
+    //没连接上会一直重连，设置延迟避免请求过多
+    let ws = new WebSocket(process.env.VUE_APP_BASEURL);
+    store.commit('SET_ISONLINE', '连接中...');
+    ws.binaryType = 'arraybuffer';
+    store.commit('SET_WS', ws);
+    ws.onclose = function () {
+      store.commit('SET_WS', null);
+      console.log('onclose');
+      store.commit('SET_ISONLINE', '网络状态不佳');
+      hideLoading();
+      reconnect(store);
+    };
+    ws.onerror = function () {
+      store.commit('SET_WS', null);
+      store.commit('SET_ISONLINE', '网络状态不佳');
+      console.log('onerror');
+    };
+  }, 1000);
+}
 </script>
 <script lang="ts" setup>
 const store = useStore(key);
@@ -198,54 +233,33 @@ if (Notification.permission !== 'granted') {
 }
 
 const init = async () => {
-  const url = 'ws://18.167.158.191:8003'; // duomi正式
-  let ws = new WebSocket(url);
+  let ws = new WebSocket(process.env.VUE_APP_BASEURL);
   store.commit('SET_ISONLINE', '连接中...');
   store.commit('SET_WS', ws);
   ws.binaryType = 'arraybuffer';
 
   ws.onclose = function () {
-    console.log('close');
+    store.commit('SET_WS', null);
+    console.log('onclose');
     store.commit('SET_ISONLINE', '网络状态不佳');
-    reconnect();
+    hideLoading();
+    reconnect(store);
   };
   ws.onerror = function () {
+    store.commit('SET_WS', null);
     store.commit('SET_ISONLINE', '网络状态不佳');
-    console.log('error');
-    // reconnect();
+    console.log('onerror');
   };
-  function reconnect() {
-    setTimeout(function () {
-      //没连接上会一直重连，设置延迟避免请求过多
-      let ws = new WebSocket(url);
-      store.commit('SET_ISONLINE', '连接中...');
-      ws.binaryType = 'arraybuffer';
-      store.commit('SET_WS', ws);
-      ws.onclose = function () {
-        console.log('close');
-        store.commit('SET_ISONLINE', '网络状态不佳');
-        reconnect();
-      };
-      ws.onerror = function () {
-        store.commit('SET_ISONLINE', '网络状态不佳');
-        console.log('error');
-      };
-    }, 1000);
-  }
 
-  try {
-    // 获取阿里存储信息
-    const config: any = await getOssInfo();
-    store.commit('SET_CREDENTIALS', config.Credentials);
-  } catch (error) {
-    console.log(error);
-  }
+  // 获取阿里存储信息
+  initOss(store);
 
   // 初始化融云服务
   initRonyun(store);
   setTimeout(async () => {
     // 获取漫游数据并且合并
     const roamList = await getRoam(store);
+    console.log(roamList);
 
     // 合并数据
     await mergeData([], store, roamList);
@@ -326,6 +340,7 @@ const stop = watch(
           (e: any) => Number(e.msgId) === Number(revokeMsgId),
         );
         readList.splice(revokeKey, 1);
+
         store.commit('SET_MSGLIST', msgList);
       }
 

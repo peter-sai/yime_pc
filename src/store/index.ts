@@ -12,6 +12,7 @@ import { IMsgInfo, ImsgItem, TMsgContent } from '@/types/msg';
 import { IUserDetailInfo } from '@/types/user';
 import { useClientSendMsgAckToServer, mergeData } from '@/hooks/window';
 import { hideLoading } from '@/plugin/Loading';
+import { reconnect } from '../App.vue';
 
 const OSS = require('ali-oss');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -124,6 +125,7 @@ const initState = {
   msgInfo: {},
   client: {
     put: (fileName: any, file: any) => null,
+    userAgent: null,
   },
   msgList: {} as { [key: number]: ImsgItem },
   playAudio: '', // 当前正在播放的音频
@@ -234,6 +236,7 @@ const sotreRoot = createStore({
     },
     SET_WS: (state, val) => {
       state.ws = val;
+      if (!val) return;
       ws = val;
       onMessage();
       if (!ws.onopen) {
@@ -241,7 +244,7 @@ const sotreRoot = createStore({
           console.log('open');
           num = 0;
           setTimeout(() => {
-            heartbeat(sotreRoot.dispatch, ws);
+            heartbeat(sotreRoot, ws);
           }, 10000);
           const userList = getStorage('userList');
           if (!userList) return;
@@ -343,10 +346,9 @@ const sotreRoot = createStore({
       if (ws.readyState !== 1) {
         ws.onopen = async function () {
           setTimeout(() => {
-            heartbeat(dispatch, ws);
+            heartbeat(sotreRoot, ws);
           }, 10000);
           console.log('open');
-
           ws.send(data);
         };
       } else {
@@ -583,17 +585,14 @@ function getMessage(cmd: any, encryption: any, state: any) {
 
         state.msgInfo = query;
         if (query.cmd !== 2) {
-          // console.log(query);
+          // console.log(query, cmd);
         }
 
         if (query.cmd - cmd === 1) {
           resolve(query);
-        } else {
-          hideLoading();
         }
       } catch (error) {
         console.log(error);
-        hideLoading();
         reject(error);
       }
     };
@@ -604,13 +603,15 @@ function getMessage(cmd: any, encryption: any, state: any) {
 }
 
 function onMessage() {
-  const cmdList = [2129, 2004, 2125, 2148, 2024, 2156, 2162];
+  const cmdList = [2129, 2004, 2125, 2148, 2024, 2156, 2162, 2054];
   ws.onmessage = (evt: any) => {
     if (sotreRoot.state.isOnLine !== '消息') {
       sotreRoot.commit('SET_ISONLINE', '消息');
     }
     const dataview = new DataView(evt.data);
     const ansCmd = dataview.getUint16(5);
+    // console.log(dataview, ansCmd);
+
     if (cmdList.includes(ansCmd)) {
       defCb(evt);
     } else {
@@ -619,6 +620,7 @@ function onMessage() {
       }
       try {
         cb[ansCmd - 1](evt);
+        // delete cb[ansCmd - 1];
       } catch (error) {
         console.log(error, ansCmd);
       }
@@ -627,24 +629,32 @@ function onMessage() {
 }
 
 // 心跳包
-async function heartbeat(dispatch: any, ws: any) {
+async function heartbeat(store: any, ws: any) {
   const strarTime: number = Date.now();
+  console.log(num);
+  if (!store.state.ws) return;
+
   try {
-    if (num <= 2) {
+    if (num <= 3) {
       setTimeout(() => {
-        heartbeat(dispatch, ws);
+        heartbeat(store, ws);
       }, 10000);
     } else {
       console.log('close');
       // 重新连接
       ws.close();
+      store.commit('SET_WS', null);
+      reconnect(store);
+      hideLoading();
     }
     setTimeout(() => {
-      if (!time || time - strarTime > 3000 || time - strarTime < 0) {
+      if (!time || time - strarTime > 5000 || time - strarTime < 0) {
         num++;
+      } else {
+        num = 0;
       }
-    }, 3000);
-    await dispatch('postMsg', {
+    }, 5000);
+    await store.dispatch('postMsg', {
       query: null,
       cmd: 1,
     });

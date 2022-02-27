@@ -9,7 +9,7 @@ const ShowVideo = (props) => {
   const option = {
     ...props,
     destroy: () => {
-      app.unmount();
+      app && app.unmount();
     },
   };
   app = createApp(dialog, option);
@@ -20,7 +20,7 @@ const ShowVideo = (props) => {
 };
 
 const HideVideo = () => {
-  app.unmount();
+  app && app.unmount();
 };
 
 export { ShowVideo, HideVideo };

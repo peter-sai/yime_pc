@@ -1,6 +1,7 @@
 <template>
   <div class="mmsg">
-    <img @click="$emit('click')" :src="userInfo?.icon" />
+    <img v-if="userInfo?.icon" @click="$emit('click')" :src="userInfo?.icon" />
+    <Iconfont v-else name="iconlianxiren" size="46" color="#A8B5BE" />
     <div>
       <div style="flex: 1" @contextmenu="contextmenu">
         <div class="fileBg" @click="$emit('clickCard')">
@@ -25,6 +26,7 @@ import { defineComponent, defineProps, defineEmits } from 'vue';
 import { PropType } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { IUserInfo } from '@/types/user';
+import Iconfont from '../../../iconfont/index.vue';
 import { IVisitingCard } from '@/types/msg';
 defineComponent({
   name: 'YVisitingCard',
@@ -74,11 +76,14 @@ const contextmenu = (e: any) => {
     border-radius: 14px 0px 14px 14px;
     .left {
       .title {
-        width: 100px;
+        width: 180px;
         font-size: 16px;
         margin-bottom: 5px;
         color: #333;
         line-height: 22px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
       }
       .content {
         display: flex;
@@ -100,6 +105,10 @@ const contextmenu = (e: any) => {
           font-size: 14px;
           color: #666;
           line-height: 17px;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+          width: 150px;
         }
       }
     }

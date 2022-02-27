@@ -1,11 +1,12 @@
 <template>
   <div class="ymsg">
     <div @click="$emit('click')">
-      <img :src="userInfo?.icon" />
+      <img v-if="userInfo?.icon" :src="userInfo?.icon" />
+      <Iconfont v-else name="iconlianxiren" size="46" color="#A8B5BE" />
     </div>
-    <div @contextmenu="contextmenu">
+    <div>
       <div class="title1" v-if="isGroup">{{ userInfo?.nickname }}</div>
-      <div class="fileBg">
+      <div class="fileBg" @contextmenu="contextmenu" @click="$emit('download')">
         <div class="left">
           <div class="title">{{ item?.fileName }}</div>
           <div class="size">{{ getSize() }}</div>
@@ -86,7 +87,7 @@ if (res.length > 1) {
 const store = useStore(key);
 const isGroup = computed(() => store.state.activeIsGroup);
 
-const emit = defineEmits(['menuClick', 'click']);
+const emit = defineEmits(['menuClick', 'click', 'download']);
 
 const contextmenu = (e: any) => {
   e.preventDefault();
