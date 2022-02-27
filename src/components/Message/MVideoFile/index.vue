@@ -101,7 +101,7 @@ const contextmenu = (e: any) => {
       max-height: 100%;
       max-width: 100%;
     }
-    &::after {
+    &::before {
       position: absolute;
       left: 0;
       right: 0;

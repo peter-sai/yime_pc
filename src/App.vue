@@ -49,6 +49,8 @@ export async function initRonyun(store: Store<initStore>) {
     rtcInstaller,
     {},
   ) as RCRTCClient;
+  // 正在通话中的uid
+  let callUid = '';
   const rongIm = RongIMLib.installPlugin(callInstaller, {
     // rtcClient 实例 （必填）
     rtcClient,
@@ -58,6 +60,7 @@ export async function initRonyun(store: Store<initStore>) {
     async onSession(session: RCCallSession) {
       const uid = session.getTargetId();
       const mediaNode = document.getElementById('media')!;
+
       if (mediaNode.hasChildNodes()) {
         // 当前正在通话中
         session.registerSessionListener({
@@ -115,6 +118,9 @@ export async function initRonyun(store: Store<initStore>) {
         });
         return;
       }
+
+      callUid = session.getTargetId();
+
       if (session.getConversationType() === 1) {
         let userDetail = '';
         if (store.state.msgList[Number(uid)]) {
@@ -171,9 +177,11 @@ export async function initRonyun(store: Store<initStore>) {
      *  @param summaryInfo 结束一个 session 的后汇总信息
      */
     onSessionClose(session: RCCallSession, summaryInfo?: IEndSummary) {
-      hideGroupMediaAudio();
-      // 设置当前不在通话中 用于是否显示加入按钮
-      store.commit('SET_CONVERSATIONING', false);
+      if (callUid === session.getTargetId()) {
+        hideGroupMediaAudio();
+        // 设置当前不在通话中 用于是否显示加入按钮
+        store.commit('SET_CONVERSATIONING', false);
+      }
     },
   });
   // 如果以登录状态 则 连接融云
@@ -190,6 +198,29 @@ export async function initRonyun(store: Store<initStore>) {
 export default defineComponent({
   name: 'App',
 });
+
+export function reconnect(store: Store<initStore>) {
+  if (store.state.ws) return;
+  setTimeout(function () {
+    //没连接上会一直重连，设置延迟避免请求过多
+    let ws = new WebSocket(process.env.VUE_APP_BASEURL);
+    store.commit('SET_ISONLINE', '连接中...');
+    ws.binaryType = 'arraybuffer';
+    store.commit('SET_WS', ws);
+    ws.onclose = function () {
+      store.commit('SET_WS', null);
+      console.log('onclose');
+      store.commit('SET_ISONLINE', '网络状态不佳');
+      hideLoading();
+      reconnect(store);
+    };
+    ws.onerror = function () {
+      store.commit('SET_WS', null);
+      store.commit('SET_ISONLINE', '网络状态不佳');
+      console.log('onerror');
+    };
+  }, 1000);
+}
 </script>
 <script lang="ts" setup>
 const store = useStore(key);
@@ -202,42 +233,23 @@ if (Notification.permission !== 'granted') {
 }
 
 const init = async () => {
-  const url = 'wss://ws.momo886.com'; // momo 正式
-  let ws = new WebSocket(url);
+  let ws = new WebSocket(process.env.VUE_APP_BASEURL);
   store.commit('SET_ISONLINE', '连接中...');
   store.commit('SET_WS', ws);
   ws.binaryType = 'arraybuffer';
 
   ws.onclose = function () {
+    store.commit('SET_WS', null);
     console.log('onclose');
     store.commit('SET_ISONLINE', '网络状态不佳');
     hideLoading();
-    reconnect();
+    reconnect(store);
   };
   ws.onerror = function () {
+    store.commit('SET_WS', null);
     store.commit('SET_ISONLINE', '网络状态不佳');
-    console.log('error');
-    // reconnect();
+    console.log('onerror');
   };
-  function reconnect() {
-    setTimeout(function () {
-      //没连接上会一直重连，设置延迟避免请求过多
-      let ws = new WebSocket(url);
-      store.commit('SET_ISONLINE', '连接中...');
-      ws.binaryType = 'arraybuffer';
-      store.commit('SET_WS', ws);
-      ws.onclose = function () {
-        console.log('onclose');
-        store.commit('SET_ISONLINE', '网络状态不佳');
-        hideLoading();
-        reconnect();
-      };
-      ws.onerror = function () {
-        store.commit('SET_ISONLINE', '网络状态不佳');
-        console.log('error');
-      };
-    }, 1000);
-  }
 
   // 获取阿里存储信息
   initOss(store);

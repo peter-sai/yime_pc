@@ -1,7 +1,8 @@
 <template>
   <div class="mmsg">
     <div @click="$emit('click')">
-      <img :src="userInfo?.icon" />
+      <img v-if="userInfo?.icon" :src="userInfo?.icon" />
+      <Iconfont v-else name="iconlianxiren" size="46" color="#A8B5BE" />
     </div>
     <ImBg v-bind="$attrs">
       <div class="imBgBox">

@@ -50,7 +50,10 @@
 
     <div
       class="btnBox"
-      v-if="!memberUserInfos.includes(store.state.userInfo.uid)"
+      v-if="
+        groupDetailInfo.groupState === 1 &&
+        !memberUserInfos.includes(store.state.userInfo.uid)
+      "
     >
       <div @click="addGroup" class="btn">{{ t('加入群聊') }}</div>
     </div>
@@ -311,7 +314,6 @@ watch(
   async (data: any) => {
     // GroupCallNotifyToClient
     if (data.cmd === 2156) {
-      console.log(data.body);
       groupCallState.value = data.body.groupCallState;
     }
   },
@@ -320,7 +322,7 @@ watch(
 const inputVal = ref('');
 
 // 文件选择类型
-const accept = ref('image/*,video/*');
+const accept = ref('image/*');
 const changUserImg: Ref<HTMLInputElement | null> = ref(null);
 
 const cbImg = useCbImg(store, accept, t, 1);

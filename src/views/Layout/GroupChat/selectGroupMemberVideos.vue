@@ -179,8 +179,12 @@ const submit = () => {
 .selectGroupMemberVideos {
   .main {
     height: 100%;
-    position: relative;
+    position: absolute;
     overflow: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 110px;
     .content {
       box-sizing: border-box;
       padding: 8px 13px;
