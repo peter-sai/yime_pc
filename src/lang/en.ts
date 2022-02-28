@@ -931,6 +931,8 @@ export default {
   深色主题: 'Dark theme',
   '请在App客户端, 查看阅后即焚消息':
     'Please check the burn after reading message on the app client',
+  '请在App客户端, 查看位置消息':
+    'Please check the location message in the app client',
   下载手机APP: 'Download Mobile App',
   '为了您的帐户安全，请用手机app进行群设置':
     'For your account security, please use the mobile app for group settings',
