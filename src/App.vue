@@ -40,7 +40,7 @@ import { hideLoading } from './plugin/Loading';
 export async function initRonyun(store: Store<initStore>) {
   // IM 客户端初始化
   const RongCallLib = RongIMLib.init({
-    appkey: 'tdrvipkst22v5',
+    appkey: 'pgyu6atqpunsu',
   });
   // 监听消息 用来处理是否显示加入音视频按钮
 
