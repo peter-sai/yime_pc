@@ -203,7 +203,7 @@ export function reconnect(store: Store<initStore>) {
   if (store.state.ws) return;
   setTimeout(function () {
     //没连接上会一直重连，设置延迟避免请求过多
-    let ws = new WebSocket(process.env.VUE_APP_BASEURL);
+    let ws = new WebSocket('ws://18.167.158.191:8003');
     store.commit('SET_ISONLINE', '连接中...');
     ws.binaryType = 'arraybuffer';
     store.commit('SET_WS', ws);
@@ -233,7 +233,7 @@ if (Notification.permission !== 'granted') {
 }
 
 const init = async () => {
-  let ws = new WebSocket(process.env.VUE_APP_BASEURL);
+  let ws = new WebSocket('ws://18.167.158.191:8003');
   store.commit('SET_ISONLINE', '连接中...');
   store.commit('SET_WS', ws);
   ws.binaryType = 'arraybuffer';

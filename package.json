@@ -2,36 +2,21 @@
   "name": "DUOLIAO",
   "version": "0.1.0",
   "private": true,
-  "main": "build/vue-build/main.js",
   "scripts": {
     "serve": "vue-cli-service serve --mode dev",
     "build": "vue-cli-service build --mode dev",
     "lint": "vue-cli-service lint",
-    "iconfont-create": "npx iconfont-create && npm run lint",
     "electron": "cross-env NODE_ENV=development electron . --mode dev",
-    "electron-dev": "nodemon electron/config/electron-run-dev.js --mode dev",
     "electron-build": "vue-cli-service build && node electron/config/electron-build-pro.js && electron-builder --dir --mode dev",
+    "electron-dev": "nodemon electron/config/electron-run-dev.js --mode dev",
+    "electron:build": "vue-cli-service electron:build -w",
+    "electron:serve": "vue-cli-service electron:serve",
+    "iconfont-create": "npx iconfont-create && npm run lint",
+    "postinstall": "electron-builder install-app-deps",
+    "postuninstall": "electron-builder install-app-deps",
     "proto": "pbjs -t json-module -w commonjs -o src/protoBuild/proto.js  src/proto/*.proto"
   },
-  "build": {
-    "productName": "DUOLIAO",
-    "appId": "com.test",
-    "asar": false,
-    "directories": {
-      "output": "build/electron-build"
-    },
-    "files": [
-      "build/vue-build/**/*"
-    ],
-    "mac": {
-      "entitlements": "entitlements.mac.plist",
-      "hardenedRuntime": true,
-      "extendInfo": {
-        "NSMicrophoneUsageDescription": "请允许本程序访问您的麦克风",
-        "NSCameraUsageDescription": "请允许本程序访问您的摄像头"
-      }
-    }
-  },
+  "main": "background.js",
   "dependencies": {
     "@rongcloud/imlib-next": "^5.1.0",
     "@rongcloud/plugin-call": "^5.0.7",
@@ -49,6 +34,7 @@
     "vuex": "^4.0.0-0"
   },
   "devDependencies": {
+    "@types/electron-devtools-installer": "^2.2.0",
     "@typescript-eslint/eslint-plugin": "^4.18.0",
     "@typescript-eslint/parser": "^4.18.0",
     "@vue/cli-plugin-babel": "~4.5.0",
@@ -64,6 +50,7 @@
     "cross-env": "^7.0.3",
     "electron": "^16.0.5",
     "electron-builder": "^22.8.0",
+    "electron-devtools-installer": "^3.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-vue": "^7.0.0",
@@ -74,7 +61,8 @@
     "prettier": "^2.2.1",
     "protobufjs": "^6.11.2",
     "sass-loader": "^8.0.2",
-    "typescript": "~4.1.5"
+    "typescript": "~4.1.5",
+    "vue-cli-plugin-electron-builder": "~2.1.1"
   },
   "eslintConfig": {
     "root": true,
