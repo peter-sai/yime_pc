@@ -37,6 +37,7 @@ import { Toast } from './plugin/Toast';
 import { initOss } from './hooks/window';
 import { useI18n } from 'vue-i18n';
 import { hideLoading } from './plugin/Loading';
+import { yimechat } from './api';
 export async function initRonyun(store: Store<initStore>) {
   // IM 客户端初始化
   const RongCallLib = RongIMLib.init({
@@ -251,6 +252,10 @@ const init = async () => {
     console.log('onerror');
   };
 
+  // 获取config
+  const data = await yimechat();
+  store.commit('SET_CONFIG', data);
+
   // 获取阿里存储信息
   initOss(store);
 
@@ -299,6 +304,9 @@ const clientSendMsgAckToServer = (msgInfos: IMsgInfo<string>[]) => {
 const stop = watch(
   computed(() => store.state.msgInfo),
   async (data: any) => {
+    if (data.cmd === 1006) {
+      console.log(data);
+    }
     if (data.cmd === 2024) {
       try {
         const notifyContent = JSON.parse(data.body.notifyContent);

@@ -7,8 +7,34 @@ module.exports = {
   devServer: {
     port: 8000,
     // https: true,
-    // proxy: 'http://18.167.158.191:3000',
-    proxy: 'http://18.166.162.101:3000',
+    // proxy: 'http://localhost:3000',
+    // proxy: 'http://18.166.162.101:3000',
+    proxy: {
+      '/api': {
+        target: 'http://18.166.162.101:3000', // 目标地址
+        ws: true, // 是否代理websockets
+        changeOrigin: true, // 设置同源  默认false，是否需要改变原始主机头为目标URL
+        pathRewrite: {
+          '^/api': '/api',
+        },
+      },
+      '/group1': {
+        target: 'https://www.momo886.com', // 目标地址
+        ws: true, // 是否代理websockets
+        changeOrigin: true, // 设置同源  默认false，是否需要改变原始主机头为目标URL
+        pathRewrite: {
+          '^/group1': '/group1',
+        },
+      },
+      '/getConfig30300.json': {
+        target: 'https://api.yimechat.com', // 目标地址
+        ws: true, // 是否代理websockets
+        changeOrigin: true, // 设置同源  默认false，是否需要改变原始主机头为目标URL
+        pathRewrite: {
+          '^/getConfig30300.json': '/getConfig30300.json',
+        },
+      },
+    },
   },
   configureWebpack: {
     externals: {

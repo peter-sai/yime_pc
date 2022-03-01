@@ -208,7 +208,7 @@ import send from '/public/img/send.svg';
 import { MediaAudio } from '@/plugin/Audio';
 import Recorder from 'Recorder';
 import { initRonyun } from '@/App.vue';
-import { initOss } from '../../hooks/window';
+import { upLoadFile, initOss } from '../../hooks/window';
 import {
   defineComponent,
   ref,
@@ -570,7 +570,8 @@ async function sendRec(duration: number) {
   const { audioFile, name } = obj;
   showLoading();
   try {
-    let info: any = await store.state.client.put(name, audioFile);
+    const url = await upLoadFile(audioFile, store, t);
+    // let info: any = await store.state.client.put(name, audioFile);
     const userInfo = JSON.parse(getStorage('userInfo'));
     const isGroupMsg = store.state.activeIsGroup ? 1 : 0;
 
@@ -586,7 +587,7 @@ async function sendRec(duration: number) {
           msgContent: 'voiceMsg',
           voiceMsg: {
             voiceTime: duration,
-            voiceUrl: info.url,
+            voiceUrl: url,
           },
         },
         type: 'voiceMsg',

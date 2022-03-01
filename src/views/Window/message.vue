@@ -697,6 +697,7 @@ const download = (item: IFileInfo) => {
   right: 0;
   bottom: 0;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 20px;
 }
 .Message {

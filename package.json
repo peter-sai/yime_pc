@@ -10,7 +10,7 @@
     "iconfont-create": "npx iconfont-create && npm run lint",
     "electron": "cross-env NODE_ENV=development electron . --mode dev",
     "electron-dev": "nodemon electron/config/electron-run-dev.js --mode dev",
-    "electron-build": "vue-cli-service build && node electron/config/electron-build-pro.js && electron-builder --dir --mode dev",
+    "electron-build": "vue-cli-service build && node electron/config/electron-build-pro.js && electron-builder --dir -w",
     "proto": "pbjs -t json-module -w commonjs -o src/protoBuild/proto.js  src/proto/*.proto"
   },
   "build": {

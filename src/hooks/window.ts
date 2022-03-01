@@ -18,7 +18,7 @@ import {
   setMsgList,
   getToken as getUserToken,
 } from '@/utils/utils';
-import { getOssInfo, getToken } from '../api';
+import { getOssInfo, getToken, upload } from '../api';
 import { number } from '@intlify/core-base';
 import moment from 'moment';
 import { ComputedRef, Ref } from 'vue';
@@ -274,7 +274,7 @@ const useSendImg = (
         Toast(t(data.body.resultString));
       }
     } else if (type === 'img') {
-      accept!.value = 'image/*';
+      accept!.value = 'image/*,video/*';
       await nextTick();
       changUserImg.value.click();
     } else if (type === 'file') {
@@ -285,6 +285,112 @@ const useSendImg = (
   };
 };
 
+function fileToBuf(file: File) {
+  return new Promise((resovle) => {
+    const fr = new FileReader();
+    fr.readAsArrayBuffer(file);
+    fr.addEventListener(
+      'loadend',
+      (e: any) => {
+        resovle(e.target.result);
+      },
+      false,
+    );
+  });
+}
+
+export async function upLoadFile(
+  file: File,
+  store: Store<initStore>,
+  t: { (key: string | number): string },
+) {
+  // const filebuf: any = await fileToBuf(file);
+  // const buffer = new Uint8Array(filebuf);
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('auth_token', '9ijn0okm');
+  formData.append('path', store.state.userInfo.uid.toString());
+  formData.append('output', 'json');
+
+  try {
+    const data: any = await upload(store.state.config.h5_address, formData);
+    if (!data.path) {
+      Toast(data.message || t('操作失败'));
+      return null;
+    } else {
+      return store.state.config.h5_address + data.path;
+    }
+  } catch (error) {
+    Toast(error.message || t('操作失败'));
+    return null;
+  }
+
+  // const data1 = await store.dispatch('postMsg', {
+  //   query: {
+  //     content: buffer,
+  //   },
+  //   cmd: 2165,
+  //   encryption: 'Aoelailiao.Message.UploadReq',
+  //   auth: true,
+  // });
+
+  // if (data1.body.resultCode !== 0) {
+  //   Toast(t(data1.body.resultString));
+  //   return null;
+  // } else {
+  //   return store.state.config.h5_address + data1.body.url;
+  // }
+}
+
+// 获取首屏图片
+function getFristImg(
+  url: string,
+  store: Store<initStore>,
+  t: { (key: string | number): string },
+  videoSize: any,
+) {
+  return new Promise((resovle, reject) => {
+    const canvas: any = document.createElement('canvas');
+    const video = document.createElement('video');
+    video.src = url;
+    video.setAttribute('crossOrigin', 'anonymous');
+    video.currentTime = 1;
+    canvas.width = videoSize.videoWidth;
+    canvas.height = videoSize.videoHeight;
+    video.onloadeddata = () => {
+      canvas
+        .getContext('2d')
+        .drawImage(video, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob(
+        async function (blob: any) {
+          const files = new window.File([blob], '11.jpeg', {
+            type: 'image/jpeg',
+          });
+          const url = await upLoadFile(files, store, t);
+          resovle(url);
+        },
+        'image/jpeg',
+        0.8,
+      );
+    };
+    video.onerror = (e) => {
+      reject(e);
+    };
+  });
+}
+
+function getVideoSize(url: string) {
+  return new Promise((resolve, reject) => {
+    // 该file中可以获取到文件名，大小等信息
+    const video = document.createElement('video');
+    video.preload = 'metadata';
+    video.src = url;
+    video.onloadedmetadata = () => {
+      resolve(video);
+    };
+  });
+}
+
 // 选择图片之后的回调函数
 const useCbImg = (
   store: Store<initStore>,
@@ -293,38 +399,76 @@ const useCbImg = (
   isGroupMsg = 0,
 ) => {
   return async (e: any) => {
-    console.log(accept.value);
     if (!store.state.client.userAgent) {
       await initOss(store);
     }
 
     try {
       const file = e.target.files[0];
-      const info = (await store.state.client.put(file.name, file)) as {
-        url: string;
-      } | null;
+      const url = await upLoadFile(file, store, t);
+      if (!url) return;
+
+      // const info = (await store.state.client.put(file.name, file)) as {
+      //   url: string;
+      // } | null;
       let res = {};
-      if (accept.value === 'image/*') {
-        // 图片
-        const size = (await getSize(file)) as { width: number; height: number };
-        res = {
-          msgInfo: {
-            isGroupMsg,
-            fromId: store.state.userInfo.uid,
-            toId: store.state.activeUid,
-            msgShowType: 1,
-            isEncrypt: 0,
-            msgContent: {
-              msgContentType: 2,
-              msgContent: 'imageMsg',
-              imageMsg: {
-                imageUrl: info?.url,
-                imageWidth: size.width,
-                imageHeight: size.height,
+
+      if (accept.value === 'image/*,video/*') {
+        if (file.type.includes('video')) {
+          let image_url: any, videoSize: any;
+          try {
+            videoSize = await getVideoSize(url);
+            image_url = await getFristImg(url, store, t, videoSize);
+          } catch (error) {
+            console.log(error);
+          }
+          // 视频
+          res = {
+            msgInfo: {
+              isGroupMsg,
+              fromId: store.state.userInfo.uid,
+              toId: store.state.activeUid,
+              msgShowType: 1,
+              isEncrypt: 0,
+              msgContent: {
+                msgContentType: 23,
+                msgContent: 'videoMsgInfo',
+                videoMsgInfo: {
+                  url: url,
+                  name: file.name,
+                  size: file.size,
+                  imageUrl: image_url,
+                  weight: videoSize.videoWidth,
+                  height: videoSize.videoHeight,
+                },
               },
             },
-          },
-        };
+          };
+        } else {
+          // 图片
+          const size = (await getSize(file)) as {
+            width: number;
+            height: number;
+          };
+          res = {
+            msgInfo: {
+              isGroupMsg,
+              fromId: store.state.userInfo.uid,
+              toId: store.state.activeUid,
+              msgShowType: 1,
+              isEncrypt: 0,
+              msgContent: {
+                msgContentType: 2,
+                msgContent: 'imageMsg',
+                imageMsg: {
+                  imageUrl: url,
+                  imageWidth: size.width,
+                  imageHeight: size.height,
+                },
+              },
+            },
+          };
+        }
       } else {
         // 文件
         res = {
@@ -340,12 +484,14 @@ const useCbImg = (
               fileInfo: {
                 fileName: file.name,
                 fileSize: file.size,
-                fileUrl: info?.url,
+                fileUrl: url,
               },
             },
           },
         };
       }
+      console.log(res);
+
       const data = await store.dispatch('postMsg', {
         query: res,
         cmd: 2001,

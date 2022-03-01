@@ -10,7 +10,7 @@
         </div>
       </div>
     </div>
-    <input ref="changUserImg" type="file" hidden accept="image/*" />
+    <input ref="changUserImg" type="file" hidden accept="image/*,video/*" />
   </div>
 </template>
 <script lang="ts">
@@ -29,7 +29,7 @@ import { Toast } from '@/plugin/Toast';
 import { useI18n } from 'vue-i18n';
 import { useGoBack } from '@/hooks';
 import { useRouter } from 'vue-router';
-import { initOss } from '../../hooks/window';
+import { initOss, upLoadFile } from '../../hooks/window';
 const imgUrl = ref('');
 const changUserImg: Ref<any> = ref(null);
 const store = useStore(key);
@@ -61,8 +61,9 @@ const cbImg = async (e: any) => {
   showLoading();
   try {
     const file = e.target.files[0];
-    let info: any = await store.state.client.put(file.name, file);
-    imgUrl.value = info.url;
+    const url = await upLoadFile(file, store, t);
+    // let info: any = await store.state.client.put(file.name, file);
+    imgUrl.value = url || '';
   } catch (error) {
     console.log(error);
   }
