@@ -71,6 +71,19 @@
             </Mmsg>
           </div>
         </div>
+        <!-- 位置 -->
+        <div class="item" v-else-if="item.type === 'gpsMsgInfo'">
+          <Ymsg
+            @click="showUserInfo(getUserInfo(item).uid)"
+            :userInfo="getUserInfo(item)"
+            v-if="isShowHowComponent(item)"
+          >
+            {{ t('请在App客户端, 查看位置消息') }}
+          </Ymsg>
+          <Mmsg :isRead="item.msgId <= readMsgId" v-else>
+            {{ t('请在App客户端, 查看位置消息') }}
+          </Mmsg>
+        </div>
         <!-- at消息 -->
         <div class="item" v-else-if="item.type === 'groupAtInfo'">
           <Ymsg
