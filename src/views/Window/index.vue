@@ -237,7 +237,7 @@ const groupDetailInfo: ComputedRef<IGroupInfo> = computed(
 );
 
 // 文件选择类型
-const accept = ref('image/*');
+const accept = ref('image/*,video/*');
 const changUserImg: Ref<HTMLInputElement | null> = ref(null);
 
 // 是否显示右侧

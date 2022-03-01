@@ -37,6 +37,15 @@ const initState = {
   ws: null,
   activeUid: undefined,
   activeIsGroup: false,
+  config: {
+    cnd_access_key: '',
+    cnd_bucketName: '',
+    cnd_host: '',
+    cnd_secret_key: '',
+    h5_address: '',
+    ip_address: '',
+    ip_port: null,
+  },
   appAboutUsInfo: {
     Jt: '',
     Ft: '',
@@ -137,6 +146,9 @@ export type initStore = typeof initState;
 const sotreRoot = createStore({
   state: initState,
   mutations: {
+    SET_CONFIG: (state, res) => {
+      state.config = res;
+    },
     SET_RONGIM: (state, res) => {
       state.rongIm = res;
     },
