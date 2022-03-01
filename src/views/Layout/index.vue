@@ -8,6 +8,21 @@
       </router-view>
     </div>
     <div class="right">
+      <div
+        style="
+          height: 40px;
+          background: #d73232;
+          font-size: 16px;
+          color: #fff;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        "
+        v-if="store.state.isOnLine"
+      >
+        {{ t(store.state.isOnLine) }}
+      </div>
+
       <div class="noChat chat" v-if="!store.state.activeUid">
         <div>{{ t('请选择一个对话开始聊天') }}</div>
       </div>
@@ -83,6 +98,7 @@ const { t } = useI18n();
     bottom: 0;
     display: flex;
     z-index: 9;
+    flex-direction: column;
 
     .chat {
       position: relative;
