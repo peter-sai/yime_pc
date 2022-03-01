@@ -33,7 +33,7 @@ const initState = {
   forwardMsgId: 0,
   lang: -1, // 设置语言
   token: '',
-  isOnLine: '消息',
+  isOnLine: false,
   ws: null,
   activeUid: undefined,
   activeIsGroup: false,
@@ -617,8 +617,8 @@ function getMessage(cmd: any, encryption: any, state: any) {
 function onMessage() {
   const cmdList = [2129, 2004, 2125, 2148, 2024, 2156, 2162, 2054];
   ws.onmessage = (evt: any) => {
-    if (sotreRoot.state.isOnLine !== '消息') {
-      sotreRoot.commit('SET_ISONLINE', '消息');
+    if (sotreRoot.state.isOnLine) {
+      sotreRoot.commit('SET_ISONLINE', false);
     }
     const dataview = new DataView(evt.data);
     const ansCmd = dataview.getUint16(5);

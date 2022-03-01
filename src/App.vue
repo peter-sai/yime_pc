@@ -278,13 +278,13 @@ const langId = Number(getStorage('lang') || -1);
 store.commit('SET_LANG', langId);
 
 // 设置
-store.commit('SET_ISONLINE', navigator.onLine ? '消息' : '网络状态不佳');
+store.commit('SET_ISONLINE', navigator.onLine ? false : '网络状态不佳');
 window.addEventListener('offline', () => {
   store.commit('SET_ISONLINE', '网络状态不佳');
 });
 
 window.addEventListener('online', () => {
-  store.commit('SET_ISONLINE', '消息');
+  store.commit('SET_ISONLINE', false);
 });
 
 // aks
