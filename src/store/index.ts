@@ -349,6 +349,7 @@ const sotreRoot = createStore({
             heartbeat(sotreRoot, ws);
           }, 10000);
           console.log('open');
+
           ws.send(data);
         };
       } else {
@@ -630,30 +631,37 @@ function onMessage() {
 
 // 心跳包
 async function heartbeat(store: any, ws: any) {
-  const strarTime: number = Date.now();
+  // const strarTime: number = Date.now();
   console.log(num);
+
   if (!store.state.ws) return;
 
   try {
-    if (num <= 3) {
-      setTimeout(() => {
-        heartbeat(store, ws);
-      }, 10000);
-    } else {
-      console.log('close');
-      // 重新连接
-      ws.close();
-      store.commit('SET_WS', null);
-      reconnect(store);
-      hideLoading();
-    }
+    //////////////
+    // if (num <= 3) {
+    //   setTimeout(() => {
+    //     heartbeat(store, ws);
+    //   }, 10000);
+    // } else {
+    //   console.log('close');
+    //   // 重新连接
+    //   ws.close();
+    //   store.commit('SET_WS', null);
+    //   reconnect(store);
+    //   hideLoading();
+    // }
+    // setTimeout(() => {
+    //   if (!time || time - strarTime > 5000 || time - strarTime < 0) {
+    //     num++;
+    //   } else {
+    //     num = 0;
+    //   }
+    // }, 5000);
+    //////////////
+
     setTimeout(() => {
-      if (!time || time - strarTime > 5000 || time - strarTime < 0) {
-        num++;
-      } else {
-        num = 0;
-      }
-    }, 5000);
+      heartbeat(store, ws);
+    }, 10000);
     await store.dispatch('postMsg', {
       query: null,
       cmd: 1,

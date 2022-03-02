@@ -204,19 +204,19 @@ export function reconnect(store: Store<initStore>) {
   setTimeout(function () {
     //没连接上会一直重连，设置延迟避免请求过多
     let ws = new WebSocket(process.env.VUE_APP_BASEURL);
-    store.commit('SET_ISONLINE', '连接中...');
+    // store.commit('SET_ISONLINE', '连接中...');
     ws.binaryType = 'arraybuffer';
     store.commit('SET_WS', ws);
     ws.onclose = function () {
       store.commit('SET_WS', null);
       console.log('onclose');
-      store.commit('SET_ISONLINE', '网络状态不佳');
+      // store.commit('SET_ISONLINE', '网络状态不佳');
       hideLoading();
       reconnect(store);
     };
     ws.onerror = function () {
       store.commit('SET_WS', null);
-      store.commit('SET_ISONLINE', '网络状态不佳');
+      // store.commit('SET_ISONLINE', '网络状态不佳');
       console.log('onerror');
     };
   }, 1000);
@@ -234,7 +234,7 @@ if (Notification.permission !== 'granted') {
 
 const init = async () => {
   let ws = new WebSocket(process.env.VUE_APP_BASEURL);
-  store.commit('SET_ISONLINE', '连接中...');
+  // store.commit('SET_ISONLINE', '连接中...');
   store.commit('SET_WS', ws);
   ws.binaryType = 'arraybuffer';
 

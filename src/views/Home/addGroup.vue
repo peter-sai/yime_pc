@@ -4,7 +4,7 @@
       title="添加群成员"
       right-text="确认"
       @rigth-click="submit"
-      :rightTextDef="filterList.length <= 1"
+      :rightTextDef="filterList.length < 1"
     />
     <div class="content">
       <div class="item" v-for="(item, key) in list" :key="item.uid">
@@ -92,7 +92,7 @@ async function useGetContactList(store: Store<initStore>) {
 
 // 确定
 const submit = async () => {
-  if (filterList.value.length <= 1) {
+  if (filterList.value.length < 1) {
     return;
   }
   const memberUserInfos = filterList.value.map((e) => {
