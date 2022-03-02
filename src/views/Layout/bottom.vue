@@ -204,7 +204,6 @@ import Iconfont from '@/iconfont/index.vue';
 import { Toast } from '@/plugin/Toast';
 import { key } from '@/store';
 import { getStorage, setStorage } from '@/utils/utils';
-import send from '/public/img/send.svg';
 import { MediaAudio } from '@/plugin/Audio';
 import Recorder from 'Recorder';
 import { initRonyun } from '@/App.vue';
@@ -277,6 +276,7 @@ const { t } = useI18n();
 const audioObj = ref({});
 const showAtBox = ref(false);
 const atUserInfoList: Ref<IUserInfo[]> = ref([]);
+
 const newAtUserInfoList = computed(() => {
   const ats = props.modelValue.split('@');
 
@@ -421,6 +421,7 @@ const bodyClickCb = () => {
 
 onMounted(() => {
   document.body.addEventListener('click', bodyClickCb);
+  input.value?.focus();
 });
 
 onBeforeUnmount(() => {
@@ -701,17 +702,16 @@ function startAudio() {
     border-top: 1px solid #eaebea;
     .expres {
       box-sizing: border-box;
-      display: flex;
-      flex-wrap: wrap;
       padding: 10px 0;
       height: 180px;
       overflow: auto;
       background: #f9f9f9;
       .item {
+        display: inline-block;
         font-size: 12px;
-        width: 5%;
+        // width: 5%;
         text-align: center;
-        margin: 5px 0;
+        margin: 5px;
         cursor: pointer;
         .img {
           width: 28px;

@@ -1,5 +1,9 @@
 <template>
   <div class="register">
+    <div class="boBack" @click="goBack">
+      <Iconfont name="iconleft" size="15" />
+      <span>{{ t('返回') }}</span>
+    </div>
     <!-- logo -->
     <div class="logo">
       <img :src="logo" alt="" srcset="" />
@@ -63,7 +67,7 @@ import logo from '@/assets/logo.svg';
 import Iconfont from '@/iconfont/index.vue';
 import { useI18n } from 'vue-i18n';
 import { reactive, ref, Ref } from 'vue';
-import { useGoTo } from '@/hooks';
+import { useGoBack, useGoTo } from '@/hooks';
 import { RouteLocationNormalizedLoaded, useRoute, useRouter } from 'vue-router';
 import { Toast } from '@/plugin/Toast';
 import { md5 } from '@/utils/utils';
@@ -90,6 +94,8 @@ const agreement = ref(false);
 const toggleSelect = () => {
   agreement.value = !agreement.value;
 };
+
+const goBack = useGoBack(useRouter);
 
 const goTo = useGoTo(useRouter);
 
@@ -154,6 +160,19 @@ function useReg(
 <style lang="scss" scoped>
 @import '@/style/base.scss';
 .register {
+  .boBack {
+    display: flex;
+    align-items: center;
+    margin: 20px 25px;
+    cursor: pointer;
+    span {
+      font-size: 14px;
+      font-family: PingFangSC-Regular, PingFang SC;
+      font-weight: 400;
+      color: #222222;
+      line-height: 20px;
+    }
+  }
   .logo {
     width: 120px;
     margin: 76px auto 36px;
