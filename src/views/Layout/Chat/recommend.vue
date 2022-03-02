@@ -55,7 +55,7 @@
         class="btn"
         :class="{
           active: isCreateGroupChat
-            ? newList.filter((e) => e.active).length > 1
+            ? true
             : newList.filter((e) => e.active).length,
         }"
         @click="submit"
@@ -147,6 +147,7 @@ const toggleActive = (item: IContacts) => {
 
 const submit = async () => {
   const activeList = newList.value.filter((e) => e.active);
+
   // 推荐
   if (!props.isCreateGroupChat) {
     if (!activeList.length) return;
@@ -188,7 +189,7 @@ const submit = async () => {
     });
   } else {
     // 创建群聊
-    if (activeList.length <= 1) return;
+    if (activeList.length < 1) return;
     // 获取个人信息 (群主)
     const userInfo = store.state.userInfo;
     const memberUserInfos = activeList.map((e) => {

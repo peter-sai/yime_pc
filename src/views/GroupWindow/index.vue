@@ -322,7 +322,7 @@ watch(
 const inputVal = ref('');
 
 // 文件选择类型
-const accept = ref('image/*');
+const accept = ref('image/*,video/*');
 const changUserImg: Ref<HTMLInputElement | null> = ref(null);
 
 const cbImg = useCbImg(store, accept, t, 1);
