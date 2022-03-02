@@ -103,13 +103,14 @@ const go = async (e: any) => {
       });
     } else if (decodeResultInfo.jumpType === 1) {
       // 用户资料
-      const userId = decodeResultInfo.jumpContent.userId;
+      const userId = decodeResultInfo.userId;
       // 单聊
       store.commit('SET_ACTIVEUID', userId);
       store.commit('SET_ACTIVEISGROUP', false);
     } else if (decodeResultInfo.jumpType === 2) {
       // 群资料
-      const groupId = decodeResultInfo.jumpContent.groupId;
+      const groupId = decodeResultInfo.groupId;
+
       store.commit('SET_ACTIVEUID', groupId);
       store.commit('SET_ACTIVEISGROUP', true);
     }
