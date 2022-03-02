@@ -38,7 +38,7 @@
       </div>
       <div class="btn" @click="submit">{{ t('保存') }}</div>
     </div>
-    <input ref="changUserImg" type="file" hidden accept="image/*" />
+    <input ref="changUserImg" type="file" hidden accept="image/*,video/*" />
   </div>
 </template>
 <script lang="ts">
@@ -59,7 +59,7 @@ import { upDateUser } from '@/api/user';
 import { useGoBack } from '@/hooks';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import { initOss } from '../../hooks/window';
+import { initOss, upLoadFile } from '../../hooks/window';
 const { t } = useI18n();
 const store = useStore(key);
 let userInfo = computed(() => store.state.userInfo);
@@ -91,8 +91,9 @@ const cb = async (e: any) => {
   const file = e.target.files[0];
   showLoading();
   try {
+    // const url = await upLoadFile(file, store, t);
     let info: any = await store.state.client.put(file.name, file);
-    query.icon = info.url;
+    query.icon = info.url || '';
   } catch (error) {
     console.log(error);
   }

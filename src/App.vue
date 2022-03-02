@@ -37,6 +37,7 @@ import { Toast } from './plugin/Toast';
 import { initOss } from './hooks/window';
 import { useI18n } from 'vue-i18n';
 import { hideLoading } from './plugin/Loading';
+import { yimechat } from './api';
 export async function initRonyun(store: Store<initStore>) {
   // IM 客户端初始化
   const RongCallLib = RongIMLib.init({
@@ -204,19 +205,19 @@ export function reconnect(store: Store<initStore>) {
   setTimeout(function () {
     //没连接上会一直重连，设置延迟避免请求过多
     let ws = new WebSocket(process.env.VUE_APP_BASEURL);
-    store.commit('SET_ISONLINE', '连接中...');
+    // store.commit('SET_ISONLINE', '连接中...');
     ws.binaryType = 'arraybuffer';
     store.commit('SET_WS', ws);
     ws.onclose = function () {
       store.commit('SET_WS', null);
       console.log('onclose');
-      store.commit('SET_ISONLINE', '网络状态不佳');
+      // store.commit('SET_ISONLINE', '网络状态不佳');
       hideLoading();
       reconnect(store);
     };
     ws.onerror = function () {
       store.commit('SET_WS', null);
-      store.commit('SET_ISONLINE', '网络状态不佳');
+      // store.commit('SET_ISONLINE', '网络状态不佳');
       console.log('onerror');
     };
   }, 1000);
@@ -234,7 +235,7 @@ if (Notification.permission !== 'granted') {
 
 const init = async () => {
   let ws = new WebSocket(process.env.VUE_APP_BASEURL);
-  store.commit('SET_ISONLINE', '连接中...');
+  // store.commit('SET_ISONLINE', '连接中...');
   store.commit('SET_WS', ws);
   ws.binaryType = 'arraybuffer';
 
@@ -250,6 +251,10 @@ const init = async () => {
     store.commit('SET_ISONLINE', '网络状态不佳');
     console.log('onerror');
   };
+
+  // 获取config
+  const data = await yimechat();
+  store.commit('SET_CONFIG', data);
 
   // 获取阿里存储信息
   initOss(store);
@@ -299,6 +304,9 @@ const clientSendMsgAckToServer = (msgInfos: IMsgInfo<string>[]) => {
 const stop = watch(
   computed(() => store.state.msgInfo),
   async (data: any) => {
+    if (data.cmd === 1006) {
+      console.log(data);
+    }
     if (data.cmd === 2024) {
       try {
         const notifyContent = JSON.parse(data.body.notifyContent);

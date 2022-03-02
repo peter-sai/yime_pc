@@ -9,8 +9,8 @@
         <div v-if="isGroup" class="title">
           {{ userInfo?.nickname }}
         </div>
-        <div class="imgBox" ref="imgBox">
-          <div v-if="!isPlay">
+        <div class="imgBox" ref="imgBox" :style="style">
+          <div v-if="!isPlay" style="width: 100%; height: 100%">
             <img
               style="max-width: 100%; max-height: 100%"
               :src="videoMsgInfo?.imageUrl"
@@ -62,6 +62,33 @@ const props = defineProps({
     type: Object as PropType<IVideoMsgInfo>,
   },
 });
+
+const style = ref({});
+if (Number(props.videoMsgInfo?.weight) > 400) {
+  style.value = {
+    width: '400px',
+    height: `${
+      (Number(props.videoMsgInfo?.height) /
+        Number(props.videoMsgInfo?.weight)) *
+      400
+    }px`,
+  };
+}
+if (
+  (Number(props.videoMsgInfo?.height) / Number(props.videoMsgInfo?.weight)) *
+    400 >
+  400
+) {
+  style.value = {
+    height: '400px',
+    width: `${
+      (Number(props.videoMsgInfo?.weight) /
+        Number(props.videoMsgInfo?.height)) *
+      400
+    }px`,
+  };
+}
+
 const { t } = useI18n();
 const store = useStore(key);
 const isGroup = computed(() => store.state.activeIsGroup);
@@ -107,6 +134,8 @@ const play = async () => {
     width: 200px;
     height: 400px;
     display: block;
+    max-height: 400px;
+    max-width: 400px;
     img {
       max-height: 100%;
       max-width: 100%;

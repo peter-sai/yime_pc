@@ -240,7 +240,7 @@ function useBeforeSwitch(
 }
 
 // 更新缓存
-async function upDateStore(
+export async function upDateStore(
   res: string,
   e: number,
   store: Store<initStore>,

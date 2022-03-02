@@ -143,6 +143,37 @@
           <!-- <template v-slot:time>{{ formateTime(item.updateTime) }}</template> -->
         </TableDouble>
         <div class="box" v-if="showMenu === item.id">
+          <div
+            v-if="item.isGroup"
+            class="item"
+            @click="
+              groupBeforeTop(!item.groupDetailInfo?.groupAttachInfo?.groupTop)
+            "
+          >
+            <Iconfont name="icondingzi" size="15" />
+            <span>{{
+              item.groupDetailInfo?.groupAttachInfo?.groupTop
+                ? t('取消置顶')
+                : t('置顶')
+            }}</span>
+          </div>
+          <div
+            v-else
+            class="item"
+            @click="
+              userBeforeTop(
+                !item.userDetailInfo?.userInfo?.userAttachInfo?.msgTop,
+                item.id,
+              )
+            "
+          >
+            <Iconfont name="icondingzi" size="15" />
+            <span>{{
+              item.userDetailInfo?.userInfo?.userAttachInfo?.msgTop
+                ? t('取消置顶')
+                : t('置顶')
+            }}</span>
+          </div>
           <div class="item" @click="read(item)">
             <Iconfont name="iconbianzu9" size="15" />
             <span>{{ t('已读') }}</span>
@@ -203,6 +234,7 @@ import Iconfont from '@/iconfont/index.vue';
 import MessageHeader from './header.vue';
 import { Store, storeKey, useStore } from 'vuex';
 import Errors from '../Errors/index.vue';
+import { upDateStore } from '../Layout/Chat/userInfo.vue';
 import { initStore, key } from '@/store';
 import { IUserInfo } from '@/types/user';
 import {
@@ -210,6 +242,7 @@ import {
   useGetOfflineMsg,
   mergeData,
   useFormateTime,
+  useBeforeSwitch as useGroupBeforeSwitch,
 } from '@/hooks/window';
 import {
   IMsgInfo,
@@ -452,6 +485,50 @@ const del = (item: any) => {
     delete store.state.msgList[item.id];
   }
 };
+
+// 群置顶
+const groupBeforeTop = useGroupBeforeSwitch(store, 1004, t);
+
+// 置顶
+const userBeforeTop = useBeforeSwitch(store, 1004, t);
+
+function useBeforeSwitch(
+  store: Store<initStore>,
+  settingItemId: number,
+  t: { (key: string | number): string },
+) {
+  return async (e: boolean, uid: number) => {
+    const res = {
+      objectType: 1,
+      objectId: uid,
+      settingItemId,
+      switchState: e ? 1 : 0,
+    };
+    showLoading();
+
+    const data = await store.dispatch('postMsg', {
+      query: res,
+      cmd: 1041,
+      encryption: 'Aoelailiao.Login.UserOperateSettingItemSwitchReq',
+      auth: true,
+    });
+
+    hideLoading();
+    return new Promise((resovle, reject) => {
+      if (data.body.resultCode === 0) {
+        // 更新缓存
+        if (settingItemId === 1004) {
+          // 置顶
+          upDateStore('msgTop', Number(e), store, false);
+        }
+        resovle(true);
+      } else {
+        reject();
+      }
+      Toast(t(data.body.resultString));
+    });
+  };
+}
 </script>
 
 <style lang="scss" scoped>

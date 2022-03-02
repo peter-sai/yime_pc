@@ -1,10 +1,10 @@
 <template>
   <div class="mImg">
     <div>
-      <div>
+      <div style="display: flex; justify-content: flex-end">
         <div class="imgBg" @contextmenu="contextmenu">
-          <div class="imgBox" ref="imgBox">
-            <div v-if="!isPlay">
+          <div class="imgBox" ref="imgBox" :style="style">
+            <div v-if="!isPlay" style="width: 100%; height: 100%">
               <img
                 style="max-width: 100%; max-height: 100%"
                 :src="videoMsgInfo?.imageUrl"
@@ -56,6 +56,32 @@ const props = defineProps({
   },
 });
 
+const style = ref({});
+if (Number(props.videoMsgInfo?.weight) > 400) {
+  style.value = {
+    width: '400px',
+    height: `${
+      (Number(props.videoMsgInfo?.height) /
+        Number(props.videoMsgInfo?.weight)) *
+      400
+    }px`,
+  };
+}
+if (
+  (Number(props.videoMsgInfo?.height) / Number(props.videoMsgInfo?.weight)) *
+    400 >
+  400
+) {
+  style.value = {
+    height: '400px',
+    width: `${
+      (Number(props.videoMsgInfo?.weight) /
+        Number(props.videoMsgInfo?.height)) *
+      400
+    }px`,
+  };
+}
+
 const emit = defineEmits(['menuClick']);
 const imgBox = ref(null);
 let video: HTMLVideoElement | null = null;
@@ -67,6 +93,7 @@ const play = async () => {
     video = document.createElement('video');
     video.setAttribute('src', props.videoMsgInfo!.url);
     video.setAttribute('controls', true);
+    video.setAttribute('type', 'video/mov');
     video.setAttribute('style', 'width: 100%;height: 100%');
     imgBox.value.append(video);
     await nextTick();
@@ -84,7 +111,7 @@ const contextmenu = (e: any) => {
 <style lang="scss" scoped>
 @import '@/style/theme/index.scss';
 .imgBg {
-  max-width: 40%;
+  // max-width: 40%;
   .title {
     font-size: 10px;
     font-family: SourceHanSansCN-Regular, SourceHanSansCN;
@@ -97,6 +124,8 @@ const contextmenu = (e: any) => {
     width: 200px;
     height: 400px;
     display: block;
+    max-height: 400px;
+    max-width: 400px;
     img {
       max-height: 100%;
       max-width: 100%;
