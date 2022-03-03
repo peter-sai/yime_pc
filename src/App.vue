@@ -445,6 +445,16 @@ const stop = watch(
 const audio = new Audio();
 audio.src = messageAudio;
 function msgNotice(item: any) {
+  const info = store.state.msgList[item.isGroupMsg ? item.toId : item.fromId];
+
+  let name = '';
+  if (info?.isGroup) {
+    //
+    name = info?.groupDetailInfo?.groupName;
+  } else {
+    name = info?.userDetailInfo?.userInfo?.nickname;
+  }
+
   // 如果发送者不是自己 则需要通知 并且没有开通消息免打扰
   const id = item.isGroupMsg ? item.toId : item.fromId;
   const res = store.state.msgList[id];
@@ -461,7 +471,7 @@ function msgNotice(item: any) {
     if (store.state.switchSettingInfo.newMessage && !isMsgMute) {
       // 浏览器弹框
       if (Notification.permission === 'granted') {
-        const res = new Notification('YIME', {
+        const res = new Notification(name || 'YIME', {
           body: t('您收到一条消息'),
           data: {
             id: item.isGroupMsg ? item.toId : item.fromId,
