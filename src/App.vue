@@ -208,9 +208,9 @@ export function reconnect(store: Store<initStore>) {
     // store.commit('SET_ISONLINE', '连接中...');
     ws.binaryType = 'arraybuffer';
     store.commit('SET_WS', ws);
-    ws.onclose = function () {
+    ws.onclose = function (e) {
       store.commit('SET_WS', null);
-      console.log('onclose');
+      console.log('onclose', e);
       // store.commit('SET_ISONLINE', '网络状态不佳');
       hideLoading();
       reconnect(store);
@@ -239,9 +239,9 @@ const init = async () => {
   store.commit('SET_WS', ws);
   ws.binaryType = 'arraybuffer';
 
-  ws.onclose = function () {
+  ws.onclose = function (e) {
     store.commit('SET_WS', null);
-    console.log('onclose');
+    console.log('onclose', e);
     store.commit('SET_ISONLINE', '网络状态不佳');
     hideLoading();
     reconnect(store);
@@ -348,7 +348,6 @@ const stop = watch(
           (e: any) => Number(e.msgId) === Number(revokeMsgId),
         );
         readList.splice(revokeKey, 1);
-
         store.commit('SET_MSGLIST', msgList);
       }
 
@@ -388,6 +387,13 @@ const stop = watch(
         });
         const groupDetailInfo = data.body.groupDetailInfo;
         res.groupDetailInfo = groupDetailInfo;
+        console.log(data.body.groupDetailInfo, store.state.groupInfos);
+        if (store.state.groupInfos && store.state.groupInfos.length) {
+          const groupItemIndex = (store.state.groupInfos || []).findIndex(
+            (e) => e.groupId === groupDetailInfo.groupId,
+          );
+          store.state.groupInfos[groupItemIndex] = data.body.groupDetailInfo;
+        }
 
         store.commit('SET_MSGLISTITEM', {
           res: res,
