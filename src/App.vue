@@ -208,9 +208,9 @@ export function reconnect(store: Store<initStore>) {
     // store.commit('SET_ISONLINE', '连接中...');
     ws.binaryType = 'arraybuffer';
     store.commit('SET_WS', ws);
-    ws.onclose = function () {
+    ws.onclose = function (e) {
       store.commit('SET_WS', null);
-      console.log('onclose');
+      console.log('onclose', e);
       // store.commit('SET_ISONLINE', '网络状态不佳');
       hideLoading();
       reconnect(store);
@@ -239,9 +239,9 @@ const init = async () => {
   store.commit('SET_WS', ws);
   ws.binaryType = 'arraybuffer';
 
-  ws.onclose = function () {
+  ws.onclose = function (e) {
     store.commit('SET_WS', null);
-    console.log('onclose');
+    console.log('onclose', e);
     store.commit('SET_ISONLINE', '网络状态不佳');
     hideLoading();
     reconnect(store);

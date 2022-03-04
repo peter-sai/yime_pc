@@ -12,7 +12,6 @@ import { IMsgInfo, ImsgItem, TMsgContent } from '@/types/msg';
 import { IUserDetailInfo } from '@/types/user';
 import { useClientSendMsgAckToServer, mergeData } from '@/hooks/window';
 import { hideLoading } from '@/plugin/Loading';
-import { reconnect } from '../App.vue';
 
 const OSS = require('ali-oss');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -623,7 +622,6 @@ function onMessage() {
     }
     const dataview = new DataView(evt.data);
     const ansCmd = dataview.getUint16(5);
-    // console.log(dataview, ansCmd);
 
     if (cmdList.includes(ansCmd)) {
       defCb(evt);
@@ -672,6 +670,7 @@ async function heartbeat(store: any, ws: any) {
     //////////////
 
     setTimeout(() => {
+      if (!store.state.ws) return;
       heartbeat(store, ws);
     }, 10000);
     await store.dispatch('postMsg', {
