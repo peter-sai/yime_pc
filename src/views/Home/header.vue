@@ -166,17 +166,19 @@ const toggleShowSearch = (res: boolean) => {
 };
 
 const goToWindow = (item: ImsgItem) => {
-  if (item.isGroup) {
+  console.log(item);
+
+  if (item.isGroup || item.groupState) {
     // 群聊
-    store.commit('SET_ACTIVEUID', item.id);
+    store.commit('SET_ACTIVEUID', item.groupId || item.id);
     store.commit('SET_ACTIVEISGROUP', true);
   } else {
     // 单聊
-    store.commit('SET_ACTIVEUID', item.id);
+    store.commit('SET_ACTIVEUID', item.uid || item.id);
     store.commit('SET_ACTIVEISGROUP', false);
   }
-  item.unReadNum = 0;
-  store.commit('SET_MSGLISTITEM', { res: item });
+  // item.unReadNum = 0;
+  // store.commit('SET_MSGLISTITEM', { res: item });
 };
 
 watch(val, (res) => {

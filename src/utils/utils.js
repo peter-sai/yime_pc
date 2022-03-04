@@ -180,7 +180,7 @@ export function getMsgList() {
         .filter((k) => k.type === 'fireInfo')
         .map((a) => a.msgContent.fireInfo.fireMsgId);
     (v.readList || []).forEach((b) => {
-      if (fireMsgIds.includes(b.msgId.toString())) {
+      if (fireMsgIds.includes(b?.msgId?.toString())) {
         b.fire = true;
       }
     });

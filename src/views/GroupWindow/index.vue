@@ -293,7 +293,6 @@ const memberUserInfos = computed(
 );
 
 async function init() {
-  getGroupInfo(store);
   // 查询 群 通话状态
   const data = await store.dispatch('postMsg', {
     query: {
@@ -306,6 +305,7 @@ async function init() {
     auth: true,
   });
   groupCallState.value = data.body.groupCallState;
+  getGroupInfo(store);
 }
 init();
 

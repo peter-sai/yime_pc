@@ -270,6 +270,7 @@ function useInput(
 <script setup lang="ts">
 import Table from '@/components/Table/index.vue';
 import { hideLoading, showLoading } from '@/plugin/Loading';
+import send from '../../assets/img/send.svg';
 const input: Ref<HTMLInputElement | null> = ref(null);
 const store = useStore(key);
 const { t } = useI18n();

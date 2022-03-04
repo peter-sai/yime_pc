@@ -208,9 +208,9 @@ export function reconnect(store: Store<initStore>) {
     // store.commit('SET_ISONLINE', '连接中...');
     ws.binaryType = 'arraybuffer';
     store.commit('SET_WS', ws);
-    ws.onclose = function () {
+    ws.onclose = function (e) {
       store.commit('SET_WS', null);
-      console.log('onclose');
+      console.log('onclose', e);
       // store.commit('SET_ISONLINE', '网络状态不佳');
       hideLoading();
       reconnect(store);
@@ -239,9 +239,9 @@ const init = async () => {
   store.commit('SET_WS', ws);
   ws.binaryType = 'arraybuffer';
 
-  ws.onclose = function () {
+  ws.onclose = function (e) {
     store.commit('SET_WS', null);
-    console.log('onclose');
+    console.log('onclose', e);
     store.commit('SET_ISONLINE', '网络状态不佳');
     hideLoading();
     reconnect(store);
@@ -348,7 +348,6 @@ const stop = watch(
           (e: any) => Number(e.msgId) === Number(revokeMsgId),
         );
         readList.splice(revokeKey, 1);
-
         store.commit('SET_MSGLIST', msgList);
       }
 
@@ -388,6 +387,13 @@ const stop = watch(
         });
         const groupDetailInfo = data.body.groupDetailInfo;
         res.groupDetailInfo = groupDetailInfo;
+        console.log(data.body.groupDetailInfo, store.state.groupInfos);
+        if (store.state.groupInfos && store.state.groupInfos.length) {
+          const groupItemIndex = (store.state.groupInfos || []).findIndex(
+            (e) => e.groupId === groupDetailInfo.groupId,
+          );
+          store.state.groupInfos[groupItemIndex] = data.body.groupDetailInfo;
+        }
 
         store.commit('SET_MSGLISTITEM', {
           res: res,
@@ -445,6 +451,16 @@ const stop = watch(
 const audio = new Audio();
 audio.src = messageAudio;
 function msgNotice(item: any) {
+  const info = store.state.msgList[item.isGroupMsg ? item.toId : item.fromId];
+
+  let name = '';
+  if (info?.isGroup) {
+    //
+    name = info?.groupDetailInfo?.groupName;
+  } else {
+    name = info?.userDetailInfo?.userInfo?.nickname;
+  }
+
   // 如果发送者不是自己 则需要通知 并且没有开通消息免打扰
   const id = item.isGroupMsg ? item.toId : item.fromId;
   const res = store.state.msgList[id];
@@ -461,7 +477,7 @@ function msgNotice(item: any) {
     if (store.state.switchSettingInfo.newMessage && !isMsgMute) {
       // 浏览器弹框
       if (Notification.permission === 'granted') {
-        const res = new Notification('DUOLIAO', {
+        const res = new Notification(name || 'DUOLIAO', {
           body: t('您收到一条消息'),
           data: {
             id: item.isGroupMsg ? item.toId : item.fromId,

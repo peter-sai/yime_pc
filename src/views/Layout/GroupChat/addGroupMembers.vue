@@ -151,7 +151,7 @@ const submit = async () => {
   const data = await userOperateGroupInfo(4, query);
   Toast(t(data.body.resultString));
   if (data.body.resultCode === 0) {
-    const data = await store.dispatch('postMsg', {
+    const data1 = await store.dispatch('postMsg', {
       query: {
         groupId: store.state.activeUid,
       },
@@ -160,7 +160,7 @@ const submit = async () => {
       auth: true,
     });
 
-    const msgItem = data.body;
+    const msgItem = data1.body;
     const item = store.state.msgList[store.state.activeUid!];
     item.groupDetailInfo = msgItem.groupDetailInfo;
     store.commit('SET_MSGLISTITEM', { res: item });

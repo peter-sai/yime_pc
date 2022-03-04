@@ -142,6 +142,7 @@
             @clickCard="
               showUserInfo(
                 item.msgContent.visitingCard.uid,
+                'card',
                 item.msgContent.visitingCard.type,
               )
             "
@@ -155,6 +156,7 @@
             @clickCard="
               showUserInfo(
                 item.msgContent.visitingCard.uid,
+                'card',
                 item.msgContent.visitingCard.type,
               )
             "
@@ -393,12 +395,17 @@ const emit = defineEmits(['toggleBox', 'changeTag', 'selectGroupMember']);
 const msgWindow: Ref<HTMLDivElement> = ref() as Ref<HTMLDivElement>;
 
 // 显示用户详情
-const showUserInfo = async (uid: number, type?: number) => {
-  // 群名片
-  if (type) {
-    // await getGroupInfo(store, uid);
-    store.commit('SET_ACTIVEUID', uid);
-    store.commit('SET_ACTIVEISGROUP', true);
+const showUserInfo = async (uid: number, isCard?: string, type?: number) => {
+  if (isCard) {
+    // 群名片
+    if (type) {
+      // await getGroupInfo(store, uid);
+      store.commit('SET_ACTIVEUID', uid);
+      store.commit('SET_ACTIVEISGROUP', true);
+    } else {
+      store.commit('SET_ACTIVEUID', uid);
+      store.commit('SET_ACTIVEISGROUP', false);
+    }
   } else {
     emit('toggleBox', uid);
     emit('changeTag', Etag.UserInfo);
