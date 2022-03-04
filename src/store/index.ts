@@ -29,6 +29,7 @@ let time = 0;
 
 const initState = {
   rongIm: null,
+  timeOut: undefined,
   forwardMsgId: 0,
   lang: -1, // 设置语言
   token: '',
@@ -145,6 +146,9 @@ export type initStore = typeof initState;
 const sotreRoot = createStore({
   state: initState,
   mutations: {
+    SET_TIMEOUT: (state, res) => {
+      state.timeOut = res;
+    },
     SET_CONFIG: (state, res) => {
       state.config = res;
     },
@@ -247,7 +251,14 @@ const sotreRoot = createStore({
     },
     SET_WS: (state, val) => {
       state.ws = val;
-      if (!val) return;
+      if (!val) {
+        if (state.timeOut) {
+          console.log(state.timeOut, 'timeOut');
+          clearTimeout(state.timeOut);
+          state.timeOut = undefined;
+        }
+        return;
+      }
       ws = val;
       onMessage();
       if (!ws.onopen) {
@@ -255,7 +266,7 @@ const sotreRoot = createStore({
           console.log('open');
           num = 0;
           setTimeout(() => {
-            heartbeat(sotreRoot, ws);
+            heartbeat(sotreRoot);
           }, 10000);
           const userList = getStorage('userList');
           if (!userList) return;
@@ -357,7 +368,7 @@ const sotreRoot = createStore({
       if (ws.readyState !== 1) {
         ws.onopen = async function () {
           setTimeout(() => {
-            heartbeat(sotreRoot, ws);
+            heartbeat(sotreRoot);
           }, 10000);
           console.log('open');
 
@@ -640,17 +651,15 @@ function onMessage() {
 }
 
 // 心跳包
-async function heartbeat(store: any, ws: any) {
+async function heartbeat(store: any) {
   // const strarTime: number = Date.now();
   console.log(num);
-
-  if (!store.state.ws) return;
 
   try {
     //////////////
     // if (num <= 3) {
     //   setTimeout(() => {
-    //     heartbeat(store, ws);
+    //     heartbeat(store);
     //   }, 10000);
     // } else {
     //   console.log('close');
@@ -669,10 +678,12 @@ async function heartbeat(store: any, ws: any) {
     // }, 5000);
     //////////////
 
-    setTimeout(() => {
-      if (!store.state.ws) return;
-      heartbeat(store, ws);
-    }, 10000);
+    store.commit(
+      'SET_TIMEOUT',
+      setTimeout(() => {
+        heartbeat(store);
+      }, 10000),
+    );
     await store.dispatch('postMsg', {
       query: null,
       cmd: 1,

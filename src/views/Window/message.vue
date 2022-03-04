@@ -624,19 +624,9 @@ const call = async (item: any) => {
     encryption: 'Aoelailiao.Login.UserCheckFunctionPrivilegeReq',
     auth: true,
   });
-  if (data?.body?.functionState === 1) {
-    if (!store.state.activeIsGroup) {
-      // 单聊
-      MediaAudio({
-        isCall: true,
-        mediaType: item.videoType,
-        yUserInfo: props.yUserInfo,
-      });
-    } else {
-      // 群聊
-      emit('selectGroupMember', item.videoType);
-    }
+  console.log(data);
 
+  if (data?.body?.functionState === 1) {
     const mediaNode = document.getElementById('media')!;
     if (mediaNode.hasChildNodes()) {
       return Toast(t('正在通话中'));
