@@ -348,7 +348,6 @@ const stop = watch(
           (e: any) => Number(e.msgId) === Number(revokeMsgId),
         );
         readList.splice(revokeKey, 1);
-
         store.commit('SET_MSGLIST', msgList);
       }
 
@@ -388,6 +387,13 @@ const stop = watch(
         });
         const groupDetailInfo = data.body.groupDetailInfo;
         res.groupDetailInfo = groupDetailInfo;
+        console.log(data.body.groupDetailInfo, store.state.groupInfos);
+        if (store.state.groupInfos && store.state.groupInfos.length) {
+          const groupItemIndex = (store.state.groupInfos || []).findIndex(
+            (e) => e.groupId === groupDetailInfo.groupId,
+          );
+          store.state.groupInfos[groupItemIndex] = data.body.groupDetailInfo;
+        }
 
         store.commit('SET_MSGLISTITEM', {
           res: res,

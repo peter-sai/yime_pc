@@ -58,6 +58,10 @@ select {
   position: relative;
   z-index: 99999;
 }
+#toast {
+  position: relative;
+  z-index: 99999;
+}
 .vc-panel * {
   font-size: 10px;
 }
