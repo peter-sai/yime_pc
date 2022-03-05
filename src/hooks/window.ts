@@ -30,8 +30,8 @@ import { RCCallClient } from '@rongcloud/plugin-call';
 // 获取阿里存储信息
 export async function initOss(store: Store<initStore>) {
   try {
-    const config: any = await getOssInfo();
-    store.commit('SET_CREDENTIALS', config.Credentials);
+    // const config: any = await getOssInfo();
+    store.commit('SET_CREDENTIALS', '');
   } catch (error) {
     console.log(error);
   }
@@ -324,22 +324,6 @@ export async function upLoadFile(
     Toast(error.message || t('操作失败'));
     return null;
   }
-
-  // const data1 = await store.dispatch('postMsg', {
-  //   query: {
-  //     content: buffer,
-  //   },
-  //   cmd: 2165,
-  //   encryption: 'Aoelailiao.Message.UploadReq',
-  //   auth: true,
-  // });
-
-  // if (data1.body.resultCode !== 0) {
-  //   Toast(t(data1.body.resultString));
-  //   return null;
-  // } else {
-  //   return store.state.config.h5_address + data1.body.url;
-  // }
 }
 
 // 获取首屏图片
@@ -363,9 +347,13 @@ function getFristImg(
         .drawImage(video, 0, 0, canvas.width, canvas.height);
       canvas.toBlob(
         async function (blob: any) {
-          const files = new window.File([blob], '11.jpeg', {
-            type: 'image/jpeg',
-          });
+          const files = new window.File(
+            [blob],
+            `${parseInt((Math.random() * 5000).toString())}.jpeg`,
+            {
+              type: 'image/jpeg',
+            },
+          );
           const url = await upLoadFile(files, store, t);
           resovle(url);
         },

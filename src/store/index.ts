@@ -12,7 +12,6 @@ import { IMsgInfo, ImsgItem, TMsgContent } from '@/types/msg';
 import { IUserDetailInfo } from '@/types/user';
 import { useClientSendMsgAckToServer, mergeData } from '@/hooks/window';
 import { hideLoading } from '@/plugin/Loading';
-import { reconnect } from '../App.vue';
 
 const OSS = require('ali-oss');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -30,6 +29,7 @@ let time = 0;
 
 const initState = {
   rongIm: null,
+  timeOut: undefined,
   forwardMsgId: 0,
   lang: -1, // 设置语言
   token: '',
@@ -146,6 +146,9 @@ export type initStore = typeof initState;
 const sotreRoot = createStore({
   state: initState,
   mutations: {
+    SET_TIMEOUT: (state, res) => {
+      state.timeOut = res;
+    },
     SET_CONFIG: (state, res) => {
       state.config = res;
     },
@@ -248,7 +251,13 @@ const sotreRoot = createStore({
     },
     SET_WS: (state, val) => {
       state.ws = val;
-      if (!val) return;
+      if (!val) {
+        if (state.timeOut) {
+          clearTimeout(state.timeOut);
+          state.timeOut = undefined;
+        }
+        return;
+      }
       ws = val;
       onMessage();
       if (!ws.onopen) {
@@ -256,7 +265,7 @@ const sotreRoot = createStore({
           console.log('open');
           num = 0;
           setTimeout(() => {
-            heartbeat(sotreRoot, ws);
+            heartbeat(sotreRoot);
           }, 10000);
           const userList = getStorage('userList');
           if (!userList) return;
@@ -282,10 +291,10 @@ const sotreRoot = createStore({
         // yourRegion填写Bucket所在地域。以华东1（杭州）为例，Region填写为oss-cn-hangzhou。
         region: 'oss-accelerate',
         // 从STS服务获取的临时访问密钥（AccessKey ID和AccessKey Secret）。
-        accessKeyId: val.AccessKeyId,
-        accessKeySecret: val.AccessKeySecret,
+        accessKeyId: 'LTAI5tA5EFq9V1JM8cDixTAy',
+        accessKeySecret: 'ORCVe49wnwZrSEp2EO78nUMUwnML84',
         // 从STS服务获取的安全令牌（SecurityToken）。
-        stsToken: val.SecurityToken,
+        // stsToken: val.SecurityToken,
         // 填写Bucket名称。
         bucket: '123message',
       });
@@ -358,9 +367,10 @@ const sotreRoot = createStore({
       if (ws.readyState !== 1) {
         ws.onopen = async function () {
           setTimeout(() => {
-            heartbeat(sotreRoot, ws);
+            heartbeat(sotreRoot);
           }, 10000);
           console.log('open');
+
           ws.send(data);
         };
       } else {
@@ -622,7 +632,6 @@ function onMessage() {
     }
     const dataview = new DataView(evt.data);
     const ansCmd = dataview.getUint16(5);
-    // console.log(dataview, ansCmd);
 
     if (cmdList.includes(ansCmd)) {
       defCb(evt);
@@ -641,31 +650,39 @@ function onMessage() {
 }
 
 // 心跳包
-async function heartbeat(store: any, ws: any) {
-  const strarTime: number = Date.now();
+async function heartbeat(store: any) {
+  // const strarTime: number = Date.now();
   console.log(num);
-  if (!store.state.ws) return;
 
   try {
-    if (num <= 3) {
+    //////////////
+    // if (num <= 3) {
+    //   setTimeout(() => {
+    //     heartbeat(store);
+    //   }, 10000);
+    // } else {
+    //   console.log('close');
+    //   // 重新连接
+    //   ws.close();
+    //   store.commit('SET_WS', null);
+    //   reconnect(store);
+    //   hideLoading();
+    // }
+    // setTimeout(() => {
+    //   if (!time || time - strarTime > 5000 || time - strarTime < 0) {
+    //     num++;
+    //   } else {
+    //     num = 0;
+    //   }
+    // }, 5000);
+    //////////////
+
+    store.commit(
+      'SET_TIMEOUT',
       setTimeout(() => {
-        heartbeat(store, ws);
-      }, 10000);
-    } else {
-      console.log('close');
-      // 重新连接
-      ws.close();
-      store.commit('SET_WS', null);
-      reconnect(store);
-      hideLoading();
-    }
-    setTimeout(() => {
-      if (!time || time - strarTime > 5000 || time - strarTime < 0) {
-        num++;
-      } else {
-        num = 0;
-      }
-    }, 5000);
+        heartbeat(store);
+      }, 10000),
+    );
     await store.dispatch('postMsg', {
       query: null,
       cmd: 1,

@@ -151,7 +151,6 @@ const play = async () => {
     }
     .icon {
       position: absolute;
-      z-index: 999;
       left: 50%;
       top: 50%;
       width: 50px;

@@ -9,20 +9,17 @@
     <div class="input">
       <Search v-model="val" :placeholder="t('用户、群组与消息')" />
     </div>
-    <Iconfont
-      name="iconsearch"
-      size="20"
-      color="#929292"
-      @click="showBox = !showBox"
-    />
-    <div class="box" v-if="showBox">
-      <div class="item" @click="goTo('/Home/addContact')">
-        <Iconfont name="iconyaoqinghaoyoubeifen" size="15" />
-        <span>{{ t('添加好友') }}</span>
-      </div>
-      <div class="item" @click="goTo('/Home/addGroup')">
-        <Iconfont name="iconyaoqinghaoyou" size="12" />
-        <span>{{ t('新建群聊') }}</span>
+    <div class="iconsearch">
+      <Iconfont name="iconsearch" size="20" color="#929292" />
+      <div class="box">
+        <div class="item" @click="goTo('/Home/addContact')">
+          <Iconfont name="iconyaoqinghaoyoubeifen" size="15" />
+          <span>{{ t('添加好友') }}</span>
+        </div>
+        <div class="item" @click="goTo('/Home/addGroup')">
+          <Iconfont name="iconyaoqinghaoyou" size="12" />
+          <span>{{ t('新建群聊') }}</span>
+        </div>
       </div>
     </div>
     <!-- 搜索结果 -->
@@ -169,17 +166,19 @@ const toggleShowSearch = (res: boolean) => {
 };
 
 const goToWindow = (item: ImsgItem) => {
-  if (item.isGroup) {
+  console.log(item);
+
+  if (item.isGroup || item.groupState) {
     // 群聊
-    store.commit('SET_ACTIVEUID', item.id);
+    store.commit('SET_ACTIVEUID', item.groupId || item.id);
     store.commit('SET_ACTIVEISGROUP', true);
   } else {
     // 单聊
-    store.commit('SET_ACTIVEUID', item.id);
+    store.commit('SET_ACTIVEUID', item.uid || item.id);
     store.commit('SET_ACTIVEISGROUP', false);
   }
-  item.unReadNum = 0;
-  store.commit('SET_MSGLISTITEM', { res: item });
+  // item.unReadNum = 0;
+  // store.commit('SET_MSGLISTITEM', { res: item });
 };
 
 watch(val, (res) => {
@@ -278,12 +277,16 @@ init();
 </script>
 <style lang="scss" scoped>
 @import '@/style/base.scss';
+.iconsearch:hover .box {
+  display: block;
+}
 .header {
   display: flex;
   align-items: center;
   padding: 17px 13px;
   position: relative;
   .box {
+    display: none;
     position: absolute;
     background: #f9f9f9;
     border-radius: 5px;
@@ -291,7 +294,7 @@ init();
     z-index: 99;
     padding: 13px 5px;
     box-sizing: border-box;
-    top: 75%;
+    top: 40px;
     right: 13px;
     .item {
       display: flex;

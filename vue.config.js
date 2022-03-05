@@ -7,8 +7,7 @@ module.exports = {
   devServer: {
     port: 8000,
     // https: true,
-    // proxy: 'http://localhost:3000',
-    // proxy: 'http://18.166.162.101:3000',
+    // proxy: 'http://18.167.158.191:3000',
     proxy: {
       '/api': {
         target: 'http://18.166.162.101:3000', // 目标地址

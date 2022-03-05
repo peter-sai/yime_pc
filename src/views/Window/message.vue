@@ -142,6 +142,7 @@
             @clickCard="
               showUserInfo(
                 item.msgContent.visitingCard.uid,
+                'card',
                 item.msgContent.visitingCard.type,
               )
             "
@@ -155,6 +156,7 @@
             @clickCard="
               showUserInfo(
                 item.msgContent.visitingCard.uid,
+                'card',
                 item.msgContent.visitingCard.type,
               )
             "
@@ -393,12 +395,17 @@ const emit = defineEmits(['toggleBox', 'changeTag', 'selectGroupMember']);
 const msgWindow: Ref<HTMLDivElement> = ref() as Ref<HTMLDivElement>;
 
 // 显示用户详情
-const showUserInfo = async (uid: number, type?: number) => {
-  // 群名片
-  if (type) {
-    // await getGroupInfo(store, uid);
-    store.commit('SET_ACTIVEUID', uid);
-    store.commit('SET_ACTIVEISGROUP', true);
+const showUserInfo = async (uid: number, isCard?: string, type?: number) => {
+  if (isCard) {
+    // 群名片
+    if (type) {
+      // await getGroupInfo(store, uid);
+      store.commit('SET_ACTIVEUID', uid);
+      store.commit('SET_ACTIVEISGROUP', true);
+    } else {
+      store.commit('SET_ACTIVEUID', uid);
+      store.commit('SET_ACTIVEISGROUP', false);
+    }
   } else {
     emit('toggleBox', uid);
     emit('changeTag', Etag.UserInfo);
@@ -617,19 +624,9 @@ const call = async (item: any) => {
     encryption: 'Aoelailiao.Login.UserCheckFunctionPrivilegeReq',
     auth: true,
   });
-  if (data?.body?.functionState === 1) {
-    if (!store.state.activeIsGroup) {
-      // 单聊
-      MediaAudio({
-        isCall: true,
-        mediaType: item.videoType,
-        yUserInfo: props.yUserInfo,
-      });
-    } else {
-      // 群聊
-      emit('selectGroupMember', item.videoType);
-    }
+  console.log(data);
 
+  if (data?.body?.functionState === 1) {
     const mediaNode = document.getElementById('media')!;
     if (mediaNode.hasChildNodes()) {
       return Toast(t('正在通话中'));
