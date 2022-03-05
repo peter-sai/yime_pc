@@ -483,6 +483,7 @@ const quitGroupChat = async (item: ImsgItem) => {
 const del = (item: any) => {
   if (store.state.msgList[item.id]) {
     delete store.state.msgList[item.id];
+    store.commit('SET_ACTIVEUID', null);
   }
 };
 
