@@ -277,6 +277,9 @@ init();
 </script>
 <style lang="scss" scoped>
 @import '@/style/base.scss';
+.iconsearch {
+  z-index: 999;
+}
 .iconsearch:hover .box {
   display: block;
 }
