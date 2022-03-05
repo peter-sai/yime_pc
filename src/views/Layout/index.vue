@@ -8,7 +8,7 @@
       </router-view>
     </div>
     <div class="right">
-      <div
+      <!-- <div
         style="
           height: 40px;
           background: #d73232;
@@ -21,7 +21,7 @@
         v-if="store.state.isOnLine"
       >
         {{ t(store.state.isOnLine) }}
-      </div>
+      </div> -->
 
       <div class="noChat chat" v-if="!store.state.activeUid">
         <div>{{ t('请选择一个对话开始聊天') }}</div>
