@@ -388,6 +388,8 @@ const useCbImg = (
   isGroupMsg = 0,
 ) => {
   return async (e: any) => {
+    if (!e.target.files || !e.target.files.length) return;
+
     if (!store.state.client.userAgent) {
       await initOss(store);
     }
