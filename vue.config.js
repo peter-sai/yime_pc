@@ -68,7 +68,7 @@ module.exports = {
           allowToChangeInstallationDirectory: true, // 允许修改安装目录
           createDesktopShortcut: true, // 创建桌面图标
           createStartMenuShortcut: true, // 创建开始菜单图标
-          shortcutName: 'demo', // 图标名称
+          shortcutName: 'DUOLIAO', // 图标名称
         },
       },
     },
