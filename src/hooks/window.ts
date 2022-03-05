@@ -30,8 +30,8 @@ import { RCCallClient } from '@rongcloud/plugin-call';
 // 获取阿里存储信息
 export async function initOss(store: Store<initStore>) {
   try {
-    const config: any = await getOssInfo();
-    store.commit('SET_CREDENTIALS', config.Credentials);
+    // const config: any = await getOssInfo();
+    store.commit('SET_CREDENTIALS', '');
   } catch (error) {
     console.log(error);
   }
