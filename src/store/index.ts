@@ -253,7 +253,6 @@ const sotreRoot = createStore({
       state.ws = val;
       if (!val) {
         if (state.timeOut) {
-          console.log(state.timeOut, 'timeOut');
           clearTimeout(state.timeOut);
           state.timeOut = undefined;
         }
@@ -292,10 +291,10 @@ const sotreRoot = createStore({
         // yourRegion填写Bucket所在地域。以华东1（杭州）为例，Region填写为oss-cn-hangzhou。
         region: 'oss-accelerate',
         // 从STS服务获取的临时访问密钥（AccessKey ID和AccessKey Secret）。
-        accessKeyId: val.AccessKeyId,
-        accessKeySecret: val.AccessKeySecret,
+        accessKeyId: 'LTAI5tA5EFq9V1JM8cDixTAy',
+        accessKeySecret: 'ORCVe49wnwZrSEp2EO78nUMUwnML84',
         // 从STS服务获取的安全令牌（SecurityToken）。
-        stsToken: val.SecurityToken,
+        // stsToken: val.SecurityToken,
         // 填写Bucket名称。
         bucket: '123message',
       });

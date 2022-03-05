@@ -387,7 +387,6 @@ const stop = watch(
         });
         const groupDetailInfo = data.body.groupDetailInfo;
         res.groupDetailInfo = groupDetailInfo;
-        console.log(data.body.groupDetailInfo, store.state.groupInfos);
         if (store.state.groupInfos && store.state.groupInfos.length) {
           const groupItemIndex = (store.state.groupInfos || []).findIndex(
             (e) => e.groupId === groupDetailInfo.groupId,
