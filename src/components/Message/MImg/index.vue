@@ -5,7 +5,12 @@
         <!-- <img :width="width" :height="height" :src="src" alt="" /> -->
         <SayHello v-if="src === 'emoji_1'" />
         <div class="imgBg" v-else @contextmenu="contextmenu">
-          <img style="max-width: 100%; max-height: 100%" :src="src" alt="" />
+          <img
+            @click="shogImg"
+            style="max-width: 100%; max-height: 100%; cursor: pointer"
+            :src="src"
+            alt=""
+          />
         </div>
       </div>
       <IsRead :isRead="isRead" />
@@ -16,12 +21,13 @@
 import { defineComponent, defineProps, defineEmits } from 'vue';
 import SayHello from '../SayHello/index.vue';
 import IsRead from '@/components/IsRead/index.vue';
+import { showImg } from '../../../plugin/ShowImg';
 export default defineComponent({
   name: 'MImg',
 });
 </script>
 <script lang="ts" setup>
-defineProps({
+const props = defineProps({
   isRead: {
     type: Boolean,
     default: false,
@@ -45,6 +51,10 @@ const emit = defineEmits(['menuClick']);
 const contextmenu = (e: any) => {
   e.preventDefault();
   emit('menuClick', e);
+};
+
+const shogImg = () => {
+  showImg(props.src);
 };
 </script>
 <style lang="scss" scoped>

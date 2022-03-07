@@ -8,15 +8,19 @@
           size="20"
           color="#2B2C33"
         />
-        <input
-          type="text"
+        <div
           ref="input"
+          class="input"
           :placeholder="t('输入消息')"
+          contenteditable="true"
           :value="modelValue"
           @click.stop=""
           @input="onInput"
-          @keydown.enter="$emit('enter')"
-        />
+          @keydown.enter="onEnter"
+          @paste="paste"
+        >
+          {{ modelValue }}
+        </div>
       </div>
       <div class="itemRight">
         <Iconfont
@@ -378,12 +382,19 @@ const expressionList = reactive(expression);
 const { select, del } = useInput(emit, emojiList, input);
 
 const onInput = async (e: any) => {
-  emit('update:modelValue', e.target.value);
+  emit('update:modelValue', e.target.textContent);
   if (e.data === '@') {
     showAtBox.value = true;
     if (!atUserInfoList.value.length) {
       await getGroupMemberUserInfos();
     }
+  }
+};
+
+const onEnter = async (e: any) => {
+  if (!e.shiftKey) {
+    e.preventDefault();
+    emit('enter');
   }
 };
 
@@ -639,6 +650,11 @@ function startAudio() {
     line.value = (audioTime.value / 60) * 100;
   }, 1000);
 }
+
+// 粘贴
+const paste = (e: any) => {
+  e.preventDefault();
+};
 </script>
 <style lang="scss" scoped>
 @import '@/style/base.scss';
@@ -691,12 +707,13 @@ function startAudio() {
     }
   }
   .content {
-    height: 50px;
-    padding: 0 20px;
+    min-height: 50px;
+    padding: 15px 20px;
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: space-between;
     background: #fff;
+    box-sizing: border-box;
   }
   .box {
     width: 100%;
@@ -844,22 +861,23 @@ function startAudio() {
 }
 .itemLeft {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   flex: 1;
   position: relative;
   .iconfont {
     cursor: pointer;
     margin-right: 20px;
   }
-  input {
+  .input {
     flex: 1;
-    height: 20px;
     font-size: 14px;
     font-family: PingFangSC, PingFangSC-Regular;
     font-weight: 400;
     color: #000;
     line-height: 20px;
     letter-spacing: 0px;
+    outline: none;
+    word-break: break-all;
   }
 }
 .itemRight {
@@ -875,8 +893,8 @@ function startAudio() {
     cursor: pointer;
     display: flex;
     img {
-      width: 22px;
-      height: 22px;
+      width: 20px;
+      height: 20px;
     }
   }
 }
