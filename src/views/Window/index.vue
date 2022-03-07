@@ -38,7 +38,7 @@
       @sendFile="sendImg('file')"
     />
     <!-- 文件 和 图片选择 -->
-    <input ref="changUserImg" type="file" hidden :accept="accept" />
+    <input ref="changUserImg" type="file" hidden :accept="accept" multiple />
 
     <!-- 陌生人 -->
     <div class="stranger" v-if="false">
