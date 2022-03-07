@@ -147,6 +147,7 @@
               )
             "
             @click="showUserInfo(getUserInfo(item).uid)"
+            @menuClick="menuClick($event, item)"
             :userInfo="getUserInfo(item)"
             v-if="isShowHowComponent(item)"
             :item="item.msgContent.visitingCard"
@@ -267,9 +268,7 @@
           >{{ t('复制') }}</span
         >
         <span
-          v-if="
-            copyItem.type !== 'voiceMsg' && copyItem.type !== 'visitingCard'
-          "
+          v-if="copyItem.type !== 'voiceMsg'"
           @click="forward(copyItem.msgId)"
           >{{ t('转发') }}</span
         >

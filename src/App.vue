@@ -391,7 +391,12 @@ const stop = watch(
           const groupItemIndex = (store.state.groupInfos || []).findIndex(
             (e) => e.groupId === groupDetailInfo.groupId,
           );
-          store.state.groupInfos[groupItemIndex] = data.body.groupDetailInfo;
+          if (groupItemIndex === -1) {
+            store.state.groupInfos[store.state.groupInfos.length] =
+              data.body.groupDetailInfo;
+          } else {
+            store.state.groupInfos[groupItemIndex] = data.body.groupDetailInfo;
+          }
         }
 
         store.commit('SET_MSGLISTITEM', {
