@@ -58,7 +58,7 @@
       <div @click="addGroup" class="btn">{{ t('加入群聊') }}</div>
     </div>
     <!-- 文件 和 图片选择 -->
-    <input ref="changUserImg" type="file" hidden :accept="accept" />
+    <input ref="changUserImg" type="file" hidden :accept="accept" multiple />
 
     <!-- 弹框 -->
     <div>

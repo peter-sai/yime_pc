@@ -26,3 +26,7 @@ declare module 'Recorder' {
   const content: any;
   export default content;
 }
+declare module 'ClipboardItem' {
+  const content: any;
+  export default content;
+}

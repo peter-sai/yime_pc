@@ -29,6 +29,8 @@ import {
   PropType,
   ref,
   nextTick,
+  watch,
+  computed,
 } from 'vue';
 import Iconfont from '../../../iconfont/index.vue';
 import IsRead from '@/components/IsRead/index.vue';
@@ -53,6 +55,13 @@ const props = defineProps({
   height: {
     type: Number,
     default: 0,
+  },
+  msgId: {
+    type: Number,
+  },
+  playMsgId: {
+    type: Number,
+    required: true,
   },
 });
 
@@ -82,7 +91,7 @@ if (
   };
 }
 
-const emit = defineEmits(['menuClick']);
+const emit = defineEmits(['menuClick', 'onPlay']);
 const imgBox = ref(null);
 let video: HTMLVideoElement | null = null;
 const isPlay = ref(false);
@@ -98,10 +107,23 @@ const play = async () => {
     imgBox.value.append(video);
     await nextTick();
     video.play();
+
+    video.addEventListener('play', function () {
+      emit('onPlay', props.msgId);
+    });
   } else {
     video.play();
   }
+  emit('onPlay', props.msgId);
 };
+
+const playMsgId = computed(() => props.playMsgId);
+
+watch(playMsgId, (val) => {
+  if (val !== props.msgId) {
+    video && video.pause();
+  }
+});
 
 const contextmenu = (e: any) => {
   e.preventDefault();

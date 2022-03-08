@@ -51,7 +51,6 @@ export async function initRonyun(store: Store<initStore>) {
     {},
   ) as RCRTCClient;
   // 正在通话中的uid
-  let callUid = '';
   const rongIm = RongIMLib.installPlugin(callInstaller, {
     // rtcClient 实例 （必填）
     rtcClient,
@@ -120,7 +119,7 @@ export async function initRonyun(store: Store<initStore>) {
         return;
       }
 
-      callUid = session.getTargetId();
+      store.commit('SET_CALLUID', session.getTargetId());
 
       if (session.getConversationType() === 1) {
         let userDetail = '';
@@ -178,7 +177,7 @@ export async function initRonyun(store: Store<initStore>) {
      *  @param summaryInfo 结束一个 session 的后汇总信息
      */
     onSessionClose(session: RCCallSession, summaryInfo?: IEndSummary) {
-      if (callUid === session.getTargetId()) {
+      if (store.state.callUid === session.getTargetId()) {
         hideGroupMediaAudio();
         // 设置当前不在通话中 用于是否显示加入按钮
         store.commit('SET_CONVERSATIONING', false);
@@ -264,7 +263,6 @@ const init = async () => {
   setTimeout(async () => {
     // 获取漫游数据并且合并
     const roamList = await getRoam(store);
-    console.log(roamList);
 
     // 合并数据
     await mergeData([], store, roamList);

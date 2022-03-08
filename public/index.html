@@ -18,6 +18,12 @@
 </head>
 
 <body>
+  <script>
+    window.onerror = ('error', (e) => {
+      console.log(e);
+      return true
+    })
+  </script>
   <noscript>
     <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled.
         Please enable it to continue.</strong>
@@ -27,11 +33,6 @@
   <div id="toast"></div>
   <div id="media"></div>
   <!-- built files will be auto injected -->
-  <script>
-    window.onerror = ('error', (e) => {
-      console.log(e);
-    })
-  </script>
 </body>
 
 </html>

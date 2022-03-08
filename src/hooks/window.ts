@@ -395,82 +395,50 @@ const useCbImg = (
     }
 
     try {
-      const file = e.target.files[0];
+      const files = e.target.files;
+      files.forEach(async (v: File) => {
+        await sendImgInfo(v, store, accept, t, isGroupMsg);
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+};
 
-      ////  开始上传图片 ///
-      // const url = await upLoadFile(file, store, t);
-      // if (!url) return;
+async function sendImgInfo(
+  file: File,
+  store: Store<initStore>,
+  accept: Ref<string>,
+  t: { (key: string | number): string },
+  isGroupMsg: number,
+) {
+  try {
+    ////  开始上传图片 ///
+    // const url = await upLoadFile(file, store, t);
+    // if (!url) return;
 
-      const info = (await store.state.client.put(file.name, file)) as {
-        url: string;
-      } | null;
-      if (!info) return;
+    const info = (await store.state.client.put(file.name, file)) as {
+      url: string;
+    } | null;
+    if (!info) return;
 
-      ////  上传图片结束 ///
+    ////  上传图片结束 ///
 
-      // 参数
-      let res = {};
+    // 参数
+    let res = {};
 
-      if (accept.value === 'image/*,video/*') {
-        if (file.type.includes('video')) {
-          let image_url: any, videoSize: any;
-          try {
-            ////  获取视频首帧 ////
-            videoSize = await getVideoSize(info.url);
-            image_url = await getFristImg(info.url, store, t, videoSize);
-            ////  结束 ////
-          } catch (error) {
-            console.log(error);
-          }
-          // 视频
-          res = {
-            msgInfo: {
-              isGroupMsg,
-              fromId: store.state.userInfo.uid,
-              toId: store.state.activeUid,
-              msgShowType: 1,
-              isEncrypt: 0,
-              msgContent: {
-                msgContentType: 23,
-                msgContent: 'videoMsgInfo',
-                videoMsgInfo: {
-                  url: info.url,
-                  name: file.name,
-                  size: file.size,
-                  imageUrl: image_url,
-                  weight: videoSize.videoWidth,
-                  height: videoSize.videoHeight,
-                },
-              },
-            },
-          };
-        } else {
-          // 图片
-          const size = (await getSize(file)) as {
-            width: number;
-            height: number;
-          };
-          res = {
-            msgInfo: {
-              isGroupMsg,
-              fromId: store.state.userInfo.uid,
-              toId: store.state.activeUid,
-              msgShowType: 1,
-              isEncrypt: 0,
-              msgContent: {
-                msgContentType: 2,
-                msgContent: 'imageMsg',
-                imageMsg: {
-                  imageUrl: info.url,
-                  imageWidth: size.width,
-                  imageHeight: size.height,
-                },
-              },
-            },
-          };
+    if (accept.value === 'image/*,video/*') {
+      if (file.type.includes('video')) {
+        let image_url: any, videoSize: any;
+        try {
+          ////  获取视频首帧 ////
+          videoSize = await getVideoSize(info.url);
+          image_url = await getFristImg(info.url, store, t, videoSize);
+          ////  结束 ////
+        } catch (error) {
+          console.log(error);
         }
-      } else {
-        // 文件
+        // 视频
         res = {
           msgInfo: {
             isGroupMsg,
@@ -479,33 +447,80 @@ const useCbImg = (
             msgShowType: 1,
             isEncrypt: 0,
             msgContent: {
-              msgContentType: 19,
-              msgContent: 'fileInfo',
-              fileInfo: {
-                fileName: file.name,
-                fileSize: file.size,
-                fileUrl: info.url,
+              msgContentType: 23,
+              msgContent: 'videoMsgInfo',
+              videoMsgInfo: {
+                url: info.url,
+                name: file.name,
+                size: file.size,
+                imageUrl: image_url,
+                weight: videoSize.videoWidth,
+                height: videoSize.videoHeight,
+              },
+            },
+          },
+        };
+      } else {
+        // 图片
+        const size = (await getSize(file)) as {
+          width: number;
+          height: number;
+        };
+        res = {
+          msgInfo: {
+            isGroupMsg,
+            fromId: store.state.userInfo.uid,
+            toId: store.state.activeUid,
+            msgShowType: 1,
+            isEncrypt: 0,
+            msgContent: {
+              msgContentType: 2,
+              msgContent: 'imageMsg',
+              imageMsg: {
+                imageUrl: info.url,
+                imageWidth: size.width,
+                imageHeight: size.height,
               },
             },
           },
         };
       }
-      console.log(res);
-
-      const data = await store.dispatch('postMsg', {
-        query: res,
-        cmd: 2001,
-        encryption: 'Aoelailiao.Message.ClientSendMsgToServerReq',
-        auth: true,
-      });
-      if (data.body.resultCode !== 0) {
-        Toast(t(data.body.resultString));
-      }
-    } catch (error) {
-      console.log(error);
+    } else {
+      // 文件
+      res = {
+        msgInfo: {
+          isGroupMsg,
+          fromId: store.state.userInfo.uid,
+          toId: store.state.activeUid,
+          msgShowType: 1,
+          isEncrypt: 0,
+          msgContent: {
+            msgContentType: 19,
+            msgContent: 'fileInfo',
+            fileInfo: {
+              fileName: file.name,
+              fileSize: file.size,
+              fileUrl: info.url,
+            },
+          },
+        },
+      };
     }
-  };
-};
+    console.log(res);
+
+    const data = await store.dispatch('postMsg', {
+      query: res,
+      cmd: 2001,
+      encryption: 'Aoelailiao.Message.ClientSendMsgToServerReq',
+      auth: true,
+    });
+    if (data.body.resultCode !== 0) {
+      Toast(t(data.body.resultString));
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 // 获取图片宽高
 const getSize = (file: File) => {
