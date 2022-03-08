@@ -269,6 +269,8 @@ const init = async (
     },
   });
 
+  store.commit('SET_CALLUID', data.session.getTargetId());
+
   sessionRoot.value = data.session;
 };
 </script>

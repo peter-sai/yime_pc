@@ -222,12 +222,18 @@
             :userInfo="getUserInfo(item)"
             @menuClick="menuClick($event, item)"
             :videoMsgInfo="item.msgContent.videoMsgInfo"
+            :msgId="item.msgId"
+            @onPlay="playMsgId = item.msgId"
+            :playMsgId="playMsgId"
           />
           <MVideoFile
             v-else
             :isRead="item.msgId <= readMsgId"
             @menuClick="menuClick($event, item)"
             :videoMsgInfo="item.msgContent.videoMsgInfo"
+            :msgId="item.msgId"
+            @onPlay="playMsgId = item.msgId"
+            :playMsgId="playMsgId"
           />
         </div>
         <!-- 系统消息 -->
@@ -265,6 +271,12 @@
             copyItem.msgContent.stringContent ||
             copyItem.msgContent.linkUrlInfo.url
           "
+          >{{ t('复制') }}</span
+        >
+        <span
+          class="copyMsg"
+          v-if="copyItem.type === 'imageMsg'"
+          @click="copyImg(copyItem?.msgContent?.imageMsg?.imageUrl)"
           >{{ t('复制') }}</span
         >
         <span
@@ -310,6 +322,7 @@ export default defineComponent({
 </script>
 
 <script setup lang="ts">
+import ClipboardItem from 'ClipboardItem';
 import Mmsg from '@/components/Message/Mmsg/index.vue';
 import Ymsg from '@/components/Message/Ymsg/index.vue';
 import Time from '@/components/Time/index.vue';
@@ -356,6 +369,8 @@ import { Toast } from '@/plugin/Toast';
 import ClipboardJS from 'clipboard';
 import { MediaAudio } from '@/plugin/Audio';
 import { hideLoading, showLoading } from '@/plugin/Loading';
+
+const playMsgId = ref(0);
 
 async function getGroupInfo(store: Store<initStore>, uid: number) {
   if (!uid) return;
@@ -695,6 +710,32 @@ const download = (item: IFileInfo) => {
     name: item.fileName,
   };
   downloadFile(file);
+};
+
+// 复制图片
+const copyImg = (url: string) => {
+  const img = new Image();
+  img.crossOrigin = 'Anonymous';
+  img.src = url;
+  img.onload = (v: any) => {
+    const canvas = document.createElement('canvas');
+    const ctx: any = canvas.getContext('2d');
+    canvas.width = v.target.width;
+    canvas.height = v.target.height;
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    ctx.drawImage(img, 0, 0, ctx.canvas.width, ctx.canvas.height);
+    canvas.toBlob(async (blob) => {
+      const data = [new ClipboardItem({ [blob.type]: blob })];
+      await navigator.clipboard.write(data).then(
+        () => {
+          Toast(t('复制成功'));
+        },
+        () => {
+          console.error('Unable to write to clipboard.');
+        },
+      );
+    });
+  };
 };
 </script>
 <style lang="scss" scoped>
