@@ -151,7 +151,33 @@ const useEnter = (
     // eslint-disable-next-line no-useless-escape
     /^((https?|ftp|file):\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
   const userInfo = store.state.userInfo;
-  return async (groupList: IUserInfo[] = []) => {
+  return async (groupList: IUserInfo[] = [], copyImgList?: File[]) => {
+    for (const e of copyImgList || []) {
+      const info: any = e;
+      if (
+        info?.file?.type?.includes('image') ||
+        info?.file?.type?.includes('video')
+      ) {
+        await sendImgInfo(
+          info.file,
+          store,
+          { value: 'image/*,video/*' } as Ref<string>,
+          t,
+          isGroupMsg,
+        );
+      } else {
+        await sendImgInfo(
+          info.file,
+          store,
+          { value: '.xls,.doc,.docx,.txt,.pdf,video/*' } as Ref<string>,
+          t,
+          isGroupMsg,
+        );
+      }
+    }
+
+    if (!search.value) return;
+
     const isUrl = urlP.test(search.value);
     const res: any = {
       msgInfo: {

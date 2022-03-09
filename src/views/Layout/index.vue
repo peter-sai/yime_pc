@@ -45,11 +45,17 @@
           />
         </div>
       </div>
+      <div class="ondragover" v-show="isShowDragover">
+        <div class="box" ref="dragover">
+          <Iconfont name="iconwenjian2" size="30" color="#666" />
+          拖入要发送的文件
+        </div>
+      </div>
     </div>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, onMounted, Ref, ref } from 'vue';
 import SystemWindow from '../SystemWindow/index.vue';
 import Window from '../Window/index.vue';
 import GroupWindow from '../GroupWindow/index.vue';
@@ -75,8 +81,47 @@ export default defineComponent({
 });
 </script>
 <script setup lang="ts">
+import Iconfont from '../../iconfont/index.vue';
+import { Toast } from '@/plugin/Toast';
 const store = useStore(key);
 const { t } = useI18n();
+const dragover: Ref<HTMLDivElement> = ref({}) as Ref<HTMLDivElement>;
+
+const isShowDragover = ref(false);
+
+let timer: any = null;
+document.ondragover = () => {
+  if (!store.state.activeUid) return;
+  clearTimeout(timer);
+  timer = setTimeout(function () {
+    isShowDragover.value = false;
+  }, 200);
+  isShowDragover.value = true;
+};
+onMounted(() => {
+  dragover.value.ondragover = function () {
+    return false;
+  };
+  dragover.value.ondrop = function (ev: any) {
+    const oFile = ev.dataTransfer.files[0];
+    const reader = new FileReader();
+    //读取成功
+    reader.onload = function () {
+      store.commit('SET_DROPFILE', {
+        url: reader.result,
+        file: oFile,
+      });
+    };
+    reader.onabort = function () {
+      Toast('读取中断');
+    };
+    reader.onerror = function () {
+      Toast('读取失败');
+    };
+    reader.readAsDataURL(oFile);
+    return false;
+  };
+});
 </script>
 <style lang="scss" scoped>
 .layout {
@@ -99,7 +144,30 @@ const { t } = useI18n();
     display: flex;
     z-index: 9;
     flex-direction: column;
-
+    .ondragover {
+      background: rgba(255, 255, 255, 0.8);
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 99;
+      padding: 20px;
+      .box {
+        width: 100%;
+        height: 100%;
+        border: 2px dashed #666;
+        font-size: 22px;
+        font-weight: bold;
+        color: #666;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        .iconfont {
+          margin-right: 10px;
+        }
+      }
+    }
     .chat {
       position: relative;
       z-index: 99;
