@@ -10,7 +10,10 @@
           {{ userInfo?.nickname }}
         </div>
         <div class="imgBox" ref="imgBox" :style="style">
-          <div v-if="!isPlay" style="width: 100%; height: 100%">
+          <div
+            v-if="!isPlay"
+            style="width: 100%; height: 100%; text-align: center"
+          >
             <img
               style="max-width: 100%; max-height: 100%"
               :src="videoMsgInfo?.imageUrl"
