@@ -28,7 +28,9 @@ let defCb: any = null;
 let time = 0;
 
 const initState = {
+  callUid: null,
   rongIm: null,
+  dropFile: null,
   timeOut: undefined,
   forwardMsgId: 0,
   lang: -1, // 设置语言
@@ -146,6 +148,12 @@ export type initStore = typeof initState;
 const sotreRoot = createStore({
   state: initState,
   mutations: {
+    SET_DROPFILE: (state, res) => {
+      state.dropFile = res;
+    },
+    SET_CALLUID: (state, res) => {
+      state.callUid = res;
+    },
     SET_TIMEOUT: (state, res) => {
       state.timeOut = res;
     },

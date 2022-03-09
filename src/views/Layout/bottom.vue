@@ -8,15 +8,19 @@
           size="20"
           color="#2B2C33"
         />
-        <input
-          type="text"
+        <div
           ref="input"
+          class="input"
           :placeholder="t('输入消息')"
+          contenteditable="true"
           :value="modelValue"
           @click.stop=""
           @input="onInput"
-          @keydown.enter="$emit('enter')"
-        />
+          @keydown.enter="onEnter"
+          @paste="paste"
+        >
+          {{ modelValue }}
+        </div>
       </div>
       <div class="itemRight">
         <Iconfont
@@ -37,7 +41,11 @@
           size="20"
           color="#2B2C33"
         />
-        <div v-if="modelValue" class="send" @click.stop="$emit('enter')">
+        <div
+          v-if="modelValue || copyImgList.length"
+          class="send"
+          @click.stop="onEnter"
+        >
           <img src="../../assets/img/send.svg" alt="" />
         </div>
       </div>
@@ -89,6 +97,25 @@
           >
             {{ item.name }}
           </div>
+        </div>
+      </div>
+    </div>
+    <!-- 复制的图片 和 拖拽的文件 -->
+    <div class="copyImg" v-if="copyImgList.length">
+      <div
+        class="copyImgBox"
+        v-for="(item, key) in copyImgList"
+        :key="item.url"
+      >
+        <div class="imgBox" v-if="item?.file?.type?.includes('image')">
+          <img :src="item.url" alt="" />
+          <i class="close" @click="delImgList(key)"> </i>
+        </div>
+        <div class="imgBox fileBox" v-else>
+          <Iconfont name="iconwenjian2" size="20" color="#999" />
+          <div class="name">{{ (item?.file?.name, item.file.type) }}</div>
+          <div class="size">{{ getSize(item?.file?.size || 0) }}</div>
+          <i class="close" @click="delImgList(key)"> </i>
         </div>
       </div>
     </div>
@@ -208,6 +235,7 @@ import { MediaAudio } from '@/plugin/Audio';
 import Recorder from 'Recorder';
 import { initRonyun } from '@/App.vue';
 import { upLoadFile, initOss } from '../../hooks/window';
+import { getSize } from '@/utils/utils';
 import {
   defineComponent,
   ref,
@@ -277,6 +305,18 @@ const { t } = useI18n();
 const audioObj = ref({});
 const showAtBox = ref(false);
 const atUserInfoList: Ref<IUserInfo[]> = ref([]);
+
+const dropFile = computed(() => store.state.dropFile);
+
+watch(dropFile, (e) => {
+  if (e) {
+    copyImgList.value.push(e);
+    store.commit('SET_DROPFILE', null);
+  }
+});
+
+// 粘贴的图片列表
+const copyImgList: Ref<{ url: string; file: File }[]> = ref([]);
 
 const newAtUserInfoList = computed(() => {
   const ats = props.modelValue.split('@');
@@ -378,12 +418,20 @@ const expressionList = reactive(expression);
 const { select, del } = useInput(emit, emojiList, input);
 
 const onInput = async (e: any) => {
-  emit('update:modelValue', e.target.value);
+  emit('update:modelValue', e.target.textContent);
   if (e.data === '@') {
     showAtBox.value = true;
     if (!atUserInfoList.value.length) {
       await getGroupMemberUserInfos();
     }
+  }
+};
+
+const onEnter = async (e: any) => {
+  if (!e.shiftKey) {
+    e.preventDefault();
+    emit('enter', [], copyImgList.value);
+    copyImgList.value = [];
   }
 };
 
@@ -639,6 +687,57 @@ function startAudio() {
     line.value = (audioTime.value / 60) * 100;
   }, 1000);
 }
+
+// 粘贴
+const paste = (e: any) => {
+  const cbd = e.clipboardData;
+  const ua = window.navigator.userAgent;
+  // 如果是 Safari 直接 return
+  if (!(e.clipboardData && e.clipboardData.items)) {
+    return;
+  }
+  if (
+    cbd.items &&
+    cbd.items.length === 2 &&
+    cbd.items[0].kind === 'string' &&
+    cbd.items[1].kind === 'file' &&
+    cbd.types &&
+    cbd.types.length === 2 &&
+    cbd.types[0] === 'text/plain' &&
+    cbd.types[1] === 'Files' &&
+    ua.match(/Macintosh/i) &&
+    Number(ua.match(/Chrome\/(\d{2})/i)[1]) < 49
+  ) {
+    return;
+  }
+  for (let i = 0; i < cbd.items.length; i++) {
+    let item = cbd.items[i];
+    if (item.kind == 'file') {
+      e.preventDefault();
+      if (!item.type.includes('image')) return;
+      // blob 就是从剪切板获得的文件，可以进行上传或其他操作
+      const blob = item.getAsFile();
+      if (blob.size === 0) {
+        return;
+      }
+      const reader = new FileReader();
+      reader.readAsDataURL(blob);
+      reader.onload = function (v: any) {
+        copyImgList.value.push({
+          url: v.target.result,
+          file: new File([blob], Date.now().toString(), {
+            type: 'image/jpg',
+          }),
+        });
+      };
+    }
+  }
+};
+
+// 删除
+const delImgList = (key: number) => {
+  copyImgList.value.splice(key, 1);
+};
 </script>
 <style lang="scss" scoped>
 @import '@/style/base.scss';
@@ -648,6 +747,91 @@ function startAudio() {
   right: 0;
   position: absolute;
   border-top: 1px solid #eaebea;
+  .copyImg {
+    position: absolute;
+    width: 90%;
+    height: 100px;
+    box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.2);
+    left: 50%;
+    transform: translate(-50%);
+    bottom: 100%;
+    background: #fff;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    border-radius: 10px 10px 0 0;
+    overflow: hidden;
+    flex-wrap: wrap;
+    overflow: auto;
+    .copyImgBox {
+      width: 100px;
+      height: 100px;
+      padding: 10px;
+      box-sizing: border-box;
+      .imgBox {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background: #eaebea;
+        border-radius: 5px;
+        padding: 5px;
+        &.fileBox {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          .name {
+            font-size: 12px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+          .size {
+            font-size: 12px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+        }
+        img {
+          width: 100%;
+          max-height: 100%;
+        }
+        .close {
+          position: absolute;
+          right: 5px;
+          top: 5px;
+          border-radius: 50%;
+          width: 15px;
+          overflow: hidden;
+          height: 15px;
+          background: rgba(0, 0, 0, 0.2);
+          cursor: pointer;
+          &::before {
+            display: block;
+            content: '';
+            width: 80%;
+            height: 2px;
+            background: #fff;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%) rotate(45deg);
+          }
+          &::after {
+            display: block;
+            content: '';
+            width: 80%;
+            height: 2px;
+            background: #fff;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+          }
+        }
+      }
+    }
+  }
   .audioBox {
     display: flex;
     justify-content: space-between;
@@ -691,12 +875,13 @@ function startAudio() {
     }
   }
   .content {
-    height: 50px;
-    padding: 0 20px;
+    min-height: 50px;
+    padding: 15px 20px;
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: space-between;
     background: #fff;
+    box-sizing: border-box;
   }
   .box {
     width: 100%;
@@ -844,22 +1029,23 @@ function startAudio() {
 }
 .itemLeft {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   flex: 1;
   position: relative;
   .iconfont {
     cursor: pointer;
     margin-right: 20px;
   }
-  input {
+  .input {
     flex: 1;
-    height: 20px;
     font-size: 14px;
     font-family: PingFangSC, PingFangSC-Regular;
     font-weight: 400;
     color: #000;
     line-height: 20px;
     letter-spacing: 0px;
+    outline: none;
+    word-break: break-all;
   }
 }
 .itemRight {
@@ -875,8 +1061,8 @@ function startAudio() {
     cursor: pointer;
     display: flex;
     img {
-      width: 22px;
-      height: 22px;
+      width: 20px;
+      height: 20px;
     }
   }
 }

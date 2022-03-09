@@ -38,7 +38,7 @@
       </div>
       <div class="btn" @click="submit">{{ t('保存') }}</div>
     </div>
-    <input ref="changUserImg" type="file" hidden accept="image/*,video/*" />
+    <input ref="changUserImg" type="file" hidden accept="image/*" />
   </div>
 </template>
 <script lang="ts">

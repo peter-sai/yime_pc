@@ -10,7 +10,10 @@
           {{ userInfo?.nickname }}
         </div>
         <div class="imgBox" ref="imgBox" :style="style">
-          <div v-if="!isPlay" style="width: 100%; height: 100%">
+          <div
+            v-if="!isPlay"
+            style="width: 100%; height: 100%; text-align: center"
+          >
             <img
               style="max-width: 100%; max-height: 100%"
               :src="videoMsgInfo?.imageUrl"
@@ -34,6 +37,7 @@ import {
   defineEmits,
   ref,
   nextTick,
+  watch,
 } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { IUserInfo } from '@/types/user';
@@ -60,6 +64,12 @@ const props = defineProps({
   },
   videoMsgInfo: {
     type: Object as PropType<IVideoMsgInfo>,
+  },
+  msgId: {
+    type: Number,
+  },
+  playMsgId: {
+    type: Number,
   },
 });
 
@@ -96,7 +106,7 @@ const imgBox = ref(null);
 let video: HTMLVideoElement | null = null;
 const isPlay = ref(false);
 
-const emit = defineEmits(['menuClick', 'click']);
+const emit = defineEmits(['menuClick', 'click', 'onPlay']);
 
 const contextmenu = (e: any) => {
   e.preventDefault();
@@ -113,10 +123,23 @@ const play = async () => {
     imgBox.value.append(video);
     await nextTick();
     video.play();
+
+    video.addEventListener('play', function () {
+      emit('onPlay', props.msgId);
+    });
   } else {
     video.play();
   }
+  emit('onPlay', props.msgId);
 };
+
+const playMsgId = computed(() => props.playMsgId);
+
+watch(playMsgId, (val) => {
+  if (val !== props.msgId) {
+    video && video.pause();
+  }
+});
 </script>
 <style lang="scss" scoped>
 @import '@/style/theme/index.scss';

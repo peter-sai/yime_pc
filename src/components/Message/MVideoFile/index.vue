@@ -4,7 +4,10 @@
       <div style="display: flex; justify-content: flex-end">
         <div class="imgBg" @contextmenu="contextmenu">
           <div class="imgBox" ref="imgBox" :style="style">
-            <div v-if="!isPlay" style="width: 100%; height: 100%">
+            <div
+              v-if="!isPlay"
+              style="width: 100%; height: 100%; text-align: center"
+            >
               <img
                 style="max-width: 100%; max-height: 100%"
                 :src="videoMsgInfo?.imageUrl"
@@ -29,6 +32,8 @@ import {
   PropType,
   ref,
   nextTick,
+  watch,
+  computed,
 } from 'vue';
 import Iconfont from '../../../iconfont/index.vue';
 import IsRead from '@/components/IsRead/index.vue';
@@ -54,9 +59,17 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
+  msgId: {
+    type: Number,
+  },
+  playMsgId: {
+    type: Number,
+    required: true,
+  },
 });
 
 const style = ref({});
+
 if (Number(props.videoMsgInfo?.weight) > 400) {
   style.value = {
     width: '400px',
@@ -82,7 +95,7 @@ if (
   };
 }
 
-const emit = defineEmits(['menuClick']);
+const emit = defineEmits(['menuClick', 'onPlay']);
 const imgBox = ref(null);
 let video: HTMLVideoElement | null = null;
 const isPlay = ref(false);
@@ -98,10 +111,23 @@ const play = async () => {
     imgBox.value.append(video);
     await nextTick();
     video.play();
+
+    video.addEventListener('play', function () {
+      emit('onPlay', props.msgId);
+    });
   } else {
     video.play();
   }
+  emit('onPlay', props.msgId);
 };
+
+const playMsgId = computed(() => props.playMsgId);
+
+watch(playMsgId, (val) => {
+  if (val !== props.msgId) {
+    video && video.pause();
+  }
+});
 
 const contextmenu = (e: any) => {
   e.preventDefault();

@@ -39,8 +39,8 @@ function createWindow() {
   // 创建浏览器窗口
   const win = new BrowserWindow({
     icon: path.join(__dirname, 'img/ico.ico'),
-    width: 1920,
-    height: 1080,
+    width: 1024,
+    height: 768,
     webPreferences: {
       nodeIntegration: true,
     },

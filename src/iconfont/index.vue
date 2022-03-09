@@ -68,6 +68,7 @@ import iconvioce_refuse from './iconvioce_refuse.vue';
 import iconweizhi from './iconweizhi.vue';
 import iconwenjian from './iconwenjian.vue';
 import iconwenjian1 from './iconwenjian1.vue';
+import iconwenjian2 from './iconwenjian2.vue';
 import iconxiangce from './iconxiangce.vue';
 import iconxiangji from './iconxiangji.vue';
 import iconxitongjingyin from './iconxitongjingyin.vue';
@@ -157,6 +158,7 @@ export default {
     iconweizhi,
     iconwenjian,
     iconwenjian1,
+    iconwenjian2,
     iconxiangce,
     iconxiangji,
     iconxitongjingyin,

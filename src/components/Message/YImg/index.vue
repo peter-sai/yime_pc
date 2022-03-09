@@ -9,7 +9,12 @@
       <SayHello v-if="src === 'emoji_1'" />
       <div v-else class="imgBg" @contextmenu="contextmenu">
         <div class="title" v-if="isGroup">{{ userInfo?.nickname }}</div>
-        <img style="max-width: 100%; max-height: 100%" :src="src" alt="" />
+        <img
+          @click="shogImg"
+          style="max-width: 100%; max-height: 100%; cursor: pointer"
+          :src="src"
+          alt=""
+        />
       </div>
     </div>
   </div>
@@ -28,12 +33,13 @@ import { useI18n } from 'vue-i18n';
 import { IUserInfo } from '@/types/user';
 import { key } from '@/store';
 import { useStore } from 'vuex';
+import { showImg } from '../../../plugin/ShowImg';
 export default defineComponent({
   name: 'Message',
 });
 </script>
 <script lang="ts" setup>
-defineProps({
+const props = defineProps({
   src: {
     type: String,
     default: '',
@@ -65,6 +71,10 @@ const emit = defineEmits(['menuClick', 'click']);
 const contextmenu = (e: any) => {
   e.preventDefault();
   emit('menuClick', e);
+};
+
+const shogImg = () => {
+  showImg(props.src);
 };
 </script>
 <style lang="scss" scoped>

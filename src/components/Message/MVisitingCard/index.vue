@@ -5,7 +5,10 @@
         <div class="left">
           <div class="title">{{ t(item.showContent) }}</div>
           <div class="content">
-            <img class="userImg" :src="item?.icon" alt="" />
+            <img v-if="item?.icon" class="userImg" :src="item?.icon" alt="" />
+            <span v-else>{{
+              item?.name.substr(0, 1).toLocaleUpperCase()
+            }}</span>
             <div class="size">{{ item?.name }}</div>
           </div>
         </div>
@@ -75,6 +78,18 @@ const contextmenu = (e: any) => {
       .content {
         display: flex;
         align-items: center;
+        span {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          margin-right: 10px;
+          background: #f0f0f0;
+          color: #0085ff;
+          font-size: 20px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
         .userImg {
           width: 40px;
           height: 40px;
