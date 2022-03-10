@@ -29,6 +29,12 @@ const props = defineProps({
 const close = () => {
   props.destroy && props.destroy();
 };
+
+document.addEventListener('keydown', (e) => {
+  if (e.code === 'Escape') {
+    close();
+  }
+});
 </script>
 <style lang="scss" scoped>
 @import '@/style/base.scss';
