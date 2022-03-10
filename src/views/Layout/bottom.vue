@@ -310,6 +310,7 @@ const dropFile = computed(() => store.state.dropFile);
 
 watch(dropFile, (e) => {
   if (e) {
+    input.value?.focus();
     copyImgList.value.push(e);
     store.commit('SET_DROPFILE', null);
   }
