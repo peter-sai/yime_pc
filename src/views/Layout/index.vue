@@ -48,7 +48,7 @@
       <div class="ondragover" v-show="isShowDragover">
         <div class="box" ref="dragover">
           <Iconfont name="iconwenjian2" size="30" color="#666" />
-          拖入要发送的文件
+          {{ t('拖入要发送的文件') }}
         </div>
       </div>
     </div>
@@ -104,6 +104,16 @@ onMounted(() => {
   };
   dragover.value.ondrop = function (ev: any) {
     const oFile = ev.dataTransfer.files[0];
+    console.log(ev.dataTransfer.files);
+    for (const e of ev.dataTransfer.files) {
+      readFile(e);
+    }
+    return false;
+  };
+});
+
+const readFile = (oFile: File) => {
+  return new Promise((resovle, reject) => {
     const reader = new FileReader();
     //读取成功
     reader.onload = function () {
@@ -111,6 +121,7 @@ onMounted(() => {
         url: reader.result,
         file: oFile,
       });
+      resovle(reader.result);
     };
     reader.onabort = function () {
       Toast('读取中断');
@@ -119,9 +130,8 @@ onMounted(() => {
       Toast('读取失败');
     };
     reader.readAsDataURL(oFile);
-    return false;
-  };
-});
+  });
+};
 </script>
 <style lang="scss" scoped>
 .layout {

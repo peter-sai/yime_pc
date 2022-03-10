@@ -107,13 +107,20 @@
         v-for="(item, key) in copyImgList"
         :key="item.url"
       >
-        <div class="imgBox" v-if="item?.file?.type?.includes('image')">
-          <img :src="item.url" alt="" />
+        <div
+          class="imgBox"
+          v-if="item?.file?.type?.includes('image')"
+          :style="{
+            backgroundImage: `url(${item.url})`,
+            backgroundSize: 'cover',
+          }"
+        >
+          <!-- <img :src="item.url" alt="" /> -->
           <i class="close" @click="delImgList(key)"> </i>
         </div>
         <div class="imgBox fileBox" v-else>
           <Iconfont name="iconwenjian2" size="20" color="#999" />
-          <div class="name">{{ (item?.file?.name, item.file.type) }}</div>
+          <div class="name">{{ item?.file?.name }}</div>
           <div class="size">{{ getSize(item?.file?.size || 0) }}</div>
           <i class="close" @click="delImgList(key)"> </i>
         </div>
@@ -349,6 +356,9 @@ const props = defineProps({
   groupDetailInfo: {
     type: Object as PropType<IGroupInfo>,
   },
+  atUserInfoList: {
+    type: Object as PropType<IUserInfo>,
+  },
   isGroupMember: {
     type: Boolean,
     default: true,
@@ -431,7 +441,7 @@ const onInput = async (e: any) => {
 const onEnter = async (e: any) => {
   if (!e.shiftKey) {
     e.preventDefault();
-    emit('enter', [], copyImgList.value);
+    emit('enter', props.atUserInfoList || [], copyImgList.value);
     copyImgList.value = [];
   }
 };
