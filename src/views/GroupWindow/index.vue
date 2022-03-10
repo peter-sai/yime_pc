@@ -43,9 +43,10 @@
       "
       @sendImg="sendImg('img')"
       @selectGroupMember="ShowSelectGroupMember"
-      @enter="enter(atUserInfoList)"
+      @enter="enter"
       @sendFile="sendImg('file')"
       @atUserInfoList="getAtUserInfoList"
+      :atUserInfoList="atUserInfoList"
     />
 
     <div
