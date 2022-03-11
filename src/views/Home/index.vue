@@ -73,12 +73,10 @@ const unReadNum = computed(() => {
     .reduce(function (preValue: any, curValue: any) {
       return preValue + curValue.unReadNum;
     }, 0);
-  Electron.ipcRenderer.send('sendMessage', num?.toString() || '');
-  Electron.ipcRenderer.sendSync('update-badge', num ? num.toString() : null);
+  // Electron.ipcRenderer.send('sendMessage', num?.toString() || '');
+  // Electron.ipcRenderer.sendSync('update-badge', num ? num.toString() : null);
   return num;
 });
-
-console.log(unReadNum.value);
 </script>
 <style lang="scss" scoped>
 @import '@/style/base.scss';

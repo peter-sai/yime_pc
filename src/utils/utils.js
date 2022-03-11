@@ -224,3 +224,12 @@ export function getLang() {
     return 2;
   }
 }
+
+export function isMacOs() {
+  const isMac = /macintosh|mac os x/i.test(navigator.userAgent);
+  if (isMac) {
+    return true;
+  } else {
+    return false;
+  }
+}
