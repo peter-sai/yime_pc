@@ -5,8 +5,7 @@
 <script lang="ts">
 import { computed, defineComponent, onBeforeUnmount, watch } from 'vue';
 import { Store, useStore } from 'vuex';
-import { getOssInfo } from './api';
-import { getToken as getUserToken } from './utils/utils';
+import { getToken as getUserToken, isMacOs } from './utils/utils';
 import { initStore, key } from './store';
 import { getStorage, setMsgList } from './utils/utils';
 import {
@@ -15,7 +14,7 @@ import {
   useClientSendMsgAckToServer,
   mergeData,
 } from './hooks/window';
-import { IMsgInfo } from './types/msg';
+import { IMsgInfo, ImsgItem, INotifyClassMsgListInfo } from './types/msg';
 import * as RongIMLib from '@rongcloud/imlib-next';
 import {
   installer as rtcInstaller,
@@ -223,6 +222,7 @@ export function reconnect(store: Store<initStore>) {
 }
 </script>
 <script lang="ts" setup>
+import Electron from 'Electron';
 const store = useStore(key);
 store.dispatch('init');
 const { t } = useI18n();
@@ -503,6 +503,38 @@ window.onunload = () => {
   setMsgList(store.state.msgList);
   stop();
 };
+
+// 更新未读消息到应用图标
+type TMsgItem = INotifyClassMsgListInfo & ImsgItem;
+const unReadNum = computed(() => {
+  const msgList: TMsgItem[] = Object.values(store.state.msgList) as TMsgItem[];
+  const groupMsgList = msgList.filter(
+    (e) =>
+      e.unReadNum &&
+      e.isGroup &&
+      !e.groupDetailInfo?.groupAttachInfo?.groupMsgMute,
+  );
+  const userMsgList = msgList.filter(
+    (e) =>
+      e.unReadNum &&
+      !e.isGroup &&
+      !e.userDetailInfo?.userInfo?.userAttachInfo?.msgMute,
+  );
+  const num = groupMsgList
+    .concat(userMsgList)
+    .reduce(function (preValue: any, curValue: any) {
+      return preValue + curValue.unReadNum;
+    }, 0);
+  return num;
+});
+
+watch(unReadNum, (e) => {
+  if (isMacOs()) {
+    Electron.ipcRenderer.send('sendMessage', e?.toString() || '');
+  } else {
+    Electron.ipcRenderer.sendSync('update-badge', e ? e.toString() : null);
+  }
+});
 </script>
 <style lang="scss">
 #app {
