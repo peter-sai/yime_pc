@@ -74,7 +74,7 @@ const unReadNum = computed(() => {
       return preValue + curValue.unReadNum;
     }, 0);
   Electron.ipcRenderer.send('sendMessage', num?.toString() || '');
-  Electron.ipcRenderer.sendSync('update-badge', num?.toString() || null);
+  Electron.ipcRenderer.sendSync('update-badge', num ? num.toString() : null);
   return num;
 });
 
