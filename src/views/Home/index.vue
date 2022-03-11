@@ -42,6 +42,7 @@ import Iconfont from '@/iconfont/index.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useGoTo } from '@/hooks';
 import { useStore } from 'vuex';
+import Electron from 'Electron';
 import { key } from '@/store';
 import { ImsgItem, INotifyClassMsgListInfo } from '@/types/msg';
 const store = useStore(key);
@@ -67,11 +68,14 @@ const unReadNum = computed(() => {
       !e.isGroup &&
       !e.userDetailInfo?.userInfo?.userAttachInfo?.msgMute,
   );
-  return groupMsgList
+  const num = groupMsgList
     .concat(userMsgList)
     .reduce(function (preValue: any, curValue: any) {
       return preValue + curValue.unReadNum;
     }, 0);
+  Electron.ipcRenderer.send('sendMessage', num?.toString() || '');
+  Electron.ipcRenderer.sendSync('update-badge', num?.toString() || null);
+  return num;
 });
 
 console.log(unReadNum.value);

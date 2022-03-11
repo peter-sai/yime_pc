@@ -8,7 +8,7 @@ const { ipcMain } = require('electron');
 
 ipcMain.on('sendMessage', (event, data) => {
   if (process.platform === 'darwin') {
-    app.dock.setBadge('1');
+    app.dock.setBadge(data);
   }
 });
 
