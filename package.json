@@ -8,8 +8,8 @@
     "build": "vue-cli-service build --mode dev",
     "lint": "vue-cli-service lint",
     "iconfont-create": "npx iconfont-create && npm run lint",
-    "electron": "cross-env NODE_ENV=development electron . --mode dev",
-    "electron-dev": "nodemon electron/config/electron-run-dev.js --mode dev",
+    "electron": "cross-env NODE_ENV=development electron .",
+    "electron-dev": "nodemon electron/config/electron-run-dev.js",
     "electron-build": "vue-cli-service build && node electron/config/electron-build-pro.js && electron-builder --dir -w",
     "proto": "pbjs -t json-module -w commonjs -o src/protoBuild/proto.js  src/proto/*.proto"
   },
@@ -41,6 +41,7 @@
     "benz-amr-recorder": "^1.1.3",
     "clipboard": "^2.0.8",
     "core-js": "^3.6.5",
+    "electron-windows-badge": "^1.1.0",
     "lottie-web": "^5.8.1",
     "moment": "^2.29.1",
     "vue": "^3.0.0",

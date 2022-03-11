@@ -189,7 +189,7 @@ const init = async (
       ) {
         const { userId } = sender;
         // 对方挂断
-        console.log(sender, map[reason]);
+        // console.log(sender, map[reason]);
         const tar = document.getElementById(`div_${sender.userId}`);
         const yVideoGroup = document.getElementById('yVideoGroup');
         if (tar && yVideoGroup) {
@@ -211,7 +211,7 @@ const init = async (
        */
       async onTrackReady(track: RCTrack, session?: RCCallSession) {
         const users = session?.getRemoteUsers() || [];
-        users.forEach((e) => {
+        users.forEach((e: any) => {
           if (!document.getElementById(`div_${e.userId}`)) {
             // 创建div 并添加 头像 然后追加到dom
             const div = document.createElement('div');

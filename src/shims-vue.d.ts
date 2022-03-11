@@ -30,3 +30,8 @@ declare module 'ClipboardItem' {
   const content: any;
   export default content;
 }
+
+declare module 'Electron' {
+  const content: any;
+  export default content;
+}
