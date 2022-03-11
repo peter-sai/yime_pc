@@ -108,7 +108,6 @@ import { useRouter } from 'vue-router';
 import { saveData } from '@/api/app';
 import { initRonyun } from '@/App.vue';
 import { getRoam, mergeData } from '../../hooks/window';
-import Electron from 'Electron';
 
 const { t } = useI18n();
 const store = useStore(key);
@@ -199,11 +198,7 @@ const timeout = (time: Ref<number>, codeMsg: Ref<string>) => {
 };
 
 // 登录
-const login = () => {
-  Electron.ipcRenderer.send('sendMessage', 'this is renderer');
-  Electron.ipcRenderer.sendSync('update-badge', 1);
-};
-// useLogin(goTo, store, query, areaCode, t);
+const login = useLogin(goTo, store, query, areaCode, t);
 
 // 登录
 function useLogin(

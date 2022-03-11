@@ -7,8 +7,9 @@ const Badge = require('electron-windows-badge');
 const { ipcMain } = require('electron');
 
 ipcMain.on('sendMessage', (event, data) => {
-  console.log(data);
-  app.dock.setBadge('1');
+  if (process.platform === 'darwin') {
+    app.dock.setBadge('1');
+  }
 });
 
 const winURL =
@@ -58,7 +59,9 @@ function createWindow() {
 
   // 并且为你的应用加载index.html
   win.loadURL(winURL);
-  new Badge(win, {});
+  if (process.platform !== 'darwin') {
+    new Badge(win, {});
+  }
 
   // 打开开发者工具
   // win.webContents.openDevTools();
