@@ -7,7 +7,10 @@
     </NavigationBar>
     <div style="flex: 1">
       <div class="user">
-        <img :src="userInfo.icon" alt="" />
+        <img v-if="userInfo.icon" :src="userInfo.icon" alt="" />
+        <span v-else>
+          {{ userInfo?.nickname.substr(0, 1).toLocaleUpperCase() }}
+        </span>
         <div class="userName">{{ userInfo.nickname }}</div>
         <div class="phone">
           <Iconfont name="iconshoujihaoma" size="10" color="#929292" />
@@ -59,21 +62,21 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue";
 export default defineComponent({
-  name: 'setting',
+  name: "setting",
 });
 </script>
 <script setup lang="ts">
-import NavigationBar from '@/components/NavigationBar/index.vue';
-import Iconfont from '@/iconfont/index.vue';
-import Table from '@/components/Table/index.vue';
-import { useGoTo } from '@/hooks';
-import { useRouter } from 'vue-router';
-import { useI18n } from 'vue-i18n';
-import { useStore } from 'vuex';
-import { key } from '@/store';
-import { Dialog } from '@/plugin/Dialog';
+import NavigationBar from "@/components/NavigationBar/index.vue";
+import Iconfont from "@/iconfont/index.vue";
+import Table from "@/components/Table/index.vue";
+import { useGoTo } from "@/hooks";
+import { useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
+import { useStore } from "vuex";
+import { key } from "@/store";
+import { Dialog } from "@/plugin/Dialog";
 const goTo = useGoTo(useRouter);
 const { t } = useI18n();
 const store = useStore(key);
@@ -86,20 +89,32 @@ const goLink = (url: string) => {
 
 const logOut = () => {
   Dialog({
-    title: t('退出登录') + '?',
+    title: t("退出登录") + "?",
     callBack: async () => {
-      store.dispatch('logout');
+      store.dispatch("logout");
       location.reload();
     },
   });
 };
 </script>
 <style lang="scss" scoped>
-@import '@/style/base.scss';
+@import "@/style/base.scss";
 .setting {
   .user {
     text-align: center;
     margin-top: 20px;
+    span {
+      width: 60px;
+      height: 60px;
+      margin: 0 auto 10px auto;
+      border-radius: 50%;
+      background: #f0f0f0;
+      color: #0085ff;
+      font-size: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
     img {
       width: 60px;
       height: 60px;
@@ -143,8 +158,8 @@ const logOut = () => {
         margin-right: 5px;
         border-style: solid;
         border-width: 1px;
-        @include theme('border-color', main);
-        @include theme('color', main);
+        @include theme("border-color", main);
+        @include theme("color", main);
         font-size: 12px;
         font-weight: 600;
         display: flex;
