@@ -365,8 +365,6 @@ const stop = watch(
       store.dispatch('addMsgList', { ...(msgInfos[0] || {}) });
       // 处理消息通知
       msgNotice(msgInfos[0]);
-      // 发送已读msgId
-      const userInfo = store.state.userInfo;
 
       // 如果是群聊并且是系统消息则更新本地缓存群详情
       if (
@@ -402,6 +400,9 @@ const stop = watch(
           uid: item.toId,
         });
       }
+
+      // 发送已读msgId
+      const userInfo = store.state.userInfo;
       // 如果发送者是自己 或者 已经开启了对方不显示已读消息开关 不需要发送msgId
       if (
         Number(userInfo.uid) === Number(msgInfos[0].fromId) ||
@@ -410,7 +411,8 @@ const stop = watch(
         return;
 
       if (msgInfos[0].isGroupMsg) {
-        // 发送ack
+        if (msgInfos[0].toId !== store.state.activeUid) return;
+        // 上传已读最大消息msgid
         const res = {
           msgHasReadedInfo: {
             isGroupMsg: 1,
@@ -428,6 +430,7 @@ const stop = watch(
           auth: true,
         });
       } else {
+        if (msgInfos[0].fromId !== store.state.activeUid) return;
         const res = {
           msgHasReadedInfo: {
             isGroupMsg: 0,

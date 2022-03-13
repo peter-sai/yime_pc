@@ -227,7 +227,7 @@
   </div>
 </template>
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, ref } from 'vue';
+import { computed, ComputedRef, defineComponent, onMounted, ref } from 'vue';
 import TableDouble from '@/components/TableDouble/index.vue';
 import Badge from '@/components/Badge/index.vue';
 import Iconfont from '@/iconfont/index.vue';
@@ -337,6 +337,16 @@ const contextmenu = (e: any, item: ImsgItem) => {
   e.preventDefault();
   showMenu.value = item.id;
 };
+
+onMounted(() => {
+  document.body.addEventListener(
+    'click',
+    () => {
+      showMenu.value = 0;
+    },
+    true,
+  );
+});
 
 // 列表
 const store = useStore(key);

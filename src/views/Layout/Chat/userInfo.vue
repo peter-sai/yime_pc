@@ -159,7 +159,7 @@ export default defineComponent({
 });
 
 // 添加好友和删除好友
-function useToggleFriend(
+export function useToggleFriend(
   store: Store<initStore>,
   t: { (key: string | number): string },
   yUserInfo: IUserInfo,
@@ -298,7 +298,7 @@ async function upDateContact(store: Store<initStore>, val: boolean) {
 }
 
 // 操作黑名单
-function useBeforeBlacklist(
+export function useBeforeBlacklist(
   store: Store<initStore>,
   t: { (key: string | number): string },
   yUserInfo: IUserInfo,
@@ -315,6 +315,9 @@ function useBeforeBlacklist(
       encryption: 'Aoelailiao.Login.UserOperateBlackListReq',
       auth: true,
     });
+    store.state.msgList[yUserInfo.uid].userDetailInfo.isInMyBlacklist = e
+      ? 1
+      : 0;
     Toast(t(data.body.resultString));
   };
 }
@@ -328,6 +331,9 @@ const props = defineProps({
   yUserInfo: {
     type: Object as PropType<IUserInfo>,
     required: true,
+  },
+  title: {
+    type: String,
   },
 });
 
@@ -377,6 +383,15 @@ const clientCleanMsg = () => {
 
 // 点击发送消息
 const send = () => {
+  // 群聊成员中的详情 需要 添加 陌生消息备注
+  if (store.state.activeIsGroup) {
+    const source = {
+      source: props.title,
+      sourceId: props.yUserInfo?.uid,
+      sourceType: 0,
+    };
+    store.commit('SET_MSGSOURCE', source);
+  }
   emit('toggleBox');
   store.commit('SET_ACTIVEUID', props.yUserInfo?.uid);
   store.commit('SET_ACTIVEISGROUP', false);

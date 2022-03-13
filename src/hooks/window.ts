@@ -144,7 +144,6 @@ const useEnter = (
   store: Store<initStore>,
   search: Ref<string>,
   isGroupMsg = 0,
-  msgSource: any,
   t: { (key: string | number): string },
 ) => {
   const urlP =
@@ -193,10 +192,21 @@ const useEnter = (
         },
         type: 'stringContent',
         attachInfo: {
-          msgSource: msgSource,
+          msgSource: '',
         },
       },
     };
+
+    const msgSource: any = store.state.msgSource;
+    if (!store.state.activeIsGroup && msgSource) {
+      const userInfo = store.state?.msgList[store.state?.activeUid || -1];
+      if (
+        !userInfo?.readList?.length &&
+        msgSource.sourceId === store.state?.activeUid
+      ) {
+        res.msgInfo.attachInfo.msgSource = JSON.stringify(msgSource) || '';
+      }
+    }
     if (isUrl) {
       res.msgInfo.type = 'linkUrlInfo';
       res.msgInfo.msgContent = {
@@ -246,6 +256,8 @@ const useEnter = (
         },
       };
     }
+    console.log(res);
+
     const data = await store.dispatch('postMsg', {
       query: res,
       cmd: 2001,
@@ -288,8 +300,23 @@ const useSendImg = (
               imageHeight: 168,
             },
           },
+          attachInfo: {
+            msgSource: '',
+          },
         },
       };
+
+      const msgSource: any = store.state.msgSource;
+      if (!store.state.activeIsGroup && msgSource) {
+        const userInfo = store.state?.msgList[store.state?.activeUid || -1];
+        if (
+          !userInfo?.readList?.length &&
+          msgSource.sourceId === store.state?.activeUid
+        ) {
+          res.msgInfo.attachInfo.msgSource = JSON.stringify(msgSource) || '';
+        }
+      }
+
       const data = await store.dispatch('postMsg', {
         query: res,
         cmd: 2001,

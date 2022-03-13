@@ -115,6 +115,7 @@
             :yUserInfo="userInfo"
             @toggleBox="toggleBox"
             @changeTag="changeTag"
+            :title="groupDetailInfo.groupName"
           />
         </div>
       </transition>
@@ -344,7 +345,7 @@ const ShowSelectGroupMember = (e: number) => {
 };
 
 // 发送消息
-const enter = useEnter(store, inputVal, 1, null, t);
+const enter = useEnter(store, inputVal, 1, t);
 // 发送图片
 const sendImg = useSendImg(store, 1, t, changUserImg, accept, nextTick);
 
