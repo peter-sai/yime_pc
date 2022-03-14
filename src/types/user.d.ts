@@ -10,6 +10,7 @@ export interface IUserInfo {
     msgTop: number; //消息置顶开关,0--关闭(默认),1--开
     msgMute: number; //消息免打扰开关,0--关闭(默认),1--开
     msgScreenShotNotify: number;
+    msgAtNotify: number;
   }; //附加信息
   onlineState: number;
   imAccount: string;
@@ -76,6 +77,7 @@ export interface IGroupAttachInfo {
   allowEveryoneJoin: number; //允许任何人加群,0--否，1--是(默认)
   allowMemberInviteJoin: number; //允许群成员邀请其他用户入群,0--否，1--是(默认)
   groupInviteState: number; //群邀请权限,0--所有人，1--仅限邀请 2--不允许任何人加群
+  groupMsgAtNotify: number;
 }
 // 群信息接口 ClientGetGroupInfoReq
 export interface IGroupInfo {

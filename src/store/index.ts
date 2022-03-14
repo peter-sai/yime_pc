@@ -29,6 +29,7 @@ let time = 0;
 
 const initState = {
   callUid: null,
+  msgSource: undefined,
   rongIm: null,
   dropFile: null,
   timeOut: undefined,
@@ -148,6 +149,9 @@ export type initStore = typeof initState;
 const sotreRoot = createStore({
   state: initState,
   mutations: {
+    SET_MSGSOURCE: (state, res) => {
+      state.msgSource = res;
+    },
     SET_DROPFILE: (state, res) => {
       state.dropFile = res;
     },

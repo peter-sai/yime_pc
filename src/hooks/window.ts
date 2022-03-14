@@ -75,6 +75,8 @@ function useBeforeSwitch(
       res.switchState = e ? 0 : 1;
     }
     showLoading();
+    console.log(res);
+
     const data = await store.dispatch('postMsg', {
       query: res,
       cmd: 1041,
@@ -90,6 +92,9 @@ function useBeforeSwitch(
         } else if (settingItemId === 1004) {
           // 置顶
           upDateStore(store, 'groupTop', switchState);
+        } else if (settingItemId === 2108) {
+          //
+          upDateStore(store, 'groupMsgAtNotify', switchState);
         } else {
           // 设置进群权限
           upDateStore(store, 'groupInviteState', switchState);
@@ -144,7 +149,6 @@ const useEnter = (
   store: Store<initStore>,
   search: Ref<string>,
   isGroupMsg = 0,
-  msgSource: any,
   t: { (key: string | number): string },
 ) => {
   const urlP =
@@ -193,10 +197,21 @@ const useEnter = (
         },
         type: 'stringContent',
         attachInfo: {
-          msgSource: msgSource,
+          msgSource: '',
         },
       },
     };
+
+    const msgSource: any = store.state.msgSource;
+    if (!store.state.activeIsGroup && msgSource) {
+      const userInfo = store.state?.msgList[store.state?.activeUid || -1];
+      if (
+        !userInfo?.readList?.length &&
+        msgSource.sourceId === store.state?.activeUid
+      ) {
+        res.msgInfo.attachInfo.msgSource = JSON.stringify(msgSource) || '';
+      }
+    }
     if (isUrl) {
       res.msgInfo.type = 'linkUrlInfo';
       res.msgInfo.msgContent = {
@@ -246,6 +261,8 @@ const useEnter = (
         },
       };
     }
+    console.log(res);
+
     const data = await store.dispatch('postMsg', {
       query: res,
       cmd: 2001,
@@ -288,8 +305,23 @@ const useSendImg = (
               imageHeight: 168,
             },
           },
+          attachInfo: {
+            msgSource: '',
+          },
         },
       };
+
+      const msgSource: any = store.state.msgSource;
+      if (!store.state.activeIsGroup && msgSource) {
+        const userInfo = store.state?.msgList[store.state?.activeUid || -1];
+        if (
+          !userInfo?.readList?.length &&
+          msgSource.sourceId === store.state?.activeUid
+        ) {
+          res.msgInfo.attachInfo.msgSource = JSON.stringify(msgSource) || '';
+        }
+      }
+
       const data = await store.dispatch('postMsg', {
         query: res,
         cmd: 2001,

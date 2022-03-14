@@ -38,7 +38,7 @@
       :groupDetailInfo="groupDetailInfo.groupId ? groupDetailInfo : undefined"
       :isGroupMember="
         (groupDetailInfo?.groupMemberLists?.memberUserInfos || []).some(
-          (e) => Number(e.memberUid) === Number(store.state.userInfo.uid),
+          (e) => Number(e.memberUid) === Number(store.state.userInfo.uid)
         )
       "
       @sendImg="sendImg('img')"
@@ -56,7 +56,7 @@
         !memberUserInfos.includes(store.state.userInfo.uid)
       "
     >
-      <div @click="addGroup" class="btn">{{ t('加入群聊') }}</div>
+      <div @click="addGroup" class="btn">{{ t("加入群聊") }}</div>
     </div>
     <!-- 文件 和 图片选择 -->
     <input ref="changUserImg" type="file" hidden :accept="accept" multiple />
@@ -73,6 +73,7 @@
             :groupDetailInfo="groupDetailInfo"
             @toggleBox="toggleBox"
             @changeTag="changeTag"
+            @updateUser="updateUser"
           />
         </div>
       </transition>
@@ -115,6 +116,7 @@
             :yUserInfo="userInfo"
             @toggleBox="toggleBox"
             @changeTag="changeTag"
+            :title="groupDetailInfo.groupName"
           />
         </div>
       </transition>
@@ -164,8 +166,8 @@
   </div>
 </template>
 <script lang="ts">
-import { initStore, key } from '@/store';
-import { IGroupInfo, IUserDetailInfo, IUserInfo } from '@/types/user';
+import { initStore, key } from "@/store";
+import { IGroupInfo, IUserDetailInfo, IUserInfo } from "@/types/user";
 import {
   defineComponent,
   ref,
@@ -177,28 +179,28 @@ import {
   computed,
   ComputedRef,
   watch,
-} from 'vue';
-import UserInfo from '../Layout/Chat/userInfo.vue';
-import Recommend from '../Layout/Chat/recommend.vue';
-import CloudFile from '../Layout/Chat/cloudFile.vue';
-import CommonGroup from '../Layout/Chat/commonGroup.vue';
-import SelectGroupMemberVideos from '../Layout/GroupChat/selectGroupMemberVideos.vue';
-import Forward from '../Layout/Chat/Forward.vue';
-import Message from '../Window/message.vue';
-import { Store, useStore } from 'vuex';
-import GroupChatHeader from './header.vue';
-import GroupInfo from '../Layout/GroupChat/groupInfo.vue';
-import EditGroup from '../Layout/GroupChat/editGroup.vue';
-import AddGroupType from '../Layout/GroupChat/addGroupType.vue';
-import AddGroupMembers from '../Layout/GroupChat/addGroupMembers.vue';
-import Bottom from '../Layout/bottom.vue';
-import { Etag } from '../Layout/index.vue';
-import { useEnter, useCbImg, useSendImg } from '@/hooks/window';
-import { useI18n } from 'vue-i18n';
-import { ImsgItem } from '@/types/msg';
-import { Toast } from '@/plugin/Toast';
+} from "vue";
+import UserInfo from "../Layout/Chat/userInfo.vue";
+import Recommend from "../Layout/Chat/recommend.vue";
+import CloudFile from "../Layout/Chat/cloudFile.vue";
+import CommonGroup from "../Layout/Chat/commonGroup.vue";
+import SelectGroupMemberVideos from "../Layout/GroupChat/selectGroupMemberVideos.vue";
+import Forward from "../Layout/Chat/Forward.vue";
+import Message from "../Window/message.vue";
+import { Store, useStore } from "vuex";
+import GroupChatHeader from "./header.vue";
+import GroupInfo from "../Layout/GroupChat/groupInfo.vue";
+import EditGroup from "../Layout/GroupChat/editGroup.vue";
+import AddGroupType from "../Layout/GroupChat/addGroupType.vue";
+import AddGroupMembers from "../Layout/GroupChat/addGroupMembers.vue";
+import Bottom from "../Layout/bottom.vue";
+import { Etag } from "../Layout/index.vue";
+import { useEnter, useCbImg, useSendImg } from "@/hooks/window";
+import { useI18n } from "vue-i18n";
+import { ImsgItem } from "@/types/msg";
+import { Toast } from "@/plugin/Toast";
 export default defineComponent({
-  name: 'groupWindow',
+  name: "groupWindow",
 });
 
 async function getGroupInfo(store: Store<initStore>) {
@@ -207,16 +209,17 @@ async function getGroupInfo(store: Store<initStore>) {
   let msgItem: Ref<ImsgItem> = ref(store.state.msgList[store.state.activeUid!]);
   // 如果不存在则获取 (群聊不在聊天列表中会没有信息)
   if (!msgItem.value) {
-    const data = await store.dispatch('postMsg', {
+    const data = await store.dispatch("postMsg", {
       query: {
         groupId: store.state.activeUid,
       },
       cmd: 1029,
-      encryption: 'Aoelailiao.Login.ClientGetGroupInfoReq',
+      encryption: "Aoelailiao.Login.ClientGetGroupInfoReq",
       auth: true,
     });
 
     msgItem.value = data.body;
+    console.log(msgItem.value);
 
     const item = {
       id: data.body.groupDetailInfo.groupId,
@@ -229,12 +232,12 @@ async function getGroupInfo(store: Store<initStore>) {
       groupDetailInfo: data.body.groupDetailInfo,
     };
 
-    store.commit('SET_MSGLISTITEM', { res: item });
+    store.commit("SET_MSGLISTITEM", { res: item });
   }
 }
 </script>
 <script setup lang="ts">
-defineEmits(['toggleBox', 'changeTag']);
+defineEmits(["toggleBox", "changeTag"]);
 // 视频还是语音
 const mediaType = ref(1);
 const atUserInfoList: Ref<IUserInfo[]> = ref([]);
@@ -255,7 +258,7 @@ const showBox = ref(false);
 const toggleBox = async (uid?: number) => {
   if (!showBox.value) {
     const userId = uid || store.state.activeUid;
-    store.commit('SET_USERUID', userId);
+    store.commit("SET_USERUID", userId);
   }
   let msgItem: ImsgItem = store.state.msgList[store.state.userUid!];
   // 如果不存在则获取 (单聊不在聊天列表中会没有信息)
@@ -263,10 +266,10 @@ const toggleBox = async (uid?: number) => {
     const res = {
       uid: store.state.userUid,
     };
-    const data = await store.dispatch('postMsg', {
+    const data = await store.dispatch("postMsg", {
       query: res,
       cmd: 1011,
-      encryption: 'Aoelailiao.Login.ClientGetUserInfoReq',
+      encryption: "Aoelailiao.Login.ClientGetUserInfoReq",
       auth: true,
     });
     msgItem = data.body;
@@ -275,34 +278,53 @@ const toggleBox = async (uid?: number) => {
   userInfo.value = msgItem.userDetailInfo?.userInfo || {};
   showBox.value = !showBox.value;
 };
+const updateUser = async (uid?: number) => {
+  const userId = uid || store.state.activeUid;
+  store.commit("SET_USERUID", userId);
+  let msgItem: ImsgItem = store.state.msgList[store.state.userUid!];
+  if (!msgItem) {
+    const res = {
+      uid: store.state.userUid,
+    };
+    const data = await store.dispatch("postMsg", {
+      query: res,
+      cmd: 1011,
+      encryption: "Aoelailiao.Login.ClientGetUserInfoReq",
+      auth: true,
+    });
+    msgItem = data.body;
+  }
+  userDetailInfo.value = msgItem.userDetailInfo || {};
+  userInfo.value = msgItem.userDetailInfo?.userInfo || {};
+};
 // 右侧显示的内容
-const tag = ref<Etag>(Etag['UserInfo']);
+const tag = ref<Etag>(Etag["UserInfo"]);
 const changeTag = (val: Etag) => {
   tag.value = val;
 };
 const store = useStore(key);
 
 const groupDetailInfo: ComputedRef<IGroupInfo> = computed(
-  () => store.state.msgList[store.state.activeUid!]?.groupDetailInfo || {},
+  () => store.state.msgList[store.state.activeUid!]?.groupDetailInfo || {}
 );
 
 const memberUserInfos = computed(
   () =>
     groupDetailInfo.value?.groupMemberLists?.memberUserInfos?.map(
-      (e) => e.memberUid,
-    ) || [],
+      (e) => e.memberUid
+    ) || []
 );
 
 async function init() {
   // 查询 群 通话状态
-  const data = await store.dispatch('postMsg', {
+  const data = await store.dispatch("postMsg", {
     query: {
       groupCallState: {
         groupId: store.state.activeUid,
       },
     },
     cmd: 2153,
-    encryption: 'Aoelailiao.Message.GroupCallStateNotifyToServserReq',
+    encryption: "Aoelailiao.Message.GroupCallStateNotifyToServserReq",
     auth: true,
   });
   groupCallState.value = data.body.groupCallState;
@@ -317,23 +339,23 @@ watch(
     if (data.cmd === 2156) {
       groupCallState.value = data.body.groupCallState;
     }
-  },
+  }
 );
 
-const inputVal = ref('');
+const inputVal = ref("");
 
 // 文件选择类型
-const accept = ref('image/*,video/*');
+const accept = ref("image/*,video/*");
 const changUserImg: Ref<HTMLInputElement | null> = ref(null);
 
 const cbImg = useCbImg(store, accept, t, 1);
 
 onMounted(async () => {
-  changUserImg.value!.addEventListener('change', cbImg);
+  changUserImg.value!.addEventListener("change", cbImg);
 });
 
 onBeforeUnmount(() => {
-  changUserImg.value!.removeEventListener('change', cbImg);
+  changUserImg.value!.removeEventListener("change", cbImg);
 });
 
 // 选择群成员进行音视频通话
@@ -344,7 +366,7 @@ const ShowSelectGroupMember = (e: number) => {
 };
 
 // 发送消息
-const enter = useEnter(store, inputVal, 1, null, t);
+const enter = useEnter(store, inputVal, 1, t);
 // 发送图片
 const sendImg = useSendImg(store, 1, t, changUserImg, accept, nextTick);
 
@@ -372,17 +394,17 @@ const addGroup = async () => {
     joinType: 3,
     inviteUid: query.groupInfo.groupMemberLists.rootUid,
   });
-  const data = await store.dispatch('postMsg', {
+  const data = await store.dispatch("postMsg", {
     query,
     cmd: 1027,
-    encryption: 'Aoelailiao.Login.UserOperateGroupInfoReq',
+    encryption: "Aoelailiao.Login.UserOperateGroupInfoReq",
     auth: true,
   });
   Toast(t(data.body.resultString));
 };
 </script>
 <style lang="scss" scoped>
-@import '@/style/base.scss';
+@import "@/style/base.scss";
 .groupWindow {
   .msg {
     position: absolute;

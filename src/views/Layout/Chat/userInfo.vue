@@ -66,7 +66,22 @@
             />
           </template>
         </Table>
-        <Table v-if="!yUserInfo?.isBotUser" title="截屏通知" hide-more>
+        <!-- <Table
+          title="@我时显示通知"
+          hide-more
+          v-if="Boolean(yUserInfo?.userAttachInfo?.msgMute)"
+        >
+          <template v-slot:left>
+            <Iconfont name="icontongzhi" size="15" />
+          </template>
+          <template v-slot:right>
+            <Switch
+              :beforeChange="beforeMsgAtNotify"
+              :switch="Boolean(yUserInfo?.userAttachInfo?.msgAtNotify)"
+            />
+          </template>
+        </Table> -->
+        <!-- <Table v-if="!yUserInfo?.isBotUser" title="截屏通知" hide-more>
           <template v-slot:left>
             <Iconfont name="iconjieping" size="15" />
           </template>
@@ -76,7 +91,7 @@
               :switch="Boolean(yUserInfo?.userAttachInfo?.msgScreenShotNotify)"
             />
           </template>
-        </Table>
+        </Table> -->
         <Table title="置顶" hide-more>
           <template v-slot:left>
             <Iconfont name="iconzhiding" size="15" />
@@ -159,7 +174,7 @@ export default defineComponent({
 });
 
 // 添加好友和删除好友
-function useToggleFriend(
+export function useToggleFriend(
   store: Store<initStore>,
   t: { (key: string | number): string },
   yUserInfo: IUserInfo,
@@ -208,6 +223,7 @@ function useBeforeSwitch(
       res.switchState = e ? 0 : 1;
     }
     showLoading();
+    console.log(res);
 
     const data = await store.dispatch('postMsg', {
       query: res,
@@ -229,6 +245,9 @@ function useBeforeSwitch(
         } else if (settingItemId === 1003) {
           // 截屏通知
           upDateStore('msgScreenShotNotify', Number(e), store, isBack);
+        } else if (settingItemId === 2108) {
+          // 截屏通知
+          upDateStore('msgAtNotify', Number(e), store, isBack);
         }
         resovle(true);
       } else {
@@ -298,7 +317,7 @@ async function upDateContact(store: Store<initStore>, val: boolean) {
 }
 
 // 操作黑名单
-function useBeforeBlacklist(
+export function useBeforeBlacklist(
   store: Store<initStore>,
   t: { (key: string | number): string },
   yUserInfo: IUserInfo,
@@ -315,6 +334,9 @@ function useBeforeBlacklist(
       encryption: 'Aoelailiao.Login.UserOperateBlackListReq',
       auth: true,
     });
+    store.state.msgList[yUserInfo.uid].userDetailInfo.isInMyBlacklist = e
+      ? 1
+      : 0;
     Toast(t(data.body.resultString));
   };
 }
@@ -328,6 +350,9 @@ const props = defineProps({
   yUserInfo: {
     type: Object as PropType<IUserInfo>,
     required: true,
+  },
+  title: {
+    type: String,
   },
 });
 
@@ -346,6 +371,9 @@ const beforeMsgNotdisturb = useBeforeSwitch(
   props.yUserInfo,
   true,
 );
+
+// @我时显示通知
+const beforeMsgAtNotify = useBeforeSwitch(store, 2108, t, props.yUserInfo);
 
 // 截屏通知
 const beforeCaptureNotifica = useBeforeSwitch(store, 1003, t, props.yUserInfo);
@@ -377,6 +405,15 @@ const clientCleanMsg = () => {
 
 // 点击发送消息
 const send = () => {
+  // 群聊成员中的详情 需要 添加 陌生消息备注
+  if (store.state.activeIsGroup) {
+    const source = {
+      source: props.title,
+      sourceId: props.yUserInfo?.uid,
+      sourceType: 0,
+    };
+    store.commit('SET_MSGSOURCE', source);
+  }
   emit('toggleBox');
   store.commit('SET_ACTIVEUID', props.yUserInfo?.uid);
   store.commit('SET_ACTIVEISGROUP', false);
