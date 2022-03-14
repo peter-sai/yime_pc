@@ -75,6 +75,8 @@ function useBeforeSwitch(
       res.switchState = e ? 0 : 1;
     }
     showLoading();
+    console.log(res);
+
     const data = await store.dispatch('postMsg', {
       query: res,
       cmd: 1041,
@@ -90,6 +92,9 @@ function useBeforeSwitch(
         } else if (settingItemId === 1004) {
           // 置顶
           upDateStore(store, 'groupTop', switchState);
+        } else if (settingItemId === 2108) {
+          //
+          upDateStore(store, 'groupMsgAtNotify', switchState);
         } else {
           // 设置进群权限
           upDateStore(store, 'groupInviteState', switchState);

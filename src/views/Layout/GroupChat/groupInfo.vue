@@ -56,6 +56,23 @@
               />
             </template>
           </Table>
+          <Table
+            title="@我时显示通知"
+            hide-more
+            v-if="Boolean(groupDetailInfo?.groupAttachInfo?.groupMsgMute)"
+          >
+            <template v-slot:left>
+              <Iconfont name="icontongzhi" size="15" />
+            </template>
+            <template v-slot:right>
+              <Switch
+                :beforeChange="beforeGroopMsgAtNotdisturb"
+                :switch="
+                  Boolean(groupDetailInfo?.groupAttachInfo?.groupMsgAtNotify)
+                "
+              />
+            </template>
+          </Table>
           <Table title="置顶" hide-more>
             <template v-slot:left>
               <Iconfont name="iconzhiding" size="15" />
@@ -316,6 +333,9 @@ if (
 if (adminUidList.includes(Number(userInfo.uid))) {
   isAdmin.value = true;
 }
+
+// @我时显示通知
+const beforeGroopMsgAtNotdisturb = useBeforeSwitch(store, 2108, t);
 
 // 消息通知
 const beforeMsgNotdisturb = useBeforeSwitch(store, 1005, t, true);

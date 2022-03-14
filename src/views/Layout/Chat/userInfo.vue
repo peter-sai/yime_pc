@@ -66,7 +66,22 @@
             />
           </template>
         </Table>
-        <Table v-if="!yUserInfo?.isBotUser" title="截屏通知" hide-more>
+        <!-- <Table
+          title="@我时显示通知"
+          hide-more
+          v-if="Boolean(yUserInfo?.userAttachInfo?.msgMute)"
+        >
+          <template v-slot:left>
+            <Iconfont name="icontongzhi" size="15" />
+          </template>
+          <template v-slot:right>
+            <Switch
+              :beforeChange="beforeMsgAtNotify"
+              :switch="Boolean(yUserInfo?.userAttachInfo?.msgAtNotify)"
+            />
+          </template>
+        </Table> -->
+        <!-- <Table v-if="!yUserInfo?.isBotUser" title="截屏通知" hide-more>
           <template v-slot:left>
             <Iconfont name="iconjieping" size="15" />
           </template>
@@ -76,7 +91,7 @@
               :switch="Boolean(yUserInfo?.userAttachInfo?.msgScreenShotNotify)"
             />
           </template>
-        </Table>
+        </Table> -->
         <Table title="置顶" hide-more>
           <template v-slot:left>
             <Iconfont name="iconzhiding" size="15" />
@@ -208,6 +223,7 @@ function useBeforeSwitch(
       res.switchState = e ? 0 : 1;
     }
     showLoading();
+    console.log(res);
 
     const data = await store.dispatch('postMsg', {
       query: res,
@@ -229,6 +245,9 @@ function useBeforeSwitch(
         } else if (settingItemId === 1003) {
           // 截屏通知
           upDateStore('msgScreenShotNotify', Number(e), store, isBack);
+        } else if (settingItemId === 2108) {
+          // 截屏通知
+          upDateStore('msgAtNotify', Number(e), store, isBack);
         }
         resovle(true);
       } else {
@@ -352,6 +371,9 @@ const beforeMsgNotdisturb = useBeforeSwitch(
   props.yUserInfo,
   true,
 );
+
+// @我时显示通知
+const beforeMsgAtNotify = useBeforeSwitch(store, 2108, t, props.yUserInfo);
 
 // 截屏通知
 const beforeCaptureNotifica = useBeforeSwitch(store, 1003, t, props.yUserInfo);

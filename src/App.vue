@@ -302,9 +302,6 @@ const clientSendMsgAckToServer = (msgInfos: IMsgInfo<string>[]) => {
 const stop = watch(
   computed(() => store.state.msgInfo),
   async (data: any) => {
-    if (data.cmd === 1006) {
-      console.log(data);
-    }
     if (data.cmd === 2024) {
       try {
         const notifyContent = JSON.parse(data.body.notifyContent);
@@ -471,8 +468,28 @@ function msgNotice(item: any) {
   const res = store.state.msgList[id];
   let isMsgMute = !res ? false : true;
   if (res) {
-    isMsgMute = Boolean(res?.userDetailInfo?.userInfo?.userAttachInfo?.msgMute);
+    if (item.isGroupMsg) {
+      const groupAttachInfo = res?.groupDetailInfo?.groupAttachInfo || {};
+      // 群聊
+      isMsgMute = Boolean(groupAttachInfo?.groupMsgMute);
+      // 是否是at自己的消息 如果是 并且 开启at提醒通知的开关 则 通知
+      if (item.msgContent.msgContent === 'groupAtInfo') {
+        const groupAtInfo = item?.msgContent?.groupAtInfo?.atUsers?.find(
+          (e: any) => Number(e.uid) === Number(store.state.userInfo.uid),
+        );
+        if (Boolean(groupAttachInfo?.groupMsgAtNotify) && groupAtInfo) {
+          //
+          isMsgMute = false;
+        }
+      }
+    } else {
+      // 单聊
+      isMsgMute = Boolean(
+        res?.userDetailInfo?.userInfo?.userAttachInfo?.msgMute,
+      );
+    }
   }
+
   if (Number(item.fromId) !== Number(store.state.userDetailInfo.userInfo.uid)) {
     if (store.state.switchSettingInfo.pokeSound && !isMsgMute) {
       // 声音
