@@ -143,7 +143,7 @@
               showUserInfo(
                 item.msgContent.visitingCard.uid,
                 'card',
-                item.msgContent.visitingCard.type,
+                item.msgContent.visitingCard,
               )
             "
             @click="showUserInfo(getUserInfo(item).uid)"
@@ -158,7 +158,7 @@
               showUserInfo(
                 item.msgContent.visitingCard.uid,
                 'card',
-                item.msgContent.visitingCard.type,
+                item.msgContent.visitingCard,
               )
             "
             :item="item.msgContent.visitingCard"
@@ -409,14 +409,24 @@ const emit = defineEmits(['toggleBox', 'changeTag', 'selectGroupMember']);
 const msgWindow: Ref<HTMLDivElement> = ref() as Ref<HTMLDivElement>;
 
 // 显示用户详情
-const showUserInfo = async (uid: number, isCard?: string, type?: number) => {
+const showUserInfo = async (
+  uid: number,
+  isCard?: string,
+  visitingCard?: IVisitingCard,
+) => {
   if (isCard) {
     // 群名片
-    if (type) {
+    if (visitingCard?.type) {
       // await getGroupInfo(store, uid);
       store.commit('SET_ACTIVEUID', uid);
       store.commit('SET_ACTIVEISGROUP', true);
     } else {
+      const source = {
+        source: visitingCard?.name,
+        sourceId: uid,
+        sourceType: 1,
+      };
+      store.commit('SET_MSGSOURCE', source);
       store.commit('SET_ACTIVEUID', uid);
       store.commit('SET_ACTIVEISGROUP', false);
     }
@@ -580,6 +590,29 @@ const init = async () => {
     store.state.userInfo.uid,
   );
   readMsgId.value = msgHasReadedInfos[0].msgIdMax;
+
+  // 上传已读最大消息msgid
+  const msgList = store.state?.msgList[store.state?.activeUid];
+  if (msgList?.lastMsg.msgId !== readMsgId.value) {
+    const isGroup = store.state.activeIsGroup ? 1 : 0;
+    const res = {
+      msgHasReadedInfo: {
+        isGroupMsg: isGroup,
+        toId: isGroup ? msgList?.lastMsg.fromId : msgList?.lastMsg.toId,
+        fromId: isGroup ? msgList?.lastMsg.toId : msgList?.lastMsg.fromId,
+        msgIdMax: msgList?.lastMsg.msgId,
+      },
+      deviceBrand: 'web',
+    };
+
+    await store.dispatch('postMsg', {
+      query: res,
+      cmd: 2149,
+      encryption:
+        'Aoelailiao.Message.UserUpdateConversationHasReadedMsgInfoReq',
+      auth: true,
+    });
+  }
 };
 init();
 

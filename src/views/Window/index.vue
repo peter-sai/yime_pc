@@ -41,11 +41,13 @@
     <input ref="changUserImg" type="file" hidden :accept="accept" multiple />
 
     <!-- 陌生人 -->
-    <div class="stranger" v-if="false">
-      <div class="title">对方通过 <span>YGG中文社群</span> 发来消息</div>
+    <div class="stranger" v-if="strangerInfo">
+      <div class="title">
+        {{ formate(t('通过%@发来消息'), strangerInfo.source) }}
+      </div>
       <div class="btn">
-        <div class="addBlackList">加入黑名单</div>
-        <div class="chat">继续聊天</div>
+        <div class="addBlackList" @click="addBlock">加入黑名单</div>
+        <div class="chat" @click="addFriend">继续聊天</div>
       </div>
     </div>
     <!-- 弹框 -->
@@ -136,7 +138,7 @@ import Message from './message.vue';
 import { useI18n } from 'vue-i18n';
 import { getTime } from '@/utils/utils';
 import { Store, useStore } from 'vuex';
-import UserInfo from '../Layout/Chat/userInfo.vue';
+import UserInfo, { useToggleFriend } from '../Layout/Chat/userInfo.vue';
 import Forward from '../Layout/Chat/Forward.vue';
 import CloudFile from '../Layout/Chat/cloudFile.vue';
 import CommonGroup from '../Layout/Chat/commonGroup.vue';
@@ -147,6 +149,7 @@ import ChatHeader from './header.vue';
 import Bottom from '../Layout/bottom.vue';
 import { Etag } from '../Layout/index.vue';
 import { ImsgItem } from '@/types/msg';
+import { useBeforeBlacklist } from '../Layout/Chat/userInfo.vue';
 
 export default defineComponent({
   name: 'window',
@@ -235,6 +238,57 @@ const groupDetailInfo: ComputedRef<IGroupInfo> = computed(
   () => store.state.msgList[store.state.userUid]?.groupDetailInfo || {},
 );
 
+// 群聊陌生人
+const strangerInfo = computed(() => {
+  const userInfo = store.state?.msgList[store.state?.activeUid];
+
+  if (
+    userInfo?.userDetailInfo?.isFriend ||
+    userInfo?.userDetailInfo?.isInMyBlacklist ||
+    userInfo?.readList?.length > 1
+  ) {
+    return null;
+  }
+  const msgSource = userInfo?.lastMsg?.attachInfo?.msgSource;
+  try {
+    if (msgSource) {
+      return JSON.parse(msgSource);
+    } else {
+      return null;
+    }
+  } catch (error) {
+    return null;
+  }
+});
+
+// 加入黑名单
+const addBlock = async () => {
+  const userInfo = store.state?.msgList[store.state?.activeUid];
+  const query = {
+    uid: userInfo?.lastMsg.fromId,
+  };
+  if (userInfo) {
+    await useBeforeBlacklist(store, t, query as IUserInfo)(true);
+    if (store.state.msgList[userInfo?.lastMsg.fromId]) {
+      delete store.state.msgList[userInfo?.lastMsg.fromId];
+      store.commit('SET_ACTIVEUID', null);
+    }
+  }
+};
+
+// 点击继续聊天
+const addFriend = async () => {
+  const userInfo = store.state?.msgList[store.state?.activeUid];
+  const query = {
+    uid: userInfo?.lastMsg.fromId,
+  };
+  await useToggleFriend(store, t, query as IUserInfo)(true);
+};
+
+const formate = (temp: string, info: string) => {
+  return temp.replace('%@', info);
+};
+
 // 文件选择类型
 const accept = ref('image/*,video/*');
 const changUserImg: Ref<HTMLInputElement | null> = ref(null);
@@ -302,7 +356,7 @@ onBeforeUnmount(() => {
 });
 
 // 发送消息
-const enter = useEnter(store, inputVal, 0, null, t);
+const enter = useEnter(store, inputVal, 0, t);
 // 发送图片
 const sendImg = useSendImg(store, 0, t, changUserImg, accept, nextTick);
 

@@ -4,7 +4,10 @@
       <div style="display: flex; justify-content: flex-end">
         <div class="imgBg" @contextmenu="contextmenu">
           <div class="imgBox" ref="imgBox" :style="style">
-            <div v-if="!isPlay" style="width: 100%; height: 100%">
+            <div
+              v-if="!isPlay"
+              style="width: 100%; height: 100%; text-align: center"
+            >
               <img
                 style="max-width: 100%; max-height: 100%"
                 :src="videoMsgInfo?.imageUrl"
@@ -66,6 +69,7 @@ const props = defineProps({
 });
 
 const style = ref({});
+
 if (Number(props.videoMsgInfo?.weight) > 400) {
   style.value = {
     width: '400px',

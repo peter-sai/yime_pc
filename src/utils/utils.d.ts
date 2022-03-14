@@ -15,3 +15,4 @@ export function getSuffix(key:string): string
 export function getLang(): number
 export function getMsgList(): Object
 export function setMsgList(val: any): void
+export function isMacOs(): Boolean

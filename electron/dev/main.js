@@ -1,8 +1,16 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { app, BrowserWindow, systemPreferences, Menu } = require('electron');
-console.log(systemPreferences.getMediaAccessStatus('microphone'));
+const { app, BrowserWindow, Menu } = require('electron');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require('path');
+const Badge = require('electron-windows-badge');
+
+const { ipcMain } = require('electron');
+
+ipcMain.on('sendMessage', (event, data) => {
+  if (process.platform === 'darwin') {
+    app.dock.setBadge(data);
+  }
+});
 
 const winURL =
   process.env.NODE_ENV === 'development'
@@ -36,6 +44,7 @@ function createWindow() {
   } else {
     Menu.setApplicationMenu(null);
   }
+
   // 创建浏览器窗口
   const win = new BrowserWindow({
     icon: path.join(__dirname, 'img/ico.ico'),
@@ -43,11 +52,16 @@ function createWindow() {
     height: 768,
     webPreferences: {
       nodeIntegration: true,
+      contextIsolation: false,
+      // preload: path.join(__dirname, './reload.js'),
     },
   });
 
   // 并且为你的应用加载index.html
   win.loadURL(winURL);
+  if (process.platform !== 'darwin') {
+    new Badge(win, {});
+  }
 
   // 打开开发者工具
   // win.webContents.openDevTools();

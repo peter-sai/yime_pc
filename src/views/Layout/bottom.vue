@@ -41,7 +41,11 @@
           size="20"
           color="#2B2C33"
         />
-        <div v-if="modelValue" class="send" @click.stop="$emit('enter')">
+        <div
+          v-if="modelValue || copyImgList.length"
+          class="send"
+          @click.stop="onEnter"
+        >
           <img src="../../assets/img/send.svg" alt="" />
         </div>
       </div>
@@ -93,6 +97,32 @@
           >
             {{ item.name }}
           </div>
+        </div>
+      </div>
+    </div>
+    <!-- 复制的图片 和 拖拽的文件 -->
+    <div class="copyImg" v-if="copyImgList.length">
+      <div
+        class="copyImgBox"
+        v-for="(item, key) in copyImgList"
+        :key="item.url"
+      >
+        <div
+          class="imgBox"
+          v-if="item?.file?.type?.includes('image')"
+          :style="{
+            backgroundImage: `url(${item.url})`,
+            backgroundSize: 'cover',
+          }"
+        >
+          <!-- <img :src="item.url" alt="" /> -->
+          <i class="close" @click="delImgList(key)"> </i>
+        </div>
+        <div class="imgBox fileBox" v-else>
+          <Iconfont name="iconwenjian2" size="20" color="#999" />
+          <div class="name">{{ item?.file?.name }}</div>
+          <div class="size">{{ getSize(item?.file?.size || 0) }}</div>
+          <i class="close" @click="delImgList(key)"> </i>
         </div>
       </div>
     </div>
@@ -212,6 +242,7 @@ import { MediaAudio } from '@/plugin/Audio';
 import Recorder from 'Recorder';
 import { initRonyun } from '@/App.vue';
 import { upLoadFile, initOss } from '../../hooks/window';
+import { getSize } from '@/utils/utils';
 import {
   defineComponent,
   ref,
@@ -282,6 +313,19 @@ const audioObj = ref({});
 const showAtBox = ref(false);
 const atUserInfoList: Ref<IUserInfo[]> = ref([]);
 
+const dropFile = computed(() => store.state.dropFile);
+
+watch(dropFile, (e) => {
+  if (e) {
+    input.value?.focus();
+    copyImgList.value.push(e);
+    store.commit('SET_DROPFILE', null);
+  }
+});
+
+// 粘贴的图片列表
+const copyImgList: Ref<{ url: string; file: File }[]> = ref([]);
+
 const newAtUserInfoList = computed(() => {
   const ats = props.modelValue.split('@');
 
@@ -311,6 +355,9 @@ const props = defineProps({
   },
   groupDetailInfo: {
     type: Object as PropType<IGroupInfo>,
+  },
+  atUserInfoList: {
+    type: Object as PropType<IUserInfo>,
   },
   isGroupMember: {
     type: Boolean,
@@ -394,7 +441,8 @@ const onInput = async (e: any) => {
 const onEnter = async (e: any) => {
   if (!e.shiftKey) {
     e.preventDefault();
-    emit('enter');
+    emit('enter', props.atUserInfoList || [], copyImgList.value);
+    copyImgList.value = [];
   }
 };
 
@@ -677,20 +725,29 @@ const paste = (e: any) => {
     let item = cbd.items[i];
     if (item.kind == 'file') {
       e.preventDefault();
+      if (!item.type.includes('image')) return;
       // blob 就是从剪切板获得的文件，可以进行上传或其他操作
       const blob = item.getAsFile();
       if (blob.size === 0) {
         return;
       }
       const reader = new FileReader();
-      const imgs: any = new Image();
       reader.readAsDataURL(blob);
       reader.onload = function (v: any) {
-        imgs.src = v.target.result;
+        copyImgList.value.push({
+          url: v.target.result,
+          file: new File([blob], Date.now().toString(), {
+            type: 'image/jpg',
+          }),
+        });
       };
-      // document.body.appendChild(imgs);
     }
   }
+};
+
+// 删除
+const delImgList = (key: number) => {
+  copyImgList.value.splice(key, 1);
 };
 </script>
 <style lang="scss" scoped>
@@ -701,6 +758,91 @@ const paste = (e: any) => {
   right: 0;
   position: absolute;
   border-top: 1px solid #eaebea;
+  .copyImg {
+    position: absolute;
+    width: 90%;
+    height: 100px;
+    box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.2);
+    left: 50%;
+    transform: translate(-50%);
+    bottom: 100%;
+    background: #fff;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    border-radius: 10px 10px 0 0;
+    overflow: hidden;
+    flex-wrap: wrap;
+    overflow: auto;
+    .copyImgBox {
+      width: 100px;
+      height: 100px;
+      padding: 10px;
+      box-sizing: border-box;
+      .imgBox {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background: #eaebea;
+        border-radius: 5px;
+        padding: 5px;
+        &.fileBox {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          .name {
+            font-size: 12px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+          .size {
+            font-size: 12px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+        }
+        img {
+          width: 100%;
+          max-height: 100%;
+        }
+        .close {
+          position: absolute;
+          right: 5px;
+          top: 5px;
+          border-radius: 50%;
+          width: 15px;
+          overflow: hidden;
+          height: 15px;
+          background: rgba(0, 0, 0, 0.2);
+          cursor: pointer;
+          &::before {
+            display: block;
+            content: '';
+            width: 80%;
+            height: 2px;
+            background: #fff;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%) rotate(45deg);
+          }
+          &::after {
+            display: block;
+            content: '';
+            width: 80%;
+            height: 2px;
+            background: #fff;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+          }
+        }
+      }
+    }
+  }
   .audioBox {
     display: flex;
     justify-content: space-between;

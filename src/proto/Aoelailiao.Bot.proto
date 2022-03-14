@@ -1,16 +1,16 @@
 syntax = "proto2";
 package Aoelailiao.Bot;
-import "Aoelailiao.Common.proto";
 option java_package = "com.aoetech.aoelailiao.protobuf";
-option optimize_for = LITE_RUNTIME;
-
+option java_multiple_files = true;
+// option optimize_for = LITE_RUNTIME;
+option go_package = "github.com/protocolbuffers/protobuf/aoelailiao/go/protocolpb";
 //机器人消息结构体
-message BotMsgInfo {
-  optional uint32 bot_id = 1;  //机器人id
-  optional uint32 user_id = 2;  //用户id
-  optional string content = 3;//内容对应，文字和图片直接填文本内容或者url文本，其他消息填消息结构pb转换出的json字符串
-  optional uint32 type = 4; //内容类型 0--用户进入botfather聊天页面，此时需要下发欢迎消息 1--文字、2--图片、3--视频、4--链接
-  optional uint32 is_group_msg = 5 ;//0--单聊消息，1--群消息
-  optional uint32 language=6;  //语言环境 1--中文 2--英文 3--繁体
+message BotMsgInfo
+{
+    optional uint32 bot_id = 1;       //机器人id
+    optional uint32 user_id = 2;      //用户id
+    optional string content = 3;      //内容对应，文字和图片直接填文本内容或者url文本，其他消息填消息结构pb转换出的json字符串内容类型 0--用户进入botfather聊天页面，此时需要下发欢迎消息 1--文字、2--图片、3--视频、4--链接
+    optional uint32 type = 4;         //
+    optional uint32 is_group_msg = 5; // 0--单聊消息，1--群消息
+    optional uint32 language = 6;     //语言环境 1--中文 2--英文 3--繁体
 }
-

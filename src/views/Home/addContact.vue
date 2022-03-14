@@ -95,6 +95,12 @@ const enter = async () => {
 };
 
 const goWindow = (e: IUserDetailInfo) => {
+  const source = {
+    source: e.source,
+    sourceId: e.sourceId,
+    sourceType: e.sourceType,
+  };
+  store.commit('SET_MSGSOURCE', source);
   store.commit('SET_ACTIVEUID', e.userInfo.uid);
   store.commit('SET_ACTIVEISGROUP', false);
 };

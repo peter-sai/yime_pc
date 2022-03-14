@@ -14,6 +14,9 @@
           size="25"
           :color="router.path === '/Home/Message' ? '#0085FF' : '#9E9E9E'"
         />
+        <div class="badgeHome" v-if="unReadNum">
+          <Badge isHome :num="unReadNum" />
+        </div>
       </div>
       <div class="right" @click="goTo('/Home/contacts')">
         <Iconfont
@@ -29,6 +32,7 @@
 </template>
 <script lang="ts">
 import { defineComponent, computed } from 'vue';
+import Badge from '@/components/Badge/index.vue';
 export default defineComponent({
   name: 'home',
 });
@@ -37,6 +41,11 @@ export default defineComponent({
 import Iconfont from '@/iconfont/index.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useGoTo } from '@/hooks';
+import { useStore } from 'vuex';
+import Electron from 'Electron';
+import { key } from '@/store';
+import { ImsgItem, INotifyClassMsgListInfo } from '@/types/msg';
+const store = useStore(key);
 
 const router = useRoute();
 
@@ -44,7 +53,30 @@ const goTo = useGoTo(useRouter);
 
 const list = ['contacts', 'addContact', 'group', 'blacklist'];
 
-// const key = computed(() => router.path);
+type TMsgItem = INotifyClassMsgListInfo & ImsgItem;
+const unReadNum = computed(() => {
+  const msgList: TMsgItem[] = Object.values(store.state.msgList) as TMsgItem[];
+  const groupMsgList = msgList.filter(
+    (e) =>
+      e.unReadNum &&
+      e.isGroup &&
+      !e.groupDetailInfo?.groupAttachInfo?.groupMsgMute,
+  );
+  const userMsgList = msgList.filter(
+    (e) =>
+      e.unReadNum &&
+      !e.isGroup &&
+      !e.userDetailInfo?.userInfo?.userAttachInfo?.msgMute,
+  );
+  const num = groupMsgList
+    .concat(userMsgList)
+    .reduce(function (preValue: any, curValue: any) {
+      return preValue + curValue.unReadNum;
+    }, 0);
+  // Electron.ipcRenderer.send('sendMessage', num?.toString() || '');
+  // Electron.ipcRenderer.sendSync('update-badge', num ? num.toString() : null);
+  return num;
+});
 </script>
 <style lang="scss" scoped>
 @import '@/style/base.scss';
@@ -74,6 +106,15 @@ const list = ['contacts', 'addContact', 'group', 'blacklist'];
       justify-content: center;
       border-right: 1px solid #eaebea;
       cursor: pointer;
+      position: relative;
+      .badgeHome {
+        position: absolute;
+        right: 50%;
+        top: 50%;
+        transform: translate(50%, -50%);
+        margin-right: -20px;
+        margin-top: -10px;
+      }
     }
     .right {
       flex: 1;

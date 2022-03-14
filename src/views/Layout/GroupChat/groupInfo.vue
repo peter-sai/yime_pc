@@ -29,14 +29,14 @@
           <span v-else>{{
             groupDetailInfo?.groupName
               ? groupDetailInfo?.groupName.substr(0, 1).toLocaleUpperCase()
-              : ''
+              : ""
           }}</span>
         </div>
         <div class="title">{{ groupDetailInfo?.groupName }}</div>
         <div class="subTitle">
           {{
             groupDetailInfo?.groupNoticeInfo?.groupNoticeContent ||
-            t('暂无群公告')
+            t("暂无群公告")
           }}
         </div>
       </div>
@@ -52,6 +52,23 @@
                 :beforeChange="beforeMsgNotdisturb"
                 :switch="
                   !Boolean(groupDetailInfo?.groupAttachInfo?.groupMsgMute)
+                "
+              />
+            </template>
+          </Table>
+          <Table
+            title="@我时显示通知"
+            hide-more
+            v-if="Boolean(groupDetailInfo?.groupAttachInfo?.groupMsgMute)"
+          >
+            <template v-slot:left>
+              <Iconfont name="icontongzhi" size="15" />
+            </template>
+            <template v-slot:right>
+              <Switch
+                :beforeChange="beforeGroopMsgAtNotdisturb"
+                :switch="
+                  Boolean(groupDetailInfo?.groupAttachInfo?.groupMsgAtNotify)
                 "
               />
             </template>
@@ -132,14 +149,14 @@
           class="info"
           v-if="props.groupDetailInfo?.groupAttachInfo?.groupInviteState !== 2"
         >
-          {{ t('邀请链接复制后60分钟有效') }}
+          {{ t("邀请链接复制后60分钟有效") }}
         </div>
         <!-- button -->
-        <div class="btn" @click="quitGroupChat">{{ t('退出群聊') }}</div>
+        <div class="btn" @click="quitGroupChat">{{ t("退出群聊") }}</div>
         <!-- groupInfo -->
         <div class="groupInfo">
           <div class="title">
-            <div class="titleLeft">{{ t('群成员') }}</div>
+            <div class="titleLeft">{{ t("群成员") }}</div>
             <div
               class="titleRight"
               @click="$emit('changeTag', Etag.AddGroupMembers)"
@@ -156,6 +173,7 @@
             <TableDouble
               :title="item?.userAttachInfo?.remarkName || item.nickname"
               :sub-title="item.onlineState ? t('在线') : t('离线')"
+              @click.stop="userClick(item.uid)"
               v-for="item in groupMemberUserInfos"
               :key="item.uid"
             >
@@ -172,7 +190,7 @@
                 v-slot:right
                 v-if="(isRoot || isAdmin) && !item.isRoot && !item.isAdmin"
               >
-                <div class="del" @click="del(item)">{{ t('删除') }}</div>
+                <div class="del" @click.stop="del(item)">{{ t("删除") }}</div>
               </template>
             </TableDouble>
           </div>
@@ -182,35 +200,35 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, defineEmits, defineProps, PropType } from 'vue';
-import NavigationBar from '@/components/NavigationBar/index.vue';
-import Table from '@/components/Table/index.vue';
-import TableDouble from '@/components/TableDouble/index.vue';
-import Switch from '@/components/Switch/index.vue';
-import Iconfont from '@/iconfont/index.vue';
-import { Etag } from '../index.vue';
+import { defineComponent, defineEmits, defineProps, PropType } from "vue";
+import NavigationBar from "@/components/NavigationBar/index.vue";
+import Table from "@/components/Table/index.vue";
+import TableDouble from "@/components/TableDouble/index.vue";
+import Switch from "@/components/Switch/index.vue";
+import Iconfont from "@/iconfont/index.vue";
+import { Etag } from "../index.vue";
 import {
   IContacts,
   IGroupAttachInfo,
   IGroupInfo,
   IUserInfo,
-} from '@/types/user';
-import { useI18n } from 'vue-i18n';
-import { Store, useStore } from 'vuex';
-import { initStore, key } from '@/store';
-import { ref, Ref, onMounted, onUnmounted } from 'vue';
-import ClipboardJS from 'clipboard';
-import { Toast } from '@/plugin/Toast';
-import { getMsgList, getStorage, getTag, setMsgList } from '@/utils/utils';
+} from "@/types/user";
+import { useI18n } from "vue-i18n";
+import { Store, useStore } from "vuex";
+import { initStore, key } from "@/store";
+import { ref, Ref, onMounted, onUnmounted } from "vue";
+import ClipboardJS from "clipboard";
+import { Toast } from "@/plugin/Toast";
+import { getMsgList, getStorage, getTag, setMsgList } from "@/utils/utils";
 import {
   groupInviteState as getGroupInviteState,
   useUserOperateGroupInfo,
   useBeforeSwitch,
-} from '@/hooks/window';
-import { Dialog } from '@/plugin/Dialog';
-import { IGroupListItem } from '@/types/group';
+} from "@/hooks/window";
+import { Dialog } from "@/plugin/Dialog";
+import { IGroupListItem } from "@/types/group";
 export default defineComponent({
-  name: 'groupInfo',
+  name: "groupInfo",
 });
 // 获取群成员详情
 async function getGroupMemberUserInfos(
@@ -218,16 +236,16 @@ async function getGroupMemberUserInfos(
   groupMemberUserInfos: Ref<IUserInfo[]>,
   props: Readonly<{
     groupDetailInfo?: IGroupInfo | undefined;
-  }>,
+  }>
 ) {
   const groupMemberUids =
     props.groupDetailInfo?.groupMemberLists?.memberUserInfos.map(
-      (e) => e.memberUid,
+      (e) => e.memberUid
     );
-  const res = await store.dispatch('postMsg', {
+  const res = await store.dispatch("postMsg", {
     query: { uid: groupMemberUids },
     cmd: 1115,
-    encryption: 'Aoelailiao.Login.ClientGetUserInfoListReq',
+    encryption: "Aoelailiao.Login.ClientGetUserInfoListReq",
     auth: true,
   });
 
@@ -252,15 +270,15 @@ async function getGroupMemberUserInfos(
 async function linkChange(
   store: Store<initStore>,
   linkUrl: string,
-  type: number,
+  type: number
 ) {
-  const data = await store.dispatch('postMsg', {
+  const data = await store.dispatch("postMsg", {
     query: {
       type,
       linkUrl,
     },
     cmd: 1199,
-    encryption: 'Aoelailiao.Login.UserShortLinkConvertReq',
+    encryption: "Aoelailiao.Login.UserShortLinkConvertReq",
     auth: true,
   });
   return data;
@@ -270,9 +288,9 @@ async function linkChange(
 let clipboard: any = null;
 onMounted(() => {
   //  复制
-  clipboard = new ClipboardJS('.copyGroup');
-  clipboard.on('success', () => {
-    Toast(t('复制成功'));
+  clipboard = new ClipboardJS(".copyGroup");
+  clipboard.on("success", () => {
+    Toast(t("复制成功"));
   });
 });
 
@@ -285,21 +303,21 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['changeTag', 'toggleBox']);
+const emit = defineEmits(["changeTag", "toggleBox", "updateUser"]);
 
 const isRoot = ref(false);
 const isAdmin = ref(false);
 const { t } = useI18n();
 const store = useStore(key);
 const groupMemberUserInfos: Ref<IUserInfo[]> = ref([]);
-const shareLink = ref('');
-const inGroupType = ref('');
+const shareLink = ref("");
+const inGroupType = ref("");
 const groupAttachInfo: Ref<IGroupAttachInfo> = ref({}) as Ref<IGroupAttachInfo>;
 groupAttachInfo.value = props.groupDetailInfo
   ?.groupAttachInfo as IGroupAttachInfo;
 inGroupType.value = getGroupInviteState(
   props.groupDetailInfo?.groupAttachInfo?.groupInviteState,
-  t,
+  t
 );
 
 // 群管理员
@@ -317,20 +335,28 @@ if (adminUidList.includes(Number(userInfo.uid))) {
   isAdmin.value = true;
 }
 
+// @我时显示通知
+const beforeGroopMsgAtNotdisturb = useBeforeSwitch(store, 2108, t);
+
 // 消息通知
 const beforeMsgNotdisturb = useBeforeSwitch(store, 1005, t, true);
 
 // 置顶
 const beforeTop = useBeforeSwitch(store, 1004, t);
 
+const userClick = (uid: number) => {
+  emit("updateUser", uid);
+  emit("changeTag", Etag.UserInfo);
+};
+
 // 删除群聊
 const userOperateGroupInfo = useUserOperateGroupInfo(store);
 const quitGroupChat = async () => {
   if (isRoot.value) {
-    return Toast(t('请前往解散群'));
+    return Toast(t("请前往解散群"));
   }
   Dialog({
-    title: t('退出群聊') + '?',
+    title: t("退出群聊") + "?",
     callBack: async () => {
       const query = {
         groupId: store.state.activeUid,
@@ -338,24 +364,24 @@ const quitGroupChat = async () => {
       const data = await userOperateGroupInfo(3, query);
       Toast(t(data.body.resultString));
       if (data.body.resultCode === 0) {
-        emit('toggleBox');
-        const data = await store.dispatch('postMsg', {
+        emit("toggleBox");
+        const data = await store.dispatch("postMsg", {
           query: {
             groupId: store.state.activeUid,
           },
           cmd: 1029,
-          encryption: 'Aoelailiao.Login.ClientGetGroupInfoReq',
+          encryption: "Aoelailiao.Login.ClientGetGroupInfoReq",
           auth: true,
         });
         const msgItem = data.body;
         const item = store.state.msgList[store.state.activeUid!];
         item.groupDetailInfo = msgItem.groupDetailInfo;
-        store.commit('SET_MSGLISTITEM', { res: item });
+        store.commit("SET_MSGLISTITEM", { res: item });
 
-        const data1 = await store.dispatch('postMsg', {
+        const data1 = await store.dispatch("postMsg", {
           query: {},
           cmd: 1009,
-          encryption: 'Aoelailiao.Login.UserGetFriendsAndGroupsListReq',
+          encryption: "Aoelailiao.Login.UserGetFriendsAndGroupsListReq",
           auth: true,
         });
 
@@ -368,7 +394,7 @@ const quitGroupChat = async () => {
           }
         });
 
-        store.commit('SET_GROUPINFOS', data1.body.groupInfos);
+        store.commit("SET_GROUPINFOS", data1.body.groupInfos);
       }
     },
   });
@@ -380,7 +406,7 @@ async function init() {
   const getLongLink = await linkChange(
     store,
     props.groupDetailInfo?.qrCode as string,
-    1,
+    1
   );
   const linkUrl = getLongLink.body.linkUrl;
 
@@ -388,9 +414,9 @@ async function init() {
   const getLink = await linkChange(
     store,
     `${linkUrl}&s=${store.state.userInfo.uid}&t=${parseInt(
-      (Date.now() / 1000).toString(),
+      (Date.now() / 1000).toString()
     )}`,
-    0,
+    0
   );
   shareLink.value = getLink.body.linkUrl;
 }
@@ -409,24 +435,24 @@ const del = async (e: IUserInfo) => {
   const data = await userOperateGroupInfo(5, query);
   Toast(t(data.body.resultString));
   if (data.body.resultCode === 0) {
-    const data = await store.dispatch('postMsg', {
+    const data = await store.dispatch("postMsg", {
       query: {
         groupId: store.state.activeUid,
       },
       cmd: 1029,
-      encryption: 'Aoelailiao.Login.ClientGetGroupInfoReq',
+      encryption: "Aoelailiao.Login.ClientGetGroupInfoReq",
       auth: true,
     });
     const msgItem = data.body;
     const item = store.state.msgList[store.state.activeUid!];
     item.groupDetailInfo = msgItem.groupDetailInfo;
-    store.commit('SET_MSGLISTITEM', { res: item });
-    emit('toggleBox');
+    store.commit("SET_MSGLISTITEM", { res: item });
+    emit("toggleBox");
   }
 };
 </script>
 <style lang="scss" scoped>
-@import '@/style/base.scss';
+@import "@/style/base.scss";
 .groupInfo {
   height: 100%;
   padding-bottom: 40px;

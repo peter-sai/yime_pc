@@ -1,14 +1,15 @@
 syntax = "proto2";
 package Aoelailiao.Common;
 option java_package = "com.aoetech.aoelailiao.protobuf";
-option optimize_for = LITE_RUNTIME;
-
+option java_multiple_files = true;
+// option optimize_for = LITE_RUNTIME;
+option go_package = "github.com/protocolbuffers/protobuf/aoelailiao/go/protocolpb";
 //全局错误码result_code定义
-//1024,接口被限制,需要强制弹框显示result_string字段
-
+// 1024,接口被限制,需要强制弹框显示result_string字段
 
 //通用返回结构，不需要网络连接，用于客户端基类对象,ios客户端使用
-message CommonAns{ 
+message CommonAns
+{
     optional uint32 result_code = 1;
     optional string result_string = 2;
     optional bytes attach_data = 32;
@@ -16,160 +17,176 @@ message CommonAns{
 
 message ThirdUserInfo
 {
-	optional string nickname = 1;
+    optional string nickname = 1;
     optional string icon = 2;
 }
 
 message UserAttachInfo
 {
-	optional string remark_name = 1;//备注名称
-	optional uint32 destory_readed = 2;//阅后即焚开关,0--关闭(默认),1--开
-	optional uint32 msg_top = 3;//消息置顶开关,0--关闭(默认),1--开
-	optional uint32 msg_mute = 4;//消息免打扰开关,0--关闭(默认),1--开
-	optional uint32 msg_screen_shot_notify =5;
+    optional string remark_name = 1;    //备注名称
+    optional uint32 destory_readed = 2; //阅后即焚开关,0--关闭(默认),1--开
+    optional uint32 msg_top = 3;        //消息置顶开关,0--关闭(默认),1--开
+    optional uint32 msg_mute = 4;       //消息免打扰开关,0--关闭(默认),1--开
+    optional uint32 msg_screen_shot_notify = 5;
+    optional uint32 msg_at_notify = 6 [ default = 1 ]; //如果开启(1), 不论msg_mute是否开启,都推送
 }
 
-message UserInfo {
+message UserInfo
+{
     optional uint32 uid = 1;
     optional string nickname = 2;
     optional string icon = 3;
-	optional UserAttachInfo user_attach_info = 4;//附加信息
-	optional uint32 online_state = 5; 	//0--离线, 1--在线
-	optional string im_account = 6;
+    optional UserAttachInfo user_attach_info = 4; //附加信息
+    optional uint32 online_state = 5;             // 0--离线, 1--在线
+    optional string im_account = 6;
     optional uint32 last_online_time = 7; //上次在线时间
-    optional uint32 is_bot_user = 8;//是否为机器人,默认为0表示真实用户，1表示为机器人，机器人用户不会收到消息推送
+    optional uint32 is_bot_user = 8;      //是否为机器人,默认为0表示真实用户，1表示为机器人，机器人用户不会收到消息推送
 }
 
 message UserDetailInfo
 {
-	optional UserInfo user_info = 1;//基本信息
-	optional uint32 is_friend =2;//是否为好友关系，0--不是(默认)，1--是
-	optional uint32 friend_query_type=3;//加好友的方式，1--搜索，2--扫描二维码， 3--个人名片
-	optional string phone = 4;//手机号
-	optional string qr_code = 5;//用户二维码url
-	optional uint32 is_realname_auth = 6;//是否实名认证，0--未实名认证(默认)，1--已实名认证
-	optional uint32 is_in_my_blacklist =7;//是否在我的黑名单中，0--不是(默认)，1--是
-	optional uint32 is_set_password =8 ;//是否设置过密码，0--未设置(默认,不需要设置密码)，1--已设置(进入修改密码页)，2--强制退出时需要设置登录密码(进入设置密码页)
-	optional uint32 user_sex = 9;//1--男，2--女
-	optional string city_code = 10;//设置的位置信息
-	optional string user_sign = 11;//用户签名
-	repeated LabelInfo label_lists = 12;// 好友标签信息
-	optional uint32 find_me_group = 13;//通过群聊向我发起聊天 0--打开,1--关闭
-    optional string source = 14;//来源
-    optional uint32 source_id = 15;//来源id;用户id 群id
-    optional uint32 source_type = 16;//0--群聊1-好友推荐2-分享链接3-手机号搜索4-YIME号搜索5-昵称搜索
+    optional UserInfo user_info = 1;        //基本信息
+    optional uint32 is_friend = 2;          //是否为好友关系，0--不是(默认)，1--是
+    optional uint32 friend_query_type = 3;  //加好友的方式，1--搜索，2--扫描二维码， 3--个人名片
+    optional string phone = 4;              //手机号
+    optional string qr_code = 5;            //用户二维码url
+    optional uint32 is_realname_auth = 6;   //是否实名认证，0--未实名认证(默认)，1--已实名认证
+    optional uint32 is_in_my_blacklist = 7; //是否在我的黑名单中，0--不是(默认)，1--是
+    optional uint32 is_set_password = 8;    //是否设置过密码，0--未设置(默认,不需要设置密码)，1--已设置(进入修改密码页)，2--强制退出时需要设置登录密码(进入设置密码页)
+    optional uint32 user_sex = 9;           // 1--男，2--女
+    optional string city_code = 10;         //设置的位置信息
+    optional string user_sign = 11;         //用户签名
+    repeated LabelInfo label_lists = 12;    // 好友标签信息
+    optional uint32 find_me_group = 13;     //通过群聊向我发起聊天 0--打开,1--关闭
+    optional string source = 14;            //来源
+    optional uint32 source_id = 15;         //来源id;用户id 群id
+    optional uint32 source_type = 16;       // 0--群聊1-好友推荐2-分享链接3-手机号搜索4-YIME号搜索5-昵称搜索
 }
 
-message UserBlackListInfo {
-	repeated uint32 blacklist_uid_lists = 1;//黑名单用户uid列表
+message UserBlackListInfo
+{
+    repeated uint32 blacklist_uid_lists = 1; //黑名单用户uid列表
 }
 
-message GroupNoticeInfo{
-	optional string group_notice_content = 1;//公告内容
-	optional uint32 update_time=2;//修改时间
-	optional uint32 editor_uid = 3;//编辑群公告用户的uid
-	optional uint64 notice_id = 4;//公告id
+message GroupNoticeInfo
+{
+    optional string group_notice_content = 1; //公告内容
+    optional uint32 update_time = 2;          //修改时间
+    optional uint32 editor_uid = 3;           //编辑群公告用户的uid
+    optional uint64 notice_id = 4;            //公告id
 }
 
-message GroupMemberUserInfo {
-	optional uint32 member_uid =1;//群成员uid
-	optional uint32 join_type=2;//入群方式,1--邀请入群
-	optional uint32 invite_uid=3;//入群邀请人
-	optional string remark_name = 4;//我在群里面的备注名称
+message GroupMemberUserInfo
+{
+    optional uint32 member_uid = 1;  //群成员uid
+    optional uint32 join_type = 2;   //入群方式,1--邀请入群
+    optional uint32 invite_uid = 3;  //入群邀请人
+    optional string remark_name = 4; //我在群里面的备注名称
 }
 
-message GroupMemberListInfo {
-	optional uint32 root_uid = 1;//群主
-	repeated uint32 admin_uid_list = 2;//管理员
-	repeated GroupMemberUserInfo member_user_infos =3;
-	repeated uint32 bot_uid_list = 4;//机器人用户列表,只保存了机器人的uid
+message GroupMemberListInfo
+{
+    optional uint32 root_uid = 1;       //群主
+    repeated uint32 admin_uid_list = 2; //管理员
+    repeated GroupMemberUserInfo member_user_infos = 3;
+    repeated uint32 bot_uid_list = 4; //机器人用户列表,只保存了机器人的uid
 }
 
 message GroupAttachInfo
 {
-	optional uint32 group_top = 1 ;//群置顶,0--否(默认)，1--是
-	optional uint32 group_msg_mute = 2 ;//群消息免打扰(免推送),0--否(默认)，1--是
-	optional uint32 group_save_in_grouplist = 3 ;//保存到通信录,0--否(默认)，1--是
-	optional uint32 group_destory_readed = 4 ;//阅后即焚,0--否(默认)，1--是
-	optional uint32 group_screen_shot_notify = 5 ;//截屏通知,0--否(默认)，1--是
-	optional uint32 group_join_auth_type = 6 ;//加群需要认证,0--否(默认)，1--是
-	optional uint32 group_member_split = 7;//群员隔离
-	optional uint32 group_msg_gag = 8;//全员禁言
-	optional uint32 group_unable_edit_nickname = 9;//禁止修改昵称
-	optional string group_remark_name = 10;//用户对群的备注名称
-    optional uint32 group_msg_clean = 11 ;//群小时定时清理,0--否(默认)，1--是
-	optional uint32 allow_member_get_hisoty_msg = 12;//允许群成员获取聊天历史记录,0--否(默认)，1--是
-	optional uint32 allow_everyone_join = 13;//允许任何人加群,0--否，1--是(默认)
-	optional uint32 allow_member_invite_join = 14;//允许群成员邀请其他用户入群,0--否，1--是(默认)
-    optional uint32 group_invite_state = 15;//群邀请权限,0--所有人，1--仅限邀请 2--不允许任何人加群
+    optional uint32 group_top = 1;                            //群置顶,0--否(默认)，1--是
+    optional uint32 group_msg_mute = 2;                       //群消息免打扰(免推送),0--否(默认)，1--是
+    optional uint32 group_save_in_grouplist = 3;              //保存到通信录,0--否(默认)，1--是
+    optional uint32 group_destory_readed = 4;                 //阅后即焚,0--否(默认)，1--是
+    optional uint32 group_screen_shot_notify = 5;             //截屏通知,0--否(默认)，1--是
+    optional uint32 group_join_auth_type = 6;                 //加群需要认证,0--否(默认)，1--是
+    optional uint32 group_member_split = 7;                   //群员隔离
+    optional uint32 group_msg_gag = 8;                        //全员禁言
+    optional uint32 group_unable_edit_nickname = 9;           //禁止修改昵称
+    optional string group_remark_name = 10;                   //用户对群的备注名称
+    optional uint32 group_msg_clean = 11;                     //群小时定时清理,0--否(默认)，1--是
+    optional uint32 allow_member_get_hisoty_msg = 12;         //允许群成员获取聊天历史记录,0--否(默认)，1--是
+    optional uint32 allow_everyone_join = 13;                 //允许任何人加群,0--否，1--是(默认)
+    optional uint32 allow_member_invite_join = 14;            //允许群成员邀请其他用户入群,0--否，1--是(默认)
+    optional uint32 group_invite_state = 15;                  //群邀请权限,0--所有人，1--仅限邀请 2--不允许任何人加群
+    optional uint32 group_msg_at_notify = 16 [ default = 1 ]; //如果开启(1), 不论msg_mute是否开启,都推送
 }
 
-message GroupInfo{
+message GroupInfo
+{
     optional uint32 group_id = 1;
     optional string group_name = 2;
     optional string group_icon = 3;
-    optional GroupMemberListInfo group_member_lists = 5;//群成员列表
-	optional GroupAttachInfo group_attach_info=6;//群附加信息
-	optional string qr_code = 7;//二维码url
-	optional GroupNoticeInfo group_notice_info=8;//群公告信息
-	optional uint32 group_state = 9; //群状态，1--正常，其他--群已失效
-    optional uint32 is_encrypt = 11; //是否是加密会话 0--不是(默认） 1--是
+    optional GroupMemberListInfo group_member_lists = 5; //群成员列表
+    optional GroupAttachInfo group_attach_info = 6;      //群附加信息
+    optional string qr_code = 7;                         //二维码url
+    optional GroupNoticeInfo group_notice_info = 8;      //群公告信息
+    optional uint32 group_state = 9;                     //群状态，1--正常，其他--群已失效
+    optional uint32 is_encrypt = 11;                     //是否是加密会话 0--不是(默认） 1--是
 }
 
-message PhoneContactUserInfo{
-	optional string contact_name = 1;
-	optional string contact_phone = 2;
-	optional UserDetailInfo contact_user_info = 3;
-	optional uint32 cannot_chat = 4;//禁止发起聊天，0--不禁止（默认,可以发起聊天），1--禁止(不能对该用户发起聊天)
+message PhoneContactUserInfo
+{
+    optional string contact_name = 1;
+    optional string contact_phone = 2;
+    optional UserDetailInfo contact_user_info = 3;
+    optional uint32 cannot_chat = 4; //禁止发起聊天，0--不禁止（默认,可以发起聊天），1--禁止(不能对该用户发起聊天)
 }
 
 //开关设置信息
-message SwitchSettingInfo {
-    optional uint32 push_sound = 1; //离线消息push声音 0--打开,1--关闭
-    optional uint32 push_shake = 2; //离线消息push震动 0--打开,1--关闭
-    optional uint32 new_message = 3;//新消息离线通知 0--打开,1--关闭
-    optional uint32 video_call = 4;//语音和视频通话离线提醒 0--打开,1--关闭
-    optional uint32 poke_sound = 5;//戳一戳声音提醒 0--打开,1--关闭
-    optional uint32 poke_shake = 6;//戳一戳震动提醒 0--打开,1--关闭
-    optional uint32 find_me_phone = 11;//通过手机号查找我 0--打开,1--关闭
-    optional uint32 find_me_im_account = 12;//通过IM号查找我 0--打开,1--关闭
-    optional uint32 find_me_nickname = 13;//通过昵称查找我 0--打开,1--关闭
-    optional uint32 find_me_group = 14;//通过群聊 0--打开,1--关闭
-    optional uint32 find_me_recommend = 15;//通过推荐 0--打开,1--关闭
-    optional uint32 recommend_contacts_user = 16;//向我推荐通讯录朋友 0--打开,1--关闭
-    optional uint32 read_message_state = 17;//已读未读消息设置,打开该开关后对方看不到我的已读状态 0--打开,1--关闭
-    optional uint32 find_me_share_link = 18;//通过分享链接找到我 0-打开 1--关闭,默认为0表示允许
-    optional uint32 who_can_invite_me_group = 19;//谁能拉我进群 0-所有人 1-仅好友 2-没有人,默认为0表示所有人可以拉我进去
-    optional uint32 refuse_stranger_message = 20;//拒绝陌生人消息 0-关闭 1--打开 默认为0表示默认接收陌生人消息
+message SwitchSettingInfo
+{
+    optional uint32 push_sound = 1;               //离线消息push声音 0--打开,1--关闭
+    optional uint32 push_shake = 2;               //离线消息push震动 0--打开,1--关闭
+    optional uint32 new_message = 3;              //新消息离线通知 0--打开,1--关闭
+    optional uint32 video_call = 4;               //语音和视频通话离线提醒 0--打开,1--关闭
+    optional uint32 poke_sound = 5;               //戳一戳声音提醒 0--打开,1--关闭
+    optional uint32 poke_shake = 6;               //戳一戳震动提醒 0--打开,1--关闭
+    optional uint32 find_me_phone = 11;           //通过手机号查找我 0--打开,1--关闭
+    optional uint32 find_me_im_account = 12;      //通过IM号查找我 0--打开,1--关闭
+    optional uint32 find_me_nickname = 13;        //通过昵称查找我 0--打开,1--关闭
+    optional uint32 find_me_group = 14;           //通过群聊 0--打开,1--关闭
+    optional uint32 find_me_recommend = 15;       //通过推荐 0--打开,1--关闭
+    optional uint32 recommend_contacts_user = 16; //向我推荐通讯录朋友 0--打开,1--关闭
+    optional uint32 read_message_state = 17;      //已读未读消息设置,打开该开关后对方看不到我的已读状态 0--打开,1--关闭
+    optional uint32 find_me_share_link = 18;      //通过分享链接找到我 0-打开 1--关闭,默认为0表示允许
+    optional uint32 who_can_invite_me_group = 19; //谁能拉我进群 0-所有人 1-仅好友 2-没有人,默认为0表示所有人可以拉我进去
+    optional uint32 refuse_stranger_message = 20; //拒绝陌生人消息 0-关闭 1--打开 默认为0表示默认接收陌生人消息
+    optional uint32 who_can_see_my_phone = 21;    //设置电话显示 0-打开 1-仅好友能看 2-屏蔽
 }
 
 //文件信息
-message FileInfo{
-	optional string file_url = 1;//文件下载地址
-	optional string file_name = 2;//文件名
-	optional uint64 file_size = 3;//文件大小
+message FileInfo
+{
+    optional string file_url = 1;  //文件下载地址
+    optional string file_name = 2; //文件名
+    optional uint64 file_size = 3; //文件大小
 }
 
 //用户当前输入状态
-message UserWriteState{
-	optional uint32 from_id = 1; 
-    optional uint32 to_id = 2; 			// 个人或者私密群id
-	optional uint32 type = 3;     //1--个人, 2--私密群
-	optional uint32 write_state = 4; 	//0--结束输入, 1--正在输入
+message UserWriteState
+{
+    optional uint32 from_id = 1;
+    optional uint32 to_id = 2;       // 个人或者私密群id
+    optional uint32 type = 3;        // 1--个人, 2--私密群
+    optional uint32 write_state = 4; // 0--结束输入, 1--正在输入
 }
 //群当前通话状态
-message GroupCallState {
-    optional uint32 group_id = 1; //群id
+message GroupCallState
+{
+    optional uint32 group_id = 1;   //群id
     optional uint32 call_state = 2; //通话状态 0--未通话 1--正在通话
-    repeated uint32 user_id = 3;//当前正在通话的用户uid数组
+    repeated uint32 user_id = 3;    //当前正在通话的用户uid数组
 }
 //标签
-message LabelInfo{
+message LabelInfo
+{
     optional uint32 label_id = 1;
     optional string label_content = 2;
 }
 
-message LabelUserInfo{
+message LabelUserInfo
+{
     optional LabelInfo label_info = 1;
-	repeated uint32 user_id = 2;
+    repeated uint32 user_id = 2;
 }

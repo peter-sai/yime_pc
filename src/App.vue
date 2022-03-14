@@ -5,8 +5,7 @@
 <script lang="ts">
 import { computed, defineComponent, onBeforeUnmount, watch } from 'vue';
 import { Store, useStore } from 'vuex';
-import { getOssInfo } from './api';
-import { getToken as getUserToken } from './utils/utils';
+import { getToken as getUserToken, isMacOs } from './utils/utils';
 import { initStore, key } from './store';
 import { getStorage, setMsgList } from './utils/utils';
 import {
@@ -15,7 +14,7 @@ import {
   useClientSendMsgAckToServer,
   mergeData,
 } from './hooks/window';
-import { IMsgInfo } from './types/msg';
+import { IMsgInfo, ImsgItem, INotifyClassMsgListInfo } from './types/msg';
 import * as RongIMLib from '@rongcloud/imlib-next';
 import {
   installer as rtcInstaller,
@@ -223,6 +222,7 @@ export function reconnect(store: Store<initStore>) {
 }
 </script>
 <script lang="ts" setup>
+import Electron from 'Electron';
 const store = useStore(key);
 store.dispatch('init');
 const { t } = useI18n();
@@ -302,9 +302,6 @@ const clientSendMsgAckToServer = (msgInfos: IMsgInfo<string>[]) => {
 const stop = watch(
   computed(() => store.state.msgInfo),
   async (data: any) => {
-    if (data.cmd === 1006) {
-      console.log(data);
-    }
     if (data.cmd === 2024) {
       try {
         const notifyContent = JSON.parse(data.body.notifyContent);
@@ -365,8 +362,6 @@ const stop = watch(
       store.dispatch('addMsgList', { ...(msgInfos[0] || {}) });
       // 处理消息通知
       msgNotice(msgInfos[0]);
-      // 发送已读msgId
-      const userInfo = store.state.userInfo;
 
       // 如果是群聊并且是系统消息则更新本地缓存群详情
       if (
@@ -402,6 +397,9 @@ const stop = watch(
           uid: item.toId,
         });
       }
+
+      // 发送已读msgId
+      const userInfo = store.state.userInfo;
       // 如果发送者是自己 或者 已经开启了对方不显示已读消息开关 不需要发送msgId
       if (
         Number(userInfo.uid) === Number(msgInfos[0].fromId) ||
@@ -410,7 +408,8 @@ const stop = watch(
         return;
 
       if (msgInfos[0].isGroupMsg) {
-        // 发送ack
+        if (msgInfos[0].toId !== store.state.activeUid) return;
+        // 上传已读最大消息msgid
         const res = {
           msgHasReadedInfo: {
             isGroupMsg: 1,
@@ -428,6 +427,7 @@ const stop = watch(
           auth: true,
         });
       } else {
+        if (msgInfos[0].fromId !== store.state.activeUid) return;
         const res = {
           msgHasReadedInfo: {
             isGroupMsg: 0,
@@ -468,8 +468,28 @@ function msgNotice(item: any) {
   const res = store.state.msgList[id];
   let isMsgMute = !res ? false : true;
   if (res) {
-    isMsgMute = Boolean(res?.userDetailInfo?.userInfo?.userAttachInfo?.msgMute);
+    if (item.isGroupMsg) {
+      const groupAttachInfo = res?.groupDetailInfo?.groupAttachInfo || {};
+      // 群聊
+      isMsgMute = Boolean(groupAttachInfo?.groupMsgMute);
+      // 是否是at自己的消息 如果是 并且 开启at提醒通知的开关 则 通知
+      if (item.msgContent.msgContent === 'groupAtInfo') {
+        const groupAtInfo = item?.msgContent?.groupAtInfo?.atUsers?.find(
+          (e: any) => Number(e.uid) === Number(store.state.userInfo.uid),
+        );
+        if (Boolean(groupAttachInfo?.groupMsgAtNotify) && groupAtInfo) {
+          //
+          isMsgMute = false;
+        }
+      }
+    } else {
+      // 单聊
+      isMsgMute = Boolean(
+        res?.userDetailInfo?.userInfo?.userAttachInfo?.msgMute,
+      );
+    }
   }
+
   if (Number(item.fromId) !== Number(store.state.userDetailInfo.userInfo.uid)) {
     if (store.state.switchSettingInfo.pokeSound && !isMsgMute) {
       // 声音
@@ -503,6 +523,38 @@ window.onunload = () => {
   setMsgList(store.state.msgList);
   stop();
 };
+
+// 更新未读消息到应用图标
+type TMsgItem = INotifyClassMsgListInfo & ImsgItem;
+const unReadNum = computed(() => {
+  const msgList: TMsgItem[] = Object.values(store.state.msgList) as TMsgItem[];
+  const groupMsgList = msgList.filter(
+    (e) =>
+      e.unReadNum &&
+      e.isGroup &&
+      !e.groupDetailInfo?.groupAttachInfo?.groupMsgMute,
+  );
+  const userMsgList = msgList.filter(
+    (e) =>
+      e.unReadNum &&
+      !e.isGroup &&
+      !e.userDetailInfo?.userInfo?.userAttachInfo?.msgMute,
+  );
+  const num = groupMsgList
+    .concat(userMsgList)
+    .reduce(function (preValue: any, curValue: any) {
+      return preValue + curValue.unReadNum;
+    }, 0);
+  return num;
+});
+
+watch(unReadNum, (e) => {
+  if (isMacOs()) {
+    Electron.ipcRenderer.send('sendMessage', e?.toString() || '');
+  } else {
+    Electron.ipcRenderer.sendSync('update-badge', e ? e.toString() : null);
+  }
+});
 </script>
 <style lang="scss">
 #app {
