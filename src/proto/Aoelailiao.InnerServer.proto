@@ -3,247 +3,254 @@ package Aoelailiao.InnerServer;
 import "Aoelailiao.Common.proto";
 import "Aoelailiao.Login.proto";
 option java_package = "com.aoetech.aoelailiao.protobuf";
-option optimize_for = LITE_RUNTIME;
-
+option java_multiple_files = true;
+// option optimize_for = LITE_RUNTIME;
+option go_package = "github.com/protocolbuffers/protobuf/aoelailiao/go/protocolpb";
 
 //服务器内部使用的数据结构
 //好友信息
 message FriendInfo
 {
-	optional uint32 friend_uid=1;//好友uid
-	optional uint32 friend_query_type=2;//加好友的方式，1--搜索，2--扫描二维码， 3--个人名片=1;//好友uid
-	optional Aoelailiao.Common.UserAttachInfo friend_attach_info =3;//好友备注信息
+    optional uint32 friend_uid = 1;                                   //好友uid
+    optional uint32 friend_query_type = 2;                            //加好友的方式，1--搜索，2--扫描二维码， 3--个人名片=1;//好友uid
+    optional Aoelailiao.Common.UserAttachInfo friend_attach_info = 3; //好友备注信息
 }
 //好友列表
 message FriendInfoLists
 {
-	repeated FriendInfo friend_info_lists=1;//好友信息列表
+    repeated FriendInfo friend_info_lists = 1; //好友信息列表
 }
 
 //用户拥有的群信息
 message UserGroupInfo
 {
-	optional uint32 group_id =1;
-	optional Aoelailiao.Common.GroupAttachInfo group_attach_info =2; //用户对该群的备注信息
-	optional uint32 receive_gmsgid = 3; //进群时的群消息id
+    optional uint32 group_id = 1;
+    optional Aoelailiao.Common.GroupAttachInfo group_attach_info = 2; //用户对该群的备注信息
+    optional uint32 receive_gmsgid = 3;                               //进群时的群消息id
 }
 //用户群列表
 message UserGroupInfoLists
 {
-	repeated UserGroupInfo user_group_info_lists =1;
+    repeated UserGroupInfo user_group_info_lists = 1;
 }
 
 //用户会话列表
 message UserConversationLists
 {
-	repeated UserConversationInfo user_conversation_infos =1;
+    repeated UserConversationInfo user_conversation_infos = 1;
 }
 
 //用户的会话接收与已读状态
 message UserConversationInfo
 {
-    optional uint64 relation_id =1; //会话ID
-    optional uint32 is_encrypt =2; //是否私密聊,0--否（默认）,1--是
-    optional uint32 is_group_msg =3; //是否群消息
-    optional uint32 object_id =4; //对方uid或者群id
-    optional uint32 group_msgid_min =5; //用户进群时的消息ID,用户只能查看从这个消息id之后的消息
-    optional uint64 received_msg_id =6;//当前已接收的消息ID
-    optional uint64 readed_msg_id =7;//当前已读的消息ID
+    optional uint64 relation_id = 1;     //会话ID
+    optional uint32 is_encrypt = 2;      //是否私密聊,0--否（默认）,1--是
+    optional uint32 is_group_msg = 3;    //是否群消息
+    optional uint32 object_id = 4;       //对方uid或者群id
+    optional uint32 group_msgid_min = 5; //用户进群时的消息ID,用户只能查看从这个消息id之后的消息
+    optional uint64 received_msg_id = 6; //当前已接收的消息ID
+    optional uint64 readed_msg_id = 7;   //当前已读的消息ID
 }
 
 //会话的全局已读状态
 message ConversationGlobleReadedStateInfo
 {
-    optional uint64 relation_id =1; //会话ID
-    optional uint32 is_encrypt =2; //是否私密聊,0--否（默认）,1--是
-    optional uint32 is_group_msg =3; //是否群消息
-    optional uint32 from_id = 4; //单聊A的uid,群聊时填0
-    optional uint32 to_id = 5; //单聊B的uid，群聊时填群ID
-    optional uint64 readed_msg_id =6;//当前已读的消息ID
+    optional uint64 relation_id = 1;   //会话ID
+    optional uint32 is_encrypt = 2;    //是否私密聊,0--否（默认）,1--是
+    optional uint32 is_group_msg = 3;  //是否群消息
+    optional uint32 from_id = 4;       //单聊A的uid,群聊时填0
+    optional uint32 to_id = 5;         //单聊B的uid，群聊时填群ID
+    optional uint64 readed_msg_id = 6; //当前已读的消息ID
 }
 
 //用户待收取的离线消息列表
 message UserUnReceivedMsgIdListInfo
 {
-    repeated uint64 unreceived_msg_ids=1;//未收到的消息列表
+    repeated uint64 unreceived_msg_ids = 1; //未收到的消息列表
 }
 
 //离线push消息结构
 message PushMessage
 {
-	optional uint32 uid =1;//接收者uid
-	optional string push_token=2;//设备pushtoken
-	optional string push_msg=3;//push消息内容
-	optional uint32 push_msg_badge=4;//push消息未读数字
-	optional uint32 use_sandbox=5;//推送服务器类别(苹果)，0--沙箱环境，1--使用正式环境(默认)
-	optional uint32 allow_sound=6;//允许使用声音，0--不允许，1--允许(默认)
-	optional uint32 push_sdk=7;//pushSDK平台类型
+    optional uint32 uid = 1;            //接收者uid
+    optional string push_token = 2;     //设备pushtoken
+    optional string push_msg = 3;       // push消息内容
+    optional uint32 push_msg_badge = 4; // push消息未读数字
+    optional uint32 use_sandbox = 5;    //推送服务器类别(苹果)，0--沙箱环境，1--使用正式环境(默认)
+    optional uint32 allow_sound = 6;    //允许使用声音，0--不允许，1--允许(默认)
+    optional uint32 push_sdk = 7;       // pushSDK平台类型
 }
 
 //第三方云存储服务器上传token
 message FileUploadTokenInfo
 {
-	optional uint32 result_code =1;
-	optional string result_string=2;
-	optional string token=3;
+    optional uint32 result_code = 1;
+    optional string result_string = 2;
+    optional string token = 3;
 }
-
 
 //第三方登录接口返回的用户信息
 message ThirdPlatformUserInfo
 {
-	optional uint32 result_code =1;
-	optional string result_string=2;
-	optional string nick_name=3;
-	optional string avatar_url=4;
+    optional uint32 result_code = 1;
+    optional string result_string = 2;
+    optional string nick_name = 3;
+    optional string avatar_url = 4;
 }
 
 //放入redis中的个人信息结构
 message UserInfoInRedis
 {
-	optional uint32 uid = 1;
-	optional string nick_name = 2;
-	optional string icon = 3;
-	optional uint32 sex = 4;
-	optional string phone = 5;
-	optional string user_sign = 6;
-	optional string im_account = 7;
+    optional uint32 uid = 1;
+    optional string nick_name = 2;
+    optional string icon = 3;
+    optional uint32 sex = 4;
+    optional string phone = 5;
+    optional string user_sign = 6;
+    optional string im_account = 7;
 }
 
 //放入redis中的群信息结构
 message GroupInfoInRedis
 {
-	optional uint32 owner_uid =1;//群主uid
-	optional string icon=2;//群头像
-	optional string name=3;//群名称
+    optional uint32 owner_uid = 1; //群主uid
+    optional string icon = 2;      //群头像
+    optional string name = 3;      //群名称
 }
 
 //传给java后台用户更改的性别信息（附近的群/人功能）
 message UpdateUserSex
 {
-	optional uint32 uid =1;
-	optional uint32 sex =2;
+    optional uint32 uid = 1;
+    optional uint32 sex = 2;
 }
 
 //有权限操作申请信息的管理员uid集合
 message OperateGroupApplyUidList
 {
-	repeated string uid =1;
+    repeated string uid = 1;
 }
 
 message RouteDataInfo
 {
-	optional uint32 cid=1;//cid
-	optional uint32 recv_uid=2;//接收者uid
-	optional uint32 format=3;//1--二进制数据,2--json格式数据
-	optional bytes route_bin_data=4;//二进制格式数据
-	optional string route_json_data=5;//json格式数据
+    optional uint32 cid = 1;             // cid
+    optional uint32 recv_uid = 2;        //接收者uid
+    optional uint32 format = 3;          // 1--二进制数据,2--json格式数据
+    optional bytes route_bin_data = 4;   //二进制格式数据
+    optional string route_json_data = 5; // json格式数据
 }
 
-message SMSNotifyInfo{
-	optional string phone = 1;
-	optional string code = 2;
-	optional uint32 type = 3;
+message SMSNotifyInfo
+{
+    optional string phone = 1;
+    optional string code = 2;
+    optional uint32 type = 3;
 }
 
-message SyncGroupOperateInfo{
+message SyncGroupOperateInfo
+{
     optional string group_id = 1;
     optional string group_name = 2;
     repeated string member_ids = 3;
-    optional string operation_id =4;
-    optional uint32 type = 5; //1--创建群，2--解散群，3--加入群，4--退出群
+    optional string operation_id = 4;
+    optional uint32 type = 5; // 1--创建群，2--解散群，3--加入群，4--退出群
 }
 
 //群语音视频通话结束通知【启用GroupVideoCallStateNotify结构后本结构废弃】
-message GroupVideoCallEndNotify{
-    optional uint32 type = 1;//1--正常通话结束，2--无人接听
+message GroupVideoCallEndNotify
+{
+    optional uint32 type = 1;       // 1--正常通话结束，2--无人接听
     optional string channel_id = 2; //频道号或者房间号
-    optional uint32 end_time =3 ; //通话结束时间
+    optional uint32 end_time = 3;   //通话结束时间
 }
 
 //群语音视频通话会话状态变化通知
-message GroupVideoCallStateNotify{
-    optional uint32 type = 1;//1--通话创建成功（有所有人列表），3--正常通话结束，11--用户加入，12-用户退出，1001--无人接听
-    optional string channel_id = 2; //频道号或者房间号
-    optional uint32 end_time =3 ; //通话结束时间
-    repeated uint32 member_uids = 4;//当本次发生变化的用户uid数组
+message GroupVideoCallStateNotify
+{
+    // 1--通话创建成功（有所有人列表），3--正常通话结束，11--用户加入，12-用户退出，1001--无人接听
+    optional uint32 type = 1;
+    optional string channel_id = 2;  //频道号或者房间号
+    optional uint32 end_time = 3;    //通话结束时间
+    repeated uint32 member_uids = 4; //当本次发生变化的用户uid数组
 }
-
 
 //用户登录信息，用于异步存储用户的登录记录
 message UserLoginInfo
 {
-	optional uint32 uid = 1;//用户uid
-	optional uint32 login_type=2;//登录类型，0--手机号,1--微信,2--QQ,3--微博,4--微信小程序,5--短信验证码登录,6--支付宝登录，99--无效
-	optional uint32 is_auto_login=3;//是否自动登录,0--不是（用户授权登录）,1--是（app重登录）
-	optional uint32 login_time = 4;//登录时间，unix时间
-	optional string private_ip = 5;//内网ip
-	optional string public_ip = 6;//外网ip
-	optional string device_uuid = 7;//设备ID
-	optional string distribution_channel = 8;//分发渠道
+    optional uint32 uid = 1; //用户uid
 
+    //登录类型，0--手机号,1--微信,2--QQ,3--微博,4--微信小程序,5--短信验证码登录,6--支付宝登录，99--无效
+    optional uint32 login_type = 2;
+    optional uint32 is_auto_login = 3;        //是否自动登录,0--不是（用户授权登录）,1--是（app重登录）
+    optional uint32 login_time = 4;           //登录时间，unix时间
+    optional string private_ip = 5;           //内网ip
+    optional string public_ip = 6;            //外网ip
+    optional string device_uuid = 7;          //设备ID
+    optional string distribution_channel = 8; //分发渠道
 }
 
 //用户消息结构，用于记录用户的消息接收与已读状态
 message UserMessageStateInfo
 {
-	optional uint64 uid=1;//用户uid
-	optional uint64 msg_id=2;//消息id
+    optional uint64 uid = 1;    //用户uid
+    optional uint64 msg_id = 2; //消息id
 }
 
 //群成员变化
-message GroupMsgReq {
-	//cmd id :9111
-    repeated uint32 appId = 1; //群应用id集合
-    optional uint32 groupId = 2; //那个群发生了变化
-    optional uint32 push_type = 3; //0新增成员，1减少成员
-    optional uint32 userId  = 4; // 用户id
-	optional bytes attach_data = 32;
+message GroupMsgReq
+{
+    // cmd id :9111
+    repeated uint32 appId = 1;     //群应用id集合
+    optional uint32 groupId = 2;   //那个群发生了变化
+    optional uint32 push_type = 3; // 0新增成员，1减少成员
+    optional uint32 userId = 4;    // 用户id
+    optional bytes attach_data = 32;
 }
 
 //主动拉取群成员
-message PullGroupReq {
-	//cmd id :9113
-     optional uint32 comId = 1; //公司id
-	 optional bytes attach_data = 32;
+message PullGroupReq
+{
+    // cmd id :9113
+    optional uint32 comId = 1; //公司id
+    optional bytes attach_data = 32;
 }
 
-
 //主动拉取群成员返回
-message PullGroupAns{
-	//cmd id :9114
-	optional uint32 result_code = 1;//0--成功，1--失败
-	optional string result_string = 2;
-	repeated  PullGroup group = 3; //群集合
-	optional bytes attach_data = 32;
+message PullGroupAns
+{
+    // cmd id :9114
+    optional uint32 result_code = 1; // 0--成功，1--失败
+    optional string result_string = 2;
+    repeated PullGroup group = 3; //群集合
+    optional bytes attach_data = 32;
 }
 
 //拉取群实体
-message PullGroup{
-    optional uint32 appId = 1; //群应用id
+message PullGroup
+{
+    optional uint32 appId = 1;   //群应用id
     optional uint32 groupId = 2; //拉取群id
-    repeated  uint32 userId = 3; //用户id集合
+    repeated uint32 userId = 3;  //用户id集合
 }
-
 
 //用户手机联系人
 message UserContactUserInfo
 {
-	optional string contact_name = 1; //用户姓名
-	optional string contact_phone = 2; //用户手机号
-	optional string contact_phone_fixed = 3; //修正后的国际号码
+    optional string contact_name = 1;        //用户姓名
+    optional string contact_phone = 2;       //用户手机号
+    optional string contact_phone_fixed = 3; //修正后的国际号码
 }
 
-message UserContactUserInfoList{
-    repeated UserContactUserInfo user_contact_user_infos =1;//用户手机联系人列表
+message UserContactUserInfoList
+{
+    repeated UserContactUserInfo user_contact_user_infos = 1; //用户手机联系人列表
 }
-
 
 //----------------------------------内部服务器通信协议------------------------------
 
-message UserReloginSuccessNotify{
-	//cmd id: //9001
-	optional uint32 user_id = 1 ;
-    optional Aoelailiao.Login.EquipmentInformation equipment_information = 27;//当前设备信息
+message UserReloginSuccessNotify
+{
+    // cmd id: //9001
+    optional uint32 user_id = 1;
+    optional Aoelailiao.Login.EquipmentInformation equipment_information = 27; //当前设备信息
 }
-
