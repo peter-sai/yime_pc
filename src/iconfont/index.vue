@@ -18,6 +18,7 @@ import iconcaidan from './iconcaidan.vue';
 import iconchahao from './iconchahao.vue';
 import icondagou from './icondagou.vue';
 import icondanxuankuang from './icondanxuankuang.vue';
+import icondelete from './icondelete.vue';
 import icondiandian from './icondiandian.vue';
 import icondingzi from './icondingzi.vue';
 import iconemoji_icon2_copy from './iconemoji_icon2_copy.vue';
@@ -76,6 +77,7 @@ import iconyaoqinghaoyou from './iconyaoqinghaoyou.vue';
 import iconyaoqinghaoyoubeifen from './iconyaoqinghaoyoubeifen.vue';
 import iconyidu from './iconyidu.vue';
 import iconyidu1 from './iconyidu1.vue';
+import iconyincangbukejian from './iconyincangbukejian.vue';
 import iconyuehoujifen from './iconyuehoujifen.vue';
 import iconyuehoujifen2 from './iconyuehoujifen2.vue';
 import iconyuehoujifenbeifen1 from './iconyuehoujifenbeifen1.vue';
@@ -108,6 +110,7 @@ export default {
     iconchahao,
     icondagou,
     icondanxuankuang,
+    icondelete,
     icondiandian,
     icondingzi,
     iconemoji_icon2_copy,
@@ -166,6 +169,7 @@ export default {
     iconyaoqinghaoyoubeifen,
     iconyidu,
     iconyidu1,
+    iconyincangbukejian,
     iconyuehoujifen,
     iconyuehoujifen2,
     iconyuehoujifenbeifen1,

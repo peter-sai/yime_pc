@@ -876,29 +876,13 @@ const useRevoke = (
     if (Date.now() - msg.msgTime * 1000 > 120000) {
       return Toast('只能撤回两分钟内的消息');
     }
-    const userInfo = store.state.userInfo;
     const res = {
-      msgInfo: {
-        isGroupMsg: store.state.activeIsGroup ? 1 : 0,
-        fromId: userInfo.uid,
-        toId: Number(store.state.activeUid),
-        msgShowType: 4,
-        isEncrypt: 0,
-        msgContent: {
-          msgContentType: 8,
-          msgContent: 'revokeInfo',
-          revokeInfo: {
-            revokeMsgId: msg.msgId,
-            stringContent:
-              '<spile>撤回了一条消息#' + store.state.userInfo.nickname,
-          },
-        },
-      },
+      msgId: msg.msgId,
     };
     const data = await store.dispatch('postMsg', {
       query: res,
-      cmd: 2001,
-      encryption: 'Aoelailiao.Message.ClientSendMsgToServerReq',
+      cmd: 2007,
+      encryption: 'Aoelailiao.Message.ClientRevokeMsgReq',
       auth: true,
     });
     Toast(t(data.body.resultString));
