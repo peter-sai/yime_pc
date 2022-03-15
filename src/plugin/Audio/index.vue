@@ -1,10 +1,18 @@
 <template>
-  <div class="midea">
+  <div
+    class="midea"
+    :class="{ mideaDefault: !isFullscreen, mideaFullscreen: isFullscreen }"
+  >
     <div id="videoBox">
       <div id="yVideo"></div>
     </div>
     <div class="miniSize">
-      <Iconfont name="iconnarrow_icon" size="20" color="#fff" />
+      <Iconfont
+        name="iconnarrow_icon"
+        size="20"
+        color="#fff"
+        @click="fullScroll"
+      />
     </div>
     <div class="call">
       <div class="img" v-if="!conversationIng || mediaType !== 2">
@@ -32,7 +40,7 @@
         @click="changeAudio"
       >
         <Iconfont name="iconbianzu" size="30" color="#fff" />
-        <span>{{ t('切换到语音') }}</span>
+        <span>{{ t("切换到语音") }}</span>
       </div>
       <div
         class="item"
@@ -41,20 +49,20 @@
       >
         <img v-if="isOpenVideo" src="../../assets/img/videoActive.svg" alt="" />
         <img v-else src="../../assets/img/video.svg" alt="" />
-        <span>{{ t('摄像头') }}</span>
+        <span>{{ t("摄像头") }}</span>
       </div>
       <div class="item" @click="toggleMute" v-if="conversationIng">
         <img v-if="isMute" src="../../assets/img/audioActive.svg" alt="" />
         <img v-else src="../../assets/img/audio.svg" alt="" />
-        <span>{{ t('静音') }}</span>
+        <span>{{ t("静音") }}</span>
       </div>
       <div class="item" @click="hungup(1)">
         <Iconfont name="iconvideo_icon1" size="44" />
-        <span>{{ t('挂断') }}</span>
+        <span>{{ t("挂断") }}</span>
       </div>
       <div class="item" v-if="!isCall && !isAnswer" @click="accept">
         <Iconfont name="iconvideo_icon7" size="44" />
-        <span>{{ t('接听') }}</span>
+        <span>{{ t("接听") }}</span>
       </div>
     </div>
   </div>
@@ -62,48 +70,48 @@
 
 <script lang="ts">
 const map = {
-  1: '己方取消已发出的通话请求',
-  2: '己方拒绝收到的通话请求',
-  3: '己方挂断',
-  4: '己方忙碌',
-  5: '己方未接听',
-  6: '己方不支持当前音视频引擎',
-  7: '己方网络错误',
-  8: '己方摄像头资源获取失败，可能是权限原因',
-  9: '己方资源发布失败',
-  10: '己方订阅资源失败',
-  11: '对方取消发出的通话请求',
-  12: '对方拒绝收到的通话请求',
-  13: '通话过程中对方挂断',
-  14: '对方忙碌',
-  15: '对方未接听',
-  16: '对方引擎不支持',
-  17: '对方网络错误',
-  18: '对方摄像头资源获取失败，可能是权限原因',
-  19: '远端资源发布失败',
-  20: '远端订阅资源失败',
-  21: '己方其他端已加入新通话',
-  22: '己方其他端已在通话中',
-  23: '己方被禁止通话',
-  24: '己端接听系统通话（移动端接听系统来电）',
-  31: '远端其他端已加入新通话',
-  32: '远端其他端已在通话中',
-  33: '远端被禁止通话',
-  34: '远端接听系统通话（移动端接听系统来电）',
-  101: '其他端接听',
-  102: '其他端挂断',
-  103: '己方被对方加入黑名单',
-  104: '音视频服务未开通',
+  1: "己方取消已发出的通话请求",
+  2: "己方拒绝收到的通话请求",
+  3: "己方挂断",
+  4: "己方忙碌",
+  5: "己方未接听",
+  6: "己方不支持当前音视频引擎",
+  7: "己方网络错误",
+  8: "己方摄像头资源获取失败，可能是权限原因",
+  9: "己方资源发布失败",
+  10: "己方订阅资源失败",
+  11: "对方取消发出的通话请求",
+  12: "对方拒绝收到的通话请求",
+  13: "通话过程中对方挂断",
+  14: "对方忙碌",
+  15: "对方未接听",
+  16: "对方引擎不支持",
+  17: "对方网络错误",
+  18: "对方摄像头资源获取失败，可能是权限原因",
+  19: "远端资源发布失败",
+  20: "远端订阅资源失败",
+  21: "己方其他端已加入新通话",
+  22: "己方其他端已在通话中",
+  23: "己方被禁止通话",
+  24: "己端接听系统通话（移动端接听系统来电）",
+  31: "远端其他端已加入新通话",
+  32: "远端其他端已在通话中",
+  33: "远端被禁止通话",
+  34: "远端接听系统通话（移动端接听系统来电）",
+  101: "其他端接听",
+  102: "其他端挂断",
+  103: "己方被对方加入黑名单",
+  104: "音视频服务未开通",
 };
-import { initStore, key } from '@/store';
-import { IUserInfo } from '@/types/user';
+import { initStore, key } from "@/store";
+import { IUserInfo } from "@/types/user";
 import {
   IMuteUser,
   ISenderInfo,
   RCCallEndReason,
   RCCallSession,
-} from '@rongcloud/plugin-call';
-import { RCTrack } from '@rongcloud/plugin-rtc';
+} from "@rongcloud/plugin-call";
+import { RCTrack } from "@rongcloud/plugin-rtc";
 import {
   defineProps,
   defineComponent,
@@ -112,14 +120,14 @@ import {
   Ref,
   PropType,
   onUnmounted,
-} from 'vue';
-import { useI18n } from 'vue-i18n';
-import { Store, useStore } from 'vuex';
-import Iconfont from '../../iconfont/index.vue';
-import { Toast } from '../Toast';
-import basicTones from '../../assets/audio/basic_tones.mp3';
+} from "vue";
+import { useI18n } from "vue-i18n";
+import { Store, useStore } from "vuex";
+import Iconfont from "../../iconfont/index.vue";
+import { Toast } from "../Toast";
+import basicTones from "../../assets/audio/basic_tones.mp3";
 export default defineComponent({
-  name: 'Midea',
+  name: "Midea",
 });
 
 const init = async (
@@ -133,7 +141,7 @@ const init = async (
   hungup: () => void,
   videoCallActionUploadReq: (num: number) => void,
   t: { (key: string | number): string },
-  pause: () => void,
+  pause: () => void
 ) => {
   // 发送者
   const { session } = await (store.state.rongIm as any).call({
@@ -148,8 +156,8 @@ const init = async (
       onRinging(sender: ISenderInfo, session: RCCallSession) {
         const { userId } = sender;
         // 对方响铃
-        info.value = t('等待对方接听');
-        console.log('发起者', 'onRinging');
+        info.value = t("等待对方接听");
+        console.log("发起者", "onRinging");
         videoCallActionUploadReq(1);
       },
 
@@ -165,7 +173,7 @@ const init = async (
         startTimeOut();
         pause();
         conversationIng.value = true;
-        console.log('发起者', 'onAccept');
+        console.log("发起者", "onAccept");
       },
 
       /**
@@ -177,11 +185,11 @@ const init = async (
       onHungup(
         sender: ISenderInfo,
         reason: RCCallEndReason,
-        session: RCCallSession,
+        session: RCCallSession
       ) {
         const { userId } = sender;
         // 对方挂断
-        console.log('发起者', 'onHungup', map[reason]);
+        console.log("发起者", "onHungup", map[reason]);
         hungup();
         videoCallActionUploadReq(5);
         if (reason === 14) return Toast(map[reason]);
@@ -204,18 +212,18 @@ const init = async (
 
         // 视频在对应的容器里播放
         if (track.isVideoTrack()) {
-          const video = document.createElement('video');
-          if (document.getElementById('yVideo1')) {
+          const video = document.createElement("video");
+          if (document.getElementById("yVideo1")) {
             const videoBox = document.getElementById(
-              'videoBox',
+              "videoBox"
             ) as HTMLVideoElement;
-            video.setAttribute('id', 'videoBox1');
+            video.setAttribute("id", "videoBox1");
             videoBox.append(video);
           } else {
             const videoBox = document.getElementById(
-              'yVideo',
+              "yVideo"
             ) as HTMLVideoElement;
-            video.setAttribute('id', 'yVideo1');
+            video.setAttribute("id", "yVideo1");
             videoBox.append(video);
           }
           track.play(video);
@@ -226,8 +234,8 @@ const init = async (
       },
       onVideoMuteChange: function (muteUser: IMuteUser): void {
         if (muteUser.muted) {
-          const videoBox = document.getElementById('videoBox');
-          const videoBox1 = document.getElementById('videoBox1');
+          const videoBox = document.getElementById("videoBox");
+          const videoBox1 = document.getElementById("videoBox1");
           videoBox?.removeChild(videoBox1!);
         }
       },
@@ -267,11 +275,11 @@ const store = useStore(key);
 const conversationIng = ref(false);
 const sessionRoot = ref({}) as Ref<RCCallSession>;
 
-const info = ref(!props.isCall ? t('邀请你通话') : t('连接中…'));
+const info = ref(!props.isCall ? t("邀请你通话") : t("连接中…"));
 let time = 0;
 const isAnswer = ref(false);
 const isAudio = ref(false);
-
+const isFullscreen = ref(false);
 // 是否是静音
 const isMute = ref(false);
 // 是否关闭视频
@@ -283,7 +291,7 @@ const startTimeOut = () => {
   const s = time - m * 60;
 
   info.value =
-    m.toString().padStart(2, '0') + ':' + s.toString().padStart(2, '0');
+    m.toString().padStart(2, "0") + ":" + s.toString().padStart(2, "0");
   setTimeout(() => {
     startTimeOut();
   }, 1000);
@@ -303,7 +311,7 @@ onMounted(async () => {
       hungup,
       videoCallActionUploadReq,
       t,
-      pause,
+      pause
     );
   } else {
     // 接听方
@@ -320,7 +328,7 @@ onMounted(async () => {
        */
       onRinging(sender: ISenderInfo) {
         const { userId } = sender;
-        console.log('接听者', 'onRinging');
+        console.log("接听者", "onRinging");
       },
 
       /**
@@ -333,7 +341,7 @@ onMounted(async () => {
         startTimeOut();
         conversationIng.value = true;
         pause();
-        console.log('接听者', 'onAccept');
+        console.log("接听者", "onAccept");
       },
 
       /**
@@ -343,7 +351,7 @@ onMounted(async () => {
        * @param session 当前的 session 对象
        */
       onHungup(sender: ISenderInfo, reason: RCCallEndReason) {
-        console.log('接听者', 'onHungup', map[reason]);
+        console.log("接听者", "onHungup", map[reason]);
         hungup();
       },
 
@@ -360,37 +368,37 @@ onMounted(async () => {
 
         // 视频在对应的容器里播放
         if (track.isVideoTrack()) {
-          const video = document.createElement('video');
-          if (document.getElementById('yVideo1')) {
+          const video = document.createElement("video");
+          if (document.getElementById("yVideo1")) {
             const videoBox = document.getElementById(
-              'videoBox',
+              "videoBox"
             ) as HTMLVideoElement;
-            video.setAttribute('id', 'videoBox1');
+            video.setAttribute("id", "videoBox1");
             videoBox.append(video);
           } else {
             const videoBox = document.getElementById(
-              'yVideo',
+              "yVideo"
             ) as HTMLVideoElement;
-            video.setAttribute('id', 'yVideo1');
+            video.setAttribute("id", "yVideo1");
             videoBox.append(video);
           }
           track.play(video);
         }
       },
       onMemberModify: function (sender: any): void {
-        console.log('onMemberModify', sender);
+        console.log("onMemberModify", sender);
       },
       onMediaModify: function (sender: any): void {
-        console.log('onMediaModify', sender);
+        console.log("onMediaModify", sender);
         isAudio.value = true;
       },
       onAudioMuteChange: function (muteUser: IMuteUser): void {
-        console.log('onAudioMuteChange', muteUser);
+        console.log("onAudioMuteChange", muteUser);
       },
       onVideoMuteChange: function (muteUser: IMuteUser): void {
         if (muteUser.muted) {
-          const videoBox = document.getElementById('videoBox');
-          const videoBox1 = document.getElementById('videoBox1');
+          const videoBox = document.getElementById("videoBox");
+          const videoBox1 = document.getElementById("videoBox1");
           videoBox?.removeChild(videoBox1!);
         }
       },
@@ -415,14 +423,19 @@ const toggleVideo = () => {
   if (Object.keys(sessionRoot.value).length) {
     if (!isOpenVideo.value) {
       sessionRoot.value.disableVideoTrack();
-      const yVideo = document.getElementById('yVideo');
-      const yVideo1 = document.getElementById('yVideo1');
+      const yVideo = document.getElementById("yVideo");
+      const yVideo1 = document.getElementById("yVideo1");
       yVideo?.removeChild(yVideo1!);
     } else {
       sessionRoot.value.enableVideoTrack();
     }
     isOpenVideo.value = !isOpenVideo.value;
   }
+};
+
+//缩放
+const fullScroll = () => {
+  isFullscreen.value = !isFullscreen.value;
 };
 
 // 接听
@@ -453,10 +466,10 @@ const videoCallActionUploadReq = async (actionType: number) => {
     talkUid: props.yUserInfo?.uid,
   };
 
-  const data = await store.dispatch('postMsg', {
+  const data = await store.dispatch("postMsg", {
     query,
     cmd: 2009,
-    encryption: 'Aoelailiao.Message.VideoCallActionUploadReq',
+    encryption: "Aoelailiao.Message.VideoCallActionUploadReq",
     auth: true,
   });
 };
@@ -488,10 +501,8 @@ const pause = () => {
 }
 </style>
 <style lang="scss" scoped>
-@import '@/style/base.scss';
+@import "@/style/base.scss";
 .midea {
-  width: 548px;
-  height: 426px;
   background: linear-gradient(134deg, #98783e 0%, #996437 100%);
   box-shadow: 0px 0px 60px 0px rgba(0, 0, 0, 0.19);
   border-radius: 15px;
@@ -577,5 +588,13 @@ const pause = () => {
       }
     }
   }
+}
+.mideaDefault {
+  width: 548px;
+  height: 426px;
+}
+.mideaFullscreen {
+  width: 100%;
+  height: 100%;
 }
 </style>
