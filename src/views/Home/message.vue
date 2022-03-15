@@ -217,7 +217,7 @@
             <Iconfont name="icontuichu" size="15" />
             <span>{{ t('退出群聊') }}</span>
           </div>
-          <div class="item">
+          <div class="item" @click="hide(item)">
             <Iconfont name="iconyincangbukejian" size="15" />
             <span>{{ t('隐藏') }}</span>
           </div>
@@ -241,6 +241,7 @@ import Errors from '../Errors/index.vue';
 import { upDateStore } from '../Layout/Chat/userInfo.vue';
 import { initStore, key } from '@/store';
 import { IUserInfo } from '@/types/user';
+import { Dialog } from '../../plugin/Dialog';
 import {
   switchMsg,
   useGetOfflineMsg,
@@ -495,10 +496,53 @@ const quitGroupChat = async (item: ImsgItem) => {
 
 // 删除
 const del = (item: any) => {
-  if (store.state.msgList[item.id]) {
-    delete store.state.msgList[item.id];
-    store.commit('SET_ACTIVEUID', null);
-  }
+  Dialog({
+    title: t(
+      '当前会话删除后，所有聊天记录将被被删除，收到新消息，或通过搜索会话名称，会话将再次显示',
+    ),
+    callBack: async () => {
+      if (store.state.msgList[item.id]) {
+        delete store.state.msgList[item.id];
+        store.commit('SET_ACTIVEUID', null);
+        store.dispatch('postMsg', {
+          query: {
+            isGroupMsg: item.isGroup,
+            objectId: item.id,
+            opt: 1,
+          },
+          cmd: 2163,
+          encryption: 'Aoelailiao.Message.HideConversationReq',
+          auth: true,
+        });
+      }
+    },
+  });
+};
+
+// 隐藏
+const hide = (item: any) => {
+  console.log(item);
+  Dialog({
+    title: t(
+      '当前会话隐藏后，聊天记录不会被删除，所有已登录账号的设备已将隐藏会话。收到新消息，或通过搜索会话名称，会话将再次显示',
+    ),
+    callBack: async () => {
+      if (store.state.msgList[item.id]) {
+        delete store.state.msgList[item.id];
+        store.commit('SET_ACTIVEUID', null);
+        store.dispatch('postMsg', {
+          query: {
+            isGroupMsg: item.isGroup,
+            objectId: item.id,
+            opt: 0,
+          },
+          cmd: 2163,
+          encryption: 'Aoelailiao.Message.HideConversationReq',
+          auth: true,
+        });
+      }
+    },
+  });
 };
 
 // 群置顶

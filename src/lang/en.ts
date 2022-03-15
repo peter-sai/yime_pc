@@ -971,5 +971,6 @@ export default {
   登录成功正在获取数据: 'Login succeeded, getting data',
   拖入要发送的文件: 'Drag in the file to send',
   用户不接受邀请: 'User does not accept invitation',
+  隐藏: 'hide',
   '你被踢出群:<spile>': 'You were kicked out of the group:<spile>',
 };
