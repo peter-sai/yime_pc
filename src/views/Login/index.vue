@@ -75,17 +75,17 @@
         @click="goTo('/ForgetPassword')"
         v-if="btns.active !== 2"
       >
-        {{ t("忘记密码") }}?
+        {{ t('忘记密码') }}?
       </div>
       <!-- button -->
       <div class="button" @click="login" :class="{ isPwd: btns.active !== 0 }">
-        {{ t("登录") }}
+        {{ t('登录') }}
       </div>
       <div v-if="btns.active === 2" class="info" @click="btns.active = 1">
-        {{ t("密码登录") }}
+        {{ t('密码登录') }}
       </div>
       <div v-else class="info" @click="btns.active = 2">
-        {{ t("验证码登录") }}
+        {{ t('验证码登录') }}
       </div>
       <!-- info -->
       <!-- <div class="info">{{ t("未注册请使用验证码登录") }}</div> -->
@@ -100,29 +100,29 @@ import {
   reactive,
   ref,
   Ref,
-} from "vue";
+} from 'vue';
 export default defineComponent({
-  name: "login",
+  name: 'login',
 });
 </script>
 <script setup lang="ts">
-import logo from "@/assets/logo.svg";
-import { ILoginBtnItem, ILoginBtns } from "../../types/login";
-import InputGroup from "@/components/InputGroup/index.vue";
-import code from "@/config/code.json";
-import { useI18n } from "vue-i18n";
-import { Store, useStore } from "vuex";
-import { initStore, key } from "@/store";
-import { getLang, getStorage, md5, setStorage } from "@/utils/utils";
-import Iconfont from "@/iconfont/index.vue";
-import { Toast } from "@/plugin/Toast/index";
-import { Toast as Toast1 } from "@/plugin/Toast1/index";
-import { hideLoading, showLoading } from "@/plugin/Loading/index";
-import { useGoTo } from "@/hooks";
-import { useRouter } from "vue-router";
-import { saveData } from "@/api/app";
-import { initRonyun } from "@/App.vue";
-import { getRoam, mergeData } from "../../hooks/window";
+import logo from '@/assets/logo.svg';
+import { ILoginBtnItem, ILoginBtns } from '../../types/login';
+import InputGroup from '@/components/InputGroup/index.vue';
+import code from '@/config/code.json';
+import { useI18n } from 'vue-i18n';
+import { Store, useStore } from 'vuex';
+import { initStore, key } from '@/store';
+import { getLang, getStorage, md5, setStorage } from '@/utils/utils';
+import Iconfont from '@/iconfont/index.vue';
+import { Toast } from '@/plugin/Toast/index';
+import { Toast as Toast1 } from '@/plugin/Toast1/index';
+import { hideLoading, showLoading } from '@/plugin/Loading/index';
+import { useGoTo } from '@/hooks';
+import { useRouter } from 'vue-router';
+import { saveData } from '@/api/app';
+import { initRonyun } from '@/App.vue';
+import { getRoam, mergeData } from '../../hooks/window';
 
 const { t } = useI18n();
 const store = useStore(key);
@@ -132,8 +132,8 @@ const goTo = useGoTo(useRouter);
 // 导航按钮
 const btns = reactive<ILoginBtns>({
   list: [
-    { id: 0, name: t("手机登陆") },
-    { id: 1, name: t("IM登录") },
+    { id: 0, name: t('手机登陆') },
+    { id: 1, name: t('IM登录') },
   ],
   active: 0,
 });
@@ -143,21 +143,21 @@ function changeBtnActive(item: ILoginBtnItem) {
 
 // 参数
 const query = reactive({
-  phone: "",
-  verificationCode: "",
-  userName: "",
-  password: "",
+  phone: '',
+  verificationCode: '',
+  userName: '',
+  password: '',
 });
 
 type TQuery = typeof query;
 
 // 验证码文案
-let codeMsg = ref(t("获取验证码"));
+let codeMsg = ref(t('获取验证码'));
 let time = ref(60);
 
 // 区号
 const areaCode = ref(86);
-const langList = ["zh", "tw", "en"];
+const langList = ['zh', 'tw', 'en'];
 const langKey = store.state.lang === -1 ? getLang() : store.state.lang;
 const lang = langList[langKey];
 const list = reactive(code);
@@ -173,25 +173,25 @@ function useGetCode(
   query: TQuery,
   areaCode: Ref<number>,
   time: Ref<number>,
-  t: any
+  t: any,
 ) {
   return async () => {
     if (!query.phone) {
-      return Toast(t("请输入手机号"));
+      return Toast(t('请输入手机号'));
     }
-    if (codeMsg.value === t("获取验证码")) {
+    if (codeMsg.value === t('获取验证码')) {
       showLoading();
       const res = {
-        phone: "+" + areaCode.value + query.phone,
+        phone: '+' + areaCode.value + query.phone,
         type: 1,
       };
-      const data = await store.dispatch("postMsg", {
+      const data = await store.dispatch('postMsg', {
         query: res,
         cmd: 1001,
-        encryption: "Aoelailiao.Login.GetAuthCodeReq",
+        encryption: 'Aoelailiao.Login.GetAuthCodeReq',
       });
       if (data.body.resultCode === 0) {
-        codeMsg.value = time.value + "s";
+        codeMsg.value = time.value + 's';
         timeout(time, codeMsg);
       }
       return Toast(t(data.body.resultString));
@@ -204,9 +204,9 @@ const timeout = (time: Ref<number>, codeMsg: Ref<string>) => {
     if (time.value > 0) {
       timeout(time, codeMsg);
       time.value--;
-      codeMsg.value = time.value + "s";
+      codeMsg.value = time.value + 's';
     } else {
-      codeMsg.value = t("获取验证码");
+      codeMsg.value = t('获取验证码');
       time.value = 60;
     }
   }, 1000);
@@ -221,44 +221,44 @@ function useLogin(
   store: Store<initStore>,
   query: any,
   areaCode: Ref<number>,
-  t: (key: string) => string
+  t: (key: string) => string,
 ) {
   return async () => {
-    const language = getStorage("language") || 0;
+    const language = getStorage('language') || 0;
     if (btns.active === 0) {
       if (!query.phone) {
-        return Toast(t("请输入手机号"));
+        return Toast(t('请输入手机号'));
       }
       if (!query.password) {
-        return Toast(t("请输入密码"));
+        return Toast(t('请输入密码'));
       }
       // 密码登录
       showLoading();
       const res = {
         loginInfo: {
           loginType: 0,
-          loginId: "+" + areaCode.value + query.phone,
+          loginId: '+' + areaCode.value + query.phone,
           loginPasswdToken: md5(query.password),
         },
         clientLanguageType: language,
         equipmentInformation: {
-          deviceBrand: "web",
-          releaseVersion: "2.0.0",
+          deviceBrand: 'web',
+          releaseVersion: '2.0.0',
         },
       };
-      const data = await store.dispatch("postMsg", {
+      const data = await store.dispatch('postMsg', {
         query: res,
         cmd: 1005,
-        encryption: "Aoelailiao.Login.LoginReq",
+        encryption: 'Aoelailiao.Login.LoginReq',
       });
       useLoginCb(data, goTo, areaCode, query, store, t);
     } else if (btns.active === 2) {
       // 验证码登录
       if (!query.phone) {
-        return Toast(t("请输入手机号"));
+        return Toast(t('请输入手机号'));
       }
       if (!query.verificationCode) {
-        return Toast(t("请输入验证码"));
+        return Toast(t('请输入验证码'));
       }
 
       showLoading();
@@ -266,29 +266,29 @@ function useLogin(
       const res = {
         loginInfo: {
           loginType: 5,
-          loginId: "+" + areaCode.value + query.phone,
+          loginId: '+' + areaCode.value + query.phone,
           loginPasswdToken: query.verificationCode,
         },
         clientLanguageType: language,
         equipmentInformation: {
-          deviceBrand: "web",
-          releaseVersion: "2.0.0",
+          deviceBrand: 'web',
+          releaseVersion: '2.0.0',
         },
       };
 
-      const data = await store.dispatch("postMsg", {
+      const data = await store.dispatch('postMsg', {
         query: res,
         cmd: 1005,
-        encryption: "Aoelailiao.Login.LoginReq",
+        encryption: 'Aoelailiao.Login.LoginReq',
       });
       useLoginCb(data, goTo, areaCode, query, store, t);
     } else {
       // IM登录
       if (!query.phone) {
-        return Toast(t("请输入IM号"));
+        return Toast(t('请输入IM号'));
       }
       if (!query.password) {
-        return Toast(t("请输入密码"));
+        return Toast(t('请输入密码'));
       }
 
       showLoading();
@@ -301,15 +301,15 @@ function useLogin(
         },
         clientLanguageType: language,
         equipmentInformation: {
-          deviceBrand: "web",
-          releaseVersion: "2.0.0",
+          deviceBrand: 'web',
+          releaseVersion: '2.0.0',
         },
       };
 
-      const data = await store.dispatch("postMsg", {
+      const data = await store.dispatch('postMsg', {
         query: res,
         cmd: 1005,
-        encryption: "Aoelailiao.Login.LoginReq",
+        encryption: 'Aoelailiao.Login.LoginReq',
       });
       useLoginCb(data, goTo, areaCode, query, store, t);
     }
@@ -322,24 +322,24 @@ async function useLoginCb(
   areaCode: Ref<number>,
   query: any,
   store: Store<initStore>,
-  t: (key: string) => string
+  t: (key: string) => string,
 ) {
   // 手机号码未注册 跳转到 注册页面
   if (data.body.resultCode === 1201) {
     hideLoading();
     return goTo({
-      path: "/Register",
+      path: '/Register',
       query: {
-        loginId: "+" + areaCode.value + query.phone,
+        loginId: '+' + areaCode.value + query.phone,
         loginPasswdToken: query.verificationCode,
       },
     });
   }
   if (data.body.resultCode === 0) {
     // showLoading(t('获取取数据中'));
-    Toast1(t("登录成功正在获取数据"));
+    Toast1(t('登录成功正在获取数据'));
     // 设置切换账号
-    const userList = JSON.parse(getStorage("userList")) || {};
+    const userList = JSON.parse(getStorage('userList')) || {};
     // 保存数据到本地
     saveData(data, store);
 
@@ -353,9 +353,9 @@ async function useLoginCb(
         buffer: new Uint8Array(userLoginToken.buffer).toString(),
       };
       userList[data.body.userInfo.uid].token = JSON.stringify(obj);
-      setStorage("userList", JSON.stringify(userList));
+      setStorage('userList', JSON.stringify(userList));
     }
-    store.dispatch("init");
+    store.dispatch('init');
     try {
       // 初始化融云
       await initRonyun(store);
@@ -366,7 +366,7 @@ async function useLoginCb(
     const roamList = await getRoam(store);
     await mergeData([], store, roamList);
     hideLoading();
-    return goTo("/Home/Message");
+    return goTo('/Home/Message');
   }
   return Toast(t(data.body.resultString));
 }
@@ -376,10 +376,10 @@ const bodyClickCb = () => {
 };
 
 onMounted(() => {
-  document.body.addEventListener("click", bodyClickCb);
+  document.body.addEventListener('click', bodyClickCb);
 });
 onUnmounted(() => {
-  document.body.removeEventListener("click", bodyClickCb);
+  document.body.removeEventListener('click', bodyClickCb);
 });
 </script>
 <style lang="scss" scoped>
@@ -412,7 +412,7 @@ onUnmounted(() => {
             width: 20px;
             height: 3px;
             display: block;
-            content: "";
+            content: '';
             left: 50%;
             margin-left: -10px;
             bottom: -9px;

@@ -188,7 +188,7 @@
               )
             "
           >
-            <Iconfont name="iconxitongjingyin" size="12" />
+            <Iconfont name="iconxitongjingyin" size="15" />
             <span>{{
               item.groupDetailInfo?.groupAttachInfo?.groupMsgMute
                 ? t('取消静音')
@@ -206,7 +206,7 @@
               )
             "
           >
-            <Iconfont name="iconxitongjingyin" size="12" />
+            <Iconfont name="iconxitongjingyin" size="15" />
             <span>{{
               item.userDetailInfo?.userInfo?.userAttachInfo?.msgMute
                 ? t('取消静音')
@@ -214,11 +214,15 @@
             }}</span>
           </div>
           <div class="item" v-if="item.isGroup" @click="quitGroupChat(item)">
-            <Iconfont name="icontuichu" size="12" />
+            <Iconfont name="icontuichu" size="15" />
             <span>{{ t('退出群聊') }}</span>
           </div>
+          <div class="item">
+            <Iconfont name="iconyincangbukejian" size="15" />
+            <span>{{ t('隐藏') }}</span>
+          </div>
           <div class="item" @click="del(item)">
-            <Iconfont name="icontuichu" size="12" />
+            <Iconfont name="icondelete" size="12" />
             <span>{{ t('删除') }}</span>
           </div>
         </div>
