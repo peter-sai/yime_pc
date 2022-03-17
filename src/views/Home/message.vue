@@ -1,6 +1,6 @@
 <template>
-  <div style="flex: 1" @click.stop="showMenu = 0">
-    <MessageHeader @isSearch="changeIsSearch" />
+  <div style="flex: 1" @click.stop="showMenu = false">
+    <MessageHeader @isSearch="changeIsSearch" @rightClick="rightClick" />
     <div
       v-if="!msgList.length"
       style="position: absolute; left: 0; right: 0; bottom: 50px; top: 50px"
@@ -109,6 +109,17 @@
               :hover="item.id === store.state.activeUid"
             />
           </template>
+          <template v-slot:num v-else-if="item.unRead">
+            <Badge
+              :isMute="
+                item.isGroup
+                  ? item.groupDetailInfo?.groupAttachInfo?.groupMsgMute
+                  : item.userDetailInfo?.userInfo?.userAttachInfo?.msgMute
+              "
+              :num="0"
+              :hover="item.id === store.state.activeUid"
+            />
+          </template>
         </TableDouble>
         <!-- 系统消息 -->
         <TableDouble
@@ -142,96 +153,119 @@
           </template>
           <!-- <template v-slot:time>{{ formateTime(item.updateTime) }}</template> -->
         </TableDouble>
-        <div class="box" v-if="showMenu === item.id">
-          <div
-            v-if="item.isGroup"
-            class="item"
-            @click="
-              groupBeforeTop(!item.groupDetailInfo?.groupAttachInfo?.groupTop)
-            "
-          >
-            <Iconfont name="icondingzi" size="15" />
-            <span>{{
-              item.groupDetailInfo?.groupAttachInfo?.groupTop
-                ? t('取消置顶')
-                : t('置顶')
-            }}</span>
-          </div>
-          <div
-            v-else
-            class="item"
-            @click="
-              userBeforeTop(
-                !item.userDetailInfo?.userInfo?.userAttachInfo?.msgTop,
-                item.id,
-              )
-            "
-          >
-            <Iconfont name="icondingzi" size="15" />
-            <span>{{
-              item.userDetailInfo?.userInfo?.userAttachInfo?.msgTop
-                ? t('取消置顶')
-                : t('置顶')
-            }}</span>
-          </div>
-          <div class="item" @click="read(item)">
-            <Iconfont name="iconbianzu9" size="15" />
-            <span>{{ t('已读') }}</span>
-          </div>
-          <div
-            class="item"
-            v-if="item.isGroup"
-            @click="
-              beforeMsgNotdisturb(
-                item.groupDetailInfo?.groupAttachInfo?.groupMsgMute,
-                item,
-              )
-            "
-          >
-            <Iconfont name="iconxitongjingyin" size="15" />
-            <span>{{
-              item.groupDetailInfo?.groupAttachInfo?.groupMsgMute
-                ? t('取消静音')
-                : t('静音')
-            }}</span>
-            >
-          </div>
-          <div
-            class="item"
-            v-else
-            @click="
-              beforeMsgNotdisturb(
-                item.userDetailInfo?.userInfo?.userAttachInfo?.msgMute,
-                item,
-              )
-            "
-          >
-            <Iconfont name="iconxitongjingyin" size="15" />
-            <span>{{
-              item.userDetailInfo?.userInfo?.userAttachInfo?.msgMute
-                ? t('取消静音')
-                : t('静音')
-            }}</span>
-          </div>
-          <div class="item" v-if="item.isGroup" @click="quitGroupChat(item)">
-            <Iconfont name="icontuichu" size="15" />
-            <span>{{ t('退出群聊') }}</span>
-          </div>
-          <div class="item" @click="hide(item)">
-            <Iconfont name="iconyincangbukejian" size="15" />
-            <span>{{ t('隐藏') }}</span>
-          </div>
-          <div class="item" @click="del(item)">
-            <Iconfont name="icondelete" size="12" />
-            <span>{{ t('删除') }}</span>
-          </div>
-        </div>
+      </div>
+    </div>
+
+    <div class="box" v-if="showMenu" :style="style">
+      <div
+        v-if="rightClickItem.isGroup"
+        class="rightClickItem"
+        @click="
+          groupBeforeTop(
+            !rightClickItem.groupDetailInfo?.groupAttachInfo?.groupTop,
+            rightClickItem.id,
+          )
+        "
+      >
+        <Iconfont name="icondingzi" size="15" />
+        <span>{{
+          rightClickItem.groupDetailInfo?.groupAttachInfo?.groupTop
+            ? t('取消置顶')
+            : t('置顶')
+        }}</span>
+      </div>
+      <div
+        v-else
+        class="rightClickItem"
+        @click="
+          userBeforeTop(
+            !rightClickItem.userDetailInfo?.userInfo?.userAttachInfo?.msgTop,
+            rightClickItem.id,
+          )
+        "
+      >
+        <Iconfont name="icondingzi" size="15" />
+        <span>{{
+          rightClickItem.userDetailInfo?.userInfo?.userAttachInfo?.msgTop
+            ? t('取消置顶')
+            : t('置顶')
+        }}</span>
+      </div>
+      <div
+        v-if="rightClickItem.unReadNum || rightClickItem.unRead"
+        class="rightClickItem"
+        @click="read(rightClickItem)"
+      >
+        <Iconfont name="iconbianzu9" size="15" />
+        <span>{{ t('已读') }}</span>
+      </div>
+      <div v-else class="rightClickItem" @click="unRead(rightClickItem)">
+        <Iconfont name="iconbianzu9" size="15" />
+        <span>{{ t('未读') }}</span>
+      </div>
+      <div
+        class="rightClickItem"
+        v-if="rightClickItem.isGroup"
+        @click="
+          beforeMsgNotdisturb(
+            rightClickItem.groupDetailInfo?.groupAttachInfo?.groupMsgMute,
+            rightClickItem,
+          )
+        "
+      >
+        <Iconfont name="iconxitongjingyin" size="15" />
+        <span>{{
+          rightClickItem.groupDetailInfo?.groupAttachInfo?.groupMsgMute
+            ? t('取消静音')
+            : t('静音')
+        }}</span>
+        >
+      </div>
+      <div
+        class="rightClickItem"
+        v-else
+        @click="
+          beforeMsgNotdisturb(
+            rightClickItem.userDetailInfo?.userInfo?.userAttachInfo?.msgMute,
+            rightClickItem,
+          )
+        "
+      >
+        <Iconfont name="iconxitongjingyin" size="15" />
+        <span>{{
+          rightClickItem.userDetailInfo?.userInfo?.userAttachInfo?.msgMute
+            ? t('取消静音')
+            : t('静音')
+        }}</span>
+      </div>
+      <div
+        class="rightClickItem"
+        v-if="rightClickItem.isGroup"
+        @click="quitGroupChat(rightClickItem)"
+      >
+        <Iconfont name="icontuichu" size="15" />
+        <span>{{ t('退出群聊') }}</span>
+      </div>
+      <div class="rightClickItem" @click="hide(rightClickItem)">
+        <Iconfont name="iconyincangbukejian" size="15" />
+        <span>{{ t('隐藏') }}</span>
+      </div>
+      <div class="rightClickItem" @click="del(rightClickItem)">
+        <Iconfont name="icondelete" size="12" />
+        <span>{{ t('删除') }}</span>
       </div>
     </div>
   </div>
 </template>
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, ref } from 'vue';
+import {
+  computed,
+  ComputedRef,
+  defineComponent,
+  onMounted,
+  Ref,
+  ref,
+} from 'vue';
 import TableDouble from '@/components/TableDouble/index.vue';
 import Badge from '@/components/Badge/index.vue';
 import Iconfont from '@/iconfont/index.vue';
@@ -268,6 +302,8 @@ export default defineComponent({
   name: 'message',
 });
 const isSearch = ref(false);
+
+const rightClickItem = ref({}) as Ref<ImsgItem>;
 
 const changeIsSearch = (res: boolean) => {
   isSearch.value = res;
@@ -337,17 +373,28 @@ async function userGetSystemNotice(store: Store<initStore>) {
 type TMsgItem = INotifyClassMsgListInfo & ImsgItem;
 const { t } = useI18n();
 const formateTime = useFormateTime();
-const showMenu = ref(0);
+const showMenu = ref(false);
+const style = ref({ left: '0px', top: '0px' });
 const contextmenu = (e: any, item: ImsgItem) => {
-  e.preventDefault();
-  showMenu.value = item.id;
+  style.value.left = e.pageX + 'px';
+  style.value.top = e.pageY + 'px';
+  e?.preventDefault();
+  showMenu.value = true;
+  rightClickItem.value = item;
+};
+
+const rightClick = (e: any, item: ImsgItem) => {
+  style.value.left = e.pageX + 'px';
+  style.value.top = e.pageY + 'px';
+  rightClickItem.value = item;
+  showMenu.value = true;
 };
 
 onMounted(() => {
   document.body.addEventListener(
     'click',
     () => {
-      showMenu.value = 0;
+      showMenu.value = false;
     },
     true,
   );
@@ -362,7 +409,10 @@ const msgList: ComputedRef<TMsgItem[]> = computed(() => {
   let topList: TMsgItem[] = [];
   let defList: TMsgItem[] = [];
   list
-    .filter((e: TMsgItem) => e.msgClassId! || (e.lastMsg && e.lastMsg.msgId))
+    .filter(
+      (e: TMsgItem) =>
+        e.msgClassId! || (e.lastMsg && e.lastMsg.msgId && !e.isDel),
+    )
     .forEach((e: TMsgItem) => {
       if (e.isGroup && e.groupDetailInfo?.groupAttachInfo?.groupTop) {
         topList.push(e);
@@ -408,6 +458,7 @@ const goTo = (item: ImsgItem) => {
     store.commit('SET_ACTIVEISGROUP', false);
   }
   item.unReadNum = 0;
+  item.unRead = false;
   store.commit('SET_MSGLISTITEM', { res: item });
 };
 
@@ -448,6 +499,14 @@ const read = (item: ImsgItem) => {
   const msgList = store.state.msgList;
   const res = msgList[item.id];
   res.unReadNum = 0;
+  res.unRead = false;
+  store.commit('SET_MSGLISTITEM', { uid: item.id, res });
+};
+// 设置未读
+const unRead = (item: ImsgItem) => {
+  const msgList = store.state.msgList;
+  const res = msgList[item.id];
+  res.unRead = true;
   store.commit('SET_MSGLISTITEM', { uid: item.id, res });
 };
 
@@ -521,14 +580,35 @@ const del = (item: any) => {
 
 // 隐藏
 const hide = (item: any) => {
-  console.log(item);
   Dialog({
     title: t(
       '当前会话隐藏后，聊天记录不会被删除，所有已登录账号的设备已将隐藏会话。收到新消息，或通过搜索会话名称，会话将再次显示',
     ),
     callBack: async () => {
       if (store.state.msgList[item.id]) {
-        delete store.state.msgList[item.id];
+        /**
+         * 1、所有未读消息设为已读
+          2、关闭消息通知
+          3、取消置顶
+          4、当前列表删除会话入口
+         */
+        const selectItem = store.state.msgList[item.id];
+        selectItem.isDel = true;
+        selectItem.unReadNum = 0;
+        selectItem.unRead = false;
+        if (selectItem.isGroup) {
+          selectItem.groupDetailInfo.groupAttachInfo.groupTop = 0;
+          selectItem.groupDetailInfo.groupAttachInfo.groupMsgMute = 1;
+        } else {
+          if (selectItem?.userDetailInfo?.userInfo?.userAttachInfo) {
+            selectItem.userDetailInfo.userInfo.userAttachInfo.msgTop = 0;
+            selectItem.userDetailInfo.userInfo.userAttachInfo.msgMute = 1;
+          } else {
+            selectItem.userDetailInfo.userInfo.userAttachInfo = {};
+            selectItem.userDetailInfo.userInfo.userAttachInfo.msgTop = 0;
+            selectItem.userDetailInfo.userInfo.userAttachInfo.msgMute = 1;
+          }
+        }
         store.commit('SET_ACTIVEUID', null);
         store.dispatch('postMsg', {
           query: {
@@ -578,7 +658,7 @@ function useBeforeSwitch(
         // 更新缓存
         if (settingItemId === 1004) {
           // 置顶
-          upDateStore('msgTop', Number(e), store, false);
+          upDateStore('msgTop', Number(e), store, false, uid);
         }
         resovle(true);
       } else {
@@ -648,30 +728,30 @@ function useBeforeSwitch(
 }
 .tableItem {
   position: relative;
-  .box {
-    position: absolute;
-    // width: 106px;
-    background: #f9f9f9;
-    border-radius: 5px;
-    box-shadow: 0px 0px 26px 0px rgba(0, 0, 0, 0.2);
-    z-index: 99;
-    padding: 5px;
-    box-sizing: border-box;
-    top: 75%;
-    right: 13px;
-    .item {
-      display: flex;
-      cursor: pointer;
-      align-items: center;
-      padding: 6px 8px;
-      &:hover {
-        background: #eee;
-      }
-      span {
-        color: #000000;
-        font-size: 14px;
-        margin-left: 8px;
-      }
+}
+.box {
+  position: fixed;
+  // width: 106px;
+  background: #f9f9f9;
+  border-radius: 5px;
+  box-shadow: 0px 0px 26px 0px rgba(0, 0, 0, 0.2);
+  z-index: 99;
+  padding: 5px;
+  box-sizing: border-box;
+  // top: 75%;
+  // right: 13px;
+  .rightClickItem {
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    padding: 6px 8px;
+    &:hover {
+      background: #eee;
+    }
+    span {
+      color: #000000;
+      font-size: 14px;
+      margin-left: 8px;
     }
   }
 }

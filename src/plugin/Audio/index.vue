@@ -1,68 +1,78 @@
 <template>
-  <div
-    class="midea"
-    :class="{ mideaDefault: !isFullscreen, mideaFullscreen: isFullscreen }"
-  >
-    <div id="videoBox">
-      <div id="yVideo"></div>
+  <div class="mideaBox">
+    <div class="mideaMini" v-if="isMideaMini" @click="fullScroll">
+      <div class="mideaContent">
+        <img v-if="mediaType === 2" src="../../assets/img/video3.svg" alt="" />
+        <img v-else src="../../assets/img/vioce3.svg" alt="" />
+        <span>{{ info }}</span>
+      </div>
     </div>
-    <div class="miniSize">
-      <Iconfont
-        name="iconnarrow_icon"
-        size="20"
-        color="#fff"
-        @click="fullScroll"
-      />
-    </div>
-    <div class="call">
-      <div class="img" v-if="!conversationIng || mediaType !== 2">
-        <img
-          v-if="yUserInfo?.icon"
-          style="width: 75px; height: 75px; border-radius: 50%"
-          :src="yUserInfo?.icon"
-          alt=""
-        />
+    <div v-else class="midea">
+      <div id="videoBox">
+        <div id="yVideo"></div>
+      </div>
+      <div class="miniSize">
         <Iconfont
-          v-else
-          style="display: inline-block"
-          name="iconlianxiren"
-          color="#A8B5BE"
-          size="75"
+          name="iconnarrow_icon"
+          size="20"
+          color="#fff"
+          @click="fullScroll"
         />
       </div>
-      <div class="userName">{{ yUserInfo?.nickname }}</div>
-      <div class="status">{{ info }}</div>
-    </div>
-    <div class="btn">
-      <div
-        class="item changeAudio"
-        v-if="mediaType === 2 && conversationIng && !isAudio"
-        @click="changeAudio"
-      >
-        <Iconfont name="iconbianzu" size="30" color="#fff" />
-        <span>{{ t('切换到语音') }}</span>
+      <div class="call">
+        <div class="img" v-if="!conversationIng || mediaType !== 2">
+          <img
+            v-if="yUserInfo?.icon"
+            style="width: 75px; height: 75px; border-radius: 50%"
+            :src="yUserInfo?.icon"
+            alt=""
+          />
+          <Iconfont
+            v-else
+            style="display: inline-block"
+            name="iconlianxiren"
+            color="#A8B5BE"
+            size="75"
+          />
+        </div>
+        <div class="userName">{{ yUserInfo?.nickname }}</div>
+        <div class="status">{{ info }}</div>
       </div>
-      <div
-        class="item"
-        v-if="mediaType === 2 && conversationIng && !isAudio"
-        @click="toggleVideo"
-      >
-        <img v-if="isOpenVideo" src="../../assets/img/videoActive.svg" alt="" />
-        <img v-else src="../../assets/img/video.svg" alt="" />
-        <span>{{ t('摄像头') }}</span>
-      </div>
-      <div class="item" @click="toggleMute" v-if="conversationIng">
-        <img v-if="isMute" src="../../assets/img/audioActive.svg" alt="" />
-        <img v-else src="../../assets/img/audio.svg" alt="" />
-        <span>{{ t('静音') }}</span>
-      </div>
-      <div class="item" @click="hungup(1)">
-        <Iconfont name="iconvideo_icon1" size="44" />
-        <span>{{ t('挂断') }}</span>
-      </div>
-      <div class="item" v-if="!isCall && !isAnswer" @click="accept">
-        <Iconfont name="iconvideo_icon7" size="44" />
-        <span>{{ t('接听') }}</span>
+      <div class="btn">
+        <div
+          class="item changeAudio"
+          v-if="mediaType === 2 && conversationIng && !isAudio"
+          @click="changeAudio"
+        >
+          <Iconfont name="iconbianzu" size="30" color="#fff" />
+          <span>{{ t('切换到语音') }}</span>
+        </div>
+        <div
+          class="item"
+          v-if="mediaType === 2 && conversationIng && !isAudio"
+          @click="toggleVideo"
+        >
+          <img
+            v-if="isOpenVideo"
+            src="../../assets/img/videoActive.svg"
+            alt=""
+          />
+          <img v-else src="../../assets/img/video.svg" alt="" />
+          <span>{{ t('摄像头') }}</span>
+        </div>
+        <div class="item" @click="toggleMute" v-if="conversationIng">
+          <img v-if="isMute" src="../../assets/img/audioActive.svg" alt="" />
+          <img v-else src="../../assets/img/audio.svg" alt="" />
+          <span>{{ t('静音') }}</span>
+        </div>
+        <div class="item" @click="hungup(1)">
+          <Iconfont name="iconvideo_icon1" size="44" />
+          <span>{{ t('挂断') }}</span>
+        </div>
+        <div class="item" v-if="!isCall && !isAnswer" @click="accept">
+          <Iconfont name="iconvideo_icon7" size="44" />
+          <span>{{ t('接听') }}</span>
+        </div>
       </div>
     </div>
   </div>
@@ -279,7 +289,7 @@ const info = ref(!props.isCall ? t('邀请你通话') : t('连接中…'));
 let time = 0;
 const isAnswer = ref(false);
 const isAudio = ref(false);
-const isFullscreen = ref(false);
+const isMideaMini = ref(false);
 // 是否是静音
 const isMute = ref(false);
 // 是否关闭视频
@@ -435,7 +445,7 @@ const toggleVideo = () => {
 
 //缩放
 const fullScroll = () => {
-  isFullscreen.value = !isFullscreen.value;
+  isMideaMini.value = !isMideaMini.value;
 };
 
 // 接听
@@ -503,6 +513,8 @@ const pause = () => {
 <style lang="scss" scoped>
 @import '@/style/base.scss';
 .midea {
+  width: 548px;
+  height: 426px;
   background: linear-gradient(134deg, #98783e 0%, #996437 100%);
   box-shadow: 0px 0px 60px 0px rgba(0, 0, 0, 0.19);
   border-radius: 15px;
@@ -589,12 +601,35 @@ const pause = () => {
     }
   }
 }
-.mideaDefault {
-  width: 548px;
-  height: 426px;
-}
-.mideaFullscreen {
-  width: 100%;
-  height: 100%;
+.mideaMini {
+  width: 81px;
+  height: 82px;
+  background: #f7f7f7;
+  border-radius: 14px 0px 0px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: fixed;
+  right: 8px;
+  top: 35%;
+  .mideaContent {
+    width: 61px;
+    height: 61px;
+    background: #ffffff;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    img {
+      margin: 12px auto 6px auto;
+    }
+    span {
+      font-size: 12px;
+      font-family: Helvetica;
+      color: #0085ff;
+      line-height: 17px;
+    }
+  }
 }
 </style>

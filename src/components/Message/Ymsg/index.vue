@@ -8,8 +8,14 @@
     <div>
       <div class="title" v-if="isGroup">{{ userInfo?.nickname }}</div>
       <ImBg v-bind="$attrs">
-        <p v-for="item in list" :key="item" class="text">
-          {{ item.replace(/\u0000/g, '') }}
+        <p
+          v-for="item in list"
+          :key="item"
+          class="text"
+          :class="{ pointer: isBurn }"
+          @click="$emit('clickFireMsg')"
+        >
+          {{ item.replace(/\u0000/g, "") }}
         </p>
       </ImBg>
     </div>
@@ -23,20 +29,23 @@ import {
   PropType,
   computed,
   defineEmits,
-} from 'vue';
-import ImBg from '../ImgBg/index.vue';
-import Iconfont from '@/iconfont/index.vue';
-import { useStore } from 'vuex';
-import { useI18n } from 'vue-i18n';
-import { IUserInfo } from '@/types/user';
-import { key } from '@/store';
+} from "vue";
+import ImBg from "../ImgBg/index.vue";
+import Iconfont from "@/iconfont/index.vue";
+import { useStore } from "vuex";
+import { useI18n } from "vue-i18n";
+import { IUserInfo } from "@/types/user";
+import { key } from "@/store";
 export default defineComponent({
-  name: 'Ymsg',
+  name: "Ymsg",
 });
 </script>
 <script lang="ts" setup>
-defineEmits(['click']);
+defineEmits(["click", "clickFireMsg"]);
 defineProps({
+  isBurn: {
+    type: Boolean,
+  },
   userInfo: {
     type: Object as PropType<IUserInfo>,
   },
@@ -46,11 +55,11 @@ const isGroup = computed(() => store.state.activeIsGroup);
 const slots: any = useSlots();
 
 const list = slots.default()[0].children
-  ? slots.default()[0].children.split('\n\n')
+  ? slots.default()[0].children.split("\n\n")
   : [];
 </script>
 <style lang="scss" scoped>
-@import '@/style/theme/index.scss';
+@import "@/style/theme/index.scss";
 .mmsg {
   display: flex;
   max-width: 80%;
@@ -63,7 +72,7 @@ const list = slots.default()[0].children
   }
   .text {
     font-size: 16px;
-    @include theme('color', main);
+    @include theme("color", main);
     padding: 0;
   }
   .img {
@@ -73,6 +82,9 @@ const list = slots.default()[0].children
       border-radius: 50%;
     }
     margin-right: 10px;
+  }
+  .pointer {
+    cursor: pointer;
   }
 }
 </style>

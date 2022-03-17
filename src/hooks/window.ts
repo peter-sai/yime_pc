@@ -63,7 +63,7 @@ function useBeforeSwitch(
   inGroupType?: Ref<string>,
   groupAttachInfo?: any,
 ) {
-  return async (e: boolean | number) => {
+  return async (e: boolean | number, uid?: number) => {
     const switchState = typeof e === 'number' ? e : e ? 1 : 0;
     const res = {
       objectType: 2,
@@ -75,7 +75,6 @@ function useBeforeSwitch(
       res.switchState = e ? 0 : 1;
     }
     showLoading();
-    console.log(res);
 
     const data = await store.dispatch('postMsg', {
       query: res,
@@ -91,9 +90,21 @@ function useBeforeSwitch(
           upDateStore(store, 'groupMsgMute', res.switchState);
         } else if (settingItemId === 1004) {
           // 置顶
-          upDateStore(store, 'groupTop', switchState);
+          upDateStore(store, 'groupTop', switchState, uid);
         } else if (settingItemId === 2108) {
           //
+          store
+            .dispatch('postMsg', {
+              query: {
+                groupId: store.state.activeUid,
+              },
+              cmd: 1029,
+              encryption: 'Aoelailiao.Login.ClientGetGroupInfoReq',
+              auth: true,
+            })
+            .then((e) => {
+              console.log(e, 11111);
+            });
           upDateStore(store, 'groupMsgAtNotify', switchState);
         } else {
           // 设置进群权限
@@ -119,12 +130,17 @@ function upDateStore(
   store: Store<initStore>,
   group: string,
   switchState?: number,
+  uid?: number,
 ) {
   const msgList = store.state.msgList;
-  if (msgList && msgList[store.state.activeUid!]) {
-    const newMsgList = msgList[store.state.activeUid!];
+  let activeUid: number = store.state.activeUid!;
+  if (uid) {
+    activeUid = uid;
+  }
+  if (msgList && msgList[activeUid!]) {
+    const newMsgList = msgList[activeUid!];
     newMsgList.groupDetailInfo.groupAttachInfo[group] = switchState;
-    store.commit('SET_MSGLISTITEM', { res: newMsgList });
+    store.commit('SET_MSGLISTITEM', { res: newMsgList, uid: activeUid });
   }
 }
 
@@ -261,7 +277,9 @@ const useEnter = (
         },
       };
     }
-    console.log(res);
+    if (store.state.destoryReaded) {
+      res.msgInfo.msgShowType = 3;
+    }
 
     const data = await store.dispatch('postMsg', {
       query: res,

@@ -264,11 +264,15 @@ export async function upDateStore(
   e: number,
   store: Store<initStore>,
   isBack: boolean | undefined,
+  uid?: number,
 ) {
   const msgList = store.state.msgList;
-
-  if (msgList && msgList[store.state.activeUid!]) {
-    const newMsgList = msgList[store.state.activeUid!];
+  let activeUid: number = store.state.activeUid!;
+  if (uid) {
+    activeUid = uid;
+  }
+  if (msgList && msgList[activeUid!]) {
+    const newMsgList = msgList[activeUid!];
     if (!newMsgList.userDetailInfo.userInfo.userAttachInfo) {
       newMsgList.userDetailInfo.userInfo.userAttachInfo = {};
     }
@@ -277,7 +281,10 @@ export async function upDateStore(
       newMsgList.userDetailInfo.userInfo.userAttachInfo[res] = e ? 0 : 1;
     }
 
-    store.commit('SET_MSGLISTITEM', { res: newMsgList });
+    store.commit('SET_MSGLISTITEM', {
+      res: newMsgList,
+      uid: activeUid,
+    });
   }
 }
 

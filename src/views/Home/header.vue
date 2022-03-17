@@ -47,6 +47,7 @@
             v-for="item in contactsList"
             :key="item.id"
             @click="goToWindow(item)"
+            @contextmenu="contextmenu($event, item)"
           >
             <template v-slot:title>
               <div class="title">
@@ -60,7 +61,28 @@
             </template>
             <template v-slot:userImg>
               <div class="userImg">
-                <img :src="item?.userDetailInfo?.userInfo?.icon || item.icon" />
+                <img
+                  v-if="item?.userDetailInfo?.userInfo?.icon || item.icon"
+                  :src="item?.userDetailInfo?.userInfo?.icon || item.icon"
+                />
+                <div
+                  class="userImg"
+                  v-else-if="
+                    item.userDetailInfo?.userInfo?.nickname || item.nickname
+                  "
+                >
+                  {{
+                    (item.userDetailInfo?.userInfo?.nickname || item.nickname)
+                      .substr(0, 1)
+                      .toLocaleUpperCase()
+                  }}
+                </div>
+                <Iconfont
+                  v-else
+                  name="iconlianxiren"
+                  size="45"
+                  color="#929292"
+                />
               </div>
             </template>
           </TableDouble>
@@ -71,6 +93,7 @@
             v-for="item in groupList"
             :key="item?.id"
             @click="goToWindow(item)"
+            @contextmenu="contextmenu($event, item)"
           >
             <template v-slot:title>
               <div class="title">
@@ -129,7 +152,7 @@ import { switchMsg } from '@/hooks/window';
 import { IGroupInfo, IUserInfo } from '@/types/user';
 import { IGroupListItem } from '@/types/group';
 import { getTag } from '@/utils/utils';
-const emit = defineEmits(['isSearch']);
+const emit = defineEmits(['isSearch', 'rightClick']);
 const goTo = useGoTo(useRouter);
 const showBox = ref(false);
 const { t } = useI18n();
@@ -158,6 +181,11 @@ const getType = (item: ImsgItem) => {
       return switchMsg(lastMsg, t, store, item?.userDetailInfo?.userInfo || {});
     }
   }
+};
+
+const contextmenu = (e: any, item: ImsgItem) => {
+  e.preventDefault();
+  emit('rightClick', e, item);
 };
 
 const toggleShowSearch = (res: boolean) => {

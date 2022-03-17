@@ -3,7 +3,11 @@
     <!-- 无消息时显示 -->
     <div
       class="noMsg"
-      v-if="(!itemChat.readList || !itemChat.readList.length) && !activeIsGroup"
+      v-if="
+        (!itemChat.readList || !itemChat.readList.length) &&
+        !activeIsGroup &&
+        !userDetailInfo?.isFriend
+      "
     >
       <Iconfont
         style="display: inline-block"
@@ -39,17 +43,19 @@
         <Time v-if="isShowTime(key)">{{ formateTime(item.msgTime, t) }}</Time>
         <!-- 普通消息 -->
         <!-- 阅后即焚 -->
-        <div v-if="item.msgShowType === 3" class="item">
+        <div
+          v-if="item.msgShowType === 3 && !showMsg && isShowHowComponent(item)"
+          class="item"
+        >
           <Ymsg
             @click="showUserInfo(getUserInfo(item).uid)"
+            @clickFireMsg="showMsg = true"
             :userInfo="getUserInfo(item)"
+            :isBurn="true"
             v-if="isShowHowComponent(item)"
           >
-            {{ t('请在App客户端, 查看阅后即焚消息') }}
+            {{ t('点击查看阅后即焚消息') }}
           </Ymsg>
-          <Mmsg :isRead="item.msgId <= readMsgId" v-else>
-            {{ t('请在App客户端, 查看阅后即焚消息') }}
-          </Mmsg>
         </div>
         <div class="item" v-else-if="item.type === 'stringContent'">
           <!-- 普通消息 -->
@@ -364,13 +370,14 @@ import {
   formatMsg,
   downloadFile,
 } from '@/hooks/window';
-import { IGroupInfo, IUserInfo } from '@/types/user';
+import { IGroupInfo, IUserDetailInfo, IUserInfo } from '@/types/user';
 import { Toast } from '@/plugin/Toast';
 import ClipboardJS from 'clipboard';
 import { MediaAudio } from '@/plugin/Audio';
 import { hideLoading, showLoading } from '@/plugin/Loading';
 
 const playMsgId = ref(0);
+const showMsg = ref(false);
 
 async function getGroupInfo(store: Store<initStore>, uid: number) {
   if (!uid) return;
@@ -480,6 +487,9 @@ const props = defineProps({
   },
   groupDetailInfo: {
     type: Object as PropType<IGroupInfo>,
+  },
+  userDetailInfo: {
+    type: Object as PropType<IUserDetailInfo>,
   },
 });
 

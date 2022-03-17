@@ -24,6 +24,7 @@
     <div class="msg">
       <Message
         :yUserInfo="yUserInfo"
+        :userDetailInfo="userDetailInfo"
         @toggleBox="toggleBox"
         @changeTag="changeTag"
       />
@@ -186,7 +187,7 @@ const useGetDetail = async (
     isBotUser.value = false;
   }
 
-  // userDetailInfo.value = msgItem.userDetailInfo || {};
+  userDetailInfo.value = msgItem.userDetailInfo || {};
   yUserInfo.value = msgItem.userDetailInfo?.userInfo || {};
 };
 
@@ -315,6 +316,7 @@ const toggleBox = async (uid?: number) => {
     });
     msgItem = data.body;
   }
+
   userDetailInfo.value = msgItem?.userDetailInfo || {};
   yUserInfo.value = msgItem?.userDetailInfo?.userInfo || {};
   showBox.value = !showBox.value;

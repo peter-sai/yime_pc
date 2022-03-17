@@ -468,6 +468,7 @@ function msgNotice(item: any) {
   const id = item.isGroupMsg ? item.toId : item.fromId;
   const res = store.state.msgList[id];
   let isMsgMute = !res ? false : true;
+  let groupMsgAtNotify = false;
   if (res) {
     if (item.isGroupMsg) {
       const groupAttachInfo = res?.groupDetailInfo?.groupAttachInfo || {};
@@ -480,7 +481,7 @@ function msgNotice(item: any) {
         );
         if (Boolean(groupAttachInfo?.groupMsgAtNotify) && groupAtInfo) {
           //
-          isMsgMute = false;
+          groupMsgAtNotify = true;
         }
       }
     } else {
@@ -492,12 +493,18 @@ function msgNotice(item: any) {
   }
 
   if (Number(item.fromId) !== Number(store.state.userDetailInfo.userInfo.uid)) {
-    if (store.state.switchSettingInfo.pokeSound && !isMsgMute) {
+    if (
+      (store.state.switchSettingInfo.pokeSound && !isMsgMute) ||
+      groupMsgAtNotify
+    ) {
       // 声音
       audio.play();
     }
 
-    if (store.state.switchSettingInfo.newMessage && !isMsgMute) {
+    if (
+      (store.state.switchSettingInfo.newMessage && !isMsgMute) ||
+      groupMsgAtNotify
+    ) {
       // 浏览器弹框
       if (Notification.permission === 'granted') {
         const res = new Notification(name || 'YIME', {
