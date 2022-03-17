@@ -32,11 +32,12 @@ import {
 import messageAudio from './assets/audio/message.wav';
 import { MediaAudio } from './plugin/Audio';
 import { GroupMediaAudio, hideGroupMediaAudio } from './plugin/GroupAudio';
-import { Toast } from './plugin/Toast';
 import { initOss } from './hooks/window';
 import { useI18n } from 'vue-i18n';
 import { hideLoading } from './plugin/Loading';
 import { yimechat } from './api';
+import config from './config';
+
 export async function initRonyun(store: Store<initStore>) {
   // IM 客户端初始化
   const RongCallLib = RongIMLib.init({
@@ -202,7 +203,7 @@ export function reconnect(store: Store<initStore>) {
   if (store.state.ws) return;
   setTimeout(function () {
     //没连接上会一直重连，设置延迟避免请求过多
-    let ws = new WebSocket('wss://ws-test.yime.app');
+    let ws = new WebSocket(config.VUE_APP_BASEURL!);
     // store.commit('SET_ISONLINE', '连接中...');
     ws.binaryType = 'arraybuffer';
     store.commit('SET_WS', ws);
@@ -233,7 +234,7 @@ if (Notification.permission !== 'granted') {
 }
 
 const init = async () => {
-  let ws = new WebSocket('wss://ws-test.yime.app');
+  let ws = new WebSocket(config.VUE_APP_BASEURL!);
   // store.commit('SET_ISONLINE', '连接中...');
   store.commit('SET_WS', ws);
   ws.binaryType = 'arraybuffer';

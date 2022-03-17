@@ -63,7 +63,6 @@ export default defineComponent({
 </script>
 <script setup lang="ts">
 import InputGroup from '@/components/InputGroup/index.vue';
-import logo from '@/assets/logo.svg';
 import Iconfont from '@/iconfont/index.vue';
 import { useI18n } from 'vue-i18n';
 import { reactive, ref, Ref } from 'vue';
@@ -75,6 +74,9 @@ import { saveData } from '@/api/app';
 import { Store, useStore } from 'vuex';
 import { initStore, key } from '@/store';
 import { initRonyun } from '@/App.vue';
+import config from '../../config';
+const logoPath = config.ELECTRON_NAME;
+const logo = require(`@/assets/${logoPath}/logo.svg`);
 const { t } = useI18n();
 
 const store = useStore(key);

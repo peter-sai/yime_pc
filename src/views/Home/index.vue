@@ -42,7 +42,6 @@ import Iconfont from '@/iconfont/index.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useGoTo } from '@/hooks';
 import { useStore } from 'vuex';
-import Electron from 'Electron';
 import { key } from '@/store';
 import { ImsgItem, INotifyClassMsgListInfo } from '@/types/msg';
 const store = useStore(key);
@@ -73,8 +72,6 @@ const unReadNum = computed(() => {
     .reduce(function (preValue: any, curValue: any) {
       return preValue + curValue.unReadNum;
     }, 0);
-  // Electron.ipcRenderer.send('sendMessage', num?.toString() || '');
-  // Electron.ipcRenderer.sendSync('update-badge', num ? num.toString() : null);
   return num;
 });
 </script>

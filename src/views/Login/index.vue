@@ -106,7 +106,6 @@ export default defineComponent({
 });
 </script>
 <script setup lang="ts">
-import logo from '@/assets/logo.svg';
 import { ILoginBtnItem, ILoginBtns } from '../../types/login';
 import InputGroup from '@/components/InputGroup/index.vue';
 import code from '@/config/code.json';
@@ -123,6 +122,9 @@ import { useRouter } from 'vue-router';
 import { saveData } from '@/api/app';
 import { initRonyun } from '@/App.vue';
 import { getRoam, mergeData } from '../../hooks/window';
+import config from '../../config';
+const logoPath = config.ELECTRON_NAME;
+const logo = require(`@/assets/${logoPath}/logo.svg`);
 
 const { t } = useI18n();
 const store = useStore(key);

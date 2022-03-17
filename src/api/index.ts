@@ -1,5 +1,4 @@
 import request from '../config/axios';
-
 // 获取阿里云存储信息
 export const getOssInfo = () => {
   return request({

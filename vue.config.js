@@ -1,3 +1,10 @@
+const config = {
+  dev: 'YIME',
+  yime: 'YIME',
+  duoliao: 'DUOLIAO',
+  momo: 'MOMO',
+};
+
 module.exports = {
   // 这个值也可以被设置为相对路径 ('./')，这样所有的资源都会被链接为相对路径，这样打出来的包可以被部署在任意路径。
   publicPath: './',
@@ -45,8 +52,45 @@ module.exports = {
   chainWebpack: (config) => {
     //设置标题  默认不设置的话是项目名字
     config.plugin('html').tap((args) => {
-      args[0].title = 'YIME';
+      args[0].title = config[process.env.VUE_APP_MODE];
       return args;
     });
+  },
+  pluginOptions: {
+    electronBuilder: {
+      builderOptions: {
+        productName: config[process.env.VUE_APP_MODE],
+        mac: {
+          icon: `build/${config[process.env.VUE_APP_MODE]}/icons/icon.icns`,
+          entitlements: 'entitlements.mac.plist',
+          hardenedRuntime: true,
+          extendInfo: {
+            NSMicrophoneUsageDescription: '请允许本程序访问您的麦克风',
+            NSCameraUsageDescription: '请允许本程序访问您的摄像头',
+          },
+        },
+        win: {
+          icon: `build/${config[process.env.VUE_APP_MODE]}/icons/icon.ico`,
+          //win相关配置
+          target: [
+            {
+              target: 'nsis', //利用nsis制作安装程序
+              arch: [
+                'x64', //64位
+                'ia32', //32位
+              ],
+            },
+          ],
+        },
+        nsis: {
+          oneClick: false, // 是否一键安装
+          allowElevation: true, // 允许请求提升。 如果为false，则用户必须使用提升的权限重新启动安装程序。
+          allowToChangeInstallationDirectory: true, // 允许修改安装目录
+          createDesktopShortcut: true, // 创建桌面图标
+          createStartMenuShortcut: true, // 创建开始菜单图标
+          shortcutName: config[process.env.VUE_APP_MODE], // 图标名称
+        },
+      },
+    },
   },
 };

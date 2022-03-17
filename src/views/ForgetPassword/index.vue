@@ -67,7 +67,6 @@ export default defineComponent({
 });
 </script>
 <script setup lang="ts">
-import logo from '@/assets/logo.svg';
 import Iconfont from '@/iconfont/index.vue';
 import { useI18n } from 'vue-i18n';
 import InputGroup from '@/components/InputGroup/index.vue';
@@ -80,6 +79,9 @@ import { Toast } from '@/plugin/Toast';
 import { showLoading } from '@/plugin/Loading';
 import { useRouter } from 'vue-router';
 import { useGoBack } from '@/hooks';
+import config from '../../config';
+const logoPath = config.ELECTRON_NAME;
+const logo = require(`@/assets/${logoPath}/logo.svg`);
 
 const router = useRouter();
 const store = useStore(key);
