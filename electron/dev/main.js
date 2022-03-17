@@ -63,6 +63,8 @@ function createWindow() {
     new Badge(win, {});
   }
 
+  app.setAppUserModelId('com.im.YIME');
+
   // 打开开发者工具
   // win.webContents.openDevTools();
 }
