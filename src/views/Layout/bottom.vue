@@ -763,8 +763,8 @@ function useBeforeSwitch(
   return async (id: number) => {
     burnInfo.active = id;
     const res = {
-      objectType: 0,
-      // objectId: store.state.activeUid,
+      objectType: 1,
+      objectId: store.state.activeUid,
       settingItemId,
       switchState: id,
     };
@@ -789,7 +789,7 @@ function useBeforeSwitch(
       } else {
         reject();
       }
-      // Toast(t(data.body.resultString));
+      Toast(t(data.body.resultString));
     });
   };
 }
