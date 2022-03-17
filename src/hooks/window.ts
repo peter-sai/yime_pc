@@ -277,7 +277,9 @@ const useEnter = (
         },
       };
     }
-    console.log(res);
+    if (store.state.destoryReaded) {
+      res.msgInfo.msgShowType = 3;
+    }
 
     const data = await store.dispatch('postMsg', {
       query: res,
