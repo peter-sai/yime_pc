@@ -3,7 +3,11 @@
     <!-- 无消息时显示 -->
     <div
       class="noMsg"
-      v-if="(!itemChat.readList || !itemChat.readList.length) && !activeIsGroup"
+      v-if="
+        (!itemChat.readList || !itemChat.readList.length) &&
+        !activeIsGroup &&
+        !userDetailInfo?.isFriend
+      "
     >
       <Iconfont
         style="display: inline-block"
@@ -364,7 +368,7 @@ import {
   formatMsg,
   downloadFile,
 } from '@/hooks/window';
-import { IGroupInfo, IUserInfo } from '@/types/user';
+import { IGroupInfo, IUserDetailInfo, IUserInfo } from '@/types/user';
 import { Toast } from '@/plugin/Toast';
 import ClipboardJS from 'clipboard';
 import { MediaAudio } from '@/plugin/Audio';
@@ -480,6 +484,9 @@ const props = defineProps({
   },
   groupDetailInfo: {
     type: Object as PropType<IGroupInfo>,
+  },
+  userDetailInfo: {
+    type: Object as PropType<IUserDetailInfo>,
   },
 });
 

@@ -972,5 +972,10 @@ export default {
   拖入要发送的文件: 'Drag in the file to send',
   用户不接受邀请: 'User does not accept invitation',
   隐藏: 'hide',
+  '当前会话隐藏后，聊天记录不会被删除，所有已登录账号的设备已将隐藏会话。收到新消息，或通过搜索会话名称，会话将再次显示':
+    'After the current session is hidden, the chat record will not be deleted, and all devices with logged in accounts will hide the session. When a new message is received, or by searching the session name, the session will be displayed again',
+  '当前会话删除后，所有聊天记录将被被删除，收到新消息，或通过搜索会话名称，会话将再次显示':
+    'After the current session is deleted, all chat records will be deleted, new messages will be received, or the session will be displayed again by searching the session name',
+  at我时显示通知: '@Show notifications when I',
   '你被踢出群:<spile>': 'You were kicked out of the group:<spile>',
 };
