@@ -57,7 +57,7 @@
             </template>
           </Table>
           <Table
-            title="@我时显示通知"
+            title="at我时显示通知"
             hide-more
             v-if="Boolean(groupDetailInfo?.groupAttachInfo?.groupMsgMute)"
           >

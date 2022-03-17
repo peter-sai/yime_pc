@@ -219,7 +219,6 @@ async function getGroupInfo(store: Store<initStore>) {
     });
 
     msgItem.value = data.body;
-    console.log(msgItem.value);
 
     const item = {
       id: data.body.groupDetailInfo.groupId,

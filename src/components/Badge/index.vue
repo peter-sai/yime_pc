@@ -1,5 +1,6 @@
 <template>
   <div
+    v-if="num"
     class="badge"
     :class="{
       double: length === 2,
@@ -10,6 +11,16 @@
   >
     {{ num }}
   </div>
+  <div
+    v-else
+    class="badge unRead"
+    :class="{
+      double: length === 2,
+      isMute: props.isMute,
+      isHome: props.isHome,
+      hover: props.hover,
+    }"
+  />
 </template>
 
 <script lang="ts">
@@ -57,6 +68,11 @@ length.value = props.num.toString().length;
   align-items: center;
   justify-content: center;
   background: #0085ff;
+  &.unRead {
+    height: 10px;
+    width: 10px;
+    min-width: auto;
+  }
   &.double {
     padding: 0 8px;
   }

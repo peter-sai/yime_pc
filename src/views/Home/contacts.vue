@@ -84,6 +84,7 @@ const userInfo = store.state.userInfo;
 const init = async () => {
   try {
     const storeList = store.state.contact;
+
     if (!storeList.length) {
       const data = await store.dispatch('postMsg', {
         query: {},

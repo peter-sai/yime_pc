@@ -198,6 +198,9 @@ const sotreRoot = createStore({
     },
     ADD_MSGLIST: (state, { res, id, groupDetailInfo, userDetailInfo }) => {
       if (state.msgList[id]) {
+        if (state.msgList[id].isDel) {
+          state.msgList[id].isDel = false;
+        }
         // push 消息
         if (!res.isRoamMsg) {
           state.msgList[id].readList.push(res);
