@@ -57,7 +57,7 @@
             </template>
           </Table>
           <Table
-            title="at我时显示通知"
+            :title="`@${t('我时显示通知')}`"
             hide-more
             v-if="Boolean(groupDetailInfo?.groupAttachInfo?.groupMsgMute)"
           >

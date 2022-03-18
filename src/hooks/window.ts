@@ -93,18 +93,6 @@ function useBeforeSwitch(
           upDateStore(store, 'groupTop', switchState, uid);
         } else if (settingItemId === 2108) {
           //
-          store
-            .dispatch('postMsg', {
-              query: {
-                groupId: store.state.activeUid,
-              },
-              cmd: 1029,
-              encryption: 'Aoelailiao.Login.ClientGetGroupInfoReq',
-              auth: true,
-            })
-            .then((e) => {
-              console.log(e, 11111);
-            });
           upDateStore(store, 'groupMsgAtNotify', switchState);
         } else {
           // 设置进群权限

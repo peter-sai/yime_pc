@@ -259,7 +259,8 @@ const toggleBox = async (uid?: number) => {
     const userId = uid || store.state.activeUid;
     store.commit('SET_USERUID', userId);
   }
-  let msgItem: ImsgItem = store.state.msgList[store.state.userUid!];
+  let msgItem: ImsgItem | null = null;
+  // let msgItem: ImsgItem = store.state.msgList[store.state.userUid!];
   // 如果不存在则获取 (单聊不在聊天列表中会没有信息)
   if (!msgItem) {
     const res = {
@@ -273,8 +274,8 @@ const toggleBox = async (uid?: number) => {
     });
     msgItem = data.body;
   }
-  userDetailInfo.value = msgItem.userDetailInfo || {};
-  userInfo.value = msgItem.userDetailInfo?.userInfo || {};
+  userDetailInfo.value = msgItem?.userDetailInfo || {};
+  userInfo.value = msgItem?.userDetailInfo?.userInfo || {};
   showBox.value = !showBox.value;
 };
 const updateUser = async (uid?: number) => {
