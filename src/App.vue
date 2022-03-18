@@ -264,6 +264,7 @@ const init = async () => {
   setTimeout(async () => {
     // 获取漫游数据并且合并
     const roamList = await getRoam(store);
+    console.log(roamList);
 
     // 合并数据
     await mergeData([], store, roamList);

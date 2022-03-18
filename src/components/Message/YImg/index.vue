@@ -33,7 +33,6 @@ import { useI18n } from 'vue-i18n';
 import { IUserInfo } from '@/types/user';
 import { key } from '@/store';
 import { useStore } from 'vuex';
-import { showImg } from '../../../plugin/ShowImg';
 export default defineComponent({
   name: 'Message',
 });
@@ -66,7 +65,7 @@ const { t } = useI18n();
 const store = useStore(key);
 const isGroup = computed(() => store.state.activeIsGroup);
 
-const emit = defineEmits(['menuClick', 'click']);
+const emit = defineEmits(['menuClick', 'click', 'showBigImg']);
 
 const contextmenu = (e: any) => {
   e.preventDefault();
@@ -74,7 +73,7 @@ const contextmenu = (e: any) => {
 };
 
 const shogImg = () => {
-  showImg(props.src);
+  emit('showBigImg');
 };
 </script>
 <style lang="scss" scoped>

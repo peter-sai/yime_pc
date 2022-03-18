@@ -46,6 +46,7 @@ import { Toast } from '@/plugin/Toast';
 import { useI18n } from 'vue-i18n';
 import { useGoBack } from '@/hooks';
 import { useRouter } from 'vue-router';
+import { IGroupListItem } from '@/types/group';
 export default defineComponent({
   name: 'addGroup',
 });
@@ -125,6 +126,24 @@ const submit = async () => {
     // 群聊
     store.commit('SET_ACTIVEUID', data.body.groupInfo.groupId);
     store.commit('SET_ACTIVEISGROUP', true);
+
+    // 更新我的群聊列表
+    const userInfo = store.state.userInfo;
+    const data1 = await store.dispatch('postMsg', {
+      query: {},
+      cmd: 1009,
+      encryption: 'Aoelailiao.Login.UserGetFriendsAndGroupsListReq',
+      auth: true,
+    });
+    data1.body.groupInfos.forEach((e: IGroupListItem) => {
+      if (e.groupMemberLists.rootUid === Number(userInfo.uid)) {
+        e.root = true;
+      }
+      if (e.groupMemberLists.adminUidList.includes(Number(userInfo.uid))) {
+        e.admin = true;
+      }
+    });
+    store.commit('SET_GROUPINFOS', data1.body.groupInfos);
     goBack();
   }
 };

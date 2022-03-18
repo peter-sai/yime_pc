@@ -116,10 +116,12 @@
             @menuClick="menuClick($event, item)"
             :userInfo="getUserInfo(item)"
             :src="item.msgContent.imageMsg.imageUrl"
+            @showBigImg="showBigImg(item)"
           />
           <MImg
             v-else
             :isRead="item.msgId <= readMsgId"
+            @showBigImg="showBigImg(item)"
             @menuClick="menuClick($event, item)"
             :src="item.msgContent.imageMsg.imageUrl"
           />
@@ -351,6 +353,7 @@ import MVideoFile from '@/components/Message/MVideoFile/index.vue';
 import { Store, useStore } from 'vuex';
 import { initStore, key } from '@/store';
 import { useI18n } from 'vue-i18n';
+import { showImg } from '../../plugin/ShowImg';
 import {
   IFileInfo,
   IFireInfo,
@@ -498,6 +501,18 @@ const list = computed(() => store.state.msgList);
 const itemChat: ComputedRef<ImsgItem> = computed(
   () => list.value[store.state.activeUid!] || {},
 );
+
+const imageList = computed(() => {
+  const list = itemChat.value.readList
+    .filter((e: IMsgInfo<IImageMsgInfo>) => e.type === 'imageMsg')
+    .map((e) => {
+      return {
+        msgId: e.msgId,
+        imageUrl: e.msgContent.imageMsg.imageUrl,
+      };
+    });
+  return list;
+});
 
 // 登录用户信息
 const userInfo = computed(() => store.state.userInfo);
@@ -681,7 +696,6 @@ const call = async (item: any) => {
     encryption: 'Aoelailiao.Login.UserCheckFunctionPrivilegeReq',
     auth: true,
   });
-  console.log(data);
 
   if (data?.body?.functionState === 1) {
     const mediaNode = document.getElementById('media')!;
@@ -779,6 +793,12 @@ const copyImg = (url: string) => {
       );
     });
   };
+};
+
+// 放大图片
+const showBigImg = (item: IMsgInfo<IImageMsgInfo>) => {
+  const index = imageList.value.findIndex((e) => e.msgId === item.msgId);
+  showImg(index, imageList.value);
 };
 </script>
 <style lang="scss" scoped>

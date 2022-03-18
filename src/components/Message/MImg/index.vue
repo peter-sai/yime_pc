@@ -21,7 +21,6 @@
 import { defineComponent, defineProps, defineEmits } from 'vue';
 import SayHello from '../SayHello/index.vue';
 import IsRead from '@/components/IsRead/index.vue';
-import { showImg } from '../../../plugin/ShowImg';
 export default defineComponent({
   name: 'MImg',
 });
@@ -46,7 +45,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['menuClick']);
+const emit = defineEmits(['menuClick', 'showBigImg']);
 
 const contextmenu = (e: any) => {
   e.preventDefault();
@@ -54,7 +53,7 @@ const contextmenu = (e: any) => {
 };
 
 const shogImg = () => {
-  showImg(props.src);
+  emit('showBigImg');
 };
 </script>
 <style lang="scss" scoped>

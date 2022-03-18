@@ -533,13 +533,26 @@ const quitGroupChat = async (item: ImsgItem) => {
   Toast(t(data.body.resultString));
   if (data.body.resultCode === 0) {
     const data = await store.dispatch('postMsg', {
+      query: {
+        groupId: store.state.activeUid,
+      },
+      cmd: 1029,
+      encryption: 'Aoelailiao.Login.ClientGetGroupInfoReq',
+      auth: true,
+    });
+    const msgItem = data.body;
+    const item = store.state.msgList[store.state.activeUid!];
+    item.groupDetailInfo = msgItem.groupDetailInfo;
+    store.commit('SET_MSGLISTITEM', { res: item });
+
+    const data1 = await store.dispatch('postMsg', {
       query: {},
       cmd: 1009,
       encryption: 'Aoelailiao.Login.UserGetFriendsAndGroupsListReq',
       auth: true,
     });
 
-    data.body.groupInfos.forEach((e: IGroupListItem) => {
+    data1.body.groupInfos.forEach((e: IGroupListItem) => {
       if (e.groupMemberLists.rootUid === Number(userInfo.uid)) {
         e.root = true;
       }
@@ -548,8 +561,8 @@ const quitGroupChat = async (item: ImsgItem) => {
       }
     });
 
-    store.commit('SET_GROUPINFOS', data.body.groupInfos);
-    store.commit('DEL_MSGITEM', item.id);
+    store.commit('SET_GROUPINFOS', data1.body.groupInfos);
+    // store.commit('DEL_MSGITEM', item.id);
   }
 };
 
@@ -561,7 +574,34 @@ const del = (item: any) => {
     ),
     callBack: async () => {
       if (store.state.msgList[item.id]) {
-        delete store.state.msgList[item.id];
+        /*
+          1、所有未读消息设为已读
+          2、关闭消息通知
+          3、取消置顶
+          4、当前列表删除会话入口
+          5、关闭提示弹窗
+          6、删除当前操作时间点以前的所有聊天记录，并且不再同步到客户端
+        */
+        const selectItem = store.state.msgList[item.id];
+        // delete store.state.msgList[item.id];
+        selectItem.lastMsg = {};
+        selectItem.readList = [];
+        selectItem.unReadNum = 0;
+        selectItem.isDel = true;
+        selectItem.unRead = false;
+        if (selectItem.isGroup) {
+          selectItem.groupDetailInfo.groupAttachInfo.groupTop = 0;
+          selectItem.groupDetailInfo.groupAttachInfo.groupMsgMute = 1;
+        } else {
+          if (selectItem?.userDetailInfo?.userInfo?.userAttachInfo) {
+            selectItem.userDetailInfo.userInfo.userAttachInfo.msgTop = 0;
+            selectItem.userDetailInfo.userInfo.userAttachInfo.msgMute = 1;
+          } else {
+            selectItem.userDetailInfo.userInfo.userAttachInfo = {};
+            selectItem.userDetailInfo.userInfo.userAttachInfo.msgTop = 0;
+            selectItem.userDetailInfo.userInfo.userAttachInfo.msgMute = 1;
+          }
+        }
         store.commit('SET_ACTIVEUID', null);
         store.dispatch('postMsg', {
           query: {
@@ -582,7 +622,7 @@ const del = (item: any) => {
 const hide = (item: any) => {
   Dialog({
     title: t(
-      '当前会话隐藏后，聊天记录不会被删除，所有已登录账号的设备已将隐藏会话。收到新消息，或通过搜索会话名称，会话将再次显示',
+      '当前会话隐藏后，聊天记录不会被删除。收到新消息，或通过搜索会话名称，会话将再次显示',
     ),
     callBack: async () => {
       if (store.state.msgList[item.id]) {

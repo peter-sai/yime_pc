@@ -3,10 +3,16 @@ import toastIndex from './index.vue';
 
 const loading = () => {
   let app: any = null;
-  const showImg = (msg?: string) => {
+  const showImg = (
+    initialSlide: number,
+    imgList: { msgId: number; imageUrl: string }[],
+  ) => {
     hideImg();
+    console.log(initialSlide, imgList);
+
     app = createApp(toastIndex, {
-      src: msg,
+      initialSlide,
+      imgList,
       destroy: () => {
         app && app.unmount();
       },
