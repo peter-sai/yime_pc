@@ -230,7 +230,6 @@ const useEnter = (
 
     // 处理@消息
     const atList = search.value.match(/@(\S*) /g) || [];
-
     if (atList.length && groupList.length) {
       const ats = atList.map((e) => {
         const item = e.replace('@', '').replace(' ', '');

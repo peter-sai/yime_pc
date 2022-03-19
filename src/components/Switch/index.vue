@@ -4,7 +4,7 @@
   </div>
 </template>
 <script lang="ts">
-import { ref, defineProps, defineEmits } from 'vue';
+import { ref, defineProps, defineEmits, computed } from 'vue';
 export default {
   name: 'Switch',
 };
@@ -20,7 +20,7 @@ const props = defineProps({
   },
 });
 const emit = defineEmits(['toggle']);
-const active = ref(props.switch);
+const active = computed(() => props.switch);
 const toggle = async () => {
   emit('toggle', !active.value);
   if (props.beforeChange) {

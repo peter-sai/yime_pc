@@ -477,7 +477,8 @@ function msgNotice(item: any) {
       // 是否是at自己的消息 如果是 并且 开启at提醒通知的开关 则 通知
       if (item.msgContent.msgContent === 'groupAtInfo') {
         const groupAtInfo = item?.msgContent?.groupAtInfo?.atUsers?.find(
-          (e: any) => Number(e.uid) === Number(store.state.userInfo.uid),
+          (e: any) =>
+            Number(e.uid) === Number(store.state.userInfo.uid) || e.type === 1,
         );
         if (Boolean(groupAttachInfo?.groupMsgAtNotify) && groupAtInfo) {
           //
@@ -515,9 +516,19 @@ function msgNotice(item: any) {
           },
         });
         res.onclick = function (e: any) {
-          store.commit('SET_ACTIVEUID', e.target.data.id);
-          store.commit('SET_ACTIVEISGROUP', e.target.data.isGroupMsg);
-          res.close();
+          try {
+            store.commit('SET_ACTIVEUID', e.target.data.id);
+            store.commit('SET_ACTIVEISGROUP', e.target.data.isGroupMsg);
+            const item = store.state.msgList[e.target.data.id];
+            if (item) {
+              item.unReadNum = 0;
+              item.unRead = false;
+              store.commit('SET_MSGLISTITEM', { res: item });
+            }
+            res.close();
+          } catch (error) {
+            console.log(error);
+          }
         };
       }
     }
