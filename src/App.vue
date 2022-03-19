@@ -3,25 +3,25 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onBeforeUnmount, watch } from 'vue';
-import { Store, useStore } from 'vuex';
-import { getOssInfo } from './api';
-import { getToken as getUserToken } from './utils/utils';
-import { initStore, key } from './store';
-import { getStorage, setMsgList } from './utils/utils';
+import { computed, defineComponent, onBeforeUnmount, watch } from "vue";
+import { Store, useStore } from "vuex";
+import { getOssInfo } from "./api";
+import { getToken as getUserToken } from "./utils/utils";
+import { initStore, key } from "./store";
+import { getStorage, setMsgList } from "./utils/utils";
 import {
   getRoam,
   initRongConnect,
   useClientSendMsgAckToServer,
   mergeData,
-} from './hooks/window';
-import { IMsgInfo } from './types/msg';
-import * as RongIMLib from '@rongcloud/imlib-next';
+} from "./hooks/window";
+import { IMsgInfo } from "./types/msg";
+import * as RongIMLib from "@rongcloud/imlib-next";
 import {
   installer as rtcInstaller,
   RCRTCClient,
   RCTrack,
-} from '@rongcloud/plugin-rtc';
+} from "@rongcloud/plugin-rtc";
 import {
   installer as callInstaller,
   RCCallSession,
@@ -29,26 +29,26 @@ import {
   ISenderInfo,
   RCCallEndReason,
   IMuteUser,
-} from '@rongcloud/plugin-call';
-import messageAudio from './assets/audio/message.wav';
-import { MediaAudio } from './plugin/Audio';
-import { GroupMediaAudio, hideGroupMediaAudio } from './plugin/GroupAudio';
-import { Toast } from './plugin/Toast';
-import { initOss } from './hooks/window';
-import { useI18n } from 'vue-i18n';
-import { hideLoading } from './plugin/Loading';
-import { yimechat } from './api';
+} from "@rongcloud/plugin-call";
+import messageAudio from "./assets/audio/message.wav";
+import { MediaAudio } from "./plugin/Audio";
+import { GroupMediaAudio, hideGroupMediaAudio } from "./plugin/GroupAudio";
+import { Toast } from "./plugin/Toast";
+import { initOss } from "./hooks/window";
+import { useI18n } from "vue-i18n";
+import { hideLoading } from "./plugin/Loading";
+import { yimechat } from "./api";
 export async function initRonyun(store: Store<initStore>) {
   // IM 客户端初始化
   const RongCallLib = RongIMLib.init({
-    appkey: 'tdrvipkst22v5',
+    appkey: "tdrvipkst22v5",
   });
   // 监听消息 用来处理是否显示加入音视频按钮
 
   // RTC 客户端初始化
   const rtcClient: RCRTCClient = RongIMLib.installPlugin(
     rtcInstaller,
-    {},
+    {}
   ) as RCRTCClient;
   // 正在通话中的uid
   const rongIm = RongIMLib.installPlugin(callInstaller, {
@@ -59,7 +59,7 @@ export async function initRonyun(store: Store<initStore>) {
      */
     async onSession(session: RCCallSession) {
       const uid = session.getTargetId();
-      const mediaNode = document.getElementById('media')!;
+      const mediaNode = document.getElementById("media")!;
 
       if (mediaNode.hasChildNodes()) {
         // 当前正在通话中
@@ -71,7 +71,7 @@ export async function initRonyun(store: Store<initStore>) {
            */
           onRinging(sender: ISenderInfo) {
             const { userId } = sender;
-            console.log('接听者', 'onRinging');
+            console.log("接听者", "onRinging");
           },
 
           /**
@@ -81,7 +81,7 @@ export async function initRonyun(store: Store<initStore>) {
            */
           onAccept(sender: ISenderInfo) {
             const { userId } = sender;
-            console.log('接听者', 'onAccept');
+            console.log("接听者", "onAccept");
           },
 
           /**
@@ -91,7 +91,7 @@ export async function initRonyun(store: Store<initStore>) {
            * @param session 当前的 session 对象
            */
           onHungup(sender: ISenderInfo, reason: RCCallEndReason) {
-            console.log('接听者挂断', 'onHungup', reason);
+            console.log("接听者挂断", "onHungup", reason);
           },
 
           /**
@@ -104,13 +104,13 @@ export async function initRonyun(store: Store<initStore>) {
             console.log(track);
           },
           onMemberModify: function (sender: any): void {
-            console.log('onMemberModify', sender);
+            console.log("onMemberModify", sender);
           },
           onMediaModify: function (sender: any): void {
-            console.log('onMediaModify', sender);
+            console.log("onMediaModify", sender);
           },
           onAudioMuteChange: function (muteUser: IMuteUser): void {
-            console.log('onAudioMuteChange', muteUser);
+            console.log("onAudioMuteChange", muteUser);
           },
           onVideoMuteChange: function (muteUser: IMuteUser): void {
             console.log(muteUser);
@@ -119,19 +119,19 @@ export async function initRonyun(store: Store<initStore>) {
         return;
       }
 
-      store.commit('SET_CALLUID', session.getTargetId());
+      store.commit("SET_CALLUID", session.getTargetId());
 
       if (session.getConversationType() === 1) {
-        let userDetail = '';
+        let userDetail = "";
         if (store.state.msgList[Number(uid)]) {
           userDetail = store.state.msgList[Number(uid)].userDetailInfo.userInfo;
         } else {
-          const data = await await store.dispatch('postMsg', {
+          const data = await await store.dispatch("postMsg", {
             query: {
               uid,
             },
             cmd: 1011,
-            encryption: 'Aoelailiao.Login.ClientGetUserInfoReq',
+            encryption: "Aoelailiao.Login.ClientGetUserInfoReq",
             auth: true,
           });
           userDetail = data.body.userDetailInfo.userInfo;
@@ -144,16 +144,16 @@ export async function initRonyun(store: Store<initStore>) {
           session,
         });
       } else {
-        let groupDetailInfo = '';
+        let groupDetailInfo = "";
         if (store.state.msgList[Number(uid)]) {
           groupDetailInfo = store.state.msgList[Number(uid)].groupDetailInfo;
         } else {
-          const data = await await store.dispatch('postMsg', {
+          const data = await await store.dispatch("postMsg", {
             query: {
               groupId: uid,
             },
             cmd: 1029,
-            encryption: 'Aoelailiao.Login.ClientGetGroupInfoReq',
+            encryption: "Aoelailiao.Login.ClientGetGroupInfoReq",
             auth: true,
           });
           groupDetailInfo = data.body.groupDetailInfo;
@@ -180,7 +180,7 @@ export async function initRonyun(store: Store<initStore>) {
       if (store.state.callUid === session.getTargetId()) {
         hideGroupMediaAudio();
         // 设置当前不在通话中 用于是否显示加入按钮
-        store.commit('SET_CONVERSATIONING', false);
+        store.commit("SET_CONVERSATIONING", false);
       }
     },
   });
@@ -196,7 +196,7 @@ export async function initRonyun(store: Store<initStore>) {
 }
 
 export default defineComponent({
-  name: 'App',
+  name: "App",
 });
 
 export function reconnect(store: Store<initStore>) {
@@ -205,55 +205,55 @@ export function reconnect(store: Store<initStore>) {
     //没连接上会一直重连，设置延迟避免请求过多
     let ws = new WebSocket(process.env.VUE_APP_BASEURL);
     // store.commit('SET_ISONLINE', '连接中...');
-    ws.binaryType = 'arraybuffer';
-    store.commit('SET_WS', ws);
+    ws.binaryType = "arraybuffer";
+    store.commit("SET_WS", ws);
     ws.onclose = function (e) {
-      store.commit('SET_WS', null);
-      console.log('onclose', e);
+      store.commit("SET_WS", null);
+      console.log("onclose", e);
       // store.commit('SET_ISONLINE', '网络状态不佳');
       hideLoading();
       reconnect(store);
     };
     ws.onerror = function () {
-      store.commit('SET_WS', null);
+      store.commit("SET_WS", null);
       // store.commit('SET_ISONLINE', '网络状态不佳');
-      console.log('onerror');
+      console.log("onerror");
     };
   }, 1000);
 }
 </script>
 <script lang="ts" setup>
 const store = useStore(key);
-store.dispatch('init');
+store.dispatch("init");
 const { t } = useI18n();
 
 // 获取浏览器弹框权限
-if (Notification.permission !== 'granted') {
+if (Notification.permission !== "granted") {
   Notification.requestPermission();
 }
 
 const init = async () => {
   let ws = new WebSocket(process.env.VUE_APP_BASEURL);
   // store.commit('SET_ISONLINE', '连接中...');
-  store.commit('SET_WS', ws);
-  ws.binaryType = 'arraybuffer';
+  store.commit("SET_WS", ws);
+  ws.binaryType = "arraybuffer";
 
   ws.onclose = function (e) {
-    store.commit('SET_WS', null);
-    console.log('onclose', e);
-    store.commit('SET_ISONLINE', '网络状态不佳');
+    store.commit("SET_WS", null);
+    console.log("onclose", e);
+    store.commit("SET_ISONLINE", "网络状态不佳");
     hideLoading();
     reconnect(store);
   };
   ws.onerror = function () {
-    store.commit('SET_WS', null);
-    store.commit('SET_ISONLINE', '网络状态不佳');
-    console.log('onerror');
+    store.commit("SET_WS", null);
+    store.commit("SET_ISONLINE", "网络状态不佳");
+    console.log("onerror");
   };
 
   // 获取config
   const data = await yimechat();
-  store.commit('SET_CONFIG', data);
+  store.commit("SET_CONFIG", data);
 
   // 获取阿里存储信息
   initOss(store);
@@ -273,17 +273,17 @@ const init = async () => {
 init();
 
 // 设置语言
-const langId = Number(getStorage('lang') || -1);
-store.commit('SET_LANG', langId);
+const langId = Number(getStorage("lang") || -1);
+store.commit("SET_LANG", langId);
 
 // 设置
-store.commit('SET_ISONLINE', navigator.onLine ? false : '网络状态不佳');
-window.addEventListener('offline', () => {
-  store.commit('SET_ISONLINE', '网络状态不佳');
+store.commit("SET_ISONLINE", navigator.onLine ? false : "网络状态不佳");
+window.addEventListener("offline", () => {
+  store.commit("SET_ISONLINE", "网络状态不佳");
 });
 
-window.addEventListener('online', () => {
-  store.commit('SET_ISONLINE', false);
+window.addEventListener("online", () => {
+  store.commit("SET_ISONLINE", false);
 });
 
 // aks
@@ -294,7 +294,7 @@ const clientSendMsgAckToServer = (msgInfos: IMsgInfo<string>[]) => {
     const { msgId, fromId, toId } = lastMsgInfo;
     const ackToServer = useClientSendMsgAckToServer(
       store,
-      lastMsgInfo.isGroupMsg ? 1 : 0,
+      lastMsgInfo.isGroupMsg ? 1 : 0
     );
     ackToServer(msgId, fromId, toId, 0);
   }
@@ -311,19 +311,19 @@ const stop = watch(
             msgClassHaveNewMsg: 1,
             msgClassId: 1,
             msgClassRecentMsgContent: data.body.notifyContent,
-            msgClassTitle: '系统消息',
+            msgClassTitle: "系统消息",
             updateTime: data.body.updateTime,
           };
-          store.commit('ADD_NOTIFY', { id: 1, res });
+          store.commit("ADD_NOTIFY", { id: 1, res });
         } else {
           const res = {
             msgClassHaveNewMsg: 1,
             msgClassId: 2,
             msgClassRecentMsgContent: data.body.notifyContent,
-            msgClassTitle: '用户反馈消息',
+            msgClassTitle: "用户反馈消息",
             updateTime: data.body.updateTime,
           };
-          store.commit('ADD_NOTIFY', { id: 2, res });
+          store.commit("ADD_NOTIFY", { id: 2, res });
         }
       } catch (error) {
         console.log(error);
@@ -334,56 +334,70 @@ const stop = watch(
       const msgInfos = data.body.msgInfos;
       const msgList = store.state.msgList;
       // 处理撤回消息
-      if (msgInfos[0].msgContent.msgContent === 'revokeInfo') {
+      if (msgInfos[0].msgContent.msgContent === "revokeInfo") {
         const { revokeMsgId } = msgInfos[0].msgContent.revokeInfo;
         let readList =
           msgList[msgInfos[0].toId]?.readList ||
           msgList[msgInfos[0].fromId]?.readList ||
           [];
         const revokeKey = readList.findIndex(
-          (e: any) => Number(e.msgId) === Number(revokeMsgId),
+          (e: any) => Number(e.msgId) === Number(revokeMsgId)
         );
         readList.splice(revokeKey, 1);
-        store.commit('SET_MSGLIST', msgList);
+        store.commit("SET_MSGLIST", msgList);
+      }
+
+      // 处理焚毁消息
+      if (msgInfos[0].msgContent.msgContent === "fireInfo") {
+        const { fireMsgId } = msgInfos[0].msgContent.fireInfo;
+        let readList =
+          msgList[msgInfos[0].toId]?.readList ||
+          msgList[msgInfos[0].fromId]?.readList ||
+          [];
+        const fireKey = readList.findIndex(
+          (e: any) => Number(e.msgId) === Number(fireMsgId)
+        );
+        readList[fireKey].fired = true;
+        store.commit("SET_MSGLIST", msgList);
       }
 
       // 处理双向清空消息
-      if (msgInfos[0].msgContent.msgContent === 'cleanInfo') {
+      if (msgInfos[0].msgContent.msgContent === "cleanInfo") {
         const { maxMsgId } = msgInfos[0].msgContent.cleanInfo;
         const newList = msgList[store.state.activeUid!].readList.filter(
-          (e: any) => Number(e.msgId) > Number(maxMsgId),
+          (e: any) => Number(e.msgId) > Number(maxMsgId)
         );
         msgList[store.state.activeUid!].readList = newList;
-        store.commit('SET_MSGLIST', msgList);
+        store.commit("SET_MSGLIST", msgList);
         setMsgList(store.state.msgList);
       }
-      console.log('推送消息', data);
+      console.log("推送消息", data);
       // 发送ack
       clientSendMsgAckToServer(msgInfos);
-      store.dispatch('addMsgList', { ...(msgInfos[0] || {}) });
+      store.dispatch("addMsgList", { ...(msgInfos[0] || {}) });
       // 处理消息通知
       msgNotice(msgInfos[0]);
 
       // 如果是群聊并且是系统消息则更新本地缓存群详情
       if (
         msgInfos[0].isGroupMsg &&
-        msgInfos[0].msgContent.msgContent === 'systemNotifyInfo'
+        msgInfos[0].msgContent.msgContent === "systemNotifyInfo"
       ) {
         const item = msgInfos[0];
         const res = store.state.msgList[item.toId];
         if (!res) return;
         // 群聊获取群详情
-        const data = await store.dispatch('postMsg', {
+        const data = await store.dispatch("postMsg", {
           query: { groupId: item.toId },
           cmd: 1029,
-          encryption: 'Aoelailiao.Login.ClientGetGroupInfoReq',
+          encryption: "Aoelailiao.Login.ClientGetGroupInfoReq",
           auth: true,
         });
         const groupDetailInfo = data.body.groupDetailInfo;
         res.groupDetailInfo = groupDetailInfo;
         if (store.state.groupInfos && store.state.groupInfos.length) {
           const groupItemIndex = (store.state.groupInfos || []).findIndex(
-            (e) => e.groupId === groupDetailInfo.groupId,
+            (e) => e.groupId === groupDetailInfo.groupId
           );
           if (groupItemIndex === -1) {
             store.state.groupInfos[store.state.groupInfos.length] =
@@ -393,7 +407,7 @@ const stop = watch(
           }
         }
 
-        store.commit('SET_MSGLISTITEM', {
+        store.commit("SET_MSGLISTITEM", {
           res: res,
           uid: item.toId,
         });
@@ -418,13 +432,13 @@ const stop = watch(
             toId: msgInfos[0].fromId,
             msgIdMax: msgInfos[0].msgId,
           },
-          deviceBrand: 'web',
+          deviceBrand: "web",
         };
-        await store.dispatch('postMsg', {
+        await store.dispatch("postMsg", {
           query: res,
           cmd: 2149,
           encryption:
-            'Aoelailiao.Message.UserUpdateConversationHasReadedMsgInfoReq',
+            "Aoelailiao.Message.UserUpdateConversationHasReadedMsgInfoReq",
           auth: true,
         });
       } else {
@@ -436,19 +450,19 @@ const stop = watch(
             fromId: msgInfos[0].fromId,
             msgIdMax: msgInfos[0].msgId,
           },
-          deviceBrand: 'web',
+          deviceBrand: "web",
         };
 
-        await store.dispatch('postMsg', {
+        await store.dispatch("postMsg", {
           query: res,
           cmd: 2149,
           encryption:
-            'Aoelailiao.Message.UserUpdateConversationHasReadedMsgInfoReq',
+            "Aoelailiao.Message.UserUpdateConversationHasReadedMsgInfoReq",
           auth: true,
         });
       }
     }
-  },
+  }
 );
 
 const audio = new Audio();
@@ -456,7 +470,7 @@ audio.src = messageAudio;
 function msgNotice(item: any) {
   const info = store.state.msgList[item.isGroupMsg ? item.toId : item.fromId];
 
-  let name = '';
+  let name = "";
   if (info?.isGroup) {
     //
     name = info?.groupDetailInfo?.groupName;
@@ -475,9 +489,9 @@ function msgNotice(item: any) {
       // 群聊
       isMsgMute = Boolean(groupAttachInfo?.groupMsgMute);
       // 是否是at自己的消息 如果是 并且 开启at提醒通知的开关 则 通知
-      if (item.msgContent.msgContent === 'groupAtInfo') {
+      if (item.msgContent.msgContent === "groupAtInfo") {
         const groupAtInfo = item?.msgContent?.groupAtInfo?.atUsers?.find(
-          (e: any) => Number(e.uid) === Number(store.state.userInfo.uid),
+          (e: any) => Number(e.uid) === Number(store.state.userInfo.uid)
         );
         if (Boolean(groupAttachInfo?.groupMsgAtNotify) && groupAtInfo) {
           //
@@ -487,7 +501,7 @@ function msgNotice(item: any) {
     } else {
       // 单聊
       isMsgMute = Boolean(
-        res?.userDetailInfo?.userInfo?.userAttachInfo?.msgMute,
+        res?.userDetailInfo?.userInfo?.userAttachInfo?.msgMute
       );
     }
   }
@@ -506,17 +520,17 @@ function msgNotice(item: any) {
       groupMsgAtNotify
     ) {
       // 浏览器弹框
-      if (Notification.permission === 'granted') {
-        const res = new Notification(name || 'YIME', {
-          body: t('您收到一条消息'),
+      if (Notification.permission === "granted") {
+        const res = new Notification(name || "YIME", {
+          body: t("您收到一条消息"),
           data: {
             id: item.isGroupMsg ? item.toId : item.fromId,
             isGroupMsg: Boolean(item.isGroupMsg),
           },
         });
         res.onclick = function (e: any) {
-          store.commit('SET_ACTIVEUID', e.target.data.id);
-          store.commit('SET_ACTIVEISGROUP', e.target.data.isGroupMsg);
+          store.commit("SET_ACTIVEUID", e.target.data.id);
+          store.commit("SET_ACTIVEISGROUP", e.target.data.isGroupMsg);
           res.close();
         };
       }
