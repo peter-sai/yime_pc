@@ -77,6 +77,7 @@ import { useI18n } from 'vue-i18n';
 import { useStore } from 'vuex';
 import { key } from '@/store';
 import { Dialog } from '@/plugin/Dialog';
+import Electron from 'Electron';
 const goTo = useGoTo(useRouter);
 const { t } = useI18n();
 const store = useStore(key);
@@ -92,6 +93,7 @@ const logOut = () => {
     title: t('退出登录') + '?',
     callBack: async () => {
       store.dispatch('logout');
+      Electron.ipcRenderer.sendSync('update-badge', null);
       location.reload();
     },
   });
