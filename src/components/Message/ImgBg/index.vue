@@ -22,10 +22,10 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, defineProps, defineEmits } from 'vue';
-import Iconfont from '@/iconfont/index.vue';
+import { defineComponent, defineProps, defineEmits } from "vue";
+import Iconfont from "@/iconfont/index.vue";
 export default defineComponent({
-  name: 'ImgBg',
+  name: "ImgBg",
 });
 </script>
 <script setup lang="ts">
@@ -44,15 +44,15 @@ defineProps({
   },
 });
 
-const emit = defineEmits(['menuClick']);
+const emit = defineEmits(["menuClick"]);
 
 const contextmenu = (e: any) => {
   e.preventDefault();
-  emit('menuClick', e);
+  emit("menuClick", e);
 };
 </script>
 <style lang="scss" scoped>
-@import '@/style/base.scss';
+@import "@/style/base.scss";
 .imBg {
   display: flex;
   &.isMe {
@@ -68,6 +68,7 @@ const contextmenu = (e: any) => {
     word-break: break-all;
     // display: inline-flex;
     align-items: center;
+    position: relative;
     &.me {
       border-radius: 14px 0px 14px 14px;
       color: #fff;
