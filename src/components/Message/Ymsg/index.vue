@@ -8,11 +8,22 @@
     <div>
       <div class="title" v-if="isGroup">{{ userInfo?.nickname }}</div>
       <ImBg v-bind="$attrs">
+        <img
+          class="fire"
+          v-if="isBurn && fired"
+          src="../../../assets/img/fired.svg"
+          alt=""
+        />
+        <img
+          class="fire"
+          v-if="isBurn && !fired"
+          src="../../../assets/img/fire.svg"
+          alt=""
+        />
         <p
           v-for="item in list"
           :key="item"
           class="text"
-          :class="{ pointer: isBurn }"
           @click="$emit('clickFireMsg')"
         >
           {{ item.replace(/\u0000/g, "") }}
@@ -44,6 +55,9 @@ export default defineComponent({
 defineEmits(["click", "clickFireMsg"]);
 defineProps({
   isBurn: {
+    type: Boolean,
+  },
+  fired: {
     type: Boolean,
   },
   userInfo: {
@@ -85,6 +99,11 @@ const list = slots.default()[0].children
   }
   .pointer {
     cursor: pointer;
+  }
+  .fire {
+    position: absolute;
+    right: -6px;
+    top: -2px;
   }
 }
 </style>

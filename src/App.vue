@@ -347,6 +347,20 @@ const stop = watch(
         store.commit('SET_MSGLIST', msgList);
       }
 
+      // 处理焚毁消息
+      if (msgInfos[0].msgContent.msgContent === 'fireInfo') {
+        const { fireMsgId } = msgInfos[0].msgContent.fireInfo;
+        let readList =
+          msgList[msgInfos[0].toId]?.readList ||
+          msgList[msgInfos[0].fromId]?.readList ||
+          [];
+        const fireKey = readList.findIndex(
+          (e: any) => Number(e.msgId) === Number(fireMsgId),
+        );
+        readList[fireKey].fired = true;
+        store.commit('SET_MSGLIST', msgList);
+      }
+
       // 处理双向清空消息
       if (msgInfos[0].msgContent.msgContent === 'cleanInfo') {
         const { maxMsgId } = msgInfos[0].msgContent.cleanInfo;
