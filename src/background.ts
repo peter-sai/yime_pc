@@ -9,12 +9,6 @@ const Badge = require('electron-windows-badge');
 
 const { ipcMain } = require('electron');
 
-ipcMain.on('sendMessage', (event, data) => {
-  if (process.platform === 'darwin') {
-    app.dock.setBadge(data);
-  }
-});
-
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } },
@@ -44,10 +38,24 @@ async function createWindow() {
     win.loadURL('app://./index.html');
   }
 
+  // win 下设置角标
   if (process.platform !== 'darwin') {
     new Badge(win, {});
+  } else {
+    // mac 下设置角标
+    ipcMain.on('sendMessage', (event, data) => {
+      app.dock.setBadge(data);
+    });
   }
 
+  // active 程序
+  ipcMain.on('appActive', (event, data) => {
+    if (data) {
+      win.show();
+    }
+  });
+
+  // 设置通知标题
   app.setAppUserModelId(config.ELECTRON_NAME || '');
 }
 

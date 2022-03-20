@@ -540,6 +540,7 @@ function msgNotice(item: any) {
               item.unRead = false;
               store.commit('SET_MSGLISTITEM', { res: item });
             }
+            Electron.ipcRenderer.send('appActive', true);
             res.close();
           } catch (error) {
             console.log(error);
