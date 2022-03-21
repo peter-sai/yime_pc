@@ -979,3 +979,16 @@ message UploadAns
     optional string thumbnail = 4; //截图
     optional bytes attach_data = 32;
 }
+// cid 2167
+message DeleteMsgReq
+{
+    repeated uint64 msg_ids = 1; // 要删除哪些消息
+    optional bytes attach_data = 32;
+}
+// cid 2168
+message DeleteMsgAns
+{
+    optional uint32 result_code = 1;
+    optional string result_string = 2;
+    optional bytes attach_data = 32;
+}

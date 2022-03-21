@@ -68,7 +68,6 @@ const contextmenu = (e: any) => {
     word-break: break-all;
     // display: inline-flex;
     align-items: center;
-    position: relative;
     &.me {
       border-radius: 14px 0px 14px 14px;
       color: #fff;
