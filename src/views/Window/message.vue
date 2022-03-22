@@ -124,6 +124,8 @@
             @click="showUserInfo(getUserInfo(item).uid)"
             v-if="isShowHowComponent(item)"
             @menuClick="menuClick($event, item)"
+            :isBurn="item.msgShowType === 3"
+            :fired="false"
             :userInfo="getUserInfo(item)"
             :src="item.msgContent.imageMsg.imageUrl"
             @showBigImg="showBigImg(item)"
@@ -133,6 +135,8 @@
             :isRead="item.msgId <= readMsgId"
             @showBigImg="showBigImg(item)"
             @menuClick="menuClick($event, item)"
+            :isBurn="item.msgShowType === 3"
+            :fired="false"
             :src="item.msgContent.imageMsg.imageUrl"
           />
         </div>

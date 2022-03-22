@@ -9,6 +9,7 @@
       <SayHello v-if="src === 'emoji_1'" />
       <div v-else class="imgBg" @contextmenu="contextmenu">
         <div class="title" v-if="isGroup">{{ userInfo?.nickname }}</div>
+        <Fire :isBurn="isBurn" :fired="fired" :right="`-15px`" :top="`-10px`" />
         <img
           @click="shogImg"
           style="max-width: 100%; max-height: 100%; cursor: pointer"
@@ -26,22 +27,23 @@ import {
   defineProps,
   PropType,
   defineEmits,
-} from 'vue';
-import Iconfont from '@/iconfont/index.vue';
-import SayHello from '../SayHello/index.vue';
-import { useI18n } from 'vue-i18n';
-import { IUserInfo } from '@/types/user';
-import { key } from '@/store';
-import { useStore } from 'vuex';
+} from "vue";
+import Iconfont from "@/iconfont/index.vue";
+import SayHello from "../SayHello/index.vue";
+import Fire from "../Fire/index.vue";
+import { useI18n } from "vue-i18n";
+import { IUserInfo } from "@/types/user";
+import { key } from "@/store";
+import { useStore } from "vuex";
 export default defineComponent({
-  name: 'Message',
+  name: "Message",
 });
 </script>
 <script lang="ts" setup>
 const props = defineProps({
   src: {
     type: String,
-    default: '',
+    default: "",
   },
   userInfo: {
     type: Object as PropType<IUserInfo>,
@@ -60,24 +62,30 @@ const props = defineProps({
   groupMemberSplit: {
     type: Boolean,
   },
+  isBurn: {
+    type: Boolean,
+  },
+  fired: {
+    type: Boolean,
+  },
 });
 const { t } = useI18n();
 const store = useStore(key);
 const isGroup = computed(() => store.state.activeIsGroup);
 
-const emit = defineEmits(['menuClick', 'click', 'showBigImg']);
+const emit = defineEmits(["menuClick", "click", "showBigImg"]);
 
 const contextmenu = (e: any) => {
   e.preventDefault();
-  emit('menuClick', e);
+  emit("menuClick", e);
 };
 
 const shogImg = () => {
-  emit('showBigImg');
+  emit("showBigImg");
 };
 </script>
 <style lang="scss" scoped>
-@import '@/style/theme/index.scss';
+@import "@/style/theme/index.scss";
 .imgBg {
   max-width: 60%;
   .title {
