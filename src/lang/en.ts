@@ -972,6 +972,7 @@ export default {
   拖入要发送的文件: 'Drag in the file to send',
   用户不接受邀请: 'User does not accept invitation',
   隐藏: 'hide',
+  账号不存在: 'Account does not exist',
   '当前会话隐藏后，聊天记录不会被删除。收到新消息，或通过搜索会话名称，会话将再次显示':
     'After the current session is hidden, the chat record will not be deleted. When a new message is received, or by searching the session name, the session will be displayed again',
   '当前会话删除后，所有聊天记录将被被删除，收到新消息，或通过搜索会话名称，会话将再次显示':
