@@ -148,6 +148,8 @@
             @menuClick="menuClick($event, item)"
             :userInfo="getUserInfo(item)"
             :item="item.msgContent.fileInfo"
+            :isBurn="item.msgShowType === 3"
+            :fired="false"
             @download="download(item.msgContent.fileInfo)"
           />
           <MFile
@@ -155,6 +157,8 @@
             :isRead="item.msgId <= readMsgId"
             @menuClick="menuClick($event, item)"
             :item="item.msgContent.fileInfo"
+            :isBurn="item.msgShowType === 3"
+            :fired="false"
             @download="download(item.msgContent.fileInfo)"
           />
         </div>

@@ -2,6 +2,7 @@
   <div class="mmsg">
     <div style="flex: 1">
       <div class="fileBg" @contextmenu="contextmenu" @click="$emit('download')">
+        <Fire :isBurn="isBurn" :fired="fired" :left="`-23px`" :top="`-48px`" />
         <div class="left">
           <div class="title">{{ item?.fileName }}</div>
           <div class="size">{{ size }}</div>
@@ -16,13 +17,14 @@
   </div>
 </template>
 <script lang="ts">
-import Iconfont from '@/iconfont/index.vue';
-import { getSize } from '@/utils/utils';
-import { ref, defineComponent, defineProps, PropType, defineEmits } from 'vue';
-import IsRead from '@/components/IsRead/index.vue';
-import { IFileInfo } from '@/types/msg';
+import Iconfont from "@/iconfont/index.vue";
+import { getSize } from "@/utils/utils";
+import { ref, defineComponent, defineProps, PropType, defineEmits } from "vue";
+import IsRead from "@/components/IsRead/index.vue";
+import Fire from "../Fire/index.vue";
+import { IFileInfo } from "@/types/msg";
 defineComponent({
-  name: 'MFile',
+  name: "MFile",
 });
 </script>
 <script lang="ts" setup>
@@ -34,34 +36,40 @@ const props = defineProps({
   item: {
     type: Object as PropType<IFileInfo>,
   },
+  isBurn: {
+    type: Boolean,
+  },
+  fired: {
+    type: Boolean,
+  },
 });
 
-const name = ref('iconWORD');
-const res = props.item!.fileName.split('.');
+const name = ref("iconWORD");
+const res = props.item!.fileName.split(".");
 if (res.length > 1) {
   const suffix = res[1];
-  if (suffix.toLocaleLowerCase().includes('doc')) {
-    name.value = 'iconWORD';
-  } else if (suffix.toLocaleLowerCase().includes('xls')) {
-    name.value = 'iconexcel';
-  } else if (suffix.toLocaleLowerCase().includes('pdf')) {
-    name.value = 'iconpdf';
+  if (suffix.toLocaleLowerCase().includes("doc")) {
+    name.value = "iconWORD";
+  } else if (suffix.toLocaleLowerCase().includes("xls")) {
+    name.value = "iconexcel";
+  } else if (suffix.toLocaleLowerCase().includes("pdf")) {
+    name.value = "iconpdf";
   } else {
-    name.value = 'iconwenjian';
+    name.value = "iconwenjian";
   }
 }
 
 const size = getSize(props.item!.fileSize);
 
-const emit = defineEmits(['menuClick', 'download']);
+const emit = defineEmits(["menuClick", "download"]);
 
 const contextmenu = (e: any) => {
   e.preventDefault();
-  emit('menuClick', e);
+  emit("menuClick", e);
 };
 </script>
 <style lang="scss" scoped>
-@import '@/style/theme/index.scss';
+@import "@/style/theme/index.scss";
 .mmsg {
   text-align: right;
   display: flex;

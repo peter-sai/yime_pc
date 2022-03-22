@@ -1,5 +1,5 @@
 <template>
-  <div class="fireImg">
+  <div class="fireBox">
     <img
       :style="`right:${right};top:${top};left:${left}`"
       class="fire"
@@ -46,7 +46,7 @@ defineProps({
 });
 </script>
 <style lang="scss" scoped>
-.fireImg {
+.fireBox {
   position: relative;
   .fire {
     position: absolute;
