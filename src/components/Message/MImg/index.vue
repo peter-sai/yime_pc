@@ -5,6 +5,7 @@
         <!-- <img :width="width" :height="height" :src="src" alt="" /> -->
         <SayHello v-if="src === 'emoji_1'" />
         <div class="imgBg" v-else @contextmenu="contextmenu">
+          <Fire :isBurn="isBurn" :fired="fired" :left="`-15px`" :top="`-8px`" />
           <img
             @click="shogImg"
             style="max-width: 100%; max-height: 100%; cursor: pointer"
@@ -18,11 +19,12 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, defineProps, defineEmits } from 'vue';
-import SayHello from '../SayHello/index.vue';
-import IsRead from '@/components/IsRead/index.vue';
+import { defineComponent, defineProps, defineEmits } from "vue";
+import SayHello from "../SayHello/index.vue";
+import Fire from "../Fire/index.vue";
+import IsRead from "@/components/IsRead/index.vue";
 export default defineComponent({
-  name: 'MImg',
+  name: "MImg",
 });
 </script>
 <script lang="ts" setup>
@@ -33,7 +35,7 @@ const props = defineProps({
   },
   src: {
     type: String,
-    default: '',
+    default: "",
   },
   width: {
     type: Number,
@@ -43,24 +45,32 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
+  isBurn: {
+    type: Boolean,
+  },
+  fired: {
+    type: Boolean,
+  },
 });
 
-const emit = defineEmits(['menuClick', 'showBigImg']);
+const emit = defineEmits(["menuClick", "showBigImg"]);
 
 const contextmenu = (e: any) => {
   e.preventDefault();
-  emit('menuClick', e);
+  emit("menuClick", e);
 };
 
 const shogImg = () => {
-  emit('showBigImg');
+  emit("showBigImg");
 };
 </script>
 <style lang="scss" scoped>
-@import '@/style/theme/index.scss';
+@import "@/style/theme/index.scss";
 .imgBg {
   max-width: 70%;
   margin: auto 0 auto auto;
+  display: flex;
+  justify-content: flex-end;
 }
 .mImg {
   text-align: right;

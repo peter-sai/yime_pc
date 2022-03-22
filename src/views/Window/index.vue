@@ -242,7 +242,6 @@ const groupDetailInfo: ComputedRef<IGroupInfo> = computed(
 // 群聊陌生人
 const strangerInfo = computed(() => {
   const userInfo = store.state?.msgList[store.state?.activeUid];
-
   if (
     userInfo?.userDetailInfo?.isFriend ||
     userInfo?.userDetailInfo?.isInMyBlacklist ||
@@ -253,7 +252,12 @@ const strangerInfo = computed(() => {
   const msgSource = userInfo?.lastMsg?.attachInfo?.msgSource;
   try {
     if (msgSource) {
-      return JSON.parse(msgSource);
+      const item = JSON.parse(msgSource);
+      if (item.sourceId != store.state.activeUid) {
+        return item;
+      } else {
+        return null;
+      }
     } else {
       return null;
     }

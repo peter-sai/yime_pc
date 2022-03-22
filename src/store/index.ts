@@ -143,7 +143,7 @@ const initState = {
   },
   msgList: {} as { [key: number]: ImsgItem },
   playAudio: '', // 当前正在播放的音频
-  conversationIng: false, // 是否在通话中
+  conversationIng: true, // 是否在通话中
 };
 
 export type initStore = typeof initState;
@@ -646,7 +646,7 @@ function getMessage(cmd: any, encryption: any, state: any) {
 }
 
 function onMessage() {
-  const cmdList = [2129, 2004, 2125, 2148, 2024, 2156, 2162, 2054];
+  const cmdList = [2129, 2004, 2125, 2148, 2024, 2156, 2162];
   ws.onmessage = (evt: any) => {
     if (sotreRoot.state.isOnLine) {
       sotreRoot.commit('SET_ISONLINE', false);

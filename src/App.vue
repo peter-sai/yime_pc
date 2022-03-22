@@ -358,7 +358,9 @@ const stop = watch(
         const fireKey = readList.findIndex(
           (e: any) => Number(e.msgId) === Number(fireMsgId),
         );
-        readList[fireKey].fired = true;
+        if (readList[fireKey]) {
+          readList[fireKey].fired = true;
+        }
         store.commit('SET_MSGLIST', msgList);
       }
 

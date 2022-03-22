@@ -97,7 +97,7 @@ const enter = async () => {
 const goWindow = (e: IUserDetailInfo) => {
   const source = {
     source: e.source,
-    sourceId: e.sourceId,
+    sourceId: e.userInfo.uid,
     sourceType: e.sourceType,
   };
   store.commit('SET_MSGSOURCE', source);

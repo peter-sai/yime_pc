@@ -1,46 +1,46 @@
 /*eslint-disable block-scoped-var, id-length, no-control-regex, no-magic-numbers, no-prototype-builtins, no-redeclare, no-shadow, no-var, sort-vars*/
-'use strict';
+"use strict";
 
-var $protobuf = require('protobufjs/light');
+var $protobuf = require("protobufjs/light");
 
 var $root = (
-  $protobuf.roots['default'] ||
-  ($protobuf.roots['default'] = new $protobuf.Root())
+  $protobuf.roots["default"] ||
+  ($protobuf.roots["default"] = new $protobuf.Root())
 ).addJSON({
   Aoelailiao: {
     nested: {
       Bot: {
         options: {
-          java_package: 'com.aoetech.aoelailiao.protobuf',
+          java_package: "com.aoetech.aoelailiao.protobuf",
           java_multiple_files: true,
           go_package:
-            'github.com/protocolbuffers/protobuf/aoelailiao/go/protocolpb',
+            "github.com/protocolbuffers/protobuf/aoelailiao/go/protocolpb",
         },
         nested: {
           BotMsgInfo: {
             fields: {
               botId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               userId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               content: {
-                type: 'string',
+                type: "string",
                 id: 3,
               },
               type: {
-                type: 'uint32',
+                type: "uint32",
                 id: 4,
               },
               isGroupMsg: {
-                type: 'uint32',
+                type: "uint32",
                 id: 5,
               },
               language: {
-                type: 'uint32',
+                type: "uint32",
                 id: 6,
               },
             },
@@ -49,24 +49,24 @@ var $root = (
       },
       Common: {
         options: {
-          java_package: 'com.aoetech.aoelailiao.protobuf',
+          java_package: "com.aoetech.aoelailiao.protobuf",
           java_multiple_files: true,
           go_package:
-            'github.com/protocolbuffers/protobuf/aoelailiao/go/protocolpb',
+            "github.com/protocolbuffers/protobuf/aoelailiao/go/protocolpb",
         },
         nested: {
           CommonAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -74,11 +74,11 @@ var $root = (
           ThirdUserInfo: {
             fields: {
               nickname: {
-                type: 'string',
+                type: "string",
                 id: 1,
               },
               icon: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
             },
@@ -86,27 +86,27 @@ var $root = (
           UserAttachInfo: {
             fields: {
               remarkName: {
-                type: 'string',
+                type: "string",
                 id: 1,
               },
               destoryReaded: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               msgTop: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
               msgMute: {
-                type: 'uint32',
+                type: "uint32",
                 id: 4,
               },
               msgScreenShotNotify: {
-                type: 'uint32',
+                type: "uint32",
                 id: 5,
               },
               msgAtNotify: {
-                type: 'uint32',
+                type: "uint32",
                 id: 6,
                 options: {
                   default: 1,
@@ -117,35 +117,35 @@ var $root = (
           UserInfo: {
             fields: {
               uid: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               nickname: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               icon: {
-                type: 'string',
+                type: "string",
                 id: 3,
               },
               userAttachInfo: {
-                type: 'UserAttachInfo',
+                type: "UserAttachInfo",
                 id: 4,
               },
               onlineState: {
-                type: 'uint32',
+                type: "uint32",
                 id: 5,
               },
               imAccount: {
-                type: 'string',
+                type: "string",
                 id: 6,
               },
               lastOnlineTime: {
-                type: 'uint32',
+                type: "uint32",
                 id: 7,
               },
               isBotUser: {
-                type: 'uint32',
+                type: "uint32",
                 id: 8,
               },
             },
@@ -153,68 +153,68 @@ var $root = (
           UserDetailInfo: {
             fields: {
               userInfo: {
-                type: 'UserInfo',
+                type: "UserInfo",
                 id: 1,
               },
               isFriend: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               friendQueryType: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
               phone: {
-                type: 'string',
+                type: "string",
                 id: 4,
               },
               qrCode: {
-                type: 'string',
+                type: "string",
                 id: 5,
               },
               isRealnameAuth: {
-                type: 'uint32',
+                type: "uint32",
                 id: 6,
               },
               isInMyBlacklist: {
-                type: 'uint32',
+                type: "uint32",
                 id: 7,
               },
               isSetPassword: {
-                type: 'uint32',
+                type: "uint32",
                 id: 8,
               },
               userSex: {
-                type: 'uint32',
+                type: "uint32",
                 id: 9,
               },
               cityCode: {
-                type: 'string',
+                type: "string",
                 id: 10,
               },
               userSign: {
-                type: 'string',
+                type: "string",
                 id: 11,
               },
               labelLists: {
-                rule: 'repeated',
-                type: 'LabelInfo',
+                rule: "repeated",
+                type: "LabelInfo",
                 id: 12,
               },
               findMeGroup: {
-                type: 'uint32',
+                type: "uint32",
                 id: 13,
               },
               source: {
-                type: 'string',
+                type: "string",
                 id: 14,
               },
               sourceId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 15,
               },
               sourceType: {
-                type: 'uint32',
+                type: "uint32",
                 id: 16,
               },
             },
@@ -222,8 +222,8 @@ var $root = (
           UserBlackListInfo: {
             fields: {
               blacklistUidLists: {
-                rule: 'repeated',
-                type: 'uint32',
+                rule: "repeated",
+                type: "uint32",
                 id: 1,
                 options: {
                   packed: false,
@@ -234,19 +234,19 @@ var $root = (
           GroupNoticeInfo: {
             fields: {
               groupNoticeContent: {
-                type: 'string',
+                type: "string",
                 id: 1,
               },
               updateTime: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               editorUid: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
               noticeId: {
-                type: 'uint64',
+                type: "uint64",
                 id: 4,
               },
             },
@@ -254,19 +254,19 @@ var $root = (
           GroupMemberUserInfo: {
             fields: {
               memberUid: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               joinType: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               inviteUid: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
               remarkName: {
-                type: 'string',
+                type: "string",
                 id: 4,
               },
             },
@@ -274,25 +274,25 @@ var $root = (
           GroupMemberListInfo: {
             fields: {
               rootUid: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               adminUidList: {
-                rule: 'repeated',
-                type: 'uint32',
+                rule: "repeated",
+                type: "uint32",
                 id: 2,
                 options: {
                   packed: false,
                 },
               },
               memberUserInfos: {
-                rule: 'repeated',
-                type: 'GroupMemberUserInfo',
+                rule: "repeated",
+                type: "GroupMemberUserInfo",
                 id: 3,
               },
               botUidList: {
-                rule: 'repeated',
-                type: 'uint32',
+                rule: "repeated",
+                type: "uint32",
                 id: 4,
                 options: {
                   packed: false,
@@ -303,67 +303,67 @@ var $root = (
           GroupAttachInfo: {
             fields: {
               groupTop: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               groupMsgMute: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               groupSaveInGrouplist: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
               groupDestoryReaded: {
-                type: 'uint32',
+                type: "uint32",
                 id: 4,
               },
               groupScreenShotNotify: {
-                type: 'uint32',
+                type: "uint32",
                 id: 5,
               },
               groupJoinAuthType: {
-                type: 'uint32',
+                type: "uint32",
                 id: 6,
               },
               groupMemberSplit: {
-                type: 'uint32',
+                type: "uint32",
                 id: 7,
               },
               groupMsgGag: {
-                type: 'uint32',
+                type: "uint32",
                 id: 8,
               },
               groupUnableEditNickname: {
-                type: 'uint32',
+                type: "uint32",
                 id: 9,
               },
               groupRemarkName: {
-                type: 'string',
+                type: "string",
                 id: 10,
               },
               groupMsgClean: {
-                type: 'uint32',
+                type: "uint32",
                 id: 11,
               },
               allowMemberGetHisotyMsg: {
-                type: 'uint32',
+                type: "uint32",
                 id: 12,
               },
               allowEveryoneJoin: {
-                type: 'uint32',
+                type: "uint32",
                 id: 13,
               },
               allowMemberInviteJoin: {
-                type: 'uint32',
+                type: "uint32",
                 id: 14,
               },
               groupInviteState: {
-                type: 'uint32',
+                type: "uint32",
                 id: 15,
               },
               groupMsgAtNotify: {
-                type: 'uint32',
+                type: "uint32",
                 id: 16,
                 options: {
                   default: 1,
@@ -374,39 +374,39 @@ var $root = (
           GroupInfo: {
             fields: {
               groupId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               groupName: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               groupIcon: {
-                type: 'string',
+                type: "string",
                 id: 3,
               },
               groupMemberLists: {
-                type: 'GroupMemberListInfo',
+                type: "GroupMemberListInfo",
                 id: 5,
               },
               groupAttachInfo: {
-                type: 'GroupAttachInfo',
+                type: "GroupAttachInfo",
                 id: 6,
               },
               qrCode: {
-                type: 'string',
+                type: "string",
                 id: 7,
               },
               groupNoticeInfo: {
-                type: 'GroupNoticeInfo',
+                type: "GroupNoticeInfo",
                 id: 8,
               },
               groupState: {
-                type: 'uint32',
+                type: "uint32",
                 id: 9,
               },
               isEncrypt: {
-                type: 'uint32',
+                type: "uint32",
                 id: 11,
               },
             },
@@ -414,19 +414,19 @@ var $root = (
           PhoneContactUserInfo: {
             fields: {
               contactName: {
-                type: 'string',
+                type: "string",
                 id: 1,
               },
               contactPhone: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               contactUserInfo: {
-                type: 'UserDetailInfo',
+                type: "UserDetailInfo",
                 id: 3,
               },
               cannotChat: {
-                type: 'uint32',
+                type: "uint32",
                 id: 4,
               },
             },
@@ -434,71 +434,71 @@ var $root = (
           SwitchSettingInfo: {
             fields: {
               pushSound: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               pushShake: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               newMessage: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
               videoCall: {
-                type: 'uint32',
+                type: "uint32",
                 id: 4,
               },
               pokeSound: {
-                type: 'uint32',
+                type: "uint32",
                 id: 5,
               },
               pokeShake: {
-                type: 'uint32',
+                type: "uint32",
                 id: 6,
               },
               findMePhone: {
-                type: 'uint32',
+                type: "uint32",
                 id: 11,
               },
               findMeImAccount: {
-                type: 'uint32',
+                type: "uint32",
                 id: 12,
               },
               findMeNickname: {
-                type: 'uint32',
+                type: "uint32",
                 id: 13,
               },
               findMeGroup: {
-                type: 'uint32',
+                type: "uint32",
                 id: 14,
               },
               findMeRecommend: {
-                type: 'uint32',
+                type: "uint32",
                 id: 15,
               },
               recommendContactsUser: {
-                type: 'uint32',
+                type: "uint32",
                 id: 16,
               },
               readMessageState: {
-                type: 'uint32',
+                type: "uint32",
                 id: 17,
               },
               findMeShareLink: {
-                type: 'uint32',
+                type: "uint32",
                 id: 18,
               },
               whoCanInviteMeGroup: {
-                type: 'uint32',
+                type: "uint32",
                 id: 19,
               },
               refuseStrangerMessage: {
-                type: 'uint32',
+                type: "uint32",
                 id: 20,
               },
               whoCanSeeMyPhone: {
-                type: 'uint32',
+                type: "uint32",
                 id: 21,
               },
             },
@@ -506,15 +506,15 @@ var $root = (
           FileInfo: {
             fields: {
               fileUrl: {
-                type: 'string',
+                type: "string",
                 id: 1,
               },
               fileName: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               fileSize: {
-                type: 'uint64',
+                type: "uint64",
                 id: 3,
               },
             },
@@ -522,19 +522,19 @@ var $root = (
           UserWriteState: {
             fields: {
               fromId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               toId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               type: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
               writeState: {
-                type: 'uint32',
+                type: "uint32",
                 id: 4,
               },
             },
@@ -542,16 +542,16 @@ var $root = (
           GroupCallState: {
             fields: {
               groupId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               callState: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               userId: {
-                rule: 'repeated',
-                type: 'uint32',
+                rule: "repeated",
+                type: "uint32",
                 id: 3,
                 options: {
                   packed: false,
@@ -562,11 +562,11 @@ var $root = (
           LabelInfo: {
             fields: {
               labelId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               labelContent: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
             },
@@ -574,12 +574,12 @@ var $root = (
           LabelUserInfo: {
             fields: {
               labelInfo: {
-                type: 'LabelInfo',
+                type: "LabelInfo",
                 id: 1,
               },
               userId: {
-                rule: 'repeated',
-                type: 'uint32',
+                rule: "repeated",
+                type: "uint32",
                 id: 2,
                 options: {
                   packed: false,
@@ -591,24 +591,24 @@ var $root = (
       },
       InnerServer: {
         options: {
-          java_package: 'com.aoetech.aoelailiao.protobuf',
+          java_package: "com.aoetech.aoelailiao.protobuf",
           java_multiple_files: true,
           go_package:
-            'github.com/protocolbuffers/protobuf/aoelailiao/go/protocolpb',
+            "github.com/protocolbuffers/protobuf/aoelailiao/go/protocolpb",
         },
         nested: {
           FriendInfo: {
             fields: {
               friendUid: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               friendQueryType: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               friendAttachInfo: {
-                type: 'Aoelailiao.Common.UserAttachInfo',
+                type: "Aoelailiao.Common.UserAttachInfo",
                 id: 3,
               },
             },
@@ -616,8 +616,8 @@ var $root = (
           FriendInfoLists: {
             fields: {
               friendInfoLists: {
-                rule: 'repeated',
-                type: 'FriendInfo',
+                rule: "repeated",
+                type: "FriendInfo",
                 id: 1,
               },
             },
@@ -625,15 +625,15 @@ var $root = (
           UserGroupInfo: {
             fields: {
               groupId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               groupAttachInfo: {
-                type: 'Aoelailiao.Common.GroupAttachInfo',
+                type: "Aoelailiao.Common.GroupAttachInfo",
                 id: 2,
               },
               receiveGmsgid: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
             },
@@ -641,8 +641,8 @@ var $root = (
           UserGroupInfoLists: {
             fields: {
               userGroupInfoLists: {
-                rule: 'repeated',
-                type: 'UserGroupInfo',
+                rule: "repeated",
+                type: "UserGroupInfo",
                 id: 1,
               },
             },
@@ -650,8 +650,8 @@ var $root = (
           UserConversationLists: {
             fields: {
               userConversationInfos: {
-                rule: 'repeated',
-                type: 'UserConversationInfo',
+                rule: "repeated",
+                type: "UserConversationInfo",
                 id: 1,
               },
             },
@@ -659,31 +659,31 @@ var $root = (
           UserConversationInfo: {
             fields: {
               relationId: {
-                type: 'uint64',
+                type: "uint64",
                 id: 1,
               },
               isEncrypt: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               isGroupMsg: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
               objectId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 4,
               },
               groupMsgidMin: {
-                type: 'uint32',
+                type: "uint32",
                 id: 5,
               },
               receivedMsgId: {
-                type: 'uint64',
+                type: "uint64",
                 id: 6,
               },
               readedMsgId: {
-                type: 'uint64',
+                type: "uint64",
                 id: 7,
               },
             },
@@ -691,27 +691,27 @@ var $root = (
           ConversationGlobleReadedStateInfo: {
             fields: {
               relationId: {
-                type: 'uint64',
+                type: "uint64",
                 id: 1,
               },
               isEncrypt: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               isGroupMsg: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
               fromId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 4,
               },
               toId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 5,
               },
               readedMsgId: {
-                type: 'uint64',
+                type: "uint64",
                 id: 6,
               },
             },
@@ -719,8 +719,8 @@ var $root = (
           UserUnReceivedMsgIdListInfo: {
             fields: {
               unreceivedMsgIds: {
-                rule: 'repeated',
-                type: 'uint64',
+                rule: "repeated",
+                type: "uint64",
                 id: 1,
                 options: {
                   packed: false,
@@ -731,31 +731,31 @@ var $root = (
           PushMessage: {
             fields: {
               uid: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               pushToken: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               pushMsg: {
-                type: 'string',
+                type: "string",
                 id: 3,
               },
               pushMsgBadge: {
-                type: 'uint32',
+                type: "uint32",
                 id: 4,
               },
               useSandbox: {
-                type: 'uint32',
+                type: "uint32",
                 id: 5,
               },
               allowSound: {
-                type: 'uint32',
+                type: "uint32",
                 id: 6,
               },
               pushSdk: {
-                type: 'uint32',
+                type: "uint32",
                 id: 7,
               },
             },
@@ -763,15 +763,15 @@ var $root = (
           FileUploadTokenInfo: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               token: {
-                type: 'string',
+                type: "string",
                 id: 3,
               },
             },
@@ -779,19 +779,19 @@ var $root = (
           ThirdPlatformUserInfo: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               nickName: {
-                type: 'string',
+                type: "string",
                 id: 3,
               },
               avatarUrl: {
-                type: 'string',
+                type: "string",
                 id: 4,
               },
             },
@@ -799,31 +799,31 @@ var $root = (
           UserInfoInRedis: {
             fields: {
               uid: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               nickName: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               icon: {
-                type: 'string',
+                type: "string",
                 id: 3,
               },
               sex: {
-                type: 'uint32',
+                type: "uint32",
                 id: 4,
               },
               phone: {
-                type: 'string',
+                type: "string",
                 id: 5,
               },
               userSign: {
-                type: 'string',
+                type: "string",
                 id: 6,
               },
               imAccount: {
-                type: 'string',
+                type: "string",
                 id: 7,
               },
             },
@@ -831,15 +831,15 @@ var $root = (
           GroupInfoInRedis: {
             fields: {
               ownerUid: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               icon: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               name: {
-                type: 'string',
+                type: "string",
                 id: 3,
               },
             },
@@ -847,11 +847,11 @@ var $root = (
           UpdateUserSex: {
             fields: {
               uid: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               sex: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
             },
@@ -859,8 +859,8 @@ var $root = (
           OperateGroupApplyUidList: {
             fields: {
               uid: {
-                rule: 'repeated',
-                type: 'string',
+                rule: "repeated",
+                type: "string",
                 id: 1,
               },
             },
@@ -868,23 +868,23 @@ var $root = (
           RouteDataInfo: {
             fields: {
               cid: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               recvUid: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               format: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
               routeBinData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 4,
               },
               routeJsonData: {
-                type: 'string',
+                type: "string",
                 id: 5,
               },
             },
@@ -892,15 +892,15 @@ var $root = (
           SMSNotifyInfo: {
             fields: {
               phone: {
-                type: 'string',
+                type: "string",
                 id: 1,
               },
               code: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               type: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
             },
@@ -908,24 +908,24 @@ var $root = (
           SyncGroupOperateInfo: {
             fields: {
               groupId: {
-                type: 'string',
+                type: "string",
                 id: 1,
               },
               groupName: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               memberIds: {
-                rule: 'repeated',
-                type: 'string',
+                rule: "repeated",
+                type: "string",
                 id: 3,
               },
               operationId: {
-                type: 'string',
+                type: "string",
                 id: 4,
               },
               type: {
-                type: 'uint32',
+                type: "uint32",
                 id: 5,
               },
             },
@@ -933,15 +933,15 @@ var $root = (
           GroupVideoCallEndNotify: {
             fields: {
               type: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               channelId: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               endTime: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
             },
@@ -949,20 +949,20 @@ var $root = (
           GroupVideoCallStateNotify: {
             fields: {
               type: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               channelId: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               endTime: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
               memberUids: {
-                rule: 'repeated',
-                type: 'uint32',
+                rule: "repeated",
+                type: "uint32",
                 id: 4,
                 options: {
                   packed: false,
@@ -973,35 +973,35 @@ var $root = (
           UserLoginInfo: {
             fields: {
               uid: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               loginType: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               isAutoLogin: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
               loginTime: {
-                type: 'uint32',
+                type: "uint32",
                 id: 4,
               },
               privateIp: {
-                type: 'string',
+                type: "string",
                 id: 5,
               },
               publicIp: {
-                type: 'string',
+                type: "string",
                 id: 6,
               },
               deviceUuid: {
-                type: 'string',
+                type: "string",
                 id: 7,
               },
               distributionChannel: {
-                type: 'string',
+                type: "string",
                 id: 8,
               },
             },
@@ -1009,11 +1009,11 @@ var $root = (
           UserMessageStateInfo: {
             fields: {
               uid: {
-                type: 'uint64',
+                type: "uint64",
                 id: 1,
               },
               msgId: {
-                type: 'uint64',
+                type: "uint64",
                 id: 2,
               },
             },
@@ -1021,27 +1021,27 @@ var $root = (
           GroupMsgReq: {
             fields: {
               appId: {
-                rule: 'repeated',
-                type: 'uint32',
+                rule: "repeated",
+                type: "uint32",
                 id: 1,
                 options: {
                   packed: false,
                 },
               },
               groupId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               pushType: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
               userId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 4,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -1049,11 +1049,11 @@ var $root = (
           PullGroupReq: {
             fields: {
               comId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -1061,20 +1061,20 @@ var $root = (
           PullGroupAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               group: {
-                rule: 'repeated',
-                type: 'PullGroup',
+                rule: "repeated",
+                type: "PullGroup",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -1082,16 +1082,16 @@ var $root = (
           PullGroup: {
             fields: {
               appId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               groupId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               userId: {
-                rule: 'repeated',
-                type: 'uint32',
+                rule: "repeated",
+                type: "uint32",
                 id: 3,
                 options: {
                   packed: false,
@@ -1102,15 +1102,15 @@ var $root = (
           UserContactUserInfo: {
             fields: {
               contactName: {
-                type: 'string',
+                type: "string",
                 id: 1,
               },
               contactPhone: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               contactPhoneFixed: {
-                type: 'string',
+                type: "string",
                 id: 3,
               },
             },
@@ -1118,8 +1118,8 @@ var $root = (
           UserContactUserInfoList: {
             fields: {
               userContactUserInfos: {
-                rule: 'repeated',
-                type: 'UserContactUserInfo',
+                rule: "repeated",
+                type: "UserContactUserInfo",
                 id: 1,
               },
             },
@@ -1127,11 +1127,11 @@ var $root = (
           UserReloginSuccessNotify: {
             fields: {
               userId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               equipmentInformation: {
-                type: 'Aoelailiao.Login.EquipmentInformation',
+                type: "Aoelailiao.Login.EquipmentInformation",
                 id: 27,
               },
             },
@@ -1140,32 +1140,32 @@ var $root = (
       },
       Login: {
         options: {
-          java_package: 'com.aoetech.aoelailiao.protobuf',
+          java_package: "com.aoetech.aoelailiao.protobuf",
           java_multiple_files: true,
           go_package:
-            'github.com/protocolbuffers/protobuf/aoelailiao/go/protocolpb',
+            "github.com/protocolbuffers/protobuf/aoelailiao/go/protocolpb",
         },
         nested: {
           UserPlatformInfo: {
             fields: {
               loginType: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               loginId: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               loginPasswdToken: {
-                type: 'string',
+                type: "string",
                 id: 3,
               },
               wxUnionId: {
-                type: 'string',
+                type: "string",
                 id: 4,
               },
               thirdUserInfo: {
-                type: 'Aoelailiao.Common.ThirdUserInfo',
+                type: "Aoelailiao.Common.ThirdUserInfo",
                 id: 5,
               },
             },
@@ -1173,35 +1173,35 @@ var $root = (
           EquipmentInformation: {
             fields: {
               deviceUuid: {
-                type: 'string',
+                type: "string",
                 id: 1,
               },
               deviceBrand: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               deviceModel: {
-                type: 'string',
+                type: "string",
                 id: 3,
               },
               deviceOsVersion: {
-                type: 'string',
+                type: "string",
                 id: 4,
               },
               releaseVersion: {
-                type: 'string',
+                type: "string",
                 id: 5,
               },
               devicePrivateIp: {
-                type: 'string',
+                type: "string",
                 id: 6,
               },
               devicePublicIp: {
-                type: 'string',
+                type: "string",
                 id: 7,
               },
               distributionChannelId: {
-                type: 'string',
+                type: "string",
                 id: 8,
               },
             },
@@ -1209,23 +1209,23 @@ var $root = (
           GetAuthCodeReq: {
             fields: {
               phone: {
-                type: 'string',
+                type: "string",
                 id: 1,
               },
               type: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               registerDeviceUuid: {
-                type: 'string',
+                type: "string",
                 id: 3,
               },
               iosIdfa: {
-                type: 'string',
+                type: "string",
                 id: 30,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -1233,15 +1233,15 @@ var $root = (
           GetAuthCodeAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -1249,31 +1249,31 @@ var $root = (
           AuthAuthCodeReq: {
             fields: {
               type: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               phone: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               authCode: {
-                type: 'string',
+                type: "string",
                 id: 3,
               },
               newPasswdMd5: {
-                type: 'string',
+                type: "string",
                 id: 4,
               },
               oldPhone: {
-                type: 'string',
+                type: "string",
                 id: 5,
               },
               iosIdfa: {
-                type: 'string',
+                type: "string",
                 id: 30,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -1281,15 +1281,15 @@ var $root = (
           AuthAuthCodeAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -1297,15 +1297,15 @@ var $root = (
           RegisterInfo: {
             fields: {
               nickname: {
-                type: 'string',
+                type: "string",
                 id: 1,
               },
               icon: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               password: {
-                type: 'string',
+                type: "string",
                 id: 3,
               },
             },
@@ -1313,23 +1313,23 @@ var $root = (
           LoginReq: {
             fields: {
               loginInfo: {
-                type: 'UserPlatformInfo',
+                type: "UserPlatformInfo",
                 id: 1,
               },
               registerInfo: {
-                type: 'RegisterInfo',
+                type: "RegisterInfo",
                 id: 2,
               },
               clientLanguageType: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
               equipmentInformation: {
-                type: 'EquipmentInformation',
+                type: "EquipmentInformation",
                 id: 27,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -1337,47 +1337,47 @@ var $root = (
           LoginAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               loginType: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
               serverTime: {
-                type: 'uint32',
+                type: "uint32",
                 id: 4,
               },
               userLoginToken: {
-                type: 'bytes',
+                type: "bytes",
                 id: 6,
               },
               userInfo: {
-                type: 'Aoelailiao.Common.UserInfo',
+                type: "Aoelailiao.Common.UserInfo",
                 id: 7,
               },
               switchSettingInfo: {
-                type: 'Aoelailiao.Common.SwitchSettingInfo',
+                type: "Aoelailiao.Common.SwitchSettingInfo",
                 id: 8,
               },
               userDetailInfo: {
-                type: 'Aoelailiao.Common.UserDetailInfo',
+                type: "Aoelailiao.Common.UserDetailInfo",
                 id: 9,
               },
               deviceUuid: {
-                type: 'string',
+                type: "string",
                 id: 30,
               },
               distributionChannelId: {
-                type: 'string',
+                type: "string",
                 id: 31,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -1385,7 +1385,7 @@ var $root = (
           LogOutReq: {
             fields: {
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -1393,15 +1393,15 @@ var $root = (
           LogOutAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -1409,11 +1409,11 @@ var $root = (
           UserGetFriendsAndGroupsListReq: {
             fields: {
               updateTime: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -1421,33 +1421,33 @@ var $root = (
           UserGetFriendsAndGroupsListAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               friendInfos: {
-                rule: 'repeated',
-                type: 'Aoelailiao.Common.UserInfo',
+                rule: "repeated",
+                type: "Aoelailiao.Common.UserInfo",
                 id: 3,
               },
               groupInfos: {
-                rule: 'repeated',
-                type: 'Aoelailiao.Common.GroupInfo',
+                rule: "repeated",
+                type: "Aoelailiao.Common.GroupInfo",
                 id: 4,
               },
               updateTime: {
-                type: 'uint32',
+                type: "uint32",
                 id: 5,
               },
               isNeedBindPhone: {
-                type: 'uint32',
+                type: "uint32",
                 id: 31,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -1455,23 +1455,23 @@ var $root = (
           ClientGetUserInfoReq: {
             fields: {
               uid: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               source: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               sourceId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
               sourceType: {
-                type: 'uint32',
+                type: "uint32",
                 id: 4,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -1479,23 +1479,23 @@ var $root = (
           ClientGetUserInfoAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               userDetailInfo: {
-                type: 'Aoelailiao.Common.UserDetailInfo',
+                type: "Aoelailiao.Common.UserDetailInfo",
                 id: 3,
               },
               fireReadTtl: {
-                type: 'uint32',
+                type: "uint32",
                 id: 4,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -1503,11 +1503,11 @@ var $root = (
           ItemSettingInfo: {
             fields: {
               itemNo: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               itemValue: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
             },
@@ -1515,12 +1515,12 @@ var $root = (
           UserSetItemReq: {
             fields: {
               itemInfos: {
-                rule: 'repeated',
-                type: 'ItemSettingInfo',
+                rule: "repeated",
+                type: "ItemSettingInfo",
                 id: 1,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -1528,20 +1528,20 @@ var $root = (
           UserSetItemAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               itemInfos: {
-                rule: 'repeated',
-                type: 'ItemSettingInfo',
+                rule: "repeated",
+                type: "ItemSettingInfo",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -1549,11 +1549,11 @@ var $root = (
           UserQueryUserInfoReq: {
             fields: {
               queryString: {
-                type: 'string',
+                type: "string",
                 id: 1,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -1561,20 +1561,20 @@ var $root = (
           UserQueryUserInfoAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               userDetailInfos: {
-                rule: 'repeated',
-                type: 'Aoelailiao.Common.UserDetailInfo',
+                rule: "repeated",
+                type: "Aoelailiao.Common.UserDetailInfo",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -1582,23 +1582,23 @@ var $root = (
           ClientUploadDevicePushTokenReq: {
             fields: {
               operateReason: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               deviceToken: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               pushSdkType: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
               deviceVoipToken: {
-                type: 'string',
+                type: "string",
                 id: 4,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -1606,19 +1606,19 @@ var $root = (
           ClientUploadDevicePushTokenAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               operateReason: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -1626,11 +1626,11 @@ var $root = (
           ClientUploadBadgeInfoReq: {
             fields: {
               badge: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -1638,15 +1638,15 @@ var $root = (
           ClientUploadBadgeInfoAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -1654,19 +1654,19 @@ var $root = (
           UserChangePassWordReq: {
             fields: {
               passwordType: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               oldPasswordMd5: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               newPasswordMd5: {
-                type: 'string',
+                type: "string",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -1674,15 +1674,15 @@ var $root = (
           UserChangePassWordAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -1690,28 +1690,28 @@ var $root = (
           DecodeResultInfo: {
             oneofs: {
               jumpContent: {
-                oneof: ['defaultValue', 'userId', 'groupId', 'webUrl'],
+                oneof: ["defaultValue", "userId", "groupId", "webUrl"],
               },
             },
             fields: {
               jumpType: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               defaultValue: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               userId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
               groupId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 4,
               },
               webUrl: {
-                type: 'string',
+                type: "string",
                 id: 5,
               },
             },
@@ -1719,11 +1719,11 @@ var $root = (
           UserDecodeConentReq: {
             fields: {
               encodeString: {
-                type: 'string',
+                type: "string",
                 id: 1,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -1731,23 +1731,23 @@ var $root = (
           UserDecodeConentAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               decodeResultInfo: {
-                type: 'DecodeResultInfo',
+                type: "DecodeResultInfo",
                 id: 3,
               },
               longLinkUrl: {
-                type: 'string',
+                type: "string",
                 id: 4,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -1755,31 +1755,31 @@ var $root = (
           UserOperateFriendShipReq: {
             fields: {
               operateType: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               queryType: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               userInfo: {
-                type: 'Aoelailiao.Common.UserInfo',
+                type: "Aoelailiao.Common.UserInfo",
                 id: 3,
               },
               applyDesc: {
-                type: 'string',
+                type: "string",
                 id: 4,
               },
               phone: {
-                type: 'string',
+                type: "string",
                 id: 5,
               },
               remarkName: {
-                type: 'string',
+                type: "string",
                 id: 6,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -1787,20 +1787,20 @@ var $root = (
           UserOperateFriendShipAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               userInfo: {
-                rule: 'repeated',
-                type: 'Aoelailiao.Common.UserInfo',
+                rule: "repeated",
+                type: "Aoelailiao.Common.UserInfo",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -1808,19 +1808,19 @@ var $root = (
           UserOperateGroupInfoReq: {
             fields: {
               operateType: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               queryGroupInfoType: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               groupInfo: {
-                type: 'Aoelailiao.Common.GroupInfo',
+                type: "Aoelailiao.Common.GroupInfo",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -1828,19 +1828,19 @@ var $root = (
           UserOperateGroupInfoAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               groupInfo: {
-                type: 'Aoelailiao.Common.GroupInfo',
+                type: "Aoelailiao.Common.GroupInfo",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -1848,11 +1848,11 @@ var $root = (
           ClientGetGroupInfoReq: {
             fields: {
               groupId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -1860,23 +1860,23 @@ var $root = (
           ClientGetGroupInfoAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               groupDetailInfo: {
-                type: 'Aoelailiao.Common.GroupInfo',
+                type: "Aoelailiao.Common.GroupInfo",
                 id: 3,
               },
               fireReadTtl: {
-                type: 'uint32',
+                type: "uint32",
                 id: 4,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -1884,15 +1884,15 @@ var $root = (
           UserOperateBlackListReq: {
             fields: {
               operateType: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               operateUid: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -1900,19 +1900,19 @@ var $root = (
           UserOperateBlackListAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               userBlacklistInfo: {
-                type: 'Aoelailiao.Common.UserBlackListInfo',
+                type: "Aoelailiao.Common.UserBlackListInfo",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -1920,27 +1920,27 @@ var $root = (
           UserOperateSettingItemSwitchReq: {
             fields: {
               objectType: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               objectId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               settingItemId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
               switchState: {
-                type: 'uint32',
+                type: "uint32",
                 id: 4,
               },
               fireReadTtl: {
-                type: 'uint32',
+                type: "uint32",
                 id: 5,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -1948,15 +1948,15 @@ var $root = (
           UserOperateSettingItemSwitchAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -1964,19 +1964,19 @@ var $root = (
           UserReportAndComplaintsReq: {
             fields: {
               reportType: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               reportObject: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               explanation: {
-                type: 'string',
+                type: "string",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -1984,19 +1984,19 @@ var $root = (
           UserReportAndComplaintsAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               isNeedKickOutUser: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2004,15 +2004,15 @@ var $root = (
           UserSendScreenShotEventNotifyReq: {
             fields: {
               notifyType: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               notifyObjectId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2020,15 +2020,15 @@ var $root = (
           UserSendScreenShotEventNotifyAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2036,12 +2036,12 @@ var $root = (
           ClientGetPhoneContactUserInfoReq: {
             fields: {
               phoneContactUserInfo: {
-                rule: 'repeated',
-                type: 'Aoelailiao.Common.PhoneContactUserInfo',
+                rule: "repeated",
+                type: "Aoelailiao.Common.PhoneContactUserInfo",
                 id: 1,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2049,24 +2049,24 @@ var $root = (
           ClientGetPhoneContactUserInfoAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               phoneContactUserInfo: {
-                rule: 'repeated',
-                type: 'Aoelailiao.Common.PhoneContactUserInfo',
+                rule: "repeated",
+                type: "Aoelailiao.Common.PhoneContactUserInfo",
                 id: 3,
               },
               userInviteFriendSmsContent: {
-                type: 'string',
+                type: "string",
                 id: 4,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2074,11 +2074,11 @@ var $root = (
           ClientReloginReq: {
             fields: {
               uid: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               equipmentInformation: {
-                type: 'EquipmentInformation',
+                type: "EquipmentInformation",
                 id: 27,
               },
             },
@@ -2086,11 +2086,11 @@ var $root = (
           ClientReloginAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
             },
@@ -2098,15 +2098,15 @@ var $root = (
           ClientGetFileUploadTokenReq: {
             fields: {
               fileSdkType: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               fileEtag: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2114,31 +2114,31 @@ var $root = (
           ClientGetFileUploadTokenAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               fileHaveExist: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
               fileExistUrl: {
-                type: 'string',
+                type: "string",
                 id: 4,
               },
               fileSdkType: {
-                type: 'uint32',
+                type: "uint32",
                 id: 5,
               },
               fileUploadToke: {
-                type: 'string',
+                type: "string",
                 id: 6,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2146,11 +2146,11 @@ var $root = (
           FunctionItemInfo: {
             fields: {
               functionId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               functionSwitchState: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
             },
@@ -2158,12 +2158,12 @@ var $root = (
           ServerSendFunctionInfoNotify: {
             fields: {
               functionItemInfos: {
-                rule: 'repeated',
-                type: 'FunctionItemInfo',
+                rule: "repeated",
+                type: "FunctionItemInfo",
                 id: 1,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2171,7 +2171,7 @@ var $root = (
           SWGetAppFunctionInfoReq: {
             fields: {
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2179,32 +2179,32 @@ var $root = (
           SWGetAppFunctionInfoAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               functionItemInfos: {
-                rule: 'repeated',
-                type: 'FunctionItemInfo',
+                rule: "repeated",
+                type: "FunctionItemInfo",
                 id: 3,
               },
               userChatWelcomeTips: {
-                type: 'string',
+                type: "string",
                 id: 4,
               },
               groupChatWelcomeTips: {
-                type: 'string',
+                type: "string",
                 id: 5,
               },
               appAboutUsInfo: {
-                type: 'string',
+                type: "string",
                 id: 6,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2212,7 +2212,7 @@ var $root = (
           SWGetAppUpdateInfoReq: {
             fields: {
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2220,39 +2220,39 @@ var $root = (
           SWGetAppUpdateInfoAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               needUpdate: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
               forceUpdate: {
-                type: 'uint32',
+                type: "uint32",
                 id: 4,
               },
               newVersion: {
-                type: 'uint32',
+                type: "uint32",
                 id: 5,
               },
               minVersion: {
-                type: 'uint32',
+                type: "uint32",
                 id: 6,
               },
               updateUrl: {
-                type: 'string',
+                type: "string",
                 id: 7,
               },
               updateDesc: {
-                type: 'string',
+                type: "string",
                 id: 8,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2260,11 +2260,11 @@ var $root = (
           ServerSendApplyNotDealWithNum: {
             fields: {
               notDealWithNum: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2272,19 +2272,19 @@ var $root = (
           UserOperateApplyReq: {
             fields: {
               applyId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               applyType: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               operate: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2292,28 +2292,28 @@ var $root = (
           UserOperateApplyAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               userInfo: {
-                rule: 'repeated',
-                type: 'Aoelailiao.Common.UserInfo',
+                rule: "repeated",
+                type: "Aoelailiao.Common.UserInfo",
                 id: 3,
               },
               groupInfo: {
-                type: 'Aoelailiao.Common.GroupInfo',
+                type: "Aoelailiao.Common.GroupInfo",
                 id: 4,
               },
               newFriendsApplyNotice: {
-                type: 'Aoelailiao.Message.NewFriendsApplyNotice',
+                type: "Aoelailiao.Message.NewFriendsApplyNotice",
                 id: 5,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2321,11 +2321,11 @@ var $root = (
           UserQueryApplyStateReq: {
             fields: {
               applyId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2333,19 +2333,19 @@ var $root = (
           UserQueryApplyStateAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               newFriendsApplyNotice: {
-                type: 'Aoelailiao.Message.NewFriendsApplyNotice',
+                type: "Aoelailiao.Message.NewFriendsApplyNotice",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2353,11 +2353,11 @@ var $root = (
           UserGetApplyInfoReq: {
             fields: {
               applyType: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2365,20 +2365,20 @@ var $root = (
           UserGetApplyInfoAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               newFriendsApplyNotice: {
-                rule: 'repeated',
-                type: 'Aoelailiao.Message.NewFriendsApplyNotice',
+                rule: "repeated",
+                type: "Aoelailiao.Message.NewFriendsApplyNotice",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2386,7 +2386,7 @@ var $root = (
           ClientGetCustomerServicerUidReq: {
             fields: {
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2394,19 +2394,19 @@ var $root = (
           ClientGetCustomerServicerUidAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               customerServicerUid: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2414,11 +2414,11 @@ var $root = (
           UserQueryGroupInfoReq: {
             fields: {
               queryString: {
-                type: 'string',
+                type: "string",
                 id: 1,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2426,20 +2426,20 @@ var $root = (
           UserQueryGroupInfoAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               groupInfos: {
-                rule: 'repeated',
-                type: 'Aoelailiao.Common.GroupInfo',
+                rule: "repeated",
+                type: "Aoelailiao.Common.GroupInfo",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2447,15 +2447,15 @@ var $root = (
           ClientGetUserInfoListReq: {
             fields: {
               uid: {
-                rule: 'repeated',
-                type: 'uint32',
+                rule: "repeated",
+                type: "uint32",
                 id: 1,
                 options: {
                   packed: false,
                 },
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2463,20 +2463,20 @@ var $root = (
           ClientGetUserInfoListAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               userInfo: {
-                rule: 'repeated',
-                type: 'Aoelailiao.Common.UserInfo',
+                rule: "repeated",
+                type: "Aoelailiao.Common.UserInfo",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2484,19 +2484,19 @@ var $root = (
           sendPublicKeyToServserReq: {
             fields: {
               convId: {
-                type: 'string',
+                type: "string",
                 id: 1,
               },
               receiveUid: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               publicKey: {
-                type: 'string',
+                type: "string",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2504,15 +2504,15 @@ var $root = (
           sendPublicKeyToServserAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2520,23 +2520,23 @@ var $root = (
           receivePublicKeyFromServser: {
             fields: {
               convId: {
-                type: 'string',
+                type: "string",
                 id: 1,
               },
               sendUid: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               publicKey: {
-                type: 'string',
+                type: "string",
                 id: 3,
               },
               deviceCount: {
-                type: 'uint32',
+                type: "uint32",
                 id: 4,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2544,19 +2544,19 @@ var $root = (
           sendSignatureToServserReq: {
             fields: {
               convId: {
-                type: 'string',
+                type: "string",
                 id: 1,
               },
               receiveUid: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               sign: {
-                type: 'string',
+                type: "string",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2564,15 +2564,15 @@ var $root = (
           sendSignatureToServserAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2580,19 +2580,19 @@ var $root = (
           receiveSignatureFromServser: {
             fields: {
               convId: {
-                type: 'string',
+                type: "string",
                 id: 1,
               },
               sendUid: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               sign: {
-                type: 'string',
+                type: "string",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2600,15 +2600,15 @@ var $root = (
           reportCommunicateResultReq: {
             fields: {
               convId: {
-                type: 'string',
+                type: "string",
                 id: 1,
               },
               code: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2616,15 +2616,15 @@ var $root = (
           reportCommunicateResultAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2632,23 +2632,23 @@ var $root = (
           pushEncryptedTunnelResult: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               convId: {
-                type: 'string',
+                type: "string",
                 id: 3,
               },
               finalConvId: {
-                type: 'string',
+                type: "string",
                 id: 4,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2656,15 +2656,15 @@ var $root = (
           UploadSessionKeyReq: {
             fields: {
               convId: {
-                type: 'uint64',
+                type: "uint64",
                 id: 1,
               },
               sessionKey: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2672,15 +2672,15 @@ var $root = (
           UploadSessionKeyAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2688,11 +2688,11 @@ var $root = (
           UserGetTempEncryptedConvIdReq: {
             fields: {
               friendUid: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2700,19 +2700,19 @@ var $root = (
           UserGetTempEncryptedConvIdAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               tempConvId: {
-                type: 'string',
+                type: "string",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2720,19 +2720,19 @@ var $root = (
           ClientCustomMsgTransferReq: {
             fields: {
               recvUids: {
-                rule: 'repeated',
-                type: 'uint32',
+                rule: "repeated",
+                type: "uint32",
                 id: 1,
                 options: {
                   packed: false,
                 },
               },
               msgData: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2740,23 +2740,23 @@ var $root = (
           ClientCustomMsgTransferAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               failedUids: {
-                rule: 'repeated',
-                type: 'uint32',
+                rule: "repeated",
+                type: "uint32",
                 id: 3,
                 options: {
                   packed: false,
                 },
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2764,11 +2764,11 @@ var $root = (
           ClientCustomMsgTransferNotify: {
             fields: {
               msgData: {
-                type: 'string',
+                type: "string",
                 id: 1,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2776,11 +2776,11 @@ var $root = (
           GetCommonGroupReq: {
             fields: {
               uid: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2788,20 +2788,20 @@ var $root = (
           GetCommonGroupAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               commonGroupInfos: {
-                rule: 'repeated',
-                type: 'Aoelailiao.Common.GroupInfo',
+                rule: "repeated",
+                type: "Aoelailiao.Common.GroupInfo",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2809,23 +2809,23 @@ var $root = (
           SearchInfoReq: {
             fields: {
               keyWords: {
-                type: 'string',
+                type: "string",
                 id: 1,
               },
               searchType: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               receiveIds: {
-                rule: 'repeated',
-                type: 'uint64',
+                rule: "repeated",
+                type: "uint64",
                 id: 3,
                 options: {
                   packed: false,
                 },
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2833,15 +2833,15 @@ var $root = (
           SearchMessageInfo: {
             fields: {
               isGroup: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               toId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               msgCount: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
             },
@@ -2849,39 +2849,39 @@ var $root = (
           SearchInfoAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               searchType: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
               contracts: {
-                rule: 'repeated',
-                type: 'Aoelailiao.Common.UserInfo',
+                rule: "repeated",
+                type: "Aoelailiao.Common.UserInfo",
                 id: 4,
               },
               groups: {
-                rule: 'repeated',
-                type: 'Aoelailiao.Common.GroupInfo',
+                rule: "repeated",
+                type: "Aoelailiao.Common.GroupInfo",
                 id: 5,
               },
               messageInfos: {
-                rule: 'repeated',
-                type: 'SearchMessageInfo',
+                rule: "repeated",
+                type: "SearchMessageInfo",
                 id: 6,
               },
               msgInfos: {
-                rule: 'repeated',
-                type: 'Aoelailiao.Message.MsgInfo',
+                rule: "repeated",
+                type: "Aoelailiao.Message.MsgInfo",
                 id: 7,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2889,7 +2889,7 @@ var $root = (
           DestroyUserAccountReq: {
             fields: {
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2897,15 +2897,15 @@ var $root = (
           DestroyUserAccountAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2913,15 +2913,15 @@ var $root = (
           GetGroupNoticeInfoListReq: {
             fields: {
               groupId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               noticeId: {
-                type: 'uint64',
+                type: "uint64",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2929,20 +2929,20 @@ var $root = (
           GetGroupNoticeInfoListAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               groupNotices: {
-                rule: 'repeated',
-                type: 'Aoelailiao.Common.GroupNoticeInfo',
+                rule: "repeated",
+                type: "Aoelailiao.Common.GroupNoticeInfo",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2950,16 +2950,16 @@ var $root = (
           UserCommitFeedBackReq: {
             fields: {
               feedbackContent: {
-                type: 'string',
+                type: "string",
                 id: 1,
               },
               feedbackImages: {
-                rule: 'repeated',
-                type: 'string',
+                rule: "repeated",
+                type: "string",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2967,15 +2967,15 @@ var $root = (
           UserCommitFeedBackAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2983,15 +2983,15 @@ var $root = (
           UserCheckFunctionPrivilegeReq: {
             fields: {
               functionId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               objectId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -2999,23 +2999,23 @@ var $root = (
           UserCheckFunctionPrivilegeAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               functionId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
               functionState: {
-                type: 'uint32',
+                type: "uint32",
                 id: 4,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -3023,11 +3023,11 @@ var $root = (
           UserUpdateClientLanguageReq: {
             fields: {
               clientLanguageType: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -3035,15 +3035,15 @@ var $root = (
           UserUpdateClientLanguageAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -3051,7 +3051,7 @@ var $root = (
           UserGetMyManagedGroupListReq: {
             fields: {
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -3059,20 +3059,20 @@ var $root = (
           UserGetMyManagedGroupListAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               groupInfos: {
-                rule: 'repeated',
-                type: 'Aoelailiao.Common.GroupInfo',
+                rule: "repeated",
+                type: "Aoelailiao.Common.GroupInfo",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -3080,15 +3080,15 @@ var $root = (
           UserAddBotToMyManagedGroupReq: {
             fields: {
               botUserId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               groupId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -3096,19 +3096,19 @@ var $root = (
           UserAddBotToMyManagedGroupAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               groupInfo: {
-                type: 'Aoelailiao.Common.GroupInfo',
+                type: "Aoelailiao.Common.GroupInfo",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -3116,7 +3116,7 @@ var $root = (
           UserChatWithBotFatherReq: {
             fields: {
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -3124,15 +3124,15 @@ var $root = (
           UserChatWithBotFatherAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -3140,15 +3140,15 @@ var $root = (
           UserShortLinkConvertReq: {
             fields: {
               type: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               linkUrl: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -3156,19 +3156,19 @@ var $root = (
           UserShortLinkConvertAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               linkUrl: {
-                type: 'string',
+                type: "string",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -3177,52 +3177,52 @@ var $root = (
       },
       Message: {
         options: {
-          java_package: 'com.aoetech.aoelailiao.protobuf',
+          java_package: "com.aoetech.aoelailiao.protobuf",
           java_multiple_files: true,
           go_package:
-            'github.com/protocolbuffers/protobuf/aoelailiao/go/protocolpb',
+            "github.com/protocolbuffers/protobuf/aoelailiao/go/protocolpb",
         },
         nested: {
           MsgInfo: {
             fields: {
               msgId: {
-                type: 'uint64',
+                type: "uint64",
                 id: 1,
               },
               isGroupMsg: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               fromId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
               toId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 4,
               },
               msgTime: {
-                type: 'uint32',
+                type: "uint32",
                 id: 5,
               },
               msgShowType: {
-                type: 'uint32',
+                type: "uint32",
                 id: 6,
               },
               msgContent: {
-                type: 'MsgContentInfo',
+                type: "MsgContentInfo",
                 id: 7,
               },
               clientMsgUuid: {
-                type: 'string',
+                type: "string",
                 id: 8,
               },
               isEncrypt: {
-                type: 'uint32',
+                type: "uint32",
                 id: 9,
               },
               attachInfo: {
-                type: 'MsgAttachInfo',
+                type: "MsgAttachInfo",
                 id: 10,
               },
             },
@@ -3231,107 +3231,107 @@ var $root = (
             oneofs: {
               msgContent: {
                 oneof: [
-                  'stringContent',
-                  'imageMsg',
-                  'voiceMsg',
-                  'userOperateEventDescInfo',
-                  'systemNotifyInfo',
-                  'groupAtInfo',
-                  'revokeInfo',
-                  'videoCallInfo',
-                  'gpsMsgInfo',
-                  'newFriendsApplyNotice',
-                  'forwardMsg',
-                  'visitingCard',
-                  'groupUserInviteInfo',
-                  'fileInfo',
-                  'encryptContent',
-                  'videoMsgInfo',
-                  'cleanInfo',
-                  'linkUrlInfo',
-                  'fireInfo',
+                  "stringContent",
+                  "imageMsg",
+                  "voiceMsg",
+                  "userOperateEventDescInfo",
+                  "systemNotifyInfo",
+                  "groupAtInfo",
+                  "revokeInfo",
+                  "videoCallInfo",
+                  "gpsMsgInfo",
+                  "newFriendsApplyNotice",
+                  "forwardMsg",
+                  "visitingCard",
+                  "groupUserInviteInfo",
+                  "fileInfo",
+                  "encryptContent",
+                  "videoMsgInfo",
+                  "cleanInfo",
+                  "linkUrlInfo",
+                  "fireInfo",
                 ],
               },
             },
             fields: {
               msgContentType: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               stringContent: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               imageMsg: {
-                type: 'ImageMsgInfo',
+                type: "ImageMsgInfo",
                 id: 3,
               },
               voiceMsg: {
-                type: 'VoiceMsgInfo',
+                type: "VoiceMsgInfo",
                 id: 4,
               },
               userOperateEventDescInfo: {
-                type: 'UserOperateEventDescInfo',
+                type: "UserOperateEventDescInfo",
                 id: 6,
               },
               systemNotifyInfo: {
-                type: 'SystemNotifyInfo',
+                type: "SystemNotifyInfo",
                 id: 7,
               },
               groupAtInfo: {
-                type: 'GroupAtInfo',
+                type: "GroupAtInfo",
                 id: 8,
               },
               revokeInfo: {
-                type: 'RevokeInfo',
+                type: "RevokeInfo",
                 id: 9,
               },
               videoCallInfo: {
-                type: 'VideoCallMsgInfo',
+                type: "VideoCallMsgInfo",
                 id: 10,
               },
               gpsMsgInfo: {
-                type: 'GpsMsgInfo',
+                type: "GpsMsgInfo",
                 id: 12,
               },
               newFriendsApplyNotice: {
-                type: 'NewFriendsApplyNotice',
+                type: "NewFriendsApplyNotice",
                 id: 13,
               },
               forwardMsg: {
-                type: 'ForwardMsgInfo',
+                type: "ForwardMsgInfo",
                 id: 17,
               },
               visitingCard: {
-                type: 'VisitingCard',
+                type: "VisitingCard",
                 id: 16,
               },
               groupUserInviteInfo: {
-                type: 'GroupUserInviteMsgInfo',
+                type: "GroupUserInviteMsgInfo",
                 id: 18,
               },
               fileInfo: {
-                type: 'Aoelailiao.Common.FileInfo',
+                type: "Aoelailiao.Common.FileInfo",
                 id: 19,
               },
               encryptContent: {
-                type: 'string',
+                type: "string",
                 id: 21,
               },
               videoMsgInfo: {
-                type: 'VideoMsgInfo',
+                type: "VideoMsgInfo",
                 id: 23,
               },
               cleanInfo: {
-                type: 'CleanInfo',
+                type: "CleanInfo",
                 id: 24,
               },
               linkUrlInfo: {
-                type: 'LinkUrlInfo',
+                type: "LinkUrlInfo",
                 id: 25,
               },
               fireInfo: {
-                type: 'FireInfo',
+                type: "FireInfo",
                 id: 26,
               },
             },
@@ -3339,23 +3339,23 @@ var $root = (
           LinkUrlInfo: {
             fields: {
               url: {
-                type: 'string',
+                type: "string",
                 id: 1,
               },
               title: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               content: {
-                type: 'string',
+                type: "string",
                 id: 3,
               },
               icon: {
-                type: 'string',
+                type: "string",
                 id: 4,
               },
               needParse: {
-                type: 'uint32',
+                type: "uint32",
                 id: 5,
               },
             },
@@ -3363,11 +3363,11 @@ var $root = (
           CleanInfo: {
             fields: {
               maxMsgId: {
-                type: 'uint64',
+                type: "uint64",
                 id: 1,
               },
               stringContent: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
             },
@@ -3375,39 +3375,39 @@ var $root = (
           VideoMsgInfo: {
             fields: {
               url: {
-                type: 'string',
+                type: "string",
                 id: 1,
               },
               name: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               imageUrl: {
-                type: 'string',
+                type: "string",
                 id: 3,
               },
               duration: {
-                type: 'uint32',
+                type: "uint32",
                 id: 4,
               },
               format: {
-                type: 'string',
+                type: "string",
                 id: 5,
               },
               weight: {
-                type: 'uint32',
+                type: "uint32",
                 id: 6,
               },
               height: {
-                type: 'uint32',
+                type: "uint32",
                 id: 7,
               },
               size: {
-                type: 'uint32',
+                type: "uint32",
                 id: 8,
               },
               extra: {
-                type: 'string',
+                type: "string",
                 id: 9,
               },
             },
@@ -3415,44 +3415,44 @@ var $root = (
           NewFriendsApplyNotice: {
             fields: {
               uid: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               nickName: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               icon: {
-                type: 'string',
+                type: "string",
                 id: 3,
               },
               applyState: {
-                type: 'uint32',
+                type: "uint32",
                 id: 4,
               },
               applyDesc: {
-                type: 'string',
+                type: "string",
                 id: 5,
               },
               applyType: {
-                type: 'uint32',
+                type: "uint32",
                 id: 6,
               },
               applyId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 7,
               },
               endTime: {
-                type: 'uint32',
+                type: "uint32",
                 id: 8,
               },
               updateTime: {
-                type: 'uint32',
+                type: "uint32",
                 id: 9,
               },
               adminUids: {
-                rule: 'repeated',
-                type: 'uint32',
+                rule: "repeated",
+                type: "uint32",
                 id: 10,
                 options: {
                   packed: false,
@@ -3463,35 +3463,35 @@ var $root = (
           VisitingCard: {
             fields: {
               type: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               uid: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               icon: {
-                type: 'string',
+                type: "string",
                 id: 3,
               },
               name: {
-                type: 'string',
+                type: "string",
                 id: 4,
               },
               showContent: {
-                type: 'string',
+                type: "string",
                 id: 5,
               },
               sourceName: {
-                type: 'string',
+                type: "string",
                 id: 6,
               },
               sourceId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 7,
               },
               sourceTime: {
-                type: 'uint32',
+                type: "uint32",
                 id: 8,
               },
             },
@@ -3499,23 +3499,23 @@ var $root = (
           GpsMsgInfo: {
             fields: {
               longitude: {
-                type: 'string',
+                type: "string",
                 id: 1,
               },
               latitude: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               positionName: {
-                type: 'string',
+                type: "string",
                 id: 3,
               },
               positionDetail: {
-                type: 'string',
+                type: "string",
                 id: 4,
               },
               mapUrl: {
-                type: 'string',
+                type: "string",
                 id: 5,
               },
             },
@@ -3523,20 +3523,20 @@ var $root = (
           VideoCallMsgInfo: {
             fields: {
               videoType: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               sendShowMsg: {
-                rule: 'repeated',
-                type: 'AppointUserTextInfo',
+                rule: "repeated",
+                type: "AppointUserTextInfo",
                 id: 2,
               },
               needShowTime: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
               callTime: {
-                type: 'uint32',
+                type: "uint32",
                 id: 4,
               },
             },
@@ -3544,15 +3544,15 @@ var $root = (
           AppointUserTextInfo: {
             fields: {
               userIds: {
-                rule: 'repeated',
-                type: 'uint32',
+                rule: "repeated",
+                type: "uint32",
                 id: 1,
                 options: {
                   packed: false,
                 },
               },
               msgText: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
             },
@@ -3560,15 +3560,15 @@ var $root = (
           ImageMsgInfo: {
             fields: {
               imageUrl: {
-                type: 'string',
+                type: "string",
                 id: 1,
               },
               imageWidth: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               imageHeight: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
             },
@@ -3576,11 +3576,11 @@ var $root = (
           VoiceMsgInfo: {
             fields: {
               voiceUrl: {
-                type: 'string',
+                type: "string",
                 id: 1,
               },
               voiceTime: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
             },
@@ -3588,15 +3588,15 @@ var $root = (
           ReplaceMsgItem: {
             fields: {
               showContent: {
-                type: 'string',
+                type: "string",
                 id: 1,
               },
               jumpUrl: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               showContentColor: {
-                type: 'string',
+                type: "string",
                 id: 3,
               },
             },
@@ -3604,16 +3604,16 @@ var $root = (
           ReplaceMsgInfo: {
             fields: {
               spileText: {
-                type: 'string',
+                type: "string",
                 id: 1,
               },
               msgText: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               replaceMsgItems: {
-                rule: 'repeated',
-                type: 'ReplaceMsgItem',
+                rule: "repeated",
+                type: "ReplaceMsgItem",
                 id: 3,
               },
             },
@@ -3621,15 +3621,15 @@ var $root = (
           AppointUserSystemNotifyInfo: {
             fields: {
               userIds: {
-                rule: 'repeated',
-                type: 'uint32',
+                rule: "repeated",
+                type: "uint32",
                 id: 1,
                 options: {
                   packed: false,
                 },
               },
               appointUserNotifyInfo: {
-                type: 'ReplaceMsgInfo',
+                type: "ReplaceMsgInfo",
                 id: 2,
               },
             },
@@ -3637,20 +3637,20 @@ var $root = (
           SystemNotifyInfo: {
             fields: {
               appointUserSystemNotifyInfos: {
-                rule: 'repeated',
-                type: 'AppointUserSystemNotifyInfo',
+                rule: "repeated",
+                type: "AppointUserSystemNotifyInfo",
                 id: 1,
               },
               otherUserNotifyInfo: {
-                type: 'ReplaceMsgInfo',
+                type: "ReplaceMsgInfo",
                 id: 2,
               },
               drawableDirection: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
               drawableUrl: {
-                type: 'string',
+                type: "string",
                 id: 4,
               },
             },
@@ -3658,12 +3658,12 @@ var $root = (
           GroupAtInfo: {
             fields: {
               atUsers: {
-                rule: 'repeated',
-                type: 'AtInfo',
+                rule: "repeated",
+                type: "AtInfo",
                 id: 1,
               },
               stringContent: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
             },
@@ -3671,11 +3671,11 @@ var $root = (
           AtInfo: {
             fields: {
               uid: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               type: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
             },
@@ -3683,11 +3683,11 @@ var $root = (
           RevokeInfo: {
             fields: {
               revokeMsgId: {
-                type: 'uint64',
+                type: "uint64",
                 id: 1,
               },
               stringContent: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
             },
@@ -3695,23 +3695,23 @@ var $root = (
           UserOperateEventDescInfo: {
             fields: {
               operateType: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               operateUserId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               beOperatedUserId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
               operateDesc: {
-                type: 'string',
+                type: "string",
                 id: 4,
               },
               operateReason: {
-                type: 'string',
+                type: "string",
                 id: 5,
               },
             },
@@ -3719,12 +3719,12 @@ var $root = (
           ForwardMsgInfo: {
             fields: {
               forwardMsgTitle: {
-                type: 'string',
+                type: "string",
                 id: 1,
               },
               forwardMsgInfos: {
-                rule: 'repeated',
-                type: 'MsgInfo',
+                rule: "repeated",
+                type: "MsgInfo",
                 id: 2,
               },
             },
@@ -3732,19 +3732,19 @@ var $root = (
           GroupUserInviteMsgInfo: {
             fields: {
               inviteTitle: {
-                type: 'string',
+                type: "string",
                 id: 1,
               },
               inviteDesc: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               inviteGroupId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
               inviteGroupIconUrl: {
-                type: 'string',
+                type: "string",
                 id: 4,
               },
             },
@@ -3752,11 +3752,11 @@ var $root = (
           FireInfo: {
             fields: {
               fireMsgId: {
-                type: 'uint64',
+                type: "uint64",
                 id: 1,
               },
               stringContent: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
             },
@@ -3764,7 +3764,7 @@ var $root = (
           MsgAttachInfo: {
             fields: {
               msgSource: {
-                type: 'string',
+                type: "string",
                 id: 1,
               },
             },
@@ -3772,15 +3772,15 @@ var $root = (
           ClientSendMsgToServerReq: {
             fields: {
               msgInfo: {
-                type: 'MsgInfo',
+                type: "MsgInfo",
                 id: 1,
               },
               randomNum: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -3788,23 +3788,23 @@ var $root = (
           ClientSendMsgToServerAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               msgInfo: {
-                type: 'MsgInfo',
+                type: "MsgInfo",
                 id: 3,
               },
               randomNum: {
-                type: 'uint32',
+                type: "uint32",
                 id: 4,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -3812,15 +3812,15 @@ var $root = (
           ClientPullChatsFromServerReq: {
             fields: {
               msgInfo: {
-                type: 'MsgInfo',
+                type: "MsgInfo",
                 id: 1,
               },
               randomNum: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -3828,24 +3828,24 @@ var $root = (
           ClientPullChatsFromServerAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               msgInfo: {
-                rule: 'repeated',
-                type: 'MsgInfo',
+                rule: "repeated",
+                type: "MsgInfo",
                 id: 3,
               },
               randomNum: {
-                type: 'uint32',
+                type: "uint32",
                 id: 4,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -3853,12 +3853,12 @@ var $root = (
           ServerSendMsgToClientNotify: {
             fields: {
               msgInfos: {
-                rule: 'repeated',
-                type: 'MsgInfo',
+                rule: "repeated",
+                type: "MsgInfo",
                 id: 1,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -3866,31 +3866,31 @@ var $root = (
           ClientSendMsgAckToServerReq: {
             fields: {
               msgId: {
-                type: 'uint64',
+                type: "uint64",
                 id: 1,
               },
               isEncrypt: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               isGroupMsg: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
               fromId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 4,
               },
               toId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 5,
               },
               isOffLine: {
-                type: 'uint32',
+                type: "uint32",
                 id: 6,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -3898,15 +3898,15 @@ var $root = (
           ClientSendMsgAckToServerAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -3914,11 +3914,11 @@ var $root = (
           ClientRevokeMsgReq: {
             fields: {
               msgId: {
-                type: 'uint64',
+                type: "uint64",
                 id: 1,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -3926,15 +3926,43 @@ var $root = (
           ClientRevokeMsgAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
+                id: 32,
+              },
+            },
+          },
+          DeleteMsgReq: {
+            fields: {
+              msgId: {
+                type: "uint64",
+                id: 1,
+              },
+              attachData: {
+                type: "bytes",
+                id: 32,
+              },
+            },
+          },
+          DeleteMsgAns: {
+            fields: {
+              resultCode: {
+                type: "uint32",
+                id: 1,
+              },
+              resultString: {
+                type: "string",
+                id: 2,
+              },
+              attachData: {
+                type: "bytes",
                 id: 32,
               },
             },
@@ -3942,19 +3970,19 @@ var $root = (
           VideoCallActionUploadReq: {
             fields: {
               actionType: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               videoType: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               talkUid: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -3962,15 +3990,15 @@ var $root = (
           VideoCallActionUploadAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -3978,11 +4006,11 @@ var $root = (
           ClientGetTencentVideoSignReq: {
             fields: {
               uid: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -3990,19 +4018,19 @@ var $root = (
           ClientGetTencentVideoSignAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               tencentVideoSign: {
-                type: 'string',
+                type: "string",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4010,19 +4038,19 @@ var $root = (
           SystemNoticeMsg: {
             fields: {
               systemUserId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               systemUserImage: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               systemUserName: {
-                type: 'string',
+                type: "string",
                 id: 3,
               },
               systemNoticeContent: {
-                type: 'string',
+                type: "string",
                 id: 4,
               },
             },
@@ -4030,24 +4058,24 @@ var $root = (
           UserFeedBackMsg: {
             fields: {
               feedbackContent: {
-                type: 'string',
+                type: "string",
                 id: 1,
               },
               noticeImage: {
-                rule: 'repeated',
-                type: 'string',
+                rule: "repeated",
+                type: "string",
                 id: 2,
               },
               feedbackTime: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
               replyContent: {
-                type: 'string',
+                type: "string",
                 id: 4,
               },
               replyTime: {
-                type: 'uint32',
+                type: "uint32",
                 id: 5,
               },
             },
@@ -4055,27 +4083,27 @@ var $root = (
           NotifyMsgInfo: {
             fields: {
               msgClassId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               msgId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               msgContentType: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
               systemNoticeMsg: {
-                type: 'SystemNoticeMsg',
+                type: "SystemNoticeMsg",
                 id: 4,
               },
               userFeedbackMsg: {
-                type: 'UserFeedBackMsg',
+                type: "UserFeedBackMsg",
                 id: 5,
               },
               updateTime: {
-                type: 'uint32',
+                type: "uint32",
                 id: 6,
               },
             },
@@ -4083,27 +4111,27 @@ var $root = (
           NotifyClassMsgListInfo: {
             fields: {
               msgClassId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               msgClassIcon: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               msgClassTitle: {
-                type: 'string',
+                type: "string",
                 id: 3,
               },
               msgClassHaveNewMsg: {
-                type: 'uint32',
+                type: "uint32",
                 id: 4,
               },
               msgClassRecentMsgContent: {
-                type: 'string',
+                type: "string",
                 id: 5,
               },
               updateTime: {
-                type: 'uint32',
+                type: "uint32",
                 id: 6,
               },
             },
@@ -4111,28 +4139,28 @@ var $root = (
           UsersInfoList: {
             fields: {
               fromId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               msgInfos: {
-                rule: 'repeated',
-                type: 'MsgInfo',
+                rule: "repeated",
+                type: "MsgInfo",
                 id: 2,
               },
               iconUrl: {
-                type: 'string',
+                type: "string",
                 id: 3,
               },
               nickName: {
-                type: 'string',
+                type: "string",
                 id: 4,
               },
               strTest: {
-                type: 'string',
+                type: "string",
                 id: 5,
               },
               time: {
-                type: 'uint32',
+                type: "uint32",
                 id: 6,
               },
             },
@@ -4140,7 +4168,7 @@ var $root = (
           UserGetSystemNoticeMsgClassListReq: {
             fields: {
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4148,20 +4176,20 @@ var $root = (
           UserGetSystemNoticeMsgClassListAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               classMsgInfo: {
-                rule: 'repeated',
-                type: 'NotifyClassMsgListInfo',
+                rule: "repeated",
+                type: "NotifyClassMsgListInfo",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4169,15 +4197,15 @@ var $root = (
           UserGetSystemNoticeContentListReq: {
             fields: {
               msgClassId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               minHasReadMsgId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4185,20 +4213,20 @@ var $root = (
           UserGetSystemNoticeContentListAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               msgContent: {
-                rule: 'repeated',
-                type: 'NotifyMsgInfo',
+                rule: "repeated",
+                type: "NotifyMsgInfo",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4206,11 +4234,11 @@ var $root = (
           ServerSendSystemNotifyMsg: {
             fields: {
               notifyContent: {
-                type: 'string',
+                type: "string",
                 id: 1,
               },
               updateTime: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
             },
@@ -4218,15 +4246,15 @@ var $root = (
           UserSendSystemNotifyMsgReadedStateReq: {
             fields: {
               msgClassId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               hasReadMsgIdMax: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4234,15 +4262,15 @@ var $root = (
           UserSendSystemNotifyMsgReadedStateAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4250,19 +4278,19 @@ var $root = (
           ClientSendBackgroundUrlToServerReq: {
             fields: {
               toId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               selectedBackgroundUrl: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               isGroupMsg: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4270,15 +4298,15 @@ var $root = (
           ClientSendBackgroundUrlToServerAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4286,15 +4314,15 @@ var $root = (
           ClientGetCurrentBackgroundUrlReq: {
             fields: {
               toId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               isGroupMsg: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4302,19 +4330,19 @@ var $root = (
           ClientGetCurrentBackgroundUrlAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               backgroundUrl: {
-                type: 'string',
+                type: "string",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4322,15 +4350,15 @@ var $root = (
           SetUpSystemSwitchReq: {
             fields: {
               type: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               state: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4338,19 +4366,19 @@ var $root = (
           SetUpSystemSwitchAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               switchSettingInfo: {
-                type: 'Aoelailiao.Common.SwitchSettingInfo',
+                type: "Aoelailiao.Common.SwitchSettingInfo",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4358,7 +4386,7 @@ var $root = (
           ClientGetSystemSwitchReq: {
             fields: {
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4366,19 +4394,19 @@ var $root = (
           ClientGetSystemSwitchAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               switchSettingInfo: {
-                type: 'Aoelailiao.Common.SwitchSettingInfo',
+                type: "Aoelailiao.Common.SwitchSettingInfo",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4386,11 +4414,11 @@ var $root = (
           ClientGetSectionOfflineMsgReq: {
             fields: {
               lastOfflineMsgIdMax: {
-                type: 'uint64',
+                type: "uint64",
                 id: 1,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4398,24 +4426,24 @@ var $root = (
           ClientGetSectionOfflineMsgAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               offlineMsgInfos: {
-                rule: 'repeated',
-                type: 'MsgInfo',
+                rule: "repeated",
+                type: "MsgInfo",
                 id: 3,
               },
               stopGetOfflineMsg: {
-                type: 'uint32',
+                type: "uint32",
                 id: 4,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4423,11 +4451,11 @@ var $root = (
           UserForwardContent: {
             fields: {
               isGroupMsg: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               toId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
             },
@@ -4435,24 +4463,24 @@ var $root = (
           UserForwardMsgInfoReq: {
             fields: {
               forwardType: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               forwardMsgIds: {
-                rule: 'repeated',
-                type: 'uint64',
+                rule: "repeated",
+                type: "uint64",
                 id: 2,
                 options: {
                   packed: false,
                 },
               },
               forwardMsg: {
-                rule: 'repeated',
-                type: 'UserForwardContent',
+                rule: "repeated",
+                type: "UserForwardContent",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4460,15 +4488,15 @@ var $root = (
           UserForwardMsgInfoAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4476,27 +4504,27 @@ var $root = (
           UserGetMoreMsgInfoReq: {
             fields: {
               isGroupMsg: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               objectId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               msgIdMin: {
-                type: 'uint64',
+                type: "uint64",
                 id: 3,
               },
               msgDirection: {
-                type: 'uint32',
+                type: "uint32",
                 id: 4,
               },
               msgNum: {
-                type: 'uint32',
+                type: "uint32",
                 id: 5,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4504,20 +4532,20 @@ var $root = (
           UserGetMoreMsgInfoAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               msgInfos: {
-                rule: 'repeated',
-                type: 'MsgInfo',
+                rule: "repeated",
+                type: "MsgInfo",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4525,19 +4553,19 @@ var $root = (
           UserGetFileListInfoReq: {
             fields: {
               isGroupMsg: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               objectId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               msgIdMin: {
-                type: 'uint64',
+                type: "uint64",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4545,20 +4573,20 @@ var $root = (
           UserGetFileListInfoAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               msgInfos: {
-                rule: 'repeated',
-                type: 'MsgInfo',
+                rule: "repeated",
+                type: "MsgInfo",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4566,11 +4594,11 @@ var $root = (
           UserDeleteFileMsgReq: {
             fields: {
               msgId: {
-                type: 'uint64',
+                type: "uint64",
                 id: 1,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4578,15 +4606,15 @@ var $root = (
           UserDeleteFileMsgAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4594,27 +4622,27 @@ var $root = (
           UserSearchHistoryMsgReq: {
             fields: {
               isGroupMsg: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               objectId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               keyWord: {
-                type: 'string',
+                type: "string",
                 id: 3,
               },
               msgIdMin: {
-                type: 'uint64',
+                type: "uint64",
                 id: 4,
               },
               searchType: {
-                type: 'uint32',
+                type: "uint32",
                 id: 5,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4622,20 +4650,20 @@ var $root = (
           UserSearchHistoryMsgAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               msgInfos: {
-                rule: 'repeated',
-                type: 'MsgInfo',
+                rule: "repeated",
+                type: "MsgInfo",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4643,19 +4671,19 @@ var $root = (
           GroupVideoCallActionUploadReq: {
             fields: {
               actionType: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               groupId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               channelId: {
-                type: 'string',
+                type: "string",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4663,15 +4691,15 @@ var $root = (
           GroupVideoCallActionUploadAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4679,11 +4707,11 @@ var $root = (
           GetGroupNoticeInfoReq: {
             fields: {
               groupId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4691,19 +4719,19 @@ var $root = (
           GetGroupNoticeInfoAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               groupNoticeInfo: {
-                type: 'Aoelailiao.Common.GroupNoticeInfo',
+                type: "Aoelailiao.Common.GroupNoticeInfo",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4711,11 +4739,11 @@ var $root = (
           WriteStateNotifyToServserReq: {
             fields: {
               userWriteState: {
-                type: 'Aoelailiao.Common.UserWriteState',
+                type: "Aoelailiao.Common.UserWriteState",
                 id: 1,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4723,15 +4751,15 @@ var $root = (
           WriteStateNotifyToServserAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4739,11 +4767,11 @@ var $root = (
           WriteStateNotifyToClient: {
             fields: {
               userWriteState: {
-                type: 'Aoelailiao.Common.UserWriteState',
+                type: "Aoelailiao.Common.UserWriteState",
                 id: 1,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4751,11 +4779,11 @@ var $root = (
           UserOnlineStateNotifyReq: {
             fields: {
               userOnlineState: {
-                type: 'Aoelailiao.Common.UserInfo',
+                type: "Aoelailiao.Common.UserInfo",
                 id: 1,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4763,19 +4791,19 @@ var $root = (
           UserOnlineStateNotifyAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               userOnlineState: {
-                type: 'Aoelailiao.Common.UserInfo',
+                type: "Aoelailiao.Common.UserInfo",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4783,11 +4811,11 @@ var $root = (
           UserOnlineStateNotifyToClient: {
             fields: {
               userOnlineState: {
-                type: 'Aoelailiao.Common.UserInfo',
+                type: "Aoelailiao.Common.UserInfo",
                 id: 1,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4795,15 +4823,15 @@ var $root = (
           ClientCleanMsgReq: {
             fields: {
               toUid: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               isGroupMsg: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4811,15 +4839,15 @@ var $root = (
           ClientCleanMsgAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4827,11 +4855,11 @@ var $root = (
           MarkInfo: {
             fields: {
               msgInfo: {
-                type: 'MsgInfo',
+                type: "MsgInfo",
                 id: 1,
               },
               markTime: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
             },
@@ -4839,15 +4867,15 @@ var $root = (
           OperationMarkInfoReq: {
             fields: {
               operationType: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               msgId: {
-                type: 'uint64',
+                type: "uint64",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4855,15 +4883,15 @@ var $root = (
           OperationMarkInfoAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4871,15 +4899,15 @@ var $root = (
           SearchMarkInfoReq: {
             fields: {
               keyWord: {
-                type: 'string',
+                type: "string",
                 id: 1,
               },
               markTimeMin: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4887,20 +4915,20 @@ var $root = (
           SearchMarkInfoAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               markInfos: {
-                rule: 'repeated',
-                type: 'MarkInfo',
+                rule: "repeated",
+                type: "MarkInfo",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4908,15 +4936,15 @@ var $root = (
           UserGetMarkInfoListReq: {
             fields: {
               markTimeMin: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               type: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4924,20 +4952,20 @@ var $root = (
           UserGetMarkInfoListAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               markInfos: {
-                rule: 'repeated',
-                type: 'MarkInfo',
+                rule: "repeated",
+                type: "MarkInfo",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4945,23 +4973,23 @@ var $root = (
           MsgHasReadedInfo: {
             fields: {
               isGroupMsg: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               fromId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               toId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
               msgIdMax: {
-                type: 'uint64',
+                type: "uint64",
                 id: 4,
               },
               conversationId: {
-                type: 'uint64',
+                type: "uint64",
                 id: 5,
               },
             },
@@ -4969,12 +4997,12 @@ var $root = (
           UserGetConversationHasReadedMsgInfoReq: {
             fields: {
               msgHasReadedInfos: {
-                rule: 'repeated',
-                type: 'MsgHasReadedInfo',
+                rule: "repeated",
+                type: "MsgHasReadedInfo",
                 id: 1,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -4982,20 +5010,20 @@ var $root = (
           UserGetConversationHasReadedMsgInfoAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               msgHasReadedInfos: {
-                rule: 'repeated',
-                type: 'MsgHasReadedInfo',
+                rule: "repeated",
+                type: "MsgHasReadedInfo",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -5003,12 +5031,12 @@ var $root = (
           ServerSendMsgHasReadedInfoToClientNotify: {
             fields: {
               msgHasReadedInfos: {
-                rule: 'repeated',
-                type: 'MsgHasReadedInfo',
+                rule: "repeated",
+                type: "MsgHasReadedInfo",
                 id: 1,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -5016,15 +5044,15 @@ var $root = (
           UserUpdateConversationHasReadedMsgInfoReq: {
             fields: {
               msgHasReadedInfo: {
-                type: 'MsgHasReadedInfo',
+                type: "MsgHasReadedInfo",
                 id: 1,
               },
               deviceBrand: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -5032,15 +5060,15 @@ var $root = (
           UserUpdateConversationHasReadedMsgInfoAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -5048,20 +5076,20 @@ var $root = (
           UserSendVisitCardToFriendReq: {
             fields: {
               visitingCard: {
-                rule: 'repeated',
-                type: 'VisitingCard',
+                rule: "repeated",
+                type: "VisitingCard",
                 id: 1,
               },
               toUids: {
-                rule: 'repeated',
-                type: 'uint32',
+                rule: "repeated",
+                type: "uint32",
                 id: 2,
                 options: {
                   packed: false,
                 },
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -5069,15 +5097,15 @@ var $root = (
           UserSendVisitCardToFriendAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -5085,11 +5113,11 @@ var $root = (
           GroupCallStateNotifyToServserReq: {
             fields: {
               groupCallState: {
-                type: 'Aoelailiao.Common.GroupCallState',
+                type: "Aoelailiao.Common.GroupCallState",
                 id: 1,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -5097,19 +5125,19 @@ var $root = (
           GroupCallStateNotifyToServserAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               groupCallState: {
-                type: 'Aoelailiao.Common.GroupCallState',
+                type: "Aoelailiao.Common.GroupCallState",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -5117,11 +5145,11 @@ var $root = (
           GroupCallNotifyToClient: {
             fields: {
               groupCallState: {
-                type: 'Aoelailiao.Common.GroupCallState',
+                type: "Aoelailiao.Common.GroupCallState",
                 id: 1,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -5129,11 +5157,11 @@ var $root = (
           FireReadFireMessageToServserReq: {
             fields: {
               msgId: {
-                type: 'uint64',
+                type: "uint64",
                 id: 1,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -5141,15 +5169,15 @@ var $root = (
           FireReadFireMessageToServserAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -5157,11 +5185,11 @@ var $root = (
           GroupCallApplyJoinToServserReq: {
             fields: {
               groupId: {
-                type: 'uint64',
+                type: "uint64",
                 id: 1,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -5169,15 +5197,15 @@ var $root = (
           GroupCallApplyJoinToServserAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -5185,15 +5213,15 @@ var $root = (
           GroupCallApplyJoinToClient: {
             fields: {
               groupId: {
-                type: 'uint64',
+                type: "uint64",
                 id: 1,
               },
               userId: {
-                type: 'uint64',
+                type: "uint64",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -5201,19 +5229,19 @@ var $root = (
           HideConversationReq: {
             fields: {
               isGroupMsg: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               objectId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               opt: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -5221,27 +5249,27 @@ var $root = (
           HideConversationAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               isGroupMsg: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
               objectId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 4,
               },
               opt: {
-                type: 'uint32',
+                type: "uint32",
                 id: 5,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -5249,19 +5277,19 @@ var $root = (
           UploadReq: {
             fields: {
               ext: {
-                type: 'string',
+                type: "string",
                 id: 1,
               },
               content: {
-                type: 'bytes',
+                type: "bytes",
                 id: 2,
               },
               type: {
-                type: 'uint32',
+                type: "uint32",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -5269,23 +5297,23 @@ var $root = (
           UploadAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               url: {
-                type: 'string',
+                type: "string",
                 id: 3,
               },
               thumbnail: {
-                type: 'string',
+                type: "string",
                 id: 4,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -5294,28 +5322,28 @@ var $root = (
       },
       Label: {
         options: {
-          java_package: 'com.aoetech.aoelailiao.protobuf',
+          java_package: "com.aoetech.aoelailiao.protobuf",
           java_multiple_files: true,
           go_package:
-            'github.com/protocolbuffers/protobuf/aoelailiao/go/protocolpb',
+            "github.com/protocolbuffers/protobuf/aoelailiao/go/protocolpb",
         },
         nested: {
           ClientCreateLabelReq: {
             fields: {
               uid: {
-                rule: 'repeated',
-                type: 'uint32',
+                rule: "repeated",
+                type: "uint32",
                 id: 1,
                 options: {
                   packed: false,
                 },
               },
               labelContent: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -5323,15 +5351,15 @@ var $root = (
           ClientCreateLabelAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -5339,16 +5367,16 @@ var $root = (
           ClientUpdateLabelReq: {
             fields: {
               uid: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               labelInfo: {
-                rule: 'repeated',
-                type: 'Aoelailiao.Common.LabelInfo',
+                rule: "repeated",
+                type: "Aoelailiao.Common.LabelInfo",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -5356,15 +5384,15 @@ var $root = (
           ClientUpdateLabelAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -5372,15 +5400,15 @@ var $root = (
           ClientDeleteLabelReq: {
             fields: {
               labelId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               uid: {
-                type: 'uint32',
+                type: "uint32",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -5388,15 +5416,15 @@ var $root = (
           ClientDeleteLabelAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -5404,23 +5432,23 @@ var $root = (
           ClientEditLabelReq: {
             fields: {
               labelId: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               uid: {
-                rule: 'repeated',
-                type: 'uint32',
+                rule: "repeated",
+                type: "uint32",
                 id: 2,
                 options: {
                   packed: false,
                 },
               },
               labelContent: {
-                type: 'string',
+                type: "string",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -5428,15 +5456,15 @@ var $root = (
           ClientEditLabelAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -5444,7 +5472,7 @@ var $root = (
           ClientGetLabelReq: {
             fields: {
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },
@@ -5452,20 +5480,20 @@ var $root = (
           ClientGetLabelAns: {
             fields: {
               resultCode: {
-                type: 'uint32',
+                type: "uint32",
                 id: 1,
               },
               resultString: {
-                type: 'string',
+                type: "string",
                 id: 2,
               },
               labelUserInfo: {
-                rule: 'repeated',
-                type: 'Aoelailiao.Common.LabelUserInfo',
+                rule: "repeated",
+                type: "Aoelailiao.Common.LabelUserInfo",
                 id: 3,
               },
               attachData: {
-                type: 'bytes',
+                type: "bytes",
                 id: 32,
               },
             },

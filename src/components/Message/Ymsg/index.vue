@@ -8,24 +8,8 @@
     <div>
       <div class="title" v-if="isGroup">{{ userInfo?.nickname }}</div>
       <ImBg v-bind="$attrs">
-        <img
-          class="fire"
-          v-if="isBurn && fired"
-          src="../../../assets/img/fired.svg"
-          alt=""
-        />
-        <img
-          class="fire"
-          v-if="isBurn && !fired"
-          src="../../../assets/img/fire.svg"
-          alt=""
-        />
-        <p
-          v-for="item in list"
-          :key="item"
-          class="text"
-          @click="$emit('clickFireMsg')"
-        >
+        <Fire :isBurn="isBurn" :fired="fired" :right="`-20px`" :top="`-15px`" />
+        <p v-for="item in list" :key="item" class="text">
           {{ item.replace(/\u0000/g, "") }}
         </p>
       </ImBg>
@@ -42,6 +26,7 @@ import {
   defineEmits,
 } from "vue";
 import ImBg from "../ImgBg/index.vue";
+import Fire from "../Fire/index.vue";
 import Iconfont from "@/iconfont/index.vue";
 import { useStore } from "vuex";
 import { useI18n } from "vue-i18n";
@@ -52,7 +37,7 @@ export default defineComponent({
 });
 </script>
 <script lang="ts" setup>
-defineEmits(["click", "clickFireMsg"]);
+defineEmits(["click"]);
 defineProps({
   isBurn: {
     type: Boolean,
@@ -99,11 +84,6 @@ const list = slots.default()[0].children
   }
   .pointer {
     cursor: pointer;
-  }
-  .fire {
-    position: absolute;
-    right: -6px;
-    top: -2px;
   }
 }
 </style>

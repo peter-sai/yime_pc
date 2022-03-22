@@ -459,8 +459,6 @@ const accept = () => {
 
 // 挂断
 const hungup = async (num?: number) => {
-  console.log(11);
-
   close();
   pause();
   sessionRoot.value.hungup();

@@ -81,7 +81,7 @@
       <div class="button" @click="login" :class="{ isPwd: btns.active !== 0 }">
         {{ t('登录') }}
       </div>
-      <div v-if="btns.active === 2" class="info" @click="btns.active = 1">
+      <div v-if="btns.active === 2" class="info" @click="btns.active = 0">
         {{ t('密码登录') }}
       </div>
       <div v-else class="info" @click="btns.active = 2">

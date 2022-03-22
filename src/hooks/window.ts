@@ -207,10 +207,12 @@ const useEnter = (
     };
 
     const msgSource: any = store.state.msgSource;
+    console.log(msgSource);
+
     if (!store.state.activeIsGroup && msgSource) {
-      const userInfo = store.state?.msgList[store.state?.activeUid || -1];
+      const userMsgInfo = store.state?.msgList[store.state?.activeUid || -1];
       if (
-        !userInfo?.readList?.length &&
+        !userMsgInfo?.readList?.length &&
         msgSource.sourceId === store.state?.activeUid
       ) {
         res.msgInfo.attachInfo.msgSource = JSON.stringify(msgSource) || '';
@@ -894,6 +896,37 @@ const useRevoke = (
   };
 };
 
+// 删除消息
+const useDelMsg = (
+  store: Store<initStore>,
+  t: { (key: string | number): string },
+) => {
+  return async (msg: any) => {
+    const res = {
+      msgId: msg.msgId,
+    };
+    console.log(msg, 111);
+    const data = await store.dispatch('postMsg', {
+      query: res,
+      cmd: 2167,
+      encryption: 'Aoelailiao.Message.DeleteMsgReq',
+      auth: true,
+    });
+    Toast(t(data.body.resultString));
+    if (data.body.resultCode === 0) {
+      const msgList = store.state.msgList;
+      // 处理删除消息
+      const readList =
+        msgList[msg.toId]?.readList || msgList[msg.fromId]?.readList || [];
+      const delKey = readList.findIndex(
+        (e: any) => Number(e.msgId) === Number(msg.msgId),
+      );
+      readList.splice(delKey, 1);
+      store.commit('SET_MSGLIST', msgList);
+    }
+  };
+};
+
 // 计算时间显示
 const useFormateTime = () => {
   return (msgTime: number) => {
@@ -1007,6 +1040,7 @@ export {
   useSystemNotifyInfo,
   useUserGetConversationHasReadedMsgInfo,
   useRevoke,
+  useDelMsg,
   useFormateTime,
   initRongConnect,
   getRoam,
