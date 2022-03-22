@@ -320,7 +320,6 @@ const sessionRoot = ref({}) as Ref<RCCallSession>;
 const close = () => {
   props.destroy && props.destroy();
   store.commit('SET_CONVERSATIONING', false);
-  console.log(11);
 };
 
 // 转为语音

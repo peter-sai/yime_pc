@@ -931,7 +931,7 @@ function useBeforeSwitch(
   }
   .content {
     min-height: 50px;
-    padding: 15px 20px;
+    padding: 10px 20px;
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
