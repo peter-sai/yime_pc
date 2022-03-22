@@ -8,18 +8,20 @@
     <div>
       <div class="title" v-if="isGroup">{{ userInfo?.nickname }}</div>
       <ImBg v-bind="$attrs">
-        <img
-          class="fire"
-          v-if="isBurn && fired"
-          src="../../../assets/img/fired.svg"
-          alt=""
-        />
-        <img
-          class="fire"
-          v-if="isBurn && !fired"
-          src="../../../assets/img/fire.svg"
-          alt=""
-        />
+        <div class="fireImg">
+          <img
+            class="fire"
+            v-if="isBurn && fired"
+            src="../../../assets/img/fired.svg"
+            alt=""
+          />
+          <img
+            class="fire"
+            v-if="isBurn && !fired"
+            src="../../../assets/img/fire.svg"
+            alt=""
+          />
+        </div>
         <p
           v-for="item in list"
           :key="item"
@@ -100,10 +102,13 @@ const list = slots.default()[0].children
   .pointer {
     cursor: pointer;
   }
-  .fire {
-    position: absolute;
-    right: -6px;
-    top: -2px;
+  .fireImg {
+    position: relative;
+    .fire {
+      position: absolute;
+      right: -20px;
+      top: -15px;
+    }
   }
 }
 </style>

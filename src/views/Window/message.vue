@@ -302,8 +302,11 @@
         <span
           v-if="copyItem.fromId === store.state.userInfo.uid"
           @click="del(copyItem)"
-          >{{ t("删除") }}</span
+          >{{ t("撤销") }}</span
         >
+        <span v-if="isShowHowComponent(copyItem)" @click="delMsg(copyItem)">{{
+          t("删除")
+        }}</span>
       </div>
     </div>
   </div>
@@ -370,6 +373,7 @@ import {
   useSystemNotifyInfo,
   useUserGetConversationHasReadedMsgInfo,
   useRevoke,
+  useDelMsg,
   formatMsg,
   downloadFile,
 } from "@/hooks/window";
@@ -520,6 +524,7 @@ const userInfo = computed(() => store.state.userInfo);
 const showMen = ref(false);
 
 const menuClick = (e: any, data: any) => {
+  console.log(e);
   copyItem.value = data;
 
   style.value.left = e.target.offsetLeft + 10;
@@ -670,6 +675,9 @@ onUnmounted(() => {
 
 // 撤回消息
 const del = useRevoke(store, t);
+
+// 删除消息
+const delMsg = useDelMsg(store, t);
 
 // 获取撤回消息人
 const getRevokeName = (item: IMsgInfo<string>) => {
