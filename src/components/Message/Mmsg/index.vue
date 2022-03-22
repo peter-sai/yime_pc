@@ -11,19 +11,27 @@
     >
       <div class="box">
         <Sending v-if="sending" />
-        <ImgBg v-bind="$attrs" isMe><slot /></ImgBg>
+        <ImgBg v-bind="$attrs" isMe>
+          <Fire
+            :isBurn="isBurn"
+            :fired="fired"
+            :left="`-20px`"
+            :top="`-15px`" />
+          <slot
+        /></ImgBg>
       </div>
       <IsRead :isRead="isRead" />
     </div>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, defineProps } from 'vue';
-import ImgBg from '../ImgBg/index.vue';
-import Sending from '@/components/Sending/index.vue';
-import IsRead from '@/components/IsRead/index.vue';
+import { defineComponent, defineProps } from "vue";
+import ImgBg from "../ImgBg/index.vue";
+import Fire from "../Fire/index.vue";
+import Sending from "@/components/Sending/index.vue";
+import IsRead from "@/components/IsRead/index.vue";
 export default defineComponent({
-  name: 'Mmsg',
+  name: "Mmsg",
 });
 </script>
 <script lang="ts" setup>
@@ -36,10 +44,16 @@ defineProps({
     type: Boolean,
     default: false,
   },
+  isBurn: {
+    type: Boolean,
+  },
+  fired: {
+    type: Boolean,
+  },
 });
 </script>
 <style lang="scss" scoped>
-@import '@/style/base.scss';
+@import "@/style/base.scss";
 .mmsg {
   text-align: right;
   .box {

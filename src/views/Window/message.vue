@@ -46,7 +46,6 @@
         <div v-if="item.msgShowType === 3 && item.fired" class="item">
           <Ymsg
             @click="showUserInfo(getUserInfo(item).uid)"
-            @clickFireMsg="showMsg = true"
             :userInfo="getUserInfo(item)"
             :isBurn="item.msgShowType === 3"
             :fired="item.fired"
@@ -54,6 +53,15 @@
           >
             {{ t("消息已焚毁") }}
           </Ymsg>
+          <Mmsg
+            @menuClick="menuClick($event, item)"
+            :isRead="item.msgId <= readMsgId"
+            :isBurn="item.msgShowType === 3"
+            :fired="item.fired"
+            v-else
+          >
+            {{ t("消息已焚毁") }}
+          </Mmsg>
         </div>
         <div class="item" v-else-if="item.type === 'stringContent'">
           <!-- 普通消息 -->
@@ -71,6 +79,8 @@
             <Mmsg
               @menuClick="menuClick($event, item)"
               :isRead="item.msgId <= readMsgId"
+              :isBurn="item.msgShowType === 3"
+              :fired="false"
               v-else
             >
               {{ item.msgContent.stringContent }}
@@ -384,7 +394,6 @@ import { MediaAudio } from "@/plugin/Audio";
 import { hideLoading, showLoading } from "@/plugin/Loading";
 
 const playMsgId = ref(0);
-const showMsg = ref(false);
 
 async function getGroupInfo(store: Store<initStore>, uid: number) {
   if (!uid) return;
