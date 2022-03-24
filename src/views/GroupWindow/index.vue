@@ -45,7 +45,7 @@
       @selectGroupMember="ShowSelectGroupMember"
       @enter="enter"
       @sendFile="sendImg('file')"
-      @atUserInfoList="getAtUserInfoList"
+      @atUserInfoLists="getAtUserInfoList"
       :atUserInfoList="atUserInfoList"
     />
 
@@ -241,8 +241,13 @@ defineEmits(['toggleBox', 'changeTag']);
 const mediaType = ref(1);
 const atUserInfoList: Ref<IUserInfo[]> = ref([]);
 const { t } = useI18n();
-const userInfo: Ref<IUserInfo> = ref({}) as Ref<IUserInfo>; // 需要显示详情用户的信息
-const userDetailInfo: Ref<IUserDetailInfo> = ref({}) as Ref<IUserDetailInfo>; // 需要显示详情用户的信息
+const userUid = computed(() => store.state.userUid);
+const userInfo: ComputedRef<IUserInfo> = computed(
+  () => store.state.msgList[userUid.value!]?.userDetailInfo?.userInfo || {},
+); // 需要显示详情用户的信息
+const userDetailInfo: ComputedRef<IUserDetailInfo | null> = computed(
+  () => store.state.msgList[userUid.value!]?.userDetailInfo || {},
+);
 const groupCallState: Ref<{
   callState: number;
   groupId: number;
@@ -259,9 +264,11 @@ const toggleBox = async (uid?: number) => {
     const userId = uid || store.state.activeUid;
     store.commit('SET_USERUID', userId);
   }
+
   let msgItem: ImsgItem | null = null;
   // let msgItem: ImsgItem = store.state.msgList[store.state.userUid!];
   // 如果不存在则获取 (单聊不在聊天列表中会没有信息)
+  const userUid = store.state.userUid;
   if (!msgItem) {
     const res = {
       uid: store.state.userUid,
@@ -274,8 +281,12 @@ const toggleBox = async (uid?: number) => {
     });
     msgItem = data.body;
   }
-  userDetailInfo.value = msgItem?.userDetailInfo || {};
-  userInfo.value = msgItem?.userDetailInfo?.userInfo || {};
+  const newMsgList = store.state.msgList[userUid!];
+  newMsgList.userDetailInfo = msgItem?.userDetailInfo || {};
+  store.commit('SET_MSGLISTITEM', {
+    res: newMsgList,
+    uid: userUid,
+  });
   showBox.value = !showBox.value;
 };
 const updateUser = async (uid?: number) => {
@@ -294,8 +305,14 @@ const updateUser = async (uid?: number) => {
     });
     msgItem = data.body;
   }
-  userDetailInfo.value = msgItem.userDetailInfo || {};
-  userInfo.value = msgItem.userDetailInfo?.userInfo || {};
+
+  const userUid = store.state.userUid;
+  const newMsgList = store.state.msgList[userUid!];
+  newMsgList.userDetailInfo = msgItem?.userDetailInfo || {};
+  store.commit('SET_MSGLISTITEM', {
+    res: newMsgList,
+    uid: userUid,
+  });
 };
 // 右侧显示的内容
 const tag = ref<Etag>(Etag['UserInfo']);
@@ -351,7 +368,10 @@ const changUserImg: Ref<HTMLInputElement | null> = ref(null);
 const cbImg = useCbImg(store, accept, t, 1);
 
 onMounted(async () => {
-  changUserImg.value!.addEventListener('change', cbImg);
+  changUserImg.value!.addEventListener('change', (e) => {
+    cbImg(e);
+    changUserImg.value?.setAttribute('type', 'text');
+  });
 });
 
 onBeforeUnmount(() => {

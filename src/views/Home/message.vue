@@ -296,7 +296,6 @@ import {
 } from '@/hooks/window';
 import { hideLoading, showLoading } from '@/plugin/Loading';
 import { Toast } from '@/plugin/Toast';
-import { getMsgList } from '@/utils/utils';
 import { IGroupListItem } from '@/types/group';
 export default defineComponent({
   name: 'message',
@@ -492,7 +491,10 @@ const init = async () => {
   // 合并数据
   await mergeData(offlineMsgInfos, store, []);
 };
-init();
+
+setTimeout(() => {
+  init();
+});
 
 // 设置已读
 const read = (item: ImsgItem) => {
@@ -532,18 +534,32 @@ const quitGroupChat = async (item: ImsgItem) => {
   const data = await userOperateGroupInfo(3, query);
   Toast(t(data.body.resultString));
   if (data.body.resultCode === 0) {
-    const data = await store.dispatch('postMsg', {
-      query: {
-        groupId: store.state.activeUid,
-      },
-      cmd: 1029,
-      encryption: 'Aoelailiao.Login.ClientGetGroupInfoReq',
-      auth: true,
-    });
-    const msgItem = data.body;
-    const item = store.state.msgList[store.state.activeUid!];
-    item.groupDetailInfo = msgItem.groupDetailInfo;
-    store.commit('SET_MSGLISTITEM', { res: item });
+    // const data = await store.dispatch('postMsg', {
+    //   query: {
+    //     groupId: store.state.activeUid,
+    //   },
+    //   cmd: 1029,
+    //   encryption: 'Aoelailiao.Login.ClientGetGroupInfoReq',
+    //   auth: true,
+    // });
+    // const msgItem = data.body;
+    // const item = store.state.msgList[store.state.activeUid!];
+    // item.groupDetailInfo = msgItem.groupDetailInfo;
+    // store.commit('SET_MSGLISTITEM', { res: item });
+    if (store.state.msgList[item.id]) {
+      delete store.state.msgList[item.id];
+      store.commit('SET_ACTIVEUID', null);
+      store.dispatch('postMsg', {
+        query: {
+          isGroupMsg: item.isGroup,
+          objectId: item.id,
+          opt: 1,
+        },
+        cmd: 2163,
+        encryption: 'Aoelailiao.Message.HideConversationReq',
+        auth: true,
+      });
+    }
 
     const data1 = await store.dispatch('postMsg', {
       query: {},

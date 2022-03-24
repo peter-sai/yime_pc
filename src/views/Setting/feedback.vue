@@ -43,6 +43,7 @@ const query = reactive({
 });
 
 const upLoad = () => {
+  changUserImg.value?.setAttribute('type', 'file');
   changUserImg.value!.click();
 };
 
@@ -55,6 +56,7 @@ onBeforeUnmount(() => {
 });
 
 const cbImg = async (e: any) => {
+  changUserImg.value?.setAttribute('type', 'text');
   if (!store.state.client.userAgent) {
     await initOss(store);
   }

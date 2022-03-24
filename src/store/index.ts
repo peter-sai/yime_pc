@@ -5,6 +5,7 @@ import {
   getMsgList,
   getStorage,
   getToken,
+  isMacOs,
   setStorage,
 } from '@/utils/utils';
 import { useGetOfflineMsg } from '@/api/app';
@@ -29,7 +30,6 @@ let defCb: any = null;
 let time = 0;
 
 const initState = {
-  destoryReaded: 0, //阅后即焚状态
   callUid: null,
   msgSource: undefined,
   rongIm: null,
@@ -162,9 +162,6 @@ const sotreRoot = createStore({
     },
     SET_TIMEOUT: (state, res) => {
       state.timeOut = res;
-    },
-    SET_DESTORYREADED: (state, res) => {
-      state.destoryReaded = res;
     },
     SET_CONFIG: (state, res) => {
       state.config = res;
@@ -369,7 +366,11 @@ const sotreRoot = createStore({
       commit('SET_USERINFO', null);
       commit('SET_TOKEN', null);
       clearStorage();
-      Electron.ipcRenderer.sendSync('update-badge', null);
+      if (isMacOs()) {
+        Electron.ipcRenderer.send('sendMessage', '');
+      } else {
+        Electron.ipcRenderer.sendSync('update-badge', null);
+      }
     },
     postMsg(
       { state, dispatch },

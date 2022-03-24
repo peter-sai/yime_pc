@@ -370,9 +370,10 @@ const stop = watch(
         const newList = msgList[store.state.activeUid!].readList.filter(
           (e: any) => Number(e.msgId) > Number(maxMsgId),
         );
+
         msgList[store.state.activeUid!].readList = newList;
         store.commit('SET_MSGLIST', msgList);
-        setMsgList(store.state.msgList);
+        setMsgList(msgList);
       }
       console.log('推送消息', data);
       // 发送ack
@@ -582,15 +583,17 @@ const unReadNum = computed(() => {
     .reduce(function (preValue: any, curValue: any) {
       return preValue + curValue.unReadNum;
     }, 0);
+  if (isMacOs()) {
+    Electron.ipcRenderer.send('sendMessage', num?.toString() || '');
+  } else {
+    Electron.ipcRenderer.sendSync('update-badge', num.toString() || null);
+  }
+
   return num;
 });
 
 watch(unReadNum, (e) => {
-  if (isMacOs()) {
-    Electron.ipcRenderer.send('sendMessage', e?.toString() || '');
-  } else {
-    Electron.ipcRenderer.sendSync('update-badge', e ? e.toString() : null);
-  }
+  //
 });
 </script>
 <style lang="scss">

@@ -26,26 +26,28 @@
           />
         </div>
       </div>
+      <Fire :isBurn="isBurn" :fired="fired" :right="`-20px`" :top="`-40px`" />
     </ImBg>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, defineProps, defineEmits } from 'vue';
-import ImBg from '../ImgBg/index.vue';
-import Iconfont from '@/iconfont/index.vue';
-import { watch, computed, onDeactivated } from '@vue/runtime-core';
-import { ref } from '@vue/reactivity';
-import { useStore } from 'vuex';
-import BenzAMRRecorder from 'benz-amr-recorder';
-import { useI18n } from 'vue-i18n';
-import ShowAudio from '../ShowAudio/index.vue';
-import { key } from '@/store';
+import { defineComponent, defineProps, defineEmits } from 'vue'
+import ImBg from '../ImgBg/index.vue'
+import Fire from '../Fire/index.vue'
+import Iconfont from '@/iconfont/index.vue'
+import { watch, computed, onDeactivated } from '@vue/runtime-core'
+import { ref } from '@vue/reactivity'
+import { useStore } from 'vuex'
+import BenzAMRRecorder from 'benz-amr-recorder'
+import { useI18n } from 'vue-i18n'
+import ShowAudio from '../ShowAudio/index.vue'
+import { key } from '@/store'
 export default defineComponent({
   name: 'YAudio',
-});
+})
 </script>
 <script lang="ts" setup>
-defineEmits(['click', 'call']);
+defineEmits(['click', 'call'])
 const props = defineProps({
   userInfo: {
     type: Object,
@@ -57,53 +59,59 @@ const props = defineProps({
   groupMemberSplit: {
     type: Boolean,
   },
-});
-const { t } = useI18n();
-const isPlay = ref(false);
-const store = useStore(key);
-const time = ref(0);
+  isBurn: {
+    type: Boolean,
+  },
+  fired: {
+    type: Boolean,
+  },
+})
+const { t } = useI18n()
+const isPlay = ref(false)
+const store = useStore(key)
+const time = ref(0)
 
-const amr = new BenzAMRRecorder();
-const amrCtx = amr.initWithUrl(props.voiceMsg.voiceUrl);
+const amr = new BenzAMRRecorder()
+const amrCtx = amr.initWithUrl(props.voiceMsg.voiceUrl)
 amr.onEnded(() => {
-  isPlay.value = false;
-});
+  isPlay.value = false
+})
 
 const play = () => {
   amrCtx.then(() => {
-    time.value = amr.getDuration();
+    time.value = amr.getDuration()
     if (!amr.isPlaying()) {
-      amr && amr.play();
+      amr && amr.play()
     }
-  });
+  })
 
-  isPlay.value = true;
+  isPlay.value = true
   //非常简单的就能拿到blob音频url
-  store.commit('SET_PLAYAUDIO', props.voiceMsg.voiceUrl);
-};
+  store.commit('SET_PLAYAUDIO', props.voiceMsg.voiceUrl)
+}
 
 watch(
   computed(() => store.state.playAudio),
   (e) => {
     if (e !== props.voiceMsg.voiceUrl) {
-      isPlay.value = false;
-      amr && amr.stop();
+      isPlay.value = false
+      amr && amr.stop()
     }
-  },
-);
+  }
+)
 
 onDeactivated(() => {
-  amr && amr.stop();
-});
+  amr && amr.stop()
+})
 
 const pause = () => {
   amrCtx.then(() => {
     if (amr.isPlaying()) {
-      amr && amr.stop();
+      amr && amr.stop()
     }
-  });
-  isPlay.value = false;
-};
+  })
+  isPlay.value = false
+}
 </script>
 <style lang="scss" scoped>
 @import '@/style/theme/index.scss';
