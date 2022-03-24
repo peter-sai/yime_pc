@@ -455,7 +455,7 @@ const useCbImg = (
   t: { (key: string | number): string },
   isGroupMsg = 0,
 ) => {
-  return async (e: any) => {
+  return async (e: any, uid?: number) => {
     if (!e.target.files || !e.target.files.length) return;
 
     if (!store.state.client.userAgent) {
@@ -465,7 +465,7 @@ const useCbImg = (
     try {
       const files = e.target.files;
       files.forEach(async (v: File) => {
-        await sendImgInfo(v, store, accept, t, isGroupMsg);
+        await sendImgInfo(v, store, accept, t, isGroupMsg, uid);
       });
     } catch (error) {
       console.log(error);
@@ -479,6 +479,7 @@ async function sendImgInfo(
   accept: Ref<string>,
   t: { (key: string | number): string },
   isGroupMsg: number,
+  uid?: number,
 ) {
   try {
     ////  开始上传图片 ///
@@ -511,7 +512,7 @@ async function sendImgInfo(
           msgInfo: {
             isGroupMsg,
             fromId: store.state.userInfo.uid,
-            toId: store.state.activeUid,
+            toId: uid || store.state.activeUid,
             msgShowType: 1,
             isEncrypt: 0,
             msgContent: {
@@ -538,7 +539,7 @@ async function sendImgInfo(
           msgInfo: {
             isGroupMsg,
             fromId: store.state.userInfo.uid,
-            toId: store.state.activeUid,
+            toId: uid || store.state.activeUid,
             msgShowType: 1,
             isEncrypt: 0,
             msgContent: {
@@ -559,7 +560,7 @@ async function sendImgInfo(
         msgInfo: {
           isGroupMsg,
           fromId: store.state.userInfo.uid,
-          toId: store.state.activeUid,
+          toId: uid || store.state.activeUid,
           msgShowType: 1,
           isEncrypt: 0,
           msgContent: {

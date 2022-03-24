@@ -363,7 +363,7 @@ const cbImg = useCbImg(store, accept, t);
 
 onMounted(async () => {
   changUserImg.value!.addEventListener('change', (e) => {
-    cbImg(e);
+    cbImg(e, store.state.activeUid!);
     changUserImg.value?.setAttribute('type', 'text');
   });
 });
