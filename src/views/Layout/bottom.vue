@@ -795,7 +795,7 @@ function useBeforeSwitch(
             'destoryReaded',
             Number(id),
             store.state.activeUid,
-            false
+            true
           )
         }
         resovle(true)

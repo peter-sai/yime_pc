@@ -119,7 +119,7 @@ function upDateStore(
   group: string,
   switchState?: number,
   uid?: number,
-  isGroup?: boolean
+  isUser?: boolean
 ) {
   const msgList = store.state.msgList;
   let activeUid: number = store.state.activeUid!;
@@ -128,10 +128,13 @@ function upDateStore(
   }
   if (msgList && msgList[activeUid!]) {
     const newMsgList = msgList[activeUid!];
-    if (isGroup) {
-      newMsgList.groupDetailInfo.groupAttachInfo[group] = switchState;
-    } else {
+    if (isUser) {
+      if (!newMsgList.userDetailInfo.userInfo.userAttachInfo) {
+        newMsgList.userDetailInfo.userInfo.userAttachInfo = {};
+      }
       newMsgList.userDetailInfo.userInfo.userAttachInfo[group] = switchState;
+    } else {
+      newMsgList.groupDetailInfo.groupAttachInfo[group] = switchState;
     }
     store.commit("SET_MSGLISTITEM", { res: newMsgList, uid: activeUid });
   }
