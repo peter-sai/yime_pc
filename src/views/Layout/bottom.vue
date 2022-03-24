@@ -487,7 +487,6 @@ const bodyClickCb = () => {
 };
 
 onMounted(() => {
-  store.commit('SET_DESTORYREADED', 0);
   document.body.addEventListener('click', bodyClickCb);
   input.value?.focus();
   burnInfo.active = destoryReaded.value ? destoryReaded : 0;
@@ -790,7 +789,6 @@ function useBeforeSwitch(
         // 更新缓存
         if (settingItemId === 1001) {
           // 更新焚毁状态
-          store.commit('SET_DESTORYREADED', Number(id));
           upDateStore(
             'destoryReaded',
             Number(id),
