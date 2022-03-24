@@ -30,6 +30,7 @@
           color="#2B2C33"
         />
         <Iconfont
+          v-if="!store.state.activeIsGroup"
           @click.stop="burnInfo.show = !burnInfo.show"
           name="iconyuehoujifen"
           size="24"
@@ -315,6 +316,11 @@ const showAtBox = ref(false);
 const atUserInfoList: Ref<IUserInfo[]> = ref([]);
 
 const dropFile = computed(() => store.state.dropFile);
+const destoryReaded = computed(
+  () =>
+    store.state.msgList[store.state.activeUid]?.userDetailInfo?.userInfo
+      ?.userAttachInfo?.destoryReaded,
+);
 
 watch(dropFile, (e) => {
   if (e) {
@@ -484,6 +490,7 @@ onMounted(() => {
   store.commit('SET_DESTORYREADED', 0);
   document.body.addEventListener('click', bodyClickCb);
   input.value?.focus();
+  burnInfo.active = destoryReaded.value ? destoryReaded : 0;
 });
 
 onBeforeUnmount(() => {
@@ -784,6 +791,13 @@ function useBeforeSwitch(
         if (settingItemId === 1001) {
           // 更新焚毁状态
           store.commit('SET_DESTORYREADED', Number(id));
+          upDateStore(
+            'destoryReaded',
+            Number(id),
+            store,
+            true,
+            store.state.activeUid,
+          );
         }
         resovle(true);
       } else {

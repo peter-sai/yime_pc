@@ -115,6 +115,7 @@ function upDateStore(
   group: string,
   switchState?: number,
   uid?: number,
+  isUser?: boolean,
 ) {
   const msgList = store.state.msgList;
   let activeUid: number = store.state.activeUid!;
@@ -123,7 +124,14 @@ function upDateStore(
   }
   if (msgList && msgList[activeUid!]) {
     const newMsgList = msgList[activeUid!];
-    newMsgList.groupDetailInfo.groupAttachInfo[group] = switchState;
+    if (isUser) {
+      if (!newMsgList.userDetailInfo.userInfo.userAttachInfo) {
+        newMsgList.userDetailInfo.userInfo.userAttachInfo = {};
+      }
+      newMsgList.userDetailInfo.userInfo.userAttachInfo[group] = switchState;
+    } else {
+      newMsgList.groupDetailInfo.groupAttachInfo[group] = switchState;
+    }
     store.commit('SET_MSGLISTITEM', { res: newMsgList, uid: activeUid });
   }
 }
@@ -231,7 +239,6 @@ const useEnter = (
       const list = groupList.filter((e) =>
         search.value.includes(`@${e.nickname}`),
       );
-
       const ats = list.map((v) => {
         const item = v.nickname;
         if (item === 'All') {
@@ -265,10 +272,6 @@ const useEnter = (
         },
       };
     }
-    if (store.state.destoryReaded) {
-      res.msgInfo.msgShowType = 3;
-    }
-
     const data = await store.dispatch('postMsg', {
       query: res,
       cmd: 2001,
