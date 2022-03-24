@@ -176,6 +176,9 @@
               @click.stop="userClick(item.uid)"
               v-for="item in groupMemberUserInfos"
               :key="item.uid"
+              :style="{
+                cursor: item.uid !== store.state.userInfo.uid ? 'pointer' : '',
+              }"
             >
               <template v-slot:userImg>
                 <img v-if="item.icon" class="userImg" :src="item.icon" alt="" />
@@ -344,6 +347,8 @@ const beforeMsgNotdisturb = useBeforeSwitch(store, 1005, t, true);
 const beforeTop = useBeforeSwitch(store, 1004, t);
 
 const userClick = (uid: number) => {
+  if (uid === store.state.userInfo.uid) return;
+
   emit('updateUser', uid);
   emit('changeTag', Etag.UserInfo);
 };
