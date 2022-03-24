@@ -13,11 +13,7 @@ import {
   TMsgContent,
 } from '@/types/msg';
 import { IGroupInfo, IUserDetailInfo, IUserInfo } from '@/types/user';
-import {
-  getMsgList,
-  setMsgList,
-  getToken as getUserToken,
-} from '@/utils/utils';
+import { getToken as getUserToken } from '@/utils/utils';
 import { getOssInfo, getToken, upload } from '../api';
 import { number } from '@intlify/core-base';
 import moment from 'moment';
@@ -207,7 +203,6 @@ const useEnter = (
     };
 
     const msgSource: any = store.state.msgSource;
-    console.log(msgSource);
 
     if (!store.state.activeIsGroup && msgSource) {
       const userMsgInfo = store.state?.msgList[store.state?.activeUid || -1];
@@ -231,10 +226,14 @@ const useEnter = (
     }
 
     // 处理@消息
-    const atList = search.value.match(/@(\S*) /g) || [];
+    const atList = search.value.split('@');
     if (atList.length && groupList.length) {
-      const ats = atList.map((e) => {
-        const item = e.replace('@', '').replace(' ', '');
+      const list = groupList.filter((e) =>
+        search.value.includes(`@${e.nickname}`),
+      );
+
+      const ats = list.map((v) => {
+        const item = v.nickname;
         if (item === 'All') {
           return {
             type: 1,
@@ -295,6 +294,7 @@ const useSendImg = (
   nextTick?: any,
 ) => {
   return async (type: string) => {
+    changUserImg.value?.setAttribute('type', 'file');
     if (type === 'sayHello') {
       const res = {
         msgInfo: {

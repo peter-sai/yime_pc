@@ -85,6 +85,7 @@ onBeforeUnmount(() => {
 
 // 选择图片之后的回调函数
 const cb = async (e: any) => {
+  changUserImg.value?.setAttribute('type', 'text');
   if (!store.state.client.userAgent) {
     await initOss(store);
   }
@@ -102,6 +103,7 @@ const cb = async (e: any) => {
 
 // 切换头像
 const changeImg = () => {
+  changUserImg.value?.setAttribute('type', 'file');
   changUserImg.value.click();
 };
 

@@ -39,7 +39,14 @@
       @sendFile="sendImg('file')"
     />
     <!-- 文件 和 图片选择 -->
-    <input ref="changUserImg" type="file" hidden :accept="accept" multiple />
+    <input
+      ref="changUserImg"
+      :value="files"
+      type="file"
+      hidden
+      :accept="accept"
+      multiple
+    />
 
     <!-- 陌生人 -->
     <div class="stranger" v-if="strangerInfo">
@@ -235,6 +242,7 @@ const userInfo: Ref<IUserInfo> = ref({}) as Ref<IUserInfo>; // 需要显示详�
 const userDetailInfo: Ref<IUserDetailInfo> = ref({}) as Ref<IUserDetailInfo>; // 需要显示详情用户的信息
 const isBotUser = ref(false);
 const onlineInfo: Ref<IUserInfo> = ref({}) as Ref<IUserInfo>;
+const files = ref('');
 
 const groupDetailInfo: ComputedRef<IGroupInfo> = computed(
   () => store.state.msgList[store.state.userUid]?.groupDetailInfo || {},
@@ -355,7 +363,10 @@ init(store, userDetailInfo, isBotUser, yUserInfo, onlineInfo);
 const cbImg = useCbImg(store, accept, t);
 
 onMounted(async () => {
-  changUserImg.value!.addEventListener('change', cbImg);
+  changUserImg.value!.addEventListener('change', (e) => {
+    cbImg(e);
+    changUserImg.value?.setAttribute('type', 'text');
+  });
 });
 
 onBeforeUnmount(() => {

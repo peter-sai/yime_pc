@@ -63,7 +63,7 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { computed, defineComponent } from 'vue';
 export default defineComponent({
   name: 'findMe',
 });
@@ -81,7 +81,7 @@ import { useI18n } from 'vue-i18n';
 const store = useStore(key);
 const { t } = useI18n();
 
-const switchSettingInfo = store.state.switchSettingInfo;
+const switchSettingInfo = computed(() => store.state.switchSettingInfo);
 
 function useToggle(type: number) {
   return async (val: boolean) => {
@@ -90,6 +90,7 @@ function useToggle(type: number) {
       type,
       state: val ? 0 : 1,
     };
+
     const data = await store.dispatch('postMsg', {
       query: res,
       cmd: 2043,

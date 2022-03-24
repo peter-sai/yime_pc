@@ -369,9 +369,10 @@ const stop = watch(
         const newList = msgList[store.state.activeUid!].readList.filter(
           (e: any) => Number(e.msgId) > Number(maxMsgId),
         );
+
         msgList[store.state.activeUid!].readList = newList;
         store.commit('SET_MSGLIST', msgList);
-        setMsgList(store.state.msgList);
+        setMsgList(msgList);
       }
       console.log('推送消息', data);
       // 发送ack

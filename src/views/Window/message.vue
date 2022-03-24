@@ -60,7 +60,7 @@
             :fired="item.fired"
             v-else
           >
-            {{ t("消息已焚毁") }}
+            {{ t('消息已焚毁') }}
           </Mmsg>
         </div>
         <div class="item" v-else-if="item.type === 'stringContent'">

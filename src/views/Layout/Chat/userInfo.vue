@@ -164,7 +164,7 @@ import Table from '@/components/Table/index.vue';
 import Switch from '@/components/Switch/index.vue';
 import { Etag } from '../index.vue';
 import { useI18n } from 'vue-i18n';
-import { getMsgList, getTag, setMsgList } from '@/utils/utils';
+import { getTag } from '@/utils/utils';
 import { hideLoading, showLoading } from '@/plugin/Loading';
 import { Dialog } from '@/plugin/Dialog';
 import { IGroupListItem } from '@/types/group';
@@ -194,8 +194,8 @@ export function useToggleFriend(
     });
     return new Promise((resovle, reject) => {
       if (data.body.resultCode === 0) {
-        upDateContact(store, e);
         resovle(true);
+        upDateContact(store, e);
       } else {
         reject();
       }
@@ -223,15 +223,12 @@ function useBeforeSwitch(
       res.switchState = e ? 0 : 1;
     }
     showLoading();
-    console.log(res);
-
     const data = await store.dispatch('postMsg', {
       query: res,
       cmd: 1041,
       encryption: 'Aoelailiao.Login.UserOperateSettingItemSwitchReq',
       auth: true,
     });
-
     hideLoading();
     return new Promise((resovle, reject) => {
       if (data.body.resultCode === 0) {
@@ -267,7 +264,7 @@ export async function upDateStore(
   uid?: number,
 ) {
   const msgList = store.state.msgList;
-  let activeUid: number = store.state.activeUid!;
+  let activeUid: number = store.state.userUid!;
   if (uid) {
     activeUid = uid;
   }
@@ -291,10 +288,11 @@ export async function upDateStore(
 // 删除/添加好友后更新联系人列表
 async function upDateContact(store: Store<initStore>, val: boolean) {
   const userInfo = store.state.userInfo;
-  const item = store.state.msgList[store.state.activeUid!];
+  const item = store.state.msgList[store.state.userUid!];
+
   if (item) {
     item.userDetailInfo.isFriend = val ? 1 : 0;
-    store.commit('SET_MSGLISTITEM', { res: item });
+    store.commit('SET_MSGLISTITEM', { res: item, uid: store.state.userUid });
   }
   let list: IContacts[] = [];
   const data = await store.dispatch('postMsg', {
