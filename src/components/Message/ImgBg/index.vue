@@ -22,14 +22,14 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, defineProps, defineEmits } from "vue";
-import Iconfont from "@/iconfont/index.vue";
+import { defineComponent, defineProps, defineEmits } from 'vue';
+import Iconfont from '@/iconfont/index.vue';
 export default defineComponent({
-  name: "ImgBg",
+  name: 'ImgBg',
 });
 </script>
 <script setup lang="ts">
-defineProps({
+const props = defineProps({
   isMe: {
     type: Boolean,
   },
@@ -42,17 +42,21 @@ defineProps({
   isBurn: {
     type: Boolean,
   },
+  fired: {
+    type: Boolean,
+  },
 });
 
-const emit = defineEmits(["menuClick"]);
+const emit = defineEmits(['menuClick']);
 
 const contextmenu = (e: any) => {
+  if (props.fired) return;
   e.preventDefault();
-  emit("menuClick", e);
+  emit('menuClick', e);
 };
 </script>
 <style lang="scss" scoped>
-@import "@/style/base.scss";
+@import '@/style/base.scss';
 .imBg {
   display: flex;
   &.isMe {
