@@ -181,7 +181,13 @@
               }"
             >
               <template v-slot:userImg>
-                <img v-if="item.icon" class="userImg" :src="item.icon" alt="" />
+                <Iconfont v-if="item.isBotUser" name="iconbianzu16" size="45" />
+                <img
+                  v-else-if="item.icon"
+                  class="userImg"
+                  :src="item.icon"
+                  alt=""
+                />
                 <Iconfont
                   v-else
                   name="iconlianxiren"

@@ -271,7 +271,7 @@ const toggleBox = async (uid?: number) => {
   const userUid = store.state.userUid;
   if (!msgItem) {
     const res = {
-      uid: store.state.userUid,
+      uid: userUid,
     };
     const data = await store.dispatch('postMsg', {
       query: res,
@@ -282,11 +282,28 @@ const toggleBox = async (uid?: number) => {
     msgItem = data.body;
   }
   const newMsgList = store.state.msgList[userUid!];
-  newMsgList.userDetailInfo = msgItem?.userDetailInfo || {};
-  store.commit('SET_MSGLISTITEM', {
-    res: newMsgList,
-    uid: userUid,
-  });
+  if (newMsgList) {
+    newMsgList.userDetailInfo = msgItem?.userDetailInfo || {};
+    store.commit('SET_MSGLISTITEM', {
+      res: newMsgList,
+      uid: userUid,
+    });
+  } else {
+    const item = {
+      readList: [],
+      isGroup: 0,
+      id: userUid,
+      unReadNum: 0,
+      isBotUser: false,
+      userDetailInfo: msgItem?.userDetailInfo || {},
+      lastMsg: {},
+      groupDetailInfo: {},
+    };
+    store.commit('SET_MSGLISTITEM', {
+      res: item,
+      uid: userUid,
+    });
+  }
   showBox.value = !showBox.value;
 };
 const updateUser = async (uid?: number) => {
@@ -308,11 +325,28 @@ const updateUser = async (uid?: number) => {
 
   const userUid = store.state.userUid;
   const newMsgList = store.state.msgList[userUid!];
-  newMsgList.userDetailInfo = msgItem?.userDetailInfo || {};
-  store.commit('SET_MSGLISTITEM', {
-    res: newMsgList,
-    uid: userUid,
-  });
+  if (newMsgList) {
+    newMsgList.userDetailInfo = msgItem?.userDetailInfo || {};
+    store.commit('SET_MSGLISTITEM', {
+      res: newMsgList,
+      uid: userUid,
+    });
+  } else {
+    const item = {
+      readList: [],
+      isGroup: 0,
+      id: userUid,
+      unReadNum: 0,
+      isBotUser: false,
+      userDetailInfo: msgItem?.userDetailInfo || {},
+      lastMsg: {},
+      groupDetailInfo: {},
+    };
+    store.commit('SET_MSGLISTITEM', {
+      res: item,
+      uid: userUid,
+    });
+  }
 };
 // 右侧显示的内容
 const tag = ref<Etag>(Etag['UserInfo']);
