@@ -586,7 +586,10 @@ const unReadNum = computed(() => {
   if (isMacOs()) {
     Electron.ipcRenderer.send('sendMessage', num?.toString() || '');
   } else {
-    Electron.ipcRenderer.sendSync('update-badge', num.toString() || null);
+    Electron.ipcRenderer.sendSync(
+      'update-badge',
+      (num && num.toString()) || null,
+    );
   }
 
   return num;
