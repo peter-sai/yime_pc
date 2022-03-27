@@ -6,6 +6,7 @@ import {
   getStorage,
   getToken,
   isMacOs,
+  setMsgList,
   setStorage,
 } from '@/utils/utils';
 import { useGetOfflineMsg } from '@/api/app';
@@ -360,7 +361,9 @@ const sotreRoot = createStore({
         commit('SET_TOKEN', token);
       }
     },
-    logout({ commit }) {
+    logout({ commit, state }) {
+      console.log(state);
+      setMsgList(state.msgList);
       commit('SET_SWITCHSETTINGINFO', null);
       commit('SET_USERDETAILINFO', null);
       commit('SET_USERINFO', null);

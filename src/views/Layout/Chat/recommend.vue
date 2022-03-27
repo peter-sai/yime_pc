@@ -192,6 +192,7 @@ const submit = async () => {
     if (activeList.length < 1) return;
     // 获取个人信息 (群主)
     const userInfo = store.state.userInfo;
+
     const memberUserInfos = activeList.map((e) => {
       return {
         memberUid: e.uid,
@@ -200,6 +201,12 @@ const submit = async () => {
     memberUserInfos.unshift({
       memberUid: userInfo.uid,
     });
+
+    if (!memberUserInfos.find((e) => Number(e.memberUid) === Number(userId))) {
+      memberUserInfos.push({
+        memberUid: userId,
+      });
+    }
     showLoading();
     // 创建群
     const data = await store.dispatch('postMsg', {
