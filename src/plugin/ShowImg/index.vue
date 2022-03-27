@@ -5,7 +5,10 @@
       <div class="swiper-container gallery-top">
         <div class="swiper-wrapper">
           <div class="swiper-slide" v-for="item in imgList" :key="item.msgId">
-            <img :src="item.imageUrl" alt="" />
+            <div
+              class="img"
+              :style="{ backgroundImage: `url(${item.imageUrl})` }"
+            ></div>
           </div>
         </div>
         <!-- Add Arrows -->
@@ -15,7 +18,11 @@
       <div class="swiper-container gallery-thumbs">
         <div class="swiper-wrapper">
           <div class="swiper-slide" v-for="item in imgList" :key="item.msgId">
-            <img :src="item.imageUrl" alt="" />
+            <!-- <img :src="item.imageUrl" alt="" /> -->
+            <div
+              class="img"
+              :style="{ backgroundImage: `url(${item.imageUrl})` }"
+            ></div>
           </div>
         </div>
       </div>
@@ -132,6 +139,9 @@ onMounted(() => {
   .img {
     height: 100%;
     width: 100%;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
     img {
       height: 100%;
       width: 100%;

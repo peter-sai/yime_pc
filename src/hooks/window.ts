@@ -297,7 +297,7 @@ const useSendImg = (
   nextTick?: any,
 ) => {
   return async (type: string) => {
-    changUserImg.value?.setAttribute('type', 'file');
+    changUserImg?.value?.setAttribute('type', 'file');
     if (type === 'sayHello') {
       const res = {
         msgInfo: {
