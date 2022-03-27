@@ -87,6 +87,7 @@ module.exports = {
           createDesktopShortcut: true, // 创建桌面图标
           createStartMenuShortcut: true, // 创建开始菜单图标
           shortcutName: config[process.env.VUE_APP_MODE], // 图标名称
+          deleteAppDataOnUninstall: true,
         },
       },
     },
