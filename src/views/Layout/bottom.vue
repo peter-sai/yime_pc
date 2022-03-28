@@ -243,7 +243,8 @@ import { MediaAudio } from '@/plugin/Audio'
 import Recorder from 'Recorder'
 import { initRonyun } from '@/App.vue'
 import { upLoadFile, initOss } from '../../hooks/window'
-import { upDateStore } from '../Layout/Chat/userInfo.vue'
+//import { upDateStore } from '../Layout/Chat/userInfo.vue'
+import { upDateStore } from '@/hooks/window'
 import { getSize } from '@/utils/utils'
 import {
   defineComponent,
@@ -790,11 +791,11 @@ function useBeforeSwitch(
         if (settingItemId === 1001) {
           // 更新焚毁状态
           upDateStore(
+            store,
             'destoryReaded',
             Number(id),
-            store,
-            true,
-            store.state.activeUid
+            store.state.activeUid,
+            true
           )
         }
         resovle(true)
