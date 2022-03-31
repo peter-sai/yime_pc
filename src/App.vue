@@ -461,15 +461,6 @@ const stop = watch(
             'Aoelailiao.Message.UserUpdateConversationHasReadedMsgInfoReq',
           auth: true,
         })
-
-        if (msgInfos[0].msgContent.msgContent === 'voiceMsg') {
-          await store.dispatch('postMsg', {
-            query: { msgId: msgInfos[0].msgId },
-            cmd: 2157,
-            encryption: 'Aoelailiao.Message.FireReadFireMessageToServserReq',
-            auth: true,
-          })
-        }
       }
     }
   }

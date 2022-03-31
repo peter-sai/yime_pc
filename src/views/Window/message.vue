@@ -32,9 +32,9 @@
       <div class="bg">
         <!-- <img :src="sayHello" alt="" /> -->
         <SayHello class="img" />
-        <div class="info">{{ t('打个招呼，开始聊天吧') }}</div>
+        <div class="info">{{ t("打个招呼，开始聊天吧") }}</div>
         <div class="btn" @click.stop="sendImg('sayHello')">
-          {{ t('打招呼') }}
+          {{ t("打招呼") }}
         </div>
       </div>
     </div>
@@ -51,7 +51,7 @@
             :fired="item.fired"
             v-if="isShowHowComponent(item)"
           >
-            {{ t('消息已焚毁') }}
+            {{ t("消息已焚毁") }}
           </Ymsg>
           <Mmsg
             @menuClick="menuClick($event, item)"
@@ -60,7 +60,7 @@
             :fired="item.fired"
             v-else
           >
-            {{ t('消息已焚毁') }}
+            {{ t("消息已焚毁") }}
           </Mmsg>
         </div>
         <div class="item" v-else-if="item.type === 'stringContent'">
@@ -92,10 +92,10 @@
             :userInfo="getUserInfo(item)"
             v-if="isShowHowComponent(item)"
           >
-            {{ t('请在App客户端, 查看位置消息') }}
+            {{ t("请在App客户端, 查看位置消息") }}
           </Ymsg>
           <Mmsg :isRead="item.msgId <= readMsgId" v-else>
-            {{ t('请在App客户端, 查看位置消息') }}
+            {{ t("请在App客户端, 查看位置消息") }}
           </Mmsg>
         </div>
         <!-- at消息 -->
@@ -199,6 +199,7 @@
             :isBurn="item.msgShowType === 3"
             :fired="false"
             :voiceMsg="item.msgContent.voiceMsg"
+            :msgId="item.msgId"
           />
           <MAudio
             v-else
@@ -299,33 +300,33 @@
             copyItem.msgContent.stringContent ||
             copyItem.msgContent.linkUrlInfo.url
           "
-          >{{ t('复制') }}</span
+          >{{ t("复制") }}</span
         >
         <span
           class="copyMsg"
           v-if="copyItem.type === 'imageMsg'"
           @click="copyImg(copyItem?.msgContent?.imageMsg?.imageUrl)"
-          >{{ t('复制') }}</span
+          >{{ t("复制") }}</span
         >
         <span
           v-if="copyItem.type !== 'voiceMsg'"
           @click="forward(copyItem.msgId)"
-          >{{ t('转发') }}</span
+          >{{ t("转发") }}</span
         >
         <span
           @click="save(copyItem)"
           v-if="
             ['imageMsg', 'fileInfo', 'videoMsgInfo'].includes(copyItem.type)
           "
-          >{{ t('保存') }}</span
+          >{{ t("保存") }}</span
         >
         <span
           v-if="copyItem.fromId === store.state.userInfo.uid"
           @click="del(copyItem)"
-          >{{ t('撤销') }}</span
+          >{{ t("撤销") }}</span
         >
         <span v-if="isShowHowComponent(copyItem)" @click="delMsg(copyItem)">{{
-          t('删除')
+          t("删除")
         }}</span>
       </div>
     </div>
@@ -346,37 +347,37 @@ import {
   watch,
   onUnmounted,
   nextTick,
-} from 'vue'
+} from "vue";
 export default defineComponent({
-  name: 'Message',
-})
+  name: "Message",
+});
 </script>
 
 <script setup lang="ts">
-import ClipboardItem from 'ClipboardItem'
-import Mmsg from '@/components/Message/Mmsg/index.vue'
-import Ymsg from '@/components/Message/Ymsg/index.vue'
-import Time from '@/components/Time/index.vue'
-import SayHello from '@/components/Message/SayHello/index.vue'
-import MImg from '@/components/Message/MImg/index.vue'
-import YImg from '@/components/Message/YImg/index.vue'
-import YFile from '@/components/Message/YFile/index.vue'
-import MFile from '@/components/Message/MFile/index.vue'
-import MVisitingCard from '@/components/Message/MVisitingCard/index.vue'
-import YVisitingCard from '@/components/Message/YVisitingCard/index.vue'
-import YAudio from '@/components/Message/YAudio/index.vue'
-import MAudio from '@/components/Message/MAudio/index.vue'
-import MVideo from '@/components/Message/MVideo/index.vue'
-import YVideo from '@/components/Message/YVideo/index.vue'
-import Ylink from '@/components/Message/Ylink/index.vue'
-import Mlink from '@/components/Message/Mlink/index.vue'
-import Iconfont from '../../iconfont/index.vue'
-import YVideoFile from '@/components/Message/YVideoFile/index.vue'
-import MVideoFile from '@/components/Message/MVideoFile/index.vue'
-import { Store, useStore } from 'vuex'
-import { initStore, key } from '@/store'
-import { useI18n } from 'vue-i18n'
-import { showImg } from '../../plugin/ShowImg'
+import ClipboardItem from "ClipboardItem";
+import Mmsg from "@/components/Message/Mmsg/index.vue";
+import Ymsg from "@/components/Message/Ymsg/index.vue";
+import Time from "@/components/Time/index.vue";
+import SayHello from "@/components/Message/SayHello/index.vue";
+import MImg from "@/components/Message/MImg/index.vue";
+import YImg from "@/components/Message/YImg/index.vue";
+import YFile from "@/components/Message/YFile/index.vue";
+import MFile from "@/components/Message/MFile/index.vue";
+import MVisitingCard from "@/components/Message/MVisitingCard/index.vue";
+import YVisitingCard from "@/components/Message/YVisitingCard/index.vue";
+import YAudio from "@/components/Message/YAudio/index.vue";
+import MAudio from "@/components/Message/MAudio/index.vue";
+import MVideo from "@/components/Message/MVideo/index.vue";
+import YVideo from "@/components/Message/YVideo/index.vue";
+import Ylink from "@/components/Message/Ylink/index.vue";
+import Mlink from "@/components/Message/Mlink/index.vue";
+import Iconfont from "../../iconfont/index.vue";
+import YVideoFile from "@/components/Message/YVideoFile/index.vue";
+import MVideoFile from "@/components/Message/MVideoFile/index.vue";
+import { Store, useStore } from "vuex";
+import { initStore, key } from "@/store";
+import { useI18n } from "vue-i18n";
+import { showImg } from "../../plugin/ShowImg";
 import {
   IFileInfo,
   IFireInfo,
@@ -384,10 +385,10 @@ import {
   IMsgInfo,
   ImsgItem,
   IVisitingCard,
-} from '@/types/msg'
-import { formateTime } from '@/utils/utils'
-import { Etag } from '../Layout/index.vue'
-import { initRonyun } from '@/App.vue'
+} from "@/types/msg";
+import { formateTime } from "@/utils/utils";
+import { Etag } from "../Layout/index.vue";
+import { initRonyun } from "@/App.vue";
 import {
   useSendImg,
   useSystemNotifyInfo,
@@ -396,31 +397,31 @@ import {
   useDelMsg,
   formatMsg,
   downloadFile,
-} from '@/hooks/window'
-import { IGroupInfo, IUserDetailInfo, IUserInfo } from '@/types/user'
-import { Toast } from '@/plugin/Toast'
-import ClipboardJS from 'clipboard'
-import { MediaAudio } from '@/plugin/Audio'
-import { hideLoading, showLoading } from '@/plugin/Loading'
+} from "@/hooks/window";
+import { IGroupInfo, IUserDetailInfo, IUserInfo } from "@/types/user";
+import { Toast } from "@/plugin/Toast";
+import ClipboardJS from "clipboard";
+import { MediaAudio } from "@/plugin/Audio";
+import { hideLoading, showLoading } from "@/plugin/Loading";
 
-const playMsgId = ref(0)
+const playMsgId = ref(0);
 
 async function getGroupInfo(store: Store<initStore>, uid: number) {
-  if (!uid) return
+  if (!uid) return;
 
-  let msgItem: Ref<ImsgItem> = ref(store.state.msgList[uid])
+  let msgItem: Ref<ImsgItem> = ref(store.state.msgList[uid]);
   // 如果不存在则获取 (群聊不在聊天列表中会没有信息)
   if (!msgItem.value) {
-    const data = await store.dispatch('postMsg', {
+    const data = await store.dispatch("postMsg", {
       query: {
         groupId: uid,
       },
       cmd: 1029,
-      encryption: 'Aoelailiao.Login.ClientGetGroupInfoReq',
+      encryption: "Aoelailiao.Login.ClientGetGroupInfoReq",
       auth: true,
-    })
+    });
 
-    msgItem.value = data.body
+    msgItem.value = data.body;
 
     const item = {
       id: data.body.groupDetailInfo.groupId,
@@ -431,15 +432,15 @@ async function getGroupInfo(store: Store<initStore>, uid: number) {
       userDetailInfo: {},
       lastMsg: {},
       groupDetailInfo: data.body.groupDetailInfo,
-    }
+    };
 
-    store.commit('SET_MSGLISTITEM', { res: item })
+    store.commit("SET_MSGLISTITEM", { res: item });
   }
 }
 
-const store = useStore(key)
-const emit = defineEmits(['toggleBox', 'changeTag', 'selectGroupMember'])
-const msgWindow: Ref<HTMLDivElement> = ref() as Ref<HTMLDivElement>
+const store = useStore(key);
+const emit = defineEmits(["toggleBox", "changeTag", "selectGroupMember"]);
+const msgWindow: Ref<HTMLDivElement> = ref() as Ref<HTMLDivElement>;
 
 // 显示用户详情
 const showUserInfo = async (
@@ -451,61 +452,61 @@ const showUserInfo = async (
     // 群名片
     if (visitingCard?.type) {
       // await getGroupInfo(store, uid);
-      store.commit('SET_ACTIVEUID', uid)
-      store.commit('SET_ACTIVEISGROUP', true)
+      store.commit("SET_ACTIVEUID", uid);
+      store.commit("SET_ACTIVEISGROUP", true);
     } else {
       const source = {
         source: visitingCard?.name,
         sourceId: uid,
         sourceType: 1,
-      }
-      store.commit('SET_MSGSOURCE', source)
-      store.commit('SET_ACTIVEUID', uid)
-      store.commit('SET_ACTIVEISGROUP', false)
+      };
+      store.commit("SET_MSGSOURCE", source);
+      store.commit("SET_ACTIVEUID", uid);
+      store.commit("SET_ACTIVEISGROUP", false);
     }
   } else {
-    emit('toggleBox', uid)
-    emit('changeTag', Etag.UserInfo)
+    emit("toggleBox", uid);
+    emit("changeTag", Etag.UserInfo);
   }
-}
-const { t } = useI18n()
+};
+const { t } = useI18n();
 const style = ref({
   left: 0,
   top: 0,
-})
+});
 
-const copyItem = ref({} as IMsgInfo<string>)
-let clipboard: any = null
+const copyItem = ref({} as IMsgInfo<string>);
+let clipboard: any = null;
 
 const scroll = () => {
-  msgWindow.value.scrollIntoView()
-  msgWindow.value.scrollTop = msgWindow.value.scrollHeight
-}
+  msgWindow.value.scrollIntoView();
+  msgWindow.value.scrollTop = msgWindow.value.scrollHeight;
+};
 
 onMounted(() => {
   // 复制
-  clipboard = new ClipboardJS('.copyMsg')
-  clipboard.on('success', () => {
-    Toast(t('复制成功'))
-  })
+  clipboard = new ClipboardJS(".copyMsg");
+  clipboard.on("success", () => {
+    Toast(t("复制成功"));
+  });
 
-  clipboard.on('error', () => {
+  clipboard.on("error", () => {
     // 不支持复制
-    console.log('该浏览器不支持自动复制')
-  })
-  scroll()
-})
+    console.log("该浏览器不支持自动复制");
+  });
+  scroll();
+});
 onUnmounted(() => {
-  clipboard && clipboard.destroy()
-})
+  clipboard && clipboard.destroy();
+});
 
 // 清空消息
 const cleanInfof = (cleanInfo: any) => {
-  return formatMsg(cleanInfo.stringContent, t)
-}
+  return formatMsg(cleanInfo.stringContent, t);
+};
 
 // 已读最大msgid
-const readMsgId = ref(0)
+const readMsgId = ref(0);
 
 const props = defineProps({
   yUserInfo: {
@@ -517,96 +518,96 @@ const props = defineProps({
   userDetailInfo: {
     type: Object as PropType<IUserDetailInfo>,
   },
-})
+});
 
 // 消息列表
-const list = computed(() => store.state.msgList)
+const list = computed(() => store.state.msgList);
 const itemChat: ComputedRef<ImsgItem> = computed(
   () => list.value[store.state.activeUid!] || {}
-)
+);
 
 const imageList = computed(() => {
   const list = itemChat.value.readList
-    .filter((e: IMsgInfo<IImageMsgInfo>) => e.type === 'imageMsg')
+    .filter((e: IMsgInfo<IImageMsgInfo>) => e.type === "imageMsg")
     .map((e) => {
       return {
         msgId: e.msgId,
         imageUrl: e.msgContent.imageMsg.imageUrl,
-      }
-    })
-  return list
-})
+      };
+    });
+  return list;
+});
 
 // 登录用户信息
-const userInfo = computed(() => store.state.userInfo)
+const userInfo = computed(() => store.state.userInfo);
 
-const showMen = ref(false)
+const showMen = ref(false);
 
 const menuClick = (e: any, data: any) => {
-  if (e.target.tagName === 'VIDEO') {
-    style.value.left = e.target.offsetParent.offsetLeft + 10
-    style.value.top = e.target.offsetParent.offsetTop + 10
+  if (e.target.tagName === "VIDEO") {
+    style.value.left = e.target.offsetParent.offsetLeft + 10;
+    style.value.top = e.target.offsetParent.offsetTop + 10;
   } else {
-    style.value.left = e.target.offsetLeft + 10
-    style.value.top = e.target.offsetTop + 10
+    style.value.left = e.target.offsetLeft + 10;
+    style.value.top = e.target.offsetTop + 10;
   }
-  copyItem.value = data
-  showMen.value = true
-}
+  copyItem.value = data;
+  showMen.value = true;
+};
 const contextmenu = (e: any) => {
-  e.preventDefault()
-}
+  e.preventDefault();
+};
 
 // 控制消息时间的显示
-let msgKey = 0
+let msgKey = 0;
 const isShowTime = (k: number) => {
   if (k === 0) {
-    msgKey = k
-    return true
+    msgKey = k;
+    return true;
   }
-  const prev = itemChat.value.readList[msgKey].msgTime
-  const now = itemChat.value.readList[k].msgTime
-  const minute10 = 10 * 60
+  const prev = itemChat.value.readList[msgKey].msgTime;
+  const now = itemChat.value.readList[k].msgTime;
+  const minute10 = 10 * 60;
   if (now - prev <= minute10) {
-    return false
+    return false;
   }
-  msgKey = k
-  return true
-}
+  msgKey = k;
+  return true;
+};
 
 // 焚烧消息
 const fireInfo = (item: IMsgInfo<IFireInfo>) => {
-  const res = item.msgContent.fireInfo.stringContent
+  const res = item.msgContent.fireInfo.stringContent;
   // const msg = t(res.split('#')[0]).substr(7, res.length);
   // const user = res.split('#')[1];
   // return user + msg;
-  return res
-}
+  return res;
+};
 
 // 发送图片
-const sendImg = useSendImg(store, 0, t)
+const sendImg = useSendImg(store, 0, t);
 
 const bodyClickCb = () => {
-  showMen.value = false
-}
+  showMen.value = false;
+};
 onMounted(() => {
-  document.body.addEventListener('click', bodyClickCb)
-})
+  document.body.addEventListener("click", bodyClickCb);
+});
 onBeforeUnmount(() => {
-  document.body.removeEventListener('click', bodyClickCb)
-})
+  document.body.removeEventListener("click", bodyClickCb);
+});
 
 // 群聊相关 ////////////////////
-const groupMemberLists: Ref<IUserInfo[]> = ref([])
+const groupMemberLists: Ref<IUserInfo[]> = ref([]);
 // 判断当前是否是群聊
-const activeIsGroup = computed(() => store.state.activeIsGroup)
+const activeIsGroup = computed(() => store.state.activeIsGroup);
 
 // 根据是否是群聊 而计算要显示哪个组件
 const isShowHowComponent = (item: IMsgInfo<string>) => {
   return !activeIsGroup.value
     ? item.toId === userInfo.value.uid
-    : item.fromId !== userInfo.value.uid
-}
+    : item.fromId !== userInfo.value.uid;
+};
 
 // 获取需要显示的头像信息
 const getUserInfo: (item: IMsgInfo<string>) => IUserInfo = (item) => {
@@ -614,39 +615,39 @@ const getUserInfo: (item: IMsgInfo<string>) => IUserInfo = (item) => {
     !activeIsGroup.value
       ? props.yUserInfo
       : groupMemberLists.value.find((e) => e.uid === item.fromId)
-  ) as IUserInfo
-}
+  ) as IUserInfo;
+};
 
 const userGetConversationHasReadedMsgInfo =
-  useUserGetConversationHasReadedMsgInfo(store)
+  useUserGetConversationHasReadedMsgInfo(store);
 const init = async () => {
   // 批量获取好友
   if (activeIsGroup.value) {
     const groupMemberUids =
       props.groupDetailInfo?.groupMemberLists.memberUserInfos
         .map((e) => e.memberUid)
-        .filter((e) => Number(e) !== Number(store.state.userInfo.uid))
+        .filter((e) => Number(e) !== Number(store.state.userInfo.uid));
 
-    const res = await store.dispatch('postMsg', {
+    const res = await store.dispatch("postMsg", {
       query: { uid: groupMemberUids },
       cmd: 1115,
-      encryption: 'Aoelailiao.Login.ClientGetUserInfoListReq',
+      encryption: "Aoelailiao.Login.ClientGetUserInfoListReq",
       auth: true,
-    })
-    groupMemberLists.value = res.body.userInfo
+    });
+    groupMemberLists.value = res.body.userInfo;
   }
 
   // 获取最大msgId
   const msgHasReadedInfos = await userGetConversationHasReadedMsgInfo(
     store.state.activeUid!,
     store.state.userInfo.uid
-  )
-  readMsgId.value = msgHasReadedInfos[0].msgIdMax
+  );
+  readMsgId.value = msgHasReadedInfos[0].msgIdMax;
 
   // 上传已读最大消息msgid
-  const msgList = store.state?.msgList[store.state?.activeUid]
+  const msgList = store.state?.msgList[store.state?.activeUid];
   if (msgList?.lastMsg.msgId !== readMsgId.value) {
-    const isGroup = store.state.activeIsGroup ? 1 : 0
+    const isGroup = store.state.activeIsGroup ? 1 : 0;
     const res = {
       msgHasReadedInfo: {
         isGroupMsg: isGroup,
@@ -654,194 +655,194 @@ const init = async () => {
         fromId: isGroup ? msgList?.lastMsg.toId : msgList?.lastMsg.fromId,
         msgIdMax: msgList?.lastMsg.msgId,
       },
-      deviceBrand: 'web',
-    }
+      deviceBrand: "web",
+    };
 
-    await store.dispatch('postMsg', {
+    await store.dispatch("postMsg", {
       query: res,
       cmd: 2149,
       encryption:
-        'Aoelailiao.Message.UserUpdateConversationHasReadedMsgInfoReq',
+        "Aoelailiao.Message.UserUpdateConversationHasReadedMsgInfoReq",
       auth: true,
-    })
+    });
   }
-}
-init()
+};
+init();
 
 // 系统消息显示
-const systemNotifyInfo = useSystemNotifyInfo(store, t)
+const systemNotifyInfo = useSystemNotifyInfo(store, t);
 
 let stop = watch(
   computed(() => store.state.msgInfo),
   async (data: any) => {
     // 监听服务器推送的已读消息通知
     if (data.cmd === 2148) {
-      const msgHasReadedInfos = data.body?.msgHasReadedInfos || []
+      const msgHasReadedInfos = data.body?.msgHasReadedInfos || [];
       if (
         store.state.userInfo.uid === msgHasReadedInfos[0].fromId &&
         msgHasReadedInfos.length
       ) {
-        readMsgId.value = msgHasReadedInfos[0].msgIdMax
+        readMsgId.value = msgHasReadedInfos[0].msgIdMax;
       }
     }
     if (data.cmd === 2004) {
-      await nextTick
-      scroll()
+      await nextTick;
+      scroll();
     }
   }
-)
+);
 
 watch(
   computed(() => store.state.msgInfo),
   (e) => {
     if (e) {
-      scroll()
+      scroll();
     }
   }
-)
+);
 
 onUnmounted(() => {
-  stop()
-})
+  stop();
+});
 
 // 撤回消息
-const del = useRevoke(store, t)
+const del = useRevoke(store, t);
 
 // 删除消息
-const delMsg = useDelMsg(store, t)
+const delMsg = useDelMsg(store, t);
 
 // 获取撤回消息人
 const getRevokeName = (item: IMsgInfo<string>) => {
-  const res = formatMsg(item.msgContent.revokeInfo.stringContent!, t)
-  return res
-}
+  const res = formatMsg(item.msgContent.revokeInfo.stringContent!, t);
+  return res;
+};
 
 // 转发
 const forward = (msgId: number) => {
   //
-  store.commit('SET_FORWARDMSGID', msgId)
-  emit('toggleBox')
-  emit('changeTag', Etag.Forward)
-}
+  store.commit("SET_FORWARDMSGID", msgId);
+  emit("toggleBox");
+  emit("changeTag", Etag.Forward);
+};
 
 // 开始音视频
 const call = async (item: any) => {
-  const data = await store.dispatch('postMsg', {
+  const data = await store.dispatch("postMsg", {
     query: {
       functionId: 20010,
       objectId: store.state.activeUid,
     },
     cmd: 1189,
-    encryption: 'Aoelailiao.Login.UserCheckFunctionPrivilegeReq',
+    encryption: "Aoelailiao.Login.UserCheckFunctionPrivilegeReq",
     auth: true,
-  })
+  });
 
   if (data?.body?.functionState === 1) {
-    const mediaNode = document.getElementById('media')!
+    const mediaNode = document.getElementById("media")!;
     if (mediaNode.hasChildNodes()) {
-      return Toast(t('正在通话中'))
+      return Toast(t("正在通话中"));
     }
     if (!store.state.rongIm) {
       try {
-        showLoading()
-        await initRonyun(store)
+        showLoading();
+        await initRonyun(store);
         if (!store.state.activeIsGroup) {
           // 单聊
           MediaAudio({
             isCall: true,
             mediaType: item.videoType,
             yUserInfo: props.yUserInfo,
-          })
+          });
         } else {
           // 群聊
-          emit('selectGroupMember', item.videoType)
+          emit("selectGroupMember", item.videoType);
         }
       } catch (error) {
-        console.log(error)
-        return Toast(t('服务初始化失败'))
+        console.log(error);
+        return Toast(t("服务初始化失败"));
       }
-      hideLoading()
+      hideLoading();
     } else {
       if (!store.state.activeIsGroup) {
         MediaAudio({
           isCall: true,
           mediaType: item.videoType,
           yUserInfo: props.yUserInfo,
-        })
+        });
       } else {
         // 群聊
-        emit('selectGroupMember', item.videoType)
+        emit("selectGroupMember", item.videoType);
       }
     }
   } else {
-    return Toast(t('发送者无权限'))
+    return Toast(t("发送者无权限"));
   }
-}
+};
 
 // 保存
 const save = (item: IMsgInfo<IFireInfo | IImageMsgInfo>) => {
   const file = {
-    url: '',
-    name: '',
-  }
-  if (item.type === 'imageMsg') {
-    file.url = item.msgContent.imageMsg.imageUrl!
-  } else if (item.type === 'fileInfo') {
-    file.url = item.msgContent.fileInfo.fileUrl!
-    file.name = item.msgContent.fileInfo.fileName!
-  } else if (item.type === 'videoMsgInfo') {
-    file.url = item.msgContent.videoMsgInfo.url!
-    file.name = item.msgContent.videoMsgInfo.name!
+    url: "",
+    name: "",
+  };
+  if (item.type === "imageMsg") {
+    file.url = item.msgContent.imageMsg.imageUrl!;
+  } else if (item.type === "fileInfo") {
+    file.url = item.msgContent.fileInfo.fileUrl!;
+    file.name = item.msgContent.fileInfo.fileName!;
+  } else if (item.type === "videoMsgInfo") {
+    file.url = item.msgContent.videoMsgInfo.url!;
+    file.name = item.msgContent.videoMsgInfo.name!;
   } else {
-    file.url = ''
+    file.url = "";
   }
 
-  downloadFile(file)
-}
+  downloadFile(file);
+};
 
 // 下载
 const download = (item: IFileInfo) => {
   const file = {
     url: item.fileUrl,
     name: item.fileName,
-  }
-  downloadFile(file)
-}
+  };
+  downloadFile(file);
+};
 
 // 复制图片
 const copyImg = (url: string) => {
-  const img = new Image()
-  img.crossOrigin = 'Anonymous'
-  img.src = url
+  const img = new Image();
+  img.crossOrigin = "Anonymous";
+  img.src = url;
   img.onload = (v: any) => {
-    const canvas = document.createElement('canvas')
-    const ctx: any = canvas.getContext('2d')
-    canvas.width = v.target.width
-    canvas.height = v.target.height
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
-    ctx.drawImage(img, 0, 0, ctx.canvas.width, ctx.canvas.height)
+    const canvas = document.createElement("canvas");
+    const ctx: any = canvas.getContext("2d");
+    canvas.width = v.target.width;
+    canvas.height = v.target.height;
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    ctx.drawImage(img, 0, 0, ctx.canvas.width, ctx.canvas.height);
     canvas.toBlob(async (blob) => {
-      const data = [new ClipboardItem({ [blob.type]: blob })]
+      const data = [new ClipboardItem({ [blob.type]: blob })];
       await navigator.clipboard.write(data).then(
         () => {
-          Toast(t('复制成功'))
+          Toast(t("复制成功"));
         },
         () => {
-          console.error('Unable to write to clipboard.')
+          console.error("Unable to write to clipboard.");
         }
-      )
-    })
-  }
-}
+      );
+    });
+  };
+};
 
 // 放大图片
 const showBigImg = (item: IMsgInfo<IImageMsgInfo>) => {
-  const index = imageList.value.findIndex((e) => e.msgId === item.msgId)
-  showImg(index, imageList.value)
-}
+  const index = imageList.value.findIndex((e) => e.msgId === item.msgId);
+  showImg(index, imageList.value);
+};
 </script>
 <style lang="scss" scoped>
-@import '@/style/base.scss';
+@import "@/style/base.scss";
 .msgWindow {
   position: absolute;
   left: 0;

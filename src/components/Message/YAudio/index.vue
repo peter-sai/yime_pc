@@ -65,6 +65,9 @@ const props = defineProps({
   fired: {
     type: Boolean,
   },
+  msgId: {
+    type: Number,
+  },
 })
 const { t } = useI18n()
 const isPlay = ref(false)
@@ -75,6 +78,12 @@ const amr = new BenzAMRRecorder()
 const amrCtx = amr.initWithUrl(props.voiceMsg.voiceUrl)
 amr.onEnded(() => {
   isPlay.value = false
+  store.dispatch('postMsg', {
+    query: { msgId: props.msgId },
+    cmd: 2157,
+    encryption: 'Aoelailiao.Message.FireReadFireMessageToServserReq',
+    auth: true,
+  })
 })
 
 const play = () => {
