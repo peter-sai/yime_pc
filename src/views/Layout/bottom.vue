@@ -246,6 +246,7 @@ import { upLoadFile, initOss } from '../../hooks/window';
 //import { upDateStore } from '../Layout/Chat/userInfo.vue'
 import { upDateStore } from '@/hooks/window';
 import { getSize } from '@/utils/utils';
+import md5 from 'md5';
 import {
   defineComponent,
   ref,
@@ -614,8 +615,8 @@ function stop() {
   return new Promise((resovle, reject) => {
     rec.stop(
       function (blob: any, duration: number) {
-        const name = Date.now().toString();
-        const audioFile = new File([blob], name);
+        const name = md5(Date.now()) + '.mp3';
+        const audioFile = new File([blob], name, { type: blob.type });
         resovle({ name, audioFile, duration });
       },
       function (msg: string) {
