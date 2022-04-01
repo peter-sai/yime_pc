@@ -428,11 +428,13 @@ const msgList: ComputedRef<TMsgItem[]> = computed(() => {
   // 排序置顶和非置顶列表
   topList.sort(
     (a: TMsgItem, b: TMsgItem) =>
-      (b.updateTime || b.lastMsg.msgTime) - (a.updateTime || a.lastMsg.msgTime),
+      (b.updateTime || b.lastMsg?.msgTime) -
+      (a.updateTime || a.lastMsg?.msgTime),
   );
   defList.sort(
     (a: TMsgItem, b: TMsgItem) =>
-      (b.updateTime || b.lastMsg.msgTime) - (a.updateTime || a.lastMsg.msgTime),
+      (b.updateTime || b.lastMsg?.msgTime) -
+      (a.updateTime || a.lastMsg?.msgTime),
   );
 
   return topList.concat(defList);

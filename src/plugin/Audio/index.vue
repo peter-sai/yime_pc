@@ -201,7 +201,11 @@ const init = async (
         // 对方挂断
         console.log('发起者', 'onHungup', map[reason]);
         hungup();
-        videoCallActionUploadReq(5);
+        if (conversationIng.value) {
+          videoCallActionUploadReq(8);
+        } else {
+          videoCallActionUploadReq(5);
+        }
         if (reason === 14) return Toast(map[reason]);
       },
 
@@ -362,7 +366,7 @@ onMounted(async () => {
        */
       onHungup(sender: ISenderInfo, reason: RCCallEndReason) {
         console.log('接听者', 'onHungup', map[reason]);
-        hungup();
+        hungup(2);
       },
 
       /**
@@ -455,6 +459,7 @@ const accept = () => {
   isAnswer.value = true;
   conversationIng.value = true;
   startTimeOut();
+  videoCallActionUploadReq(4);
 };
 
 // 挂断
@@ -464,6 +469,9 @@ const hungup = async (num?: number) => {
   sessionRoot.value.hungup();
   if (props.isCall && !conversationIng.value && num === 1) {
     videoCallActionUploadReq(21);
+  } else if (num === 2) {
+    // 接听之后挂断
+    videoCallActionUploadReq(8);
   }
 };
 
@@ -473,6 +481,7 @@ const videoCallActionUploadReq = async (actionType: number) => {
     videoType: props.mediaType,
     talkUid: props.yUserInfo?.uid,
   };
+  console.log(query);
 
   const data = await store.dispatch('postMsg', {
     query,
