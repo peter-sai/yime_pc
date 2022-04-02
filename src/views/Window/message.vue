@@ -695,8 +695,10 @@ let stop = watch(
 watch(
   computed(() => store.state.msgInfo),
   (e) => {
-    if (e) {
-      scroll();
+    if (e.cmd === 2146) {
+      nextTick(() => {
+        scroll();
+      });
     }
   }
 );
