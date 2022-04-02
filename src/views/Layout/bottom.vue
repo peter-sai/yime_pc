@@ -243,10 +243,8 @@ import { MediaAudio } from '@/plugin/Audio';
 import Recorder from 'Recorder';
 import { initRonyun } from '@/App.vue';
 import { upLoadFile, initOss } from '../../hooks/window';
-//import { upDateStore } from '../Layout/Chat/userInfo.vue'
 import { upDateStore } from '@/hooks/window';
 import { getSize } from '@/utils/utils';
-import md5 from 'md5';
 import {
   defineComponent,
   ref,
@@ -595,6 +593,7 @@ async function startRec() {
     onProcess: function (buffers: any, level: any, time: any, sampleRate: any) {
       wave.input(buffers[buffers.length - 1], level, sampleRate);
     },
+    type: 'amr',
   }); //使用默认配置，mp3格式
 
   //打开麦克风授权获得相关资源
@@ -615,7 +614,7 @@ function stop() {
   return new Promise((resovle, reject) => {
     rec.stop(
       function (blob: any, duration: number) {
-        const name = md5(Date.now()) + '.mp3';
+        const name = Date.now().toString() + '.amr';
         const audioFile = new File([blob], name, { type: blob.type });
         resovle({ name, audioFile, duration });
       },
