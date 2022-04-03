@@ -522,9 +522,11 @@ const props = defineProps({
 
 // 消息列表
 const list = computed(() => store.state.msgList);
-const itemChat: ComputedRef<ImsgItem> = computed(
-  () => list.value[store.state.activeUid!] || {}
-);
+const itemChat: ComputedRef<ImsgItem> = computed(() => {
+  let activeList = list.value[store.state.activeUid!] || {};
+  activeList.readList = arrDistinctByProp(activeList.readList, "clientMsgUuid");
+  return activeList;
+});
 
 const imageList = computed(() => {
   const list = itemChat.value.readList
@@ -841,6 +843,15 @@ const copyImg = (url: string) => {
 const showBigImg = (item: IMsgInfo<IImageMsgInfo>) => {
   const index = imageList.value.findIndex((e) => e.msgId === item.msgId);
   showImg(index, imageList.value);
+};
+
+// 消息去重
+const arrDistinctByProp = (arr: Array, prop: string) => {
+  let obj = {};
+  return arr.reduce(function (preValue, item) {
+    obj[item[prop]] ? "" : (obj[item[prop]] = true && preValue.push(item));
+    return preValue;
+  }, []);
 };
 </script>
 <style lang="scss" scoped>
