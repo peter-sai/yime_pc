@@ -681,8 +681,8 @@ let stop = watch(
     if (data.cmd === 2148) {
       const msgHasReadedInfos = data.body?.msgHasReadedInfos || [];
       if (
-        store.state.userInfo.uid === msgHasReadedInfos[0].fromId &&
-        msgHasReadedInfos.length
+        msgHasReadedInfos.length &&
+        store.state.userInfo.uid === msgHasReadedInfos[0].fromId
       ) {
         readMsgId.value = msgHasReadedInfos[0].msgIdMax;
       }
