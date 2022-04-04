@@ -29,13 +29,13 @@
           size="20"
           color="#2B2C33"
         />
-        <Iconfont
+        <!-- <Iconfont
           v-if="!store.state.activeIsGroup"
           @click.stop="burnInfo.show = !burnInfo.show"
           name="iconyuehoujifen"
           size="24"
           :color="burnInfo.show ? '#0085FF' : '#2B2C33'"
-        />
+        /> -->
         <Iconfont
           @click="toggleAudio"
           name="iconyuyin"

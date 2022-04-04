@@ -63,7 +63,7 @@ function useBeforeSwitch(
     const switchState = typeof e === 'number' ? e : e ? 1 : 0;
     const res = {
       objectType: 2,
-      objectId: store.state.activeUid,
+      objectId: uid || store.state.activeUid,
       settingItemId,
       switchState,
     };
