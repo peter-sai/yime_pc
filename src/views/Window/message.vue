@@ -325,9 +325,9 @@
           @click="del(copyItem)"
           >{{ t('撤销') }}</span
         >
-        <span v-if="isShowHowComponent(copyItem)" @click="delMsg(copyItem)">{{
+        <!-- <span v-if="isShowHowComponent(copyItem)" @click="delMsg(copyItem)">{{
           t('删除')
-        }}</span>
+        }}</span> -->
       </div>
     </div>
   </div>
