@@ -846,9 +846,9 @@ const showBigImg = (item: IMsgInfo<IImageMsgInfo>) => {
 };
 
 // 消息去重
-const arrDistinctByProp = (arr: Array, prop: string) => {
+const arrDistinctByProp = (arr: Array<any>, prop: string) => {
   let obj = {};
-  return arr.reduce(function (preValue, item) {
+  return (arr || []).reduce(function (preValue, item) {
     obj[item[prop]] ? '' : (obj[item[prop]] = true && preValue.push(item));
     return preValue;
   }, []);

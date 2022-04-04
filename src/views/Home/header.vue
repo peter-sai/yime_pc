@@ -194,8 +194,6 @@ const toggleShowSearch = (res: boolean) => {
 };
 
 const goToWindow = (item: ImsgItem) => {
-  console.log(item);
-
   if (item.isGroup || item.groupState) {
     // 群聊
     store.commit('SET_ACTIVEUID', item.groupId || item.id);
@@ -302,6 +300,45 @@ const init = async () => {
 };
 
 init();
+
+// 获取群列表和联系人
+const getList = async () => {
+  try {
+    const storeList = store.state.contact;
+    if (!storeList.length) {
+      const data = await store.dispatch('postMsg', {
+        query: {},
+        cmd: 1009,
+        encryption: 'Aoelailiao.Login.UserGetFriendsAndGroupsListReq',
+        auth: true,
+      });
+
+      data.body.groupInfos.forEach((e: IGroupListItem) => {
+        if (e.groupMemberLists.rootUid === Number(userInfo.uid)) {
+          e.root = true;
+        }
+        if (e.groupMemberLists.adminUidList.includes(Number(userInfo.uid))) {
+          e.admin = true;
+        }
+      });
+
+      store.commit('SET_GROUPINFOS', data.body.groupInfos);
+      const list = data.body.friendInfos;
+      list.forEach((e: any) => {
+        e.name =
+          (e.userAttachInfo && e.userAttachInfo.remarkName) || e.nickname;
+        e.tag = getTag(e);
+      });
+      list.sort((a: any, b: any) => a.tag.charCodeAt(0) - b.tag.charCodeAt(0));
+      store.commit('SET_CONTACT', list);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+setTimeout(() => {
+  getList();
+}, 500);
 </script>
 <style lang="scss" scoped>
 @import '@/style/base.scss';

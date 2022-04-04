@@ -42,6 +42,7 @@ import { ref, Ref, computed } from 'vue';
 import { IGroupListItem } from '@/types/group';
 import { useI18n } from 'vue-i18n';
 import Errors from '../Errors/index.vue';
+import { getTag } from '@/utils/utils';
 
 const { t } = useI18n();
 
@@ -66,6 +67,14 @@ const init = async () => {
     }
   });
   store.commit('SET_GROUPINFOS', data.body.groupInfos);
+
+  const list = data.body.friendInfos;
+  list.forEach((e: any) => {
+    e.name = (e.userAttachInfo && e.userAttachInfo.remarkName) || e.nickname;
+    e.tag = getTag(e);
+  });
+  list.sort((a: any, b: any) => a.tag.charCodeAt(0) - b.tag.charCodeAt(0));
+  store.commit('SET_CONTACT', list);
 };
 
 init();
