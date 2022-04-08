@@ -94,22 +94,22 @@ message GroupMemberListInfo
 
 message GroupAttachInfo
 {
-    optional uint32 group_top = 1;                            //群置顶,0--否(默认)，1--是
-    optional uint32 group_msg_mute = 2;                       //群消息免打扰(免推送),0--否(默认)，1--是
-    optional uint32 group_save_in_grouplist = 3;              //保存到通信录,0--否(默认)，1--是
-    optional uint32 group_destory_readed = 4;                 //阅后即焚,0--否(默认)，1--是
-    optional uint32 group_screen_shot_notify = 5;             //截屏通知,0--否(默认)，1--是
-    optional uint32 group_join_auth_type = 6;                 //加群需要认证,0--否(默认)，1--是
-    optional uint32 group_member_split = 7;                   //群员隔离
-    optional uint32 group_msg_gag = 8;                        //全员禁言
-    optional uint32 group_unable_edit_nickname = 9;           //禁止修改昵称
-    optional string group_remark_name = 10;                   //用户对群的备注名称
-    optional uint32 group_msg_clean = 11;                     //群小时定时清理,0--否(默认)，1--是
-    optional uint32 allow_member_get_hisoty_msg = 12;         //允许群成员获取聊天历史记录,0--否(默认)，1--是
-    optional uint32 allow_everyone_join = 13;                 //允许任何人加群,0--否，1--是(默认)
-    optional uint32 allow_member_invite_join = 14;            //允许群成员邀请其他用户入群,0--否，1--是(默认)
-    optional uint32 group_invite_state = 15;                  //群邀请权限,0--所有人，1--仅限邀请 2--不允许任何人加群
-    optional uint32 group_msg_at_notify = 16 [ default = 1 ]; //如果开启(1), 不论msg_mute是否开启,都推送
+    optional uint32 group_top = 1;                                 //群置顶,0--否(默认)，1--是
+    optional uint32 group_msg_mute = 2;                            //群消息免打扰(免推送),0--否(默认)，1--是
+    optional uint32 group_save_in_grouplist = 3;                   //保存到通信录,0--否(默认)，1--是
+    optional uint32 group_destory_readed = 4;                      //阅后即焚,0--否(默认)，1--是
+    optional uint32 group_screen_shot_notify = 5;                  //截屏通知,0--否(默认)，1--是
+    optional uint32 group_join_auth_type = 6;                      //加群需要认证,0--否(默认)，1--是
+    optional uint32 group_member_split = 7;                        //群员隔离
+    optional uint32 group_msg_gag = 8;                             //全员禁言
+    optional uint32 group_unable_edit_nickname = 9;                //禁止修改昵称
+    optional string group_remark_name = 10;                        //用户对群的备注名称
+    optional uint32 group_msg_clean = 11;                          //群小时定时清理,0--否(默认)，1--是
+    optional uint32 allow_member_get_hisoty_msg = 12;              //允许群成员获取聊天历史记录,0--否(默认)，1--是
+    optional uint32 allow_everyone_join = 13 [ default = 1 ];      //允许任何人加群,0--否，1--是(默认)
+    optional uint32 allow_member_invite_join = 14 [ default = 1 ]; //允许群成员邀请其他用户入群,0--否，1--是(默认)
+    optional uint32 group_invite_state = 15;                       //群邀请权限,0--所有人，1--仅限邀请 2--不允许任何人加群
+    optional uint32 group_msg_at_notify = 16 [ default = 1 ];      //如果开启(1), 不论msg_mute是否开启,都推送
 }
 
 message GroupInfo
