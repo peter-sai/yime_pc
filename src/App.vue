@@ -564,18 +564,8 @@ window.onunload = () => {
 type TMsgItem = INotifyClassMsgListInfo & ImsgItem;
 const unReadNum = computed(() => {
   const msgList: TMsgItem[] = Object.values(store.state.msgList) as TMsgItem[];
-  const groupMsgList = msgList.filter(
-    (e) =>
-      e.unReadNum &&
-      e.isGroup &&
-      !e.groupDetailInfo?.groupAttachInfo?.groupMsgMute,
-  );
-  const userMsgList = msgList.filter(
-    (e) =>
-      e.unReadNum &&
-      !e.isGroup &&
-      !e.userDetailInfo?.userInfo?.userAttachInfo?.msgMute,
-  );
+  const groupMsgList = msgList.filter((e) => e.unReadNum && e.isGroup);
+  const userMsgList = msgList.filter((e) => e.unReadNum && !e.isGroup);
   const num = groupMsgList
     .concat(userMsgList)
     .reduce(function (preValue: any, curValue: any) {

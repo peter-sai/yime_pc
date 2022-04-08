@@ -104,7 +104,6 @@ onMounted(() => {
   };
   dragover.value.ondrop = function (ev: any) {
     const oFile = ev.dataTransfer.files[0];
-    console.log(ev.dataTransfer.files);
     for (const e of ev.dataTransfer.files) {
       readFile(e);
     }
