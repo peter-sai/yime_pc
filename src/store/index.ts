@@ -569,6 +569,12 @@ function getMessage(cmd: any, encryption: any, state: any) {
           );
         }
 
+        if (ansCmd === 2170) {
+          LogOutAns = protoRoot.lookup(
+            'Aoelailiao.Message.SessionSyncNotify',
+          );
+        }
+
         const query = {
           length: dataview.getUint32(0),
           serviceId: dataview.getUint8(4),
@@ -643,7 +649,7 @@ function getMessage(cmd: any, encryption: any, state: any) {
 }
 
 function onMessage() {
-  const cmdList = [2129, 2004, 2125, 2148, 2024, 2156, 2162];
+  const cmdList = [2129, 2004, 2125, 2148, 2024, 2156, 2162, 2170];
   ws.onmessage = (evt: any) => {
     if (sotreRoot.state.isOnLine) {
       sotreRoot.commit('SET_ISONLINE', false);
