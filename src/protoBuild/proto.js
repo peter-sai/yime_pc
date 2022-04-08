@@ -5430,7 +5430,12 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
             values: {
               UNKNOWN: 0,
               SYSTEM_SWITCH_CHANGE: 10,
-              FRIENDS_AND_GROUPS_CHANGE: 20
+              USER_INFO_CHANGE: 11,
+              FRIENDS_AND_GROUPS_CHANGE: 20,
+              FRIENDS_AND_GROUPS_ADD: 21,
+              FRIENDS_AND_GROUPS_DEL: 22,
+              MSG_DELETED: 30,
+              CONVERSATION_HIDE: 40
             }
           },
           SessionSyncNotify: {
@@ -5438,6 +5443,26 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
               type: {
                 type: "SessionSyncType",
                 id: 1
+              },
+              msgIds: {
+                rule: "repeated",
+                type: "uint64",
+                id: 10,
+                options: {
+                  packed: false
+                }
+              },
+              objectId: {
+                type: "uint32",
+                id: 15
+              },
+              isGroupMsg: {
+                type: "uint32",
+                id: 16
+              },
+              hideOpt: {
+                type: "uint32",
+                id: 20
               }
             }
           }
