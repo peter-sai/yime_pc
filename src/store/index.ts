@@ -41,6 +41,9 @@ const initState = {
   ws: null,
   activeUid: undefined,
   activeIsGroup: false,
+  replyUser: null,
+  showReplyBox: false,
+  replyMsg: null,
   config: {
     cnd_access_key: '',
     cnd_bucketName: '',
@@ -258,6 +261,15 @@ const sotreRoot = createStore({
     },
     SET_USERINFO: (state, val) => {
       state.userInfo = val;
+    },
+    SET_REPLYUSER: (state, val) => {
+      state.replyUser = val;
+    },
+    SET_SHOWREPLYBOX: (state, res) => {
+      state.showReplyBox = res;
+    },
+    SET_REPLYMSG: (state, res) => {
+      state.replyMsg = res;
     },
     SET_TOKEN: (state, val) => {
       state.token = val;

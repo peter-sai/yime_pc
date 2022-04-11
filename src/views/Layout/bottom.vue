@@ -1,15 +1,15 @@
 <template>
   <div class="bottom">
-    <div class="reply">
+    <div class="reply" v-if="store.state.showReplyBox">
       <div class="reply-left">
         <img src="../../assets/img/reply.svg" alt="" />
         <div class="line"></div>
         <div class="text">
-          <span>回复 axixi</span>
-          <span>不过那边的位置有点远</span>
+          <span>回复 {{ store.state.replyUser }}</span>
+          <span>{{ store.state.replyMsg }}</span>
         </div>
       </div>
-      <img src="../../assets/img/close.svg" alt="" />
+      <img src="../../assets/img/close.svg" alt="" @click="closeReply" />
     </div>
     <div class="content">
       <div class="itemLeft">
@@ -66,21 +66,21 @@
         <div class="child">
           <div class="opeItem" @click.stop="onEmit('sendImg')">
             <Iconfont name="iconxiangce" size="20" color="#111111" />
-            <div>{{ t('相册') }}</div>
+            <div>{{ t("相册") }}</div>
           </div>
           <div class="opeItem" @click="start(1)">
             <Iconfont name="iconicon_yuyinshipin1" size="20" color="#111111" />
-            <div>{{ t('语音') }}</div>
+            <div>{{ t("语音") }}</div>
           </div>
           <div class="opeItem" @click="start(2)">
             <Iconfont name="iconshipintonghua" size="24" color="#111111" />
-            <div>{{ t('视频') }}</div>
+            <div>{{ t("视频") }}</div>
           </div>
         </div>
         <div class="child">
           <div class="opeItem" @click.stop="onEmit('sendFile')">
             <Iconfont name="iconwenjian1" size="20" color="#111111" />
-            <div>{{ t('文件') }}</div>
+            <div>{{ t("文件") }}</div>
           </div>
           <div
             class="opeItem"
@@ -88,17 +88,17 @@
             @click="onEmit('recommend')"
           >
             <Iconfont name="icontuijianhaoyou" size="20" color="#111111" />
-            <div>{{ t('推荐好友') }}</div>
+            <div>{{ t("推荐好友") }}</div>
           </div>
           <div class="opeItem" :style="style">
             <Iconfont name="iconweizhi" size="20" color="#111111" />
-            <div>{{ t('位置') }}</div>
+            <div>{{ t("位置") }}</div>
           </div>
         </div>
       </div>
       <!-- 设置焚阅时间 -->
       <div class="burnRead" v-if="burnInfo.show">
-        <div class="title">{{ t('设置焚毁时间') }}</div>
+        <div class="title">{{ t("设置焚毁时间") }}</div>
         <div class="burnBox">
           <div
             class="burnItem"
@@ -167,7 +167,7 @@
           <div class="line"><i :style="{ width: line + '%' }"></i></div>
           <span>{{ formateAudioTime(audioTime) }}</span>
           <span class="info" v-if="audioTime === 60">{{
-            t('时间最长60s')
+            t("时间最长60s")
           }}</span>
         </div>
       </div>
@@ -246,16 +246,16 @@
   </div>
 </template>
 <script lang="ts">
-import Iconfont from '@/iconfont/index.vue'
-import { Toast } from '@/plugin/Toast'
-import { initStore, key } from '@/store'
-import { getStorage, setStorage } from '@/utils/utils'
-import { MediaAudio } from '@/plugin/Audio'
-import Recorder from 'Recorder'
-import { initRonyun } from '@/App.vue'
-import { upLoadFile, initOss } from '../../hooks/window'
-import { upDateStore } from '@/hooks/window'
-import { getSize } from '@/utils/utils'
+import Iconfont from "@/iconfont/index.vue";
+import { Toast } from "@/plugin/Toast";
+import { initStore, key } from "@/store";
+import { getStorage, setStorage } from "@/utils/utils";
+import { MediaAudio } from "@/plugin/Audio";
+import Recorder from "Recorder";
+import { initRonyun } from "@/App.vue";
+import { upLoadFile, initOss } from "../../hooks/window";
+import { upDateStore } from "@/hooks/window";
+import { getSize } from "@/utils/utils";
 import {
   defineComponent,
   ref,
@@ -269,104 +269,108 @@ import {
   nextTick,
   PropType,
   computed,
-} from 'vue'
-import { useI18n } from 'vue-i18n'
-import { Store, useStore } from 'vuex'
-import { IGroupInfo, IUserInfo } from '@/types/user'
+} from "vue";
+import { useI18n } from "vue-i18n";
+import { Store, useStore } from "vuex";
+import { IGroupInfo, IUserInfo } from "@/types/user";
 export default defineComponent({
-  name: 'bottom',
-})
+  name: "bottom",
+});
 
 interface IexpressionItem {
-  id: number
-  name: string
-  path: string
+  id: number;
+  name: string;
+  path: string;
 }
 
 // input
 function useInput(
-  emit: (event: 'update:modelValue', ...args: any[]) => void,
+  emit: (event: "update:modelValue", ...args: any[]) => void,
   emojiList: Ref<IexpressionItem[]>,
   input: Ref<HTMLInputElement | null>
 ) {
   // 选择
   const select = (e: any, modelValue: string) => {
-    input.value?.focus()
+    input.value?.focus();
     if (!emojiList.value.find((v) => v.name === e.name)) {
-      emojiList.value.push(e)
+      emojiList.value.push(e);
     }
     emit(
-      'update:modelValue',
+      "update:modelValue",
       modelValue + String.fromCodePoint(parseInt(e.name, 16))
-    )
+    );
     if (emojiList.value.length) {
-      setStorage('emojiList', JSON.stringify(emojiList.value))
+      setStorage("emojiList", JSON.stringify(emojiList.value));
     }
-  }
+  };
 
   const del = (modelValue: string) => {
-    const res = [...modelValue].slice(0, [...modelValue].length - 1)
-    emit('update:modelValue', res.join(''))
-  }
+    const res = [...modelValue].slice(0, [...modelValue].length - 1);
+    emit("update:modelValue", res.join(""));
+  };
 
   return {
     select,
     del,
-  }
+  };
 }
 </script>
 <script setup lang="ts">
-import Table from '@/components/Table/index.vue'
-import { hideLoading, showLoading } from '@/plugin/Loading'
-import send from '../../assets/img/send.svg'
-const input: Ref<HTMLInputElement | null> = ref(null)
-const store = useStore(key)
-const { t } = useI18n()
-const audioObj = ref({})
-const showAtBox = ref(false)
-const atUserInfoList: Ref<IUserInfo[]> = ref([])
+import Table from "@/components/Table/index.vue";
+import { hideLoading, showLoading } from "@/plugin/Loading";
+import send from "../../assets/img/send.svg";
+const input: Ref<HTMLInputElement | null> = ref(null);
+const store = useStore(key);
+const { t } = useI18n();
+const audioObj = ref({});
+const showAtBox = ref(false);
+const showReplyBox = ref(false);
+const atUserInfoList: Ref<IUserInfo[]> = ref([]);
 
-const dropFile = computed(() => store.state.dropFile)
+const dropFile = computed(() => store.state.dropFile);
 const destoryReaded = computed(
   () =>
     store.state.msgList[store.state.activeUid]?.userDetailInfo?.userInfo
       ?.userAttachInfo?.destoryReaded
-)
+);
 
 watch(dropFile, (e) => {
   if (e) {
-    input.value?.focus()
-    copyImgList.value.push(e)
-    store.commit('SET_DROPFILE', null)
+    input.value?.focus();
+    copyImgList.value.push(e);
+    store.commit("SET_DROPFILE", null);
   }
-})
+});
 
 // 粘贴的图片列表
-const copyImgList: Ref<{ url: string; file: File }[]> = ref([])
+const copyImgList: Ref<{ url: string; file: File }[]> = ref([]);
 
 const newAtUserInfoList = computed(() => {
-  const ats = props.modelValue.split('@')
+  const ats = props.modelValue.split("@");
 
   const list = atUserInfoList.value.filter((e) =>
     e.nickname
       .toLocaleLowerCase()
       .includes(ats[ats.length - 1].toLocaleLowerCase())
-  )
+  );
   if (ats.length <= 1) {
     // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-    showAtBox.value = false
+    showAtBox.value = false;
   }
 
-  return list || []
-})
+  return list || [];
+});
 const style = {
   opacity: 0,
-  cursor: 'auto',
-}
+  cursor: "auto",
+};
 const props = defineProps({
   modelValue: {
     type: String,
-    default: '',
+    default: "",
+  },
+  userInfo: {
+    type: Object as PropType<IUserInfo>,
   },
   yUserInfo: {
     type: Object as PropType<IUserInfo>,
@@ -381,280 +385,280 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
-})
-const showExpres = ref(false)
+});
+const showExpres = ref(false);
 const emit = defineEmits([
-  'update:modelValue',
-  'atUserInfoLists',
-  'enter',
-  'recommend',
-  'sendImg',
-  'sendFile',
-  'selectGroupMember',
-])
+  "update:modelValue",
+  "atUserInfoLists",
+  "enter",
+  "recommend",
+  "sendImg",
+  "sendFile",
+  "selectGroupMember",
+]);
 
 const onEmit = (res: any) => {
-  if (!props.isGroupMember) return Toast(t('非群成员无法操作'))
-  emit(res)
-}
+  if (!props.isGroupMember) return Toast(t("非群成员无法操作"));
+  emit(res);
+};
 // 是否显示操作弹框
-const showOpertion = ref(false)
+const showOpertion = ref(false);
 
 // 缓存列表
-const emojiList: Ref<IexpressionItem[]> = ref([])
+const emojiList: Ref<IexpressionItem[]> = ref([]);
 
 if (!emojiList.value.length) {
-  emojiList.value = JSON.parse(getStorage('emojiList')) || []
+  emojiList.value = JSON.parse(getStorage("emojiList")) || [];
 }
 
 // 是否显示缓存图标
-const showCacheEmoji = ref(false)
+const showCacheEmoji = ref(false);
 // 切换显示缓存图标
 const changeCacheEmoji = (item: boolean) => {
-  showCacheEmoji.value = item
-}
+  showCacheEmoji.value = item;
+};
 
 // 焚阅时间
 const burnInfo = reactive({
   list: [
-    { id: 1, name: '30秒钟' },
-    { id: 2, name: '1分钟' },
-    { id: 3, name: '10分钟' },
-    { id: 4, name: '1小时' },
-    { id: 5, name: '1天' },
-    { id: 0, name: '关闭焚毁' },
+    { id: 1, name: "30秒钟" },
+    { id: 2, name: "1分钟" },
+    { id: 3, name: "10分钟" },
+    { id: 4, name: "1小时" },
+    { id: 5, name: "1天" },
+    { id: 0, name: "关闭焚毁" },
   ],
   active: 0,
   show: false,
-})
+});
 
 const keys = require
-  .context('../../assets/img/expression/', true, /\.png$/)
-  .keys()
+  .context("../../assets/img/expression/", true, /\.png$/)
+  .keys();
 
 const expression = keys.map((e, k) => {
   return {
     id: k,
     name: e.slice(2, -4),
     path: require(`../../assets/img/expression/${e.substr(2, e.length - 2)}`),
-  }
-})
+  };
+});
 
 // 图标列表
-const expressionList = reactive(expression)
+const expressionList = reactive(expression);
 
 // 输入框
-const { select, del } = useInput(emit, emojiList, input)
+const { select, del } = useInput(emit, emojiList, input);
 
 const onInput = async (e: any) => {
-  emit('update:modelValue', e.target.textContent)
-  if (e.data === '@') {
-    showAtBox.value = true
+  emit("update:modelValue", e.target.textContent);
+  if (e.data === "@") {
+    showAtBox.value = true;
     if (!atUserInfoList.value.length) {
-      await getGroupMemberUserInfos()
+      await getGroupMemberUserInfos();
     }
   }
-}
+};
 
 const onEnter = async (e: any) => {
   if (!e.shiftKey) {
-    e.preventDefault()
-    emit('enter', props.atUserInfoList || [], copyImgList.value)
-    copyImgList.value = []
+    e.preventDefault();
+    emit("enter", props.atUserInfoList || [], copyImgList.value);
+    copyImgList.value = [];
   }
-}
+};
 
 // 获取群成员详情
 async function getGroupMemberUserInfos() {
   const groupMemberUids = (
     props.groupDetailInfo?.groupMemberLists?.memberUserInfos || []
-  ).map((e) => e.memberUid)
-  const res = await store.dispatch('postMsg', {
+  ).map((e) => e.memberUid);
+  const res = await store.dispatch("postMsg", {
     query: { uid: groupMemberUids },
     cmd: 1115,
-    encryption: 'Aoelailiao.Login.ClientGetUserInfoListReq',
+    encryption: "Aoelailiao.Login.ClientGetUserInfoListReq",
     auth: true,
-  })
+  });
   atUserInfoList.value = (res.body.userInfo || []).filter(
     (e: IUserInfo) => Number(e.uid) !== Number(store.state.userInfo.uid)
-  )
+  );
   atUserInfoList.value.unshift({
     uid: 0,
-    nickname: 'All',
-  } as IUserInfo)
-  emit('atUserInfoLists', atUserInfoList.value)
+    nickname: "All",
+  } as IUserInfo);
+  emit("atUserInfoLists", atUserInfoList.value);
 }
 
 const toggleExpres = () => {
-  showExpres.value = !showExpres.value
-  input.value?.focus()
-}
+  showExpres.value = !showExpres.value;
+  input.value?.focus();
+};
 
 const bodyClickCb = () => {
-  showExpres.value = false
-  showOpertion.value = false
-  burnInfo.show = false
+  showExpres.value = false;
+  showOpertion.value = false;
+  burnInfo.show = false;
   // input.value?.focus();
-}
+};
 
 onMounted(() => {
-  document.body.addEventListener('click', bodyClickCb)
-  input.value?.focus()
-  burnInfo.active = destoryReaded.value ? destoryReaded : 0
-})
+  document.body.addEventListener("click", bodyClickCb);
+  input.value?.focus();
+  burnInfo.active = destoryReaded.value ? destoryReaded : 0;
+});
 
 onBeforeUnmount(() => {
-  document.body.removeEventListener('click', bodyClickCb)
-})
+  document.body.removeEventListener("click", bodyClickCb);
+});
 
 // 开始音视频
 const start = async (mediaType: number) => {
-  if (!props.isGroupMember) return Toast(t('非群成员无法操作'))
-  const data = await store.dispatch('postMsg', {
+  if (!props.isGroupMember) return Toast(t("非群成员无法操作"));
+  const data = await store.dispatch("postMsg", {
     query: {
       functionId: 20010,
       objectId: store.state.activeUid,
     },
     cmd: 1189,
-    encryption: 'Aoelailiao.Login.UserCheckFunctionPrivilegeReq',
+    encryption: "Aoelailiao.Login.UserCheckFunctionPrivilegeReq",
     auth: true,
-  })
+  });
 
   if (data?.body?.functionState === 1) {
-    const mediaNode = document.getElementById('media')!
+    const mediaNode = document.getElementById("media")!;
     if (mediaNode.hasChildNodes()) {
-      return Toast(t('正在通话中'))
+      return Toast(t("正在通话中"));
     }
     if (!store.state.rongIm) {
       try {
-        showLoading()
-        await initRonyun(store)
+        showLoading();
+        await initRonyun(store);
         if (!store.state.activeIsGroup) {
-          MediaAudio({ isCall: true, mediaType, yUserInfo: props.yUserInfo })
+          MediaAudio({ isCall: true, mediaType, yUserInfo: props.yUserInfo });
         } else {
           // 群聊
-          emit('selectGroupMember', mediaType)
+          emit("selectGroupMember", mediaType);
         }
       } catch (error) {
-        console.log(error)
-        return Toast(t('服务初始化失败'))
+        console.log(error);
+        return Toast(t("服务初始化失败"));
       }
-      hideLoading()
+      hideLoading();
     } else {
       if (!store.state.activeIsGroup) {
-        MediaAudio({ isCall: true, mediaType, yUserInfo: props.yUserInfo })
+        MediaAudio({ isCall: true, mediaType, yUserInfo: props.yUserInfo });
       } else {
         // 群聊
-        emit('selectGroupMember', mediaType)
+        emit("selectGroupMember", mediaType);
       }
     }
   } else {
-    return Toast(t('发送者无权限'))
+    return Toast(t("发送者无权限"));
   }
-}
+};
 
 // 录音 语音消息
 
 // 控制按住说话按钮的显示和隐藏
-const showAudio = ref(false)
+const showAudio = ref(false);
 const toggleAudio = (isSend?: string) => {
-  const duration = audioTime.value
-  showAudio.value = !showAudio.value
+  const duration = audioTime.value;
+  showAudio.value = !showAudio.value;
   if (showAudio.value) {
-    startRec()
-  } else if (isSend === 'send') {
-    sendRec(duration)
+    startRec();
+  } else if (isSend === "send") {
+    sendRec(duration);
   } else {
-    closeRec()
+    closeRec();
   }
-}
+};
 
-let line = ref(0)
-let audioTime = ref(0)
+let line = ref(0);
+let audioTime = ref(0);
 // 监听是否需要audio
 watch(showAudio, (e) => {
-  audioTime.value = 0
-  line.value = 0
-})
+  audioTime.value = 0;
+  line.value = 0;
+});
 
 // 格式化录音时间
 const formateAudioTime = (e: number) => {
   if (e < 10) {
-    return `00:0${e}`
+    return `00:0${e}`;
   } else if (e < 60) {
-    return `00:${e}`
+    return `00:${e}`;
   } else {
-    return `01:0${e - 60}`
+    return `01:0${e - 60}`;
   }
-}
+};
 
-let rec: any
-let wave: any
+let rec: any;
+let wave: any;
 async function startRec() {
-  await nextTick()
+  await nextTick();
   wave = Recorder.FrequencyHistogramView({
-    elem: '.canvas',
+    elem: ".canvas",
     position: 0,
     stripeEnable: false,
-    linear: [0, '#333', 0.5, '#333', 1, '#333'],
+    linear: [0, "#333", 0.5, "#333", 1, "#333"],
     widthRatio: 0.3,
     lineCount: 5,
-  })
+  });
   rec = Recorder({
     onProcess: function (buffers: any, level: any, time: any, sampleRate: any) {
-      wave.input(buffers[buffers.length - 1], level, sampleRate)
+      wave.input(buffers[buffers.length - 1], level, sampleRate);
     },
-    type: 'amr',
-  }) //使用默认配置，mp3格式
+    type: "amr",
+  }); //使用默认配置，mp3格式
 
   //打开麦克风授权获得相关资源
   rec.open(
     function () {
       //开始录音
-      rec.start()
-      startAudio()
+      rec.start();
+      startAudio();
     },
     function (msg: string, isUserNotAllow: boolean) {
       //用户拒绝了权限或浏览器不支持
-      alert((isUserNotAllow ? '用户拒绝了权限，' : '') + '无法录音:' + msg)
+      alert((isUserNotAllow ? "用户拒绝了权限，" : "") + "无法录音:" + msg);
     }
-  )
+  );
 }
 
 function stop() {
   return new Promise((resovle, reject) => {
     rec.stop(
       function (blob: any, duration: number) {
-        const name = Date.now().toString() + '.amr'
-        const audioFile = new File([blob], name, { type: blob.type })
-        resovle({ name, audioFile, duration })
+        const name = Date.now().toString() + ".amr";
+        const audioFile = new File([blob], name, { type: blob.type });
+        resovle({ name, audioFile, duration });
       },
       function (msg: string) {
-        alert('录音失败:' + msg)
+        alert("录音失败:" + msg);
       }
-    )
-  })
+    );
+  });
 }
 
 // 发送
 async function sendRec(duration: number) {
   if (!store.state.client.userAgent) {
-    await initOss(store)
+    await initOss(store);
   }
-  let obj: any = {}
+  let obj: any = {};
   if (audioTime.value <= 59) {
-    obj = await stop()
+    obj = await stop();
   } else {
-    obj = audioObj.value
+    obj = audioObj.value;
   }
 
-  const { audioFile, name } = obj
-  showLoading()
+  const { audioFile, name } = obj;
+  showLoading();
   try {
     // const url = await upLoadFile(audioFile, store, t);
-    let info: any = await store.state.client.put(name, audioFile)
-    const userInfo = JSON.parse(getStorage('userInfo'))
-    const isGroupMsg = store.state.activeIsGroup ? 1 : 0
+    let info: any = await store.state.client.put(name, audioFile);
+    const userInfo = JSON.parse(getStorage("userInfo"));
+    const isGroupMsg = store.state.activeIsGroup ? 1 : 0;
 
     const res = {
       msgInfo: {
@@ -665,113 +669,118 @@ async function sendRec(duration: number) {
         isEncrypt: 0,
         msgContent: {
           msgContentType: 3,
-          msgContent: 'voiceMsg',
+          msgContent: "voiceMsg",
           voiceMsg: {
             voiceTime: duration,
             voiceUrl: info.url,
           },
         },
-        type: 'voiceMsg',
+        type: "voiceMsg",
         // attachInfo: {
         //   msgSource: route.query.msgSource,
         // },
       },
-    }
-    const data = await store.dispatch('postMsg', {
+    };
+    const data = await store.dispatch("postMsg", {
       query: res,
       cmd: 2001,
-      encryption: 'Aoelailiao.Message.ClientSendMsgToServerReq',
+      encryption: "Aoelailiao.Message.ClientSendMsgToServerReq",
       auth: true,
-    })
+    });
     if (data.body.resultCode !== 0) {
-      Toast(t(data.body.resultString))
+      Toast(t(data.body.resultString));
     }
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-  hideLoading()
+  hideLoading();
 }
 
 // 取消发送
 function closeRec() {
   //停止录音，得到了录音文件blob二进制对象，想干嘛就干嘛
-  rec.close()
+  rec.close();
 }
 
 // 选择at消息
 const selectAtInfo = (item: IUserInfo) => {
-  showAtBox.value = false
-  const msgSplitList = props.modelValue.split('@')
-  msgSplitList[msgSplitList.length - 1] = item.nickname
-  emit('update:modelValue', msgSplitList.join('@') + ' ')
-}
+  showAtBox.value = false;
+  const msgSplitList = props.modelValue.split("@");
+  msgSplitList[msgSplitList.length - 1] = item.nickname;
+  emit("update:modelValue", msgSplitList.join("@") + " ");
+};
 
 function startAudio() {
   setTimeout(async () => {
     if (audioTime.value < 59 && showAudio.value) {
-      startAudio()
+      startAudio();
     }
     if (audioTime.value >= 59) {
-      audioObj.value = await stop()
+      audioObj.value = await stop();
     }
-    audioTime.value++
-    line.value = (audioTime.value / 60) * 100
-  }, 1000)
+    audioTime.value++;
+    line.value = (audioTime.value / 60) * 100;
+  }, 1000);
 }
 
 // 粘贴
 const paste = (e: any) => {
-  const cbd = e.clipboardData
-  const ua = window.navigator.userAgent
+  const cbd = e.clipboardData;
+  const ua = window.navigator.userAgent;
   // 如果是 Safari 直接 return
   if (!(e.clipboardData && e.clipboardData.items)) {
-    return
+    return;
   }
   if (
     cbd.items &&
     cbd.items.length === 2 &&
-    cbd.items[0].kind === 'string' &&
-    cbd.items[1].kind === 'file' &&
+    cbd.items[0].kind === "string" &&
+    cbd.items[1].kind === "file" &&
     cbd.types &&
     cbd.types.length === 2 &&
-    cbd.types[0] === 'text/plain' &&
-    cbd.types[1] === 'Files' &&
+    cbd.types[0] === "text/plain" &&
+    cbd.types[1] === "Files" &&
     ua.match(/Macintosh/i) &&
     Number(ua.match(/Chrome\/(\d{2})/i)[1]) < 49
   ) {
-    return
+    return;
   }
   for (let i = 0; i < cbd.items.length; i++) {
-    let item = cbd.items[i]
-    if (item.kind == 'file') {
-      e.preventDefault()
-      if (!item.type.includes('image')) return
+    let item = cbd.items[i];
+    if (item.kind == "file") {
+      e.preventDefault();
+      if (!item.type.includes("image")) return;
       // blob 就是从剪切板获得的文件，可以进行上传或其他操作
-      const blob = item.getAsFile()
+      const blob = item.getAsFile();
       if (blob.size === 0) {
-        return
+        return;
       }
-      const reader = new FileReader()
-      reader.readAsDataURL(blob)
+      const reader = new FileReader();
+      reader.readAsDataURL(blob);
       reader.onload = function (v: any) {
         copyImgList.value.push({
           url: v.target.result,
           file: new File([blob], Date.now().toString(), {
-            type: 'image/jpg',
+            type: "image/jpg",
           }),
-        })
-      }
+        });
+      };
     }
   }
-}
+};
 
 // 删除
 const delImgList = (key: number) => {
-  copyImgList.value.splice(key, 1)
-}
+  copyImgList.value.splice(key, 1);
+};
+
+// 关闭回复面板
+const closeReply = () => {
+  store.commit("SET_SHOWREPLYBOX", false);
+};
 
 // 设置焚毁时间
-const userBeforeFire = useBeforeSwitch(store, 1001, t)
+const userBeforeFire = useBeforeSwitch(store, 1001, t);
 
 function useBeforeSwitch(
   store: Store<initStore>,
@@ -779,23 +788,23 @@ function useBeforeSwitch(
   t: { (key: string | number): string }
 ) {
   return async (id: number) => {
-    burnInfo.active = id
+    burnInfo.active = id;
     const res = {
       objectType: 1,
       objectId: store.state.activeUid,
       settingItemId,
       switchState: id,
-    }
-    showLoading()
+    };
+    showLoading();
 
-    const data = await store.dispatch('postMsg', {
+    const data = await store.dispatch("postMsg", {
       query: res,
       cmd: 1041,
-      encryption: 'Aoelailiao.Login.UserOperateSettingItemSwitchReq',
+      encryption: "Aoelailiao.Login.UserOperateSettingItemSwitchReq",
       auth: true,
-    })
+    });
 
-    hideLoading()
+    hideLoading();
     return new Promise((resovle, reject) => {
       if (data.body.resultCode === 0) {
         // 更新缓存
@@ -803,23 +812,23 @@ function useBeforeSwitch(
           // 更新焚毁状态
           upDateStore(
             store,
-            'destoryReaded',
+            "destoryReaded",
             Number(id),
             store.state.activeUid,
             true
-          )
+          );
         }
-        resovle(true)
+        resovle(true);
       } else {
-        reject()
+        reject();
       }
-      Toast(t(data.body.resultString))
-    })
-  }
+      Toast(t(data.body.resultString));
+    });
+  };
 }
 </script>
 <style lang="scss" scoped>
-@import '@/style/base.scss';
+@import "@/style/base.scss";
 .bottom {
   bottom: 0;
   left: 0;
@@ -921,7 +930,7 @@ function useBeforeSwitch(
           cursor: pointer;
           &::before {
             display: block;
-            content: '';
+            content: "";
             width: 80%;
             height: 2px;
             background: #fff;
@@ -932,7 +941,7 @@ function useBeforeSwitch(
           }
           &::after {
             display: block;
-            content: '';
+            content: "";
             width: 80%;
             height: 2px;
             background: #fff;
