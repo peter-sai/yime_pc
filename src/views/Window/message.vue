@@ -308,6 +308,10 @@
           @click="copyImg(copyItem?.msgContent?.imageMsg?.imageUrl)"
           >{{ t('复制') }}</span
         >
+         <span
+          @click="forward(copyItem.msgId)"
+          >{{ t('回复') }}</span
+        >
         <span
           v-if="copyItem.type !== 'voiceMsg'"
           @click="forward(copyItem.msgId)"

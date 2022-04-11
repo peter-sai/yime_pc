@@ -987,5 +987,6 @@ export default {
   '1天': '1 day',
   关闭焚毁: 'Close and burn',
   撤销: 'revoke',
+  回复: 'reply',
   '发言太快了，休息一下吧':"It's too fast to speak. Let's have a rest"
 };
