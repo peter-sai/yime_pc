@@ -126,10 +126,15 @@
           v-if="item.msgClassId === 1"
           html
           :subTitle="JSON.parse(item.msgClassRecentMsgContent).Jt"
-          :title="t(item.msgClassTitle)"
           @click="store.commit('SET_ACTIVEUID', item.msgClassId)"
           :hover="item.msgClassId === store.state.activeUid"
         >
+          <template v-slot:title>
+            <div class="sysText">
+              {{ t(item.msgClassTitle) }}
+              <Iconfont name="iconbianzu19" size="15" />
+            </div>
+          </template>
           <template v-slot:userImg>
             <div class="userImg">
               <img src="img/systemNotify.svg" alt="" />
@@ -766,6 +771,11 @@ function useBeforeSwitch(
   }
   &::after {
     @include tableBottomLine;
+  }
+  .sysText {
+    font-size: 14px;
+    display: flex;
+    align-items: center;
   }
   .userImg {
     width: 45px;

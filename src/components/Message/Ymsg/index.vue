@@ -10,7 +10,7 @@
       <ImBg v-bind="$attrs">
         <Fire :isBurn="isBurn" :fired="fired" :right="`-20px`" :top="`-15px`" />
         <p v-for="item in list" :key="item" class="text">
-          {{ item.replace(/\u0000/g, "") }}
+          {{ item.replace(/\u0000/g, '') }}
         </p>
       </ImBg>
     </div>
@@ -24,20 +24,20 @@ import {
   PropType,
   computed,
   defineEmits,
-} from "vue";
-import ImBg from "../ImgBg/index.vue";
-import Fire from "../Fire/index.vue";
-import Iconfont from "@/iconfont/index.vue";
-import { useStore } from "vuex";
-import { useI18n } from "vue-i18n";
-import { IUserInfo } from "@/types/user";
-import { key } from "@/store";
+} from 'vue';
+import ImBg from '../ImgBg/index.vue';
+import Fire from '../Fire/index.vue';
+import Iconfont from '@/iconfont/index.vue';
+import { useStore } from 'vuex';
+import { useI18n } from 'vue-i18n';
+import { IUserInfo } from '@/types/user';
+import { key } from '@/store';
 export default defineComponent({
-  name: "Ymsg",
+  name: 'Ymsg',
 });
 </script>
 <script lang="ts" setup>
-defineEmits(["click"]);
+defineEmits(['click']);
 defineProps({
   isBurn: {
     type: Boolean,
@@ -54,11 +54,11 @@ const isGroup = computed(() => store.state.activeIsGroup);
 const slots: any = useSlots();
 
 const list = slots.default()[0].children
-  ? slots.default()[0].children.split("\n\n")
+  ? slots.default()[0].children.split('\n\n')
   : [];
 </script>
 <style lang="scss" scoped>
-@import "@/style/theme/index.scss";
+@import '@/style/theme/index.scss';
 .mmsg {
   display: flex;
   max-width: 80%;
@@ -71,7 +71,7 @@ const list = slots.default()[0].children
   }
   .text {
     font-size: 16px;
-    @include theme("color", main);
+    color: #333;
     padding: 0;
   }
   .img {
