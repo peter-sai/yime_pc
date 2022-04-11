@@ -28,21 +28,21 @@ import {
   PropType,
   ref,
   defineEmits,
-} from "vue";
-import Iconfont from "@/iconfont/index.vue";
-import Fire from "../Fire/index.vue";
-import { useRouter, useRoute } from "vue-router";
-import { useGoTo } from "@/hooks";
-import { useStore } from "vuex";
-import { Toast } from "@/plugin/Toast";
-import { useI18n } from "vue-i18n";
-import { IUserInfo } from "@/types/user";
-import { getTag } from "@/utils/utils";
-import { IFileInfo } from "@/types/msg";
-import { key } from "@/store";
+} from 'vue';
+import Iconfont from '@/iconfont/index.vue';
+import Fire from '../Fire/index.vue';
+import { useRouter, useRoute } from 'vue-router';
+import { useGoTo } from '@/hooks';
+import { useStore } from 'vuex';
+import { Toast } from '@/plugin/Toast';
+import { useI18n } from 'vue-i18n';
+import { IUserInfo } from '@/types/user';
+import { getTag } from '@/utils/utils';
+import { IFileInfo } from '@/types/msg';
+import { key } from '@/store';
 
 defineComponent({
-  name: "Yfile",
+  name: 'Yfile',
 });
 </script>
 <script lang="ts" setup>
@@ -65,45 +65,45 @@ const props = defineProps({
 const getSize = () => {
   const size = props.item!.fileSize;
   if (size < 1024) {
-    return parseInt(size.toString()) + "K";
+    return parseInt(size.toString()) + 'K';
   } else if (size / 1024 < 1024) {
-    return parseInt((size / 1024).toString()) + "KB";
+    return parseInt((size / 1024).toString()) + 'KB';
   } else if (size / 1024 / 1024 < 1024) {
-    return parseInt((size / 1024 / 1024).toString()) + "M";
+    return parseInt((size / 1024 / 1024).toString()) + 'M';
   } else if (size / 1024 / 1024 / 1024 < 1024) {
-    return parseInt((size / 1024 / 1024 / 1024).toString()) + "G";
+    return parseInt((size / 1024 / 1024 / 1024).toString()) + 'G';
   } else {
-    return parseInt((size / 1024 / 1024 / 1024 / 1024).toString()) + "T";
+    return parseInt((size / 1024 / 1024 / 1024 / 1024).toString()) + 'T';
   }
 };
 
-const name = ref("iconWORD");
-const res = props.item!.fileName.split(".");
+const name = ref('iconWORD');
+const res = props.item!.fileName.split('.');
 if (res.length > 1) {
   const suffix = res[1];
-  if (suffix.toLocaleLowerCase().includes("doc")) {
-    name.value = "iconWORD";
-  } else if (suffix.toLocaleLowerCase().includes("xls")) {
-    name.value = "iconexcel";
-  } else if (suffix.toLocaleLowerCase().includes("pdf")) {
-    name.value = "iconpdf";
+  if (suffix.toLocaleLowerCase().includes('doc')) {
+    name.value = 'iconWORD';
+  } else if (suffix.toLocaleLowerCase().includes('xls')) {
+    name.value = 'iconexcel';
+  } else if (suffix.toLocaleLowerCase().includes('pdf')) {
+    name.value = 'iconpdf';
   } else {
-    name.value = "iconwenjian";
+    name.value = 'iconwenjian';
   }
 }
 
 const store = useStore(key);
 const isGroup = computed(() => store.state.activeIsGroup);
 
-const emit = defineEmits(["menuClick", "click", "download"]);
+const emit = defineEmits(['menuClick', 'click', 'download']);
 
 const contextmenu = (e: any) => {
   e.preventDefault();
-  emit("menuClick", e);
+  emit('menuClick', e);
 };
 </script>
 <style lang="scss" scoped>
-@import "@/style/theme/index.scss";
+@import '@/style/theme/index.scss';
 .ymsg {
   display: flex;
   .title1 {

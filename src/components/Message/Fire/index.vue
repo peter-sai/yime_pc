@@ -17,13 +17,13 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, defineProps, defineEmits } from "vue";
+import { defineComponent, defineProps, defineEmits } from 'vue';
 export default defineComponent({
-  name: "Fire",
+  name: 'Fire',
 });
 </script>
 <script lang="ts" setup>
-defineEmits(["click", "clickFireMsg"]);
+defineEmits(['click', 'clickFireMsg']);
 defineProps({
   isBurn: {
     type: Boolean,
@@ -33,15 +33,15 @@ defineProps({
   },
   right: {
     type: String,
-    default: "auto",
+    default: 'auto',
   },
   top: {
     type: String,
-    default: "auto",
+    default: 'auto',
   },
   left: {
     type: String,
-    default: "auto",
+    default: 'auto',
   },
 });
 </script>

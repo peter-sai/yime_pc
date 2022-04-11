@@ -27,23 +27,23 @@ import {
   defineProps,
   PropType,
   defineEmits,
-} from "vue";
-import Iconfont from "@/iconfont/index.vue";
-import SayHello from "../SayHello/index.vue";
-import Fire from "../Fire/index.vue";
-import { useI18n } from "vue-i18n";
-import { IUserInfo } from "@/types/user";
-import { key } from "@/store";
-import { useStore } from "vuex";
+} from 'vue';
+import Iconfont from '@/iconfont/index.vue';
+import SayHello from '../SayHello/index.vue';
+import Fire from '../Fire/index.vue';
+import { useI18n } from 'vue-i18n';
+import { IUserInfo } from '@/types/user';
+import { key } from '@/store';
+import { useStore } from 'vuex';
 export default defineComponent({
-  name: "Message",
+  name: 'Message',
 });
 </script>
 <script lang="ts" setup>
 const props = defineProps({
   src: {
     type: String,
-    default: "",
+    default: '',
   },
   userInfo: {
     type: Object as PropType<IUserInfo>,
@@ -73,19 +73,19 @@ const { t } = useI18n();
 const store = useStore(key);
 const isGroup = computed(() => store.state.activeIsGroup);
 
-const emit = defineEmits(["menuClick", "click", "showBigImg"]);
+const emit = defineEmits(['menuClick', 'click', 'showBigImg']);
 
 const contextmenu = (e: any) => {
   e.preventDefault();
-  emit("menuClick", e);
+  emit('menuClick', e);
 };
 
 const shogImg = () => {
-  emit("showBigImg");
+  emit('showBigImg');
 };
 </script>
 <style lang="scss" scoped>
-@import "@/style/theme/index.scss";
+@import '@/style/theme/index.scss';
 .imgBg {
   max-width: 60%;
   .title {

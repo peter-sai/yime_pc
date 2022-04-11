@@ -403,7 +403,7 @@ import { Toast } from '@/plugin/Toast';
 import ClipboardJS from 'clipboard';
 import { MediaAudio } from '@/plugin/Audio';
 import { hideLoading, showLoading } from '@/plugin/Loading';
-
+import Electron from 'Electron';
 const playMsgId = ref(0);
 
 async function getGroupInfo(store: Store<initStore>, uid: number) {
@@ -806,11 +806,16 @@ const save = (item: IMsgInfo<IFireInfo | IImageMsgInfo>) => {
 
 // 下载
 const download = (item: IFileInfo) => {
-  const file = {
-    url: item.fileUrl,
-    name: item.fileName,
-  };
-  downloadFile(file);
+  Electron.ipcRenderer.send(
+    'openFileInSysApp',
+    item.fileUrl,
+    `${item.fileSize}_${item.fileName}`,
+  );
+  // const file = {
+  //   url: item.fileUrl,
+  //   name: item.fileName,
+  // };
+  // downloadFile(file);
 };
 
 // 复制图片

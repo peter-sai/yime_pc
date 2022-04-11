@@ -1,9 +1,11 @@
 'use strict';
 
-import { app, protocol, BrowserWindow } from 'electron';
+import { app, protocol, BrowserWindow, shell } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer';
 import config from './config';
+const os = require('os');
+const fs = require('fs');
 const isDevelopment = process.env.NODE_ENV !== 'production';
 const Badge = require('electron-windows-badge');
 
@@ -57,6 +59,30 @@ async function createWindow() {
 
   // 设置通知标题
   app.setAppUserModelId(config.ELECTRON_NAME || '');
+
+  let dowUrl = '';
+  // 使用本地应用打开文件
+  ipcMain.on('openFileInSysApp', (event, url, fileName) => {
+    dowUrl = `${os.homedir()}/${config.ELECTRON_NAME}/${fileName}`;
+    // 查看文件是否存在 如果存在 并且大小相同 则直接打开
+    fs.access(dowUrl, (err: any) => {
+      if (!err) {
+        shell.openPath(`${os.homedir()}/${config.ELECTRON_NAME}/${fileName}`);
+      } else {
+        win.webContents.downloadURL(url);
+      }
+    });
+  });
+  win.webContents.session.on('will-download', (event, item) => {
+    item.setSavePath(dowUrl);
+    item.once('done', (event, state) => {
+      if (state === 'completed') {
+        shell.openPath(dowUrl);
+      } else {
+        console.log(`Download failed: ${state}`);
+      }
+    });
+  });
 }
 
 // Quit when all windows are closed.

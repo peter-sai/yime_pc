@@ -19,12 +19,12 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, defineProps, defineEmits } from "vue";
-import SayHello from "../SayHello/index.vue";
-import Fire from "../Fire/index.vue";
-import IsRead from "@/components/IsRead/index.vue";
+import { defineComponent, defineProps, defineEmits } from 'vue';
+import SayHello from '../SayHello/index.vue';
+import Fire from '../Fire/index.vue';
+import IsRead from '@/components/IsRead/index.vue';
 export default defineComponent({
-  name: "MImg",
+  name: 'MImg',
 });
 </script>
 <script lang="ts" setup>
@@ -35,7 +35,7 @@ const props = defineProps({
   },
   src: {
     type: String,
-    default: "",
+    default: '',
   },
   width: {
     type: Number,
@@ -53,19 +53,19 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["menuClick", "showBigImg"]);
+const emit = defineEmits(['menuClick', 'showBigImg']);
 
 const contextmenu = (e: any) => {
   e.preventDefault();
-  emit("menuClick", e);
+  emit('menuClick', e);
 };
 
 const shogImg = () => {
-  emit("showBigImg");
+  emit('showBigImg');
 };
 </script>
 <style lang="scss" scoped>
-@import "@/style/theme/index.scss";
+@import '@/style/theme/index.scss';
 .imgBg {
   max-width: 70%;
   margin: auto 0 auto auto;
