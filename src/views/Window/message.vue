@@ -71,6 +71,7 @@
               @click="showUserInfo(getUserInfo(item).uid)"
               @menuClick="menuClick($event, item)"
               :isBurn="item.msgShowType === 3"
+              :replyMsg="getReply(item)"
               :userInfo="getUserInfo(item)"
               v-if="isShowHowComponent(item)"
             >
