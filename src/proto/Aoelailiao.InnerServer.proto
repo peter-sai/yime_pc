@@ -43,11 +43,14 @@ message UserConversationLists
 //用户的会话接收与已读状态
 message UserConversationInfo
 {
-    optional uint64 relation_id = 1;     //会话ID
-    optional uint32 is_encrypt = 2;      //是否私密聊,0--否（默认）,1--是
-    optional uint32 is_group_msg = 3;    //是否群消息
-    optional uint32 object_id = 4;       //对方uid或者群id
-    optional uint32 group_msgid_min = 5; //用户进群时的消息ID,用户只能查看从这个消息id之后的消息
+    optional uint64 relation_id = 1;  //会话ID
+    optional uint32 is_encrypt = 2;   //是否私密聊,0--否（默认）,1--是
+    optional uint32 is_group_msg = 3; //是否群消息
+    optional uint32 object_id = 4;    //对方uid或者群id
+
+    //用户进群时的消息ID,用户只能查看从这个消息id之后的消息
+    // todo change this to uint64
+    optional uint32 group_msgid_min = 5;
     optional uint64 received_msg_id = 6; //当前已接收的消息ID
     optional uint64 readed_msg_id = 7;   //当前已读的消息ID
 }
@@ -131,13 +134,35 @@ message OperateGroupApplyUidList
     repeated string uid = 1;
 }
 
+/*
+    服务内部通信协议, 不需要再使用 im_one_pdu 了
+ */
 message RouteDataInfo
+{
+    optional uint32 cid = 1;            // cid
+    optional uint32 client_version = 2; //客户端version
+    optional uint32 client_type = 3;    //客户端类型
+    optional uint32 uid = 4;            // uid
+    optional uint32 reserved = 5;       //序列号
+    optional string conn_uuid = 6;      //连接唯一标识 yime_conn 服务连接标识
+    optional string exclude_conn = 7;   // 在广播给uid时, 排除的conn
+    optional uint64 session_id = 8;     //请求者sessionid
+    optional string logger_id = 9;      //日志标识
+    optional bytes data = 10;           //二进制格式数据, 各个命令对应protobuf序列化二进制
+}
+
+message RouteDataInfo_Backup
 {
     optional uint32 cid = 1;             // cid
     optional uint32 recv_uid = 2;        //接收者uid
     optional uint32 format = 3;          // 1--二进制数据,2--json格式数据
     optional bytes route_bin_data = 4;   //二进制格式数据
     optional string route_json_data = 5; // json格式数据
+    optional string conn_uuid = 6;       //连接唯一标识
+    optional uint32 request_uid = 7;     //请求者uid
+    optional uint64 session_id = 8;      //请求者sessionid
+    optional uint32 service_id = 9;
+    optional string logger_id = 10;
 }
 
 message SMSNotifyInfo

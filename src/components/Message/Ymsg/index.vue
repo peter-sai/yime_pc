@@ -71,7 +71,7 @@ const list = slots.default()[0].children
   }
   .text {
     font-size: 16px;
-    @include theme('color', main);
+    color: #333;
     padding: 0;
   }
   .img {

@@ -8,6 +8,7 @@
 import iconWORD from './iconWORD.vue';
 import iconbianzu from './iconbianzu.vue';
 import iconbianzu16 from './iconbianzu16.vue';
+import iconbianzu19 from './iconbianzu19.vue';
 import iconbianzu4 from './iconbianzu4.vue';
 import iconbianzu6 from './iconbianzu6.vue';
 import iconbianzu7 from './iconbianzu7.vue';
@@ -100,6 +101,7 @@ export default {
     iconWORD,
     iconbianzu,
     iconbianzu16,
+    iconbianzu19,
     iconbianzu4,
     iconbianzu6,
     iconbianzu7,

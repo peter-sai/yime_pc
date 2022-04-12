@@ -353,10 +353,16 @@ var $root = (
               allowEveryoneJoin: {
                 type: 'uint32',
                 id: 13,
+                options: {
+                  default: 1,
+                },
               },
               allowMemberInviteJoin: {
                 type: 'uint32',
                 id: 14,
+                options: {
+                  default: 1,
+                },
               },
               groupInviteState: {
                 type: 'uint32',
@@ -871,6 +877,50 @@ var $root = (
                 type: 'uint32',
                 id: 1,
               },
+              clientVersion: {
+                type: 'uint32',
+                id: 2,
+              },
+              clientType: {
+                type: 'uint32',
+                id: 3,
+              },
+              uid: {
+                type: 'uint32',
+                id: 4,
+              },
+              reserved: {
+                type: 'uint32',
+                id: 5,
+              },
+              connUuid: {
+                type: 'string',
+                id: 6,
+              },
+              excludeConn: {
+                type: 'string',
+                id: 7,
+              },
+              sessionId: {
+                type: 'uint64',
+                id: 8,
+              },
+              loggerId: {
+                type: 'string',
+                id: 9,
+              },
+              data: {
+                type: 'bytes',
+                id: 10,
+              },
+            },
+          },
+          RouteDataInfo_Backup: {
+            fields: {
+              cid: {
+                type: 'uint32',
+                id: 1,
+              },
               recvUid: {
                 type: 'uint32',
                 id: 2,
@@ -886,6 +936,26 @@ var $root = (
               routeJsonData: {
                 type: 'string',
                 id: 5,
+              },
+              connUuid: {
+                type: 'string',
+                id: 6,
+              },
+              requestUid: {
+                type: 'uint32',
+                id: 7,
+              },
+              sessionId: {
+                type: 'uint64',
+                id: 8,
+              },
+              serviceId: {
+                type: 'uint32',
+                id: 9,
+              },
+              loggerId: {
+                type: 'string',
+                id: 10,
               },
             },
           },
@@ -1331,6 +1401,10 @@ var $root = (
               attachData: {
                 type: 'bytes',
                 id: 32,
+              },
+              loggerId: {
+                type: 'string',
+                id: 100,
               },
             },
           },
@@ -3225,6 +3299,10 @@ var $root = (
                 type: 'MsgAttachInfo',
                 id: 10,
               },
+              replyMsgId: {
+                type: 'uint64',
+                id: 11,
+              },
             },
           },
           MsgContentInfo: {
@@ -3939,34 +4017,6 @@ var $root = (
               },
             },
           },
-          DeleteMsgReq: {
-            fields: {
-              msgId: {
-                type: 'uint64',
-                id: 1,
-              },
-              attachData: {
-                type: 'bytes',
-                id: 32,
-              },
-            },
-          },
-          DeleteMsgAns: {
-            fields: {
-              resultCode: {
-                type: 'uint32',
-                id: 1,
-              },
-              resultString: {
-                type: 'string',
-                id: 2,
-              },
-              attachData: {
-                type: 'bytes',
-                id: 32,
-              },
-            },
-          },
           VideoCallActionUploadReq: {
             fields: {
               actionType: {
@@ -4087,7 +4137,7 @@ var $root = (
                 id: 1,
               },
               msgId: {
-                type: 'uint32',
+                type: 'uint64',
                 id: 2,
               },
               msgContentType: {
@@ -4133,6 +4183,10 @@ var $root = (
               updateTime: {
                 type: 'uint32',
                 id: 6,
+              },
+              maxMsgId: {
+                type: 'uint64',
+                id: 7,
               },
             },
           },
@@ -4201,7 +4255,7 @@ var $root = (
                 id: 1,
               },
               minHasReadMsgId: {
-                type: 'uint32',
+                type: 'uint64',
                 id: 2,
               },
               attachData: {
@@ -4250,7 +4304,7 @@ var $root = (
                 id: 1,
               },
               hasReadMsgIdMax: {
-                type: 'uint32',
+                type: 'uint64',
                 id: 2,
               },
               attachData: {
@@ -5315,6 +5369,102 @@ var $root = (
               attachData: {
                 type: 'bytes',
                 id: 32,
+              },
+            },
+          },
+          DeleteMsgReq: {
+            fields: {
+              msgIds: {
+                rule: 'repeated',
+                type: 'uint64',
+                id: 1,
+                options: {
+                  packed: false,
+                },
+              },
+              attachData: {
+                type: 'bytes',
+                id: 32,
+              },
+            },
+          },
+          DeleteMsgAns: {
+            fields: {
+              resultCode: {
+                type: 'uint32',
+                id: 1,
+              },
+              resultString: {
+                type: 'string',
+                id: 2,
+              },
+              attachData: {
+                type: 'bytes',
+                id: 32,
+              },
+            },
+          },
+          EchoReq: {
+            fields: {
+              text: {
+                type: 'string',
+                id: 1,
+              },
+            },
+          },
+          EchoAns: {
+            fields: {
+              resultCode: {
+                type: 'uint32',
+                id: 1,
+              },
+              resultString: {
+                type: 'string',
+                id: 2,
+              },
+              text: {
+                type: 'string',
+                id: 3,
+              },
+            },
+          },
+          SessionSyncType: {
+            values: {
+              UNKNOWN: 0,
+              SYSTEM_SWITCH_CHANGE: 10,
+              USER_INFO_CHANGE: 11,
+              FRIENDS_AND_GROUPS_CHANGE: 20,
+              FRIENDS_AND_GROUPS_ADD: 21,
+              FRIENDS_AND_GROUPS_DEL: 22,
+              MSG_DELETED: 30,
+              CONVERSATION_HIDE: 40,
+            },
+          },
+          SessionSyncNotify: {
+            fields: {
+              type: {
+                type: 'SessionSyncType',
+                id: 1,
+              },
+              msgIds: {
+                rule: 'repeated',
+                type: 'uint64',
+                id: 10,
+                options: {
+                  packed: false,
+                },
+              },
+              objectId: {
+                type: 'uint32',
+                id: 15,
+              },
+              isGroupMsg: {
+                type: 'uint32',
+                id: 16,
+              },
+              hideOpt: {
+                type: 'uint32',
+                id: 20,
               },
             },
           },

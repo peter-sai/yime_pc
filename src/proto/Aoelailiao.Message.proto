@@ -12,16 +12,31 @@ message MsgInfo
     optional uint32 from_id = 3;      //发送者
     optional uint32 to_id = 4;        //接收者
     optional uint32 msg_time = 5;
-    optional uint32 msg_show_type = 6; // 0--无效，1--普通消息，2--系统通知消息,3--阅后即焚消息，4--需要客户端进行逻辑操作的消息，5--客服消息,6--机器人客服消息
+
+    // 0--无效，1--普通消息，2--系统通知消息,3--阅后即焚消息，
+    // 4--需要客户端进行逻辑操作的消息，5--客服消息,6--机器人客服消息
+    optional uint32 msg_show_type = 6;
+
     optional MsgContentInfo msg_content = 7;
-    optional string client_msg_uuid = 8;     //客户端生成的消息uuid,用于客户端本地数据库消息去重,如果该字段为空则需要客户端自己生成，客户端发送的消息必须带这个字段
+
+    // 客户端生成的消息uuid,用于客户端本地数据库消息去重
+    // 如果该字段为空则需要客户端自己生成，客户端发送的消息必须带这个字段
+    optional string client_msg_uuid = 8;
     optional uint32 is_encrypt = 9;          //是否是加密消息 0--不是 1--是
     optional MsgAttachInfo attach_info = 10; //消息附加的信息,由客户端自定义解析
+
+    // 回复哪一条消息 > 0 表示要回复某一条消息,服务器不做任何有效性判断
+    // 转发消息体，不转发引用内容
+    optional uint64 reply_msg_id = 11;
 }
 
 message MsgContentInfo
 {
-    //消息内容类型,0--无效，1--文本，2--图片，3--语音，5--事件操作描述信息,6--系统通知消息，7--群内@消息，8--消息撤回,9--视频通话，11--位置，12--申请消息（属于系统通知消息）,15--名片，18--消息记录转发消息，17--邀请用户加入群聊,19--文件消息,23--视频消息,24--清理消息,25--链接消息,26--焚阅消息
+    // 消息内容类型,
+    // 0--无效，1--文本，2--图片，3--语音，5--事件操作描述信息, 6--系统通知消息，
+    // 7--群内@消息，8--消息撤回,9--视频通话，11--位置，12--申请消息（属于系统通知消息）
+    // 15--名片，18--消息记录转发消息 17--邀请用户加入群聊,19--文件消息,23--视频消息,
+    // 24--清理消息 25--链接消息,26--焚阅消息
     optional uint32 msg_content_type = 1;
     oneof msg_content
     {
@@ -367,7 +382,7 @@ message UserFeedBackMsg
 message NotifyMsgInfo
 {
     optional uint32 msg_class_id = 1; //消息的分类id
-    optional uint32 msg_id = 2;       //消息id
+    optional uint64 msg_id = 2;       //消息id
 
     //消息内容类型,0--无效，1--系统消息，2--用户反馈消息，3--群解散通知
     optional uint32 msg_content_type = 3;
@@ -384,6 +399,7 @@ message NotifyClassMsgListInfo
     optional uint32 msg_class_have_new_msg = 4;       //是否有未读新消息, 1--有,2--无
     optional string msg_class_recent_msg_content = 5; //最近的消息文本内容描述
     optional uint32 update_time = 6;
+    optional uint64 max_msg_id = 7; //最近的通知id
 }
 
 message UsersInfoList
@@ -418,7 +434,7 @@ message UserGetSystemNoticeContentListReq
 
     //消息分类id,1--系统消息，2--用户反馈消息，3--群解散通知
     optional uint32 msg_class_id = 1;
-    optional uint32 min_has_read_msg_id = 2; //本地已读的消息最小的id
+    optional uint64 min_has_read_msg_id = 2; //本地已读的消息最小的id
     optional bytes attach_data = 32;
 }
 message UserGetSystemNoticeContentListAns
@@ -443,7 +459,7 @@ message UserSendSystemNotifyMsgReadedStateReq
     // cmd id:2025
     //消息分类id,1--系统消息，2--用户反馈消息，3--群解散通知
     optional uint32 msg_class_id = 1;
-    optional uint32 has_read_msg_id_max = 2; //本地已读的通知消息最大msg_id
+    optional uint64 has_read_msg_id_max = 2; //本地已读的通知消息最大msg_id
     optional bytes attach_data = 32;
 }
 
@@ -991,4 +1007,80 @@ message DeleteMsgAns
     optional uint32 result_code = 1;
     optional string result_string = 2;
     optional bytes attach_data = 32;
+}
+// cid 9115
+message EchoReq
+{
+    optional string text = 1;
+}
+message EchoAns
+{
+    optional uint32 result_code = 1;
+    optional string result_string = 2;
+    optional string text = 3;
+}
+
+enum SessionSyncType {
+    UNKNOWN = 0;
+
+    // 自身的一些配置发生变化
+    // 客户端调用了 CID_PROTO_MSG_CLIENT_SET_UP_SYSTEM_SWITCH_REQ(2043)
+    // 应该调用 CID_PROTO_MSG_CLIENT_GET_SYSTEM_SWITCH_REQ(2045) 获取最新配置
+    SYSTEM_SWITCH_CHANGE = 10;
+
+    // 用户信息变化, 比如客户端修改了昵称 CID_PROTO_LOGIN_USER_SET_USER_INFO_REQ(1013)
+    // 这时应该通过 CID_PROTO_LOGIN_USER_GET_USER_INFO_REQ(1011) 获取用户信息
+    USER_INFO_CHANGE = 11;
+
+    // 自身的好友和群发生变化
+    // 前端
+    //     细一点的方法 CID_PROTO_LOGIN_USER_GET_USER_INFO_REQ(1011) 获取个人信息
+    //              或 CID_PROTO_LOGIN_CLIENT_GET_GROUP_INFO_REQ(1029) 获取群信息 
+    //     一股脑方法 CID_PROTO_LOGIN_USER_GET_FRIENDS_AND_GROUPS_LIST_REQ(1009) 全量获取好友和群信息
+    // 参数 -- is_group_msg 修改的对象
+    // 参数 -- object_id 修改的对象
+    FRIENDS_AND_GROUPS_CHANGE = 20;
+
+    // 自身的好友和群增加了
+    // 前端
+    //     细一点的方法 通过 参数 更新自己好友群列表
+    //     一股脑方法 CID_PROTO_LOGIN_USER_GET_FRIENDS_AND_GROUPS_LIST_REQ(1009) 全量获取好友和群信息
+    // 参数 -- is_group_msg 修改的对象
+    // 参数 -- object_id 修改的对象
+    FRIENDS_AND_GROUPS_ADD = 21;
+
+    // 自身的好友和群删除了
+    // 前端
+    //     细一点的方法 通过 参数 更新自己好友群列表
+    //     一股脑方法 CID_PROTO_LOGIN_USER_GET_FRIENDS_AND_GROUPS_LIST_REQ(1009) 全量获取好友和群信息
+    // 参数 -- is_group_msg 修改的对象
+    // 参数 -- object_id 修改的对象
+    FRIENDS_AND_GROUPS_DEL = 22;
+
+    // 消息被删除 用户调用 CID_DELETE_MSG_REQ(2167) 成功删除消息后 同步到用户其他会话
+    // 参数 -- msg_ids
+    MSG_DELETED = 30;
+
+    // 聊天会话被隐藏或删除
+    // 用户调用 2163 隐藏或删除会话消息后成功后, 其他会话应该执行相同的本地操作
+    // 参数 -- hide_opt 0 隐藏, 1 删除
+    // 参数 -- object_id 隐藏或删除的对象
+    // 参数 -- is_group_msg 隐藏或删除的对象是否是群
+    //
+    //   * 注:该类型不触发 FRIENDS_AND_GROUPS_CHANGE(20) 类型
+    //          前端可以通过参数获取相应对象的设置
+    CONVERSATION_HIDE = 40;
+}
+// cid 2170
+// 同步用户状态变化到用户的所有会话
+message SessionSyncNotify
+{
+    optional SessionSyncType type = 1;
+
+    repeated uint64 msg_ids = 10;
+
+    optional uint32 object_id = 15;
+    optional uint32 is_group_msg = 16;
+
+    optional uint32 hide_opt = 20; // 0 隐藏, 1 删除
 }

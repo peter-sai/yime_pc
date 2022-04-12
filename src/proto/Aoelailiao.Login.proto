@@ -101,6 +101,7 @@ message LoginReq
     optional uint32 client_language_type = 3;
     optional EquipmentInformation equipment_information = 27; //当前设备信息
     optional bytes attach_data = 32;
+    optional string logger_id = 100; //测试用
 }
 
 message LoginAns

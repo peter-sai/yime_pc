@@ -308,6 +308,7 @@
           @click="copyImg(copyItem?.msgContent?.imageMsg?.imageUrl)"
           >{{ t('复制') }}</span
         >
+        <span @click="reply(copyItem)">{{ t('回复') }}</span>
         <span
           v-if="copyItem.type !== 'voiceMsg'"
           @click="forward(copyItem.msgId)"
@@ -708,6 +709,13 @@ watch(
 onUnmounted(() => {
   stop();
 });
+
+// 回复消息
+const reply = (item: IMsgInfo<string>) => {
+  store.commit('SET_SHOWREPLYBOX', true);
+  store.commit('SET_REPLYMSG', item?.msgContent?.stringContent);
+  store.commit('SET_REPLYUSER', getUserInfo(item).nickname);
+};
 
 // 撤回消息
 const del = useRevoke(store, t);

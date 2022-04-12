@@ -13,6 +13,7 @@ import {
   initRongConnect,
   useClientSendMsgAckToServer,
   mergeData,
+  upDateStore,
 } from './hooks/window';
 import { IMsgInfo, ImsgItem, INotifyClassMsgListInfo } from './types/msg';
 import * as RongIMLib from '@rongcloud/imlib-next';
@@ -302,6 +303,31 @@ const clientSendMsgAckToServer = (msgInfos: IMsgInfo<string>[]) => {
 const stop = watch(
   computed(() => store.state.msgInfo),
   async (data: any) => {
+    if (data.cmd == 2170) {
+      console.log(data);
+      if (!data.body.isGroupMsg) {
+        const res = {
+          uid: data.body.objectId,
+        };
+        const data1 = await store.dispatch('postMsg', {
+          query: res,
+          cmd: 1011,
+          encryption: 'Aoelailiao.Login.ClientGetUserInfoReq',
+          auth: true,
+        });
+        // 更新焚毁时间
+        upDateStore(
+          store,
+          'destoryReaded',
+          Number(
+            data1?.body?.userDetailInfo?.userInfo?.userAttachInfo
+              ?.destoryReaded,
+          ),
+          data.body.objectId,
+          true,
+        );
+      }
+    }
     if (data.cmd === 2024) {
       try {
         const notifyContent = JSON.parse(data.body.notifyContent);

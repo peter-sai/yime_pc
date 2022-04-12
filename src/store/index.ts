@@ -43,6 +43,9 @@ const initState = {
   ws: null,
   activeUid: undefined,
   activeIsGroup: false,
+  replyUser: null,
+  showReplyBox: false,
+  replyMsg: null,
   config: {
     cnd_access_key: '',
     cnd_bucketName: '',
@@ -260,6 +263,15 @@ const sotreRoot = createStore({
     },
     SET_USERINFO: (state, val) => {
       state.userInfo = val;
+    },
+    SET_REPLYUSER: (state, val) => {
+      state.replyUser = val;
+    },
+    SET_SHOWREPLYBOX: (state, res) => {
+      state.showReplyBox = res;
+    },
+    SET_REPLYMSG: (state, res) => {
+      state.replyMsg = res;
     },
     SET_TOKEN: (state, val) => {
       state.token = val;
@@ -576,6 +588,12 @@ function getMessage(cmd: any, encryption: any, state: any) {
           );
         }
 
+        if (ansCmd === 2170) {
+          LogOutAns = protoRoot.lookup(
+            'Aoelailiao.Message.SessionSyncNotify',
+          );
+        }
+
         const query = {
           length: dataview.getUint32(0),
           serviceId: dataview.getUint8(4),
@@ -650,7 +668,7 @@ function getMessage(cmd: any, encryption: any, state: any) {
 }
 
 function onMessage() {
-  const cmdList = [2129, 2004, 2125, 2148, 2024, 2156, 2162];
+  const cmdList = [2129, 2004, 2125, 2148, 2024, 2156, 2162, 2170];
   ws.onmessage = (evt: any) => {
     if (sotreRoot.state.isOnLine) {
       sotreRoot.commit('SET_ISONLINE', false);
