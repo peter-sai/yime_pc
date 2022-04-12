@@ -6,7 +6,7 @@
         <div class="line"></div>
         <div class="text">
           <span>回复 {{ store.state.replyUser }}</span>
-          <span>{{ store.state.replyMsg }}</span>
+          <span>{{ store.state.replyMsg?.msgContent?.stringContent }}</span>
         </div>
       </div>
       <img src="../../assets/img/close.svg" alt="" @click="closeReply" />
@@ -776,6 +776,7 @@ const delImgList = (key: number) => {
 
 // 关闭回复面板
 const closeReply = () => {
+  store.commit("SET_REPLYMSG", {});
   store.commit("SET_SHOWREPLYBOX", false);
 };
 
