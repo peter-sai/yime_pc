@@ -988,5 +988,7 @@ export default {
   关闭焚毁: 'Close and burn',
   撤销: 'revoke',
   回复: 'reply',
-  '发言太快了，休息一下吧':"It's too fast to speak. Let's have a rest"
+  '发言太快了，休息一下吧': "It's too fast to speak. Let's have a rest",
+  '您的ip有风险，为了您的安全，您已被暂时限制登录':
+    'Your IP is at risk. For your security, you have been temporarily restricted from logging in',
 };

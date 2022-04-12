@@ -228,6 +228,8 @@ const store = useStore(key);
 store.dispatch('init');
 const { t } = useI18n();
 
+store.commit('set_T', t);
+
 // 获取浏览器弹框权限
 if (Notification.permission !== 'granted') {
   Notification.requestPermission();

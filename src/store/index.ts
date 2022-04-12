@@ -13,6 +13,8 @@ import { IMsgInfo, ImsgItem, TMsgContent } from '@/types/msg';
 import { IUserDetailInfo } from '@/types/user';
 import { useClientSendMsgAckToServer, mergeData } from '@/hooks/window';
 import { hideLoading } from '@/plugin/Loading';
+import { Toast } from '@/plugin/Toast';
+import { useI18n } from 'vue-i18n';
 
 const OSS = require('ali-oss');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -44,6 +46,7 @@ const initState = {
   replyUser: null,
   showReplyBox: false,
   replyMsg: null,
+  t: null,
   config: {
     cnd_access_key: '',
     cnd_bucketName: '',
@@ -153,6 +156,9 @@ export type initStore = typeof initState;
 const sotreRoot = createStore({
   state: initState,
   mutations: {
+    set_T: (state, res) => {
+      state.t = res;
+    },
     SET_MSGSOURCE: (state, res) => {
       state.msgSource = res;
     },
@@ -582,9 +588,7 @@ function getMessage(cmd: any, encryption: any, state: any) {
         }
 
         if (ansCmd === 2170) {
-          LogOutAns = protoRoot.lookup(
-            'Aoelailiao.Message.SessionSyncNotify',
-          );
+          LogOutAns = protoRoot.lookup('Aoelailiao.Message.SessionSyncNotify');
         }
 
         const query = {
@@ -610,6 +614,16 @@ function getMessage(cmd: any, encryption: any, state: any) {
           sotreRoot.dispatch('logout');
 
           location.reload();
+          return;
+        }
+
+        if (body.resultCode === 1102) {
+          Toast(state.t('您的ip有风险，为了您的安全，您已被暂时限制登录'));
+          setTimeout(() => {
+            // 登录凭证失效
+            sotreRoot.dispatch('logout');
+            location.reload();
+          }, 2000);
           return;
         }
         if (body.switchSettingInfo) {
