@@ -6,6 +6,7 @@ import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer';
 import config from './config';
 const os = require('os');
 const fs = require('fs');
+const path = require('path');
 const isDevelopment = process.env.NODE_ENV !== 'production';
 const Badge = require('electron-windows-badge');
 
@@ -63,11 +64,11 @@ async function createWindow() {
   let dowUrl = '';
   // 使用本地应用打开文件
   ipcMain.on('openFileInSysApp', (event, url, fileName) => {
-    dowUrl = `${os.homedir()}/${config.ELECTRON_NAME}/${fileName}`;
+    dowUrl = path.join(os.homedir(), config.ELECTRON_NAME, fileName); //`${os.homedir()}/${config.ELECTRON_NAME}/${fileName}`;
     // 查看文件是否存在 如果存在 并且大小相同 则直接打开
     fs.access(dowUrl, (err: any) => {
       if (!err) {
-        shell.openPath(`${os.homedir()}/${config.ELECTRON_NAME}/${fileName}`);
+        shell.openPath(dowUrl);
       } else {
         win.webContents.downloadURL(url);
       }
