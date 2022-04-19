@@ -74,6 +74,7 @@ import { saveData } from '@/api/app';
 import { Store, useStore } from 'vuex';
 import { initStore, key } from '@/store';
 import { initRonyun } from '@/App.vue';
+import returnCitySN from 'returnCitySN';
 import config from '../../config';
 const logoPath = config.ELECTRON_NAME;
 const logo = require(`@/assets/${logoPath}/logo.svg`);
@@ -111,7 +112,7 @@ function useReg(
   query: Tquery,
   agreement: Ref<boolean>,
   route: RouteLocationNormalizedLoaded,
-  t: any,
+  t: any
 ) {
   return async () => {
     if (!query.nickname) {
@@ -139,6 +140,7 @@ function useReg(
       equipmentInformation: {
         deviceBrand: 'web',
         releaseVersion: '2.0.0',
+        devicePublicIp: returnCitySN.cip || '',
       },
     };
     const data = await store.dispatch('postMsg', {

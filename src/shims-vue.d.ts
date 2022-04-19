@@ -34,4 +34,8 @@ declare module 'ClipboardItem' {
 declare module 'Electron' {
   const content: any;
   export default content;
+  }
+declare module 'returnCitySN' {
+  const content: any;
+  export default content;
 }

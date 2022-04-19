@@ -9,6 +9,8 @@
       <div class="title" v-if="isGroup">{{ userInfo?.nickname }}</div>
       <ImBg v-bind="$attrs">
         <Fire :isBurn="isBurn" :fired="fired" :right="`-20px`" :top="`-15px`" />
+        {{ replyMsg?.msgContent?.stringContent }}
+        <div class="line" v-if="replyMsg?.msgContent?.stringContent"></div>
         <p v-for="item in list" :key="item" class="text">
           {{ item.replace(/\u0000/g, '') }}
         </p>
@@ -24,20 +26,21 @@ import {
   PropType,
   computed,
   defineEmits,
-} from 'vue';
-import ImBg from '../ImgBg/index.vue';
-import Fire from '../Fire/index.vue';
-import Iconfont from '@/iconfont/index.vue';
-import { useStore } from 'vuex';
-import { useI18n } from 'vue-i18n';
-import { IUserInfo } from '@/types/user';
-import { key } from '@/store';
+} from 'vue'
+import ImBg from '../ImgBg/index.vue'
+import Fire from '../Fire/index.vue'
+import Iconfont from '@/iconfont/index.vue'
+import { useStore } from 'vuex'
+import { useI18n } from 'vue-i18n'
+import { IUserInfo } from '@/types/user'
+import { IMsgInfo } from '@/types/msg'
+import { key } from '@/store'
 export default defineComponent({
   name: 'Ymsg',
-});
+})
 </script>
 <script lang="ts" setup>
-defineEmits(['click']);
+defineEmits(['click'])
 defineProps({
   isBurn: {
     type: Boolean,
@@ -48,22 +51,32 @@ defineProps({
   userInfo: {
     type: Object as PropType<IUserInfo>,
   },
-});
-const store = useStore(key);
-const isGroup = computed(() => store.state.activeIsGroup);
-const slots: any = useSlots();
+  replyMsg: {
+    type: Object as PropType<IMsgInfo>,
+  },
+})
+const store = useStore(key)
+const isGroup = computed(() => store.state.activeIsGroup)
+const slots: any = useSlots()
 
 const list = slots.default()[0].children
   ? slots.default()[0].children.split('\n\n')
-  : [];
+  : []
 </script>
 <style lang="scss" scoped>
 @import '@/style/theme/index.scss';
 .mmsg {
   display: flex;
   max-width: 80%;
+  .line {
+    width: 100%;
+    height: 1px;
+    background: #000000;
+    opacity: 0.2;
+    margin: 5px 0;
+  }
   .title {
-    font-size: 16px;
+    font-size: 12px;
     font-family: SourceHanSansCN-Regular, SourceHanSansCN;
     font-weight: 400;
     color: #999999;

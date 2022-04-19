@@ -168,7 +168,7 @@ const useGetDetail = async (
   store: Store<initStore>,
   userDetailInfo: Ref<IUserDetailInfo>,
   isBotUser: Ref<boolean>,
-  yUserInfo: Ref<IUserInfo>,
+  yUserInfo: Ref<IUserInfo>
 ) => {
   if (!store.state.activeUid) return;
 
@@ -201,7 +201,7 @@ const useGetDetail = async (
 // 获取用户登录状态
 const useStatus = async (
   store: Store<initStore>,
-  onlineInfo: Ref<IUserInfo>,
+  onlineInfo: Ref<IUserInfo>
 ) => {
   const res = {
     userOnlineState: {
@@ -223,7 +223,7 @@ async function init(
   userDetailInfo: Ref<IUserDetailInfo>,
   isBotUser: Ref<boolean>,
   yUserInfo: Ref<IUserInfo>,
-  onlineInfo: Ref<IUserInfo>,
+  onlineInfo: Ref<IUserInfo>
 ) {
   // 获取用户详细资料
   await useGetDetail(store, userDetailInfo, isBotUser, yUserInfo);
@@ -238,13 +238,14 @@ const { t } = useI18n();
 const writeState = ref(0); //0--结束输入(未输入), 1--正在输入
 const store = useStore(key);
 const yUserInfo: Ref<IUserInfo> = ref({}) as Ref<IUserInfo>; // 当前聊天用户信息
+const userInfo: Ref<IUserInfo> = ref({}) as Ref<IUserInfo>; // 需要显示详情用户的信息
 const userDetailInfo: Ref<IUserDetailInfo> = ref({}) as Ref<IUserDetailInfo>; // 需要显示详情用户的信息
 const isBotUser = ref(false);
 const onlineInfo: Ref<IUserInfo> = ref({}) as Ref<IUserInfo>;
 const files = ref('');
 
 const groupDetailInfo: ComputedRef<IGroupInfo> = computed(
-  () => store.state.msgList[store.state.userUid]?.groupDetailInfo || {},
+  () => store.state.msgList[store.state.userUid]?.groupDetailInfo || {}
 );
 
 // 群聊陌生人
@@ -330,7 +331,7 @@ const toggleBox = async (uid?: number) => {
   }
 
   userDetailInfo.value = msgItem?.userDetailInfo || {};
-  yUserInfo.value = msgItem?.userDetailInfo?.userInfo || {};
+  userInfo.value = msgItem?.userDetailInfo?.userInfo || {};
   showBox.value = !showBox.value;
   const newMsgItem: ImsgItem = store.state.msgList[store.state.userUid!];
   if (!newMsgItem) return;
@@ -396,7 +397,7 @@ const stop = watch(
         writeState.value = userWriteState.writeState;
       }
     }
-  },
+  }
 );
 onUnmounted(() => {
   stop();

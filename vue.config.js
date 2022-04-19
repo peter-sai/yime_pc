@@ -45,6 +45,7 @@ module.exports = {
       Recorder: 'Recorder',
       ClipboardItem: 'ClipboardItem',
       Electron: 'Electron',
+      returnCitySN: 'returnCitySN',
     },
   },
   chainWebpack: (config) => {

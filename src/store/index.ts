@@ -14,7 +14,7 @@ import { IMsgInfo, ImsgItem, TMsgContent } from '@/types/msg';
 import { IUserDetailInfo } from '@/types/user';
 import { useClientSendMsgAckToServer, mergeData } from '@/hooks/window';
 import Electron from 'Electron';
-import { hideLoading } from '@/plugin/Loading';
+import { Toast } from '@/plugin/Toast';
 
 const OSS = require('ali-oss');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -45,7 +45,10 @@ const initState = {
   activeIsGroup: false,
   replyUser: null,
   showReplyBox: false,
-  replyMsg: null,
+  replyMsg: {
+    msgId: null,
+  },
+  t: null,
   config: {
     cnd_access_key: '',
     cnd_bucketName: '',
@@ -155,6 +158,9 @@ export type initStore = typeof initState;
 const sotreRoot = createStore({
   state: initState,
   mutations: {
+    set_T: (state, res) => {
+      state.t = res;
+    },
     SET_MSGSOURCE: (state, res) => {
       state.msgSource = res;
     },
@@ -365,7 +371,7 @@ const sotreRoot = createStore({
         const token = new Uint8Array(
           buffer,
           tokenObj.byteOffset,
-          tokenObj.byteLength,
+          tokenObj.byteLength
         );
         tokenObj.uint8Array.split(',').forEach((e: number, k: number) => {
           token[k] = e;
@@ -389,7 +395,7 @@ const sotreRoot = createStore({
     },
     postMsg(
       { state, dispatch },
-      { query, cmd, encryption, auth = false, userToken = null },
+      { query, cmd, encryption, auth = false, userToken = null }
     ) {
       let data: any = null;
       if (encryption) {
@@ -433,7 +439,7 @@ const sotreRoot = createStore({
       if (state.msgList[id]) {
         if (
           !state.msgList[id].readList.find(
-            (e: IMsgInfo<TMsgContent>) => Number(e.msgId) === Number(res.msgId),
+            (e: IMsgInfo<TMsgContent>) => Number(e.msgId) === Number(res.msgId)
           )
         ) {
           // push消息
@@ -487,7 +493,7 @@ function getProtocolHeader(
   bodybuffer: any,
   cmd: any,
   auth: boolean,
-  userToken: any,
+  userToken: any
 ) {
   // 2 版本
 
@@ -540,58 +546,56 @@ function getMessage(cmd: any, encryption: any, state: any) {
         // 获取后台自动推送的上线和离线消息
         if (ansCmd === 2129) {
           LogOutAns = protoRoot.lookup(
-            'Aoelailiao.Message.UserOnlineStateNotifyToClient',
+            'Aoelailiao.Message.UserOnlineStateNotifyToClient'
           );
         }
         if (ansCmd === 2004) {
           LogOutAns = protoRoot.lookup(
-            'Aoelailiao.Message.ServerSendMsgToClientNotify',
+            'Aoelailiao.Message.ServerSendMsgToClientNotify'
           );
         }
         if (ansCmd === 5002) {
           LogOutAns = protoRoot.lookup(
-            'Aoelailiao.Message.ServerSendMsgToClientNotify',
+            'Aoelailiao.Message.ServerSendMsgToClientNotify'
           );
         }
         if (ansCmd === 2148) {
           LogOutAns = protoRoot.lookup(
-            'Aoelailiao.Message.ServerSendMsgHasReadedInfoToClientNotify',
+            'Aoelailiao.Message.ServerSendMsgHasReadedInfoToClientNotify'
           );
         }
         if (ansCmd === 2054) {
           LogOutAns = protoRoot.lookup(
-            'Aoelailiao.Message.ClientGetSectionOfflineMsgAns',
+            'Aoelailiao.Message.ClientGetSectionOfflineMsgAns'
           );
         }
 
         if (ansCmd === 2125) {
           LogOutAns = protoRoot.lookup(
-            'Aoelailiao.Message.WriteStateNotifyToClient',
+            'Aoelailiao.Message.WriteStateNotifyToClient'
           );
         }
 
         if (ansCmd === 2024) {
           LogOutAns = protoRoot.lookup(
-            'Aoelailiao.Message.ServerSendSystemNotifyMsg',
+            'Aoelailiao.Message.ServerSendSystemNotifyMsg'
           );
         }
 
         if (ansCmd === 2156) {
           LogOutAns = protoRoot.lookup(
-            'Aoelailiao.Message.GroupCallNotifyToClient',
+            'Aoelailiao.Message.GroupCallNotifyToClient'
           );
         }
 
         if (ansCmd === 2162) {
           LogOutAns = protoRoot.lookup(
-            'Aoelailiao.Message.GroupCallApplyJoinToClient',
+            'Aoelailiao.Message.GroupCallApplyJoinToClient'
           );
         }
 
         if (ansCmd === 2170) {
-          LogOutAns = protoRoot.lookup(
-            'Aoelailiao.Message.SessionSyncNotify',
-          );
+          LogOutAns = protoRoot.lookup('Aoelailiao.Message.SessionSyncNotify');
         }
 
         const query = {
@@ -619,10 +623,20 @@ function getMessage(cmd: any, encryption: any, state: any) {
           location.reload();
           return;
         }
+
+        if (body.resultCode === 1102) {
+          Toast(state.t('您的ip有风险，为了您的安全，您已被暂时限制登录'));
+          setTimeout(() => {
+            // 登录凭证失效
+            sotreRoot.dispatch('logout');
+            location.reload();
+          }, 2000);
+          return;
+        }
         if (body.switchSettingInfo) {
           setStorage(
             'switchSettingInfo',
-            JSON.stringify(body.switchSettingInfo),
+            JSON.stringify(body.switchSettingInfo)
           );
           sotreRoot.commit('SET_SWITCHSETTINGINFO', body.switchSettingInfo);
         }
@@ -633,17 +647,17 @@ function getMessage(cmd: any, encryption: any, state: any) {
         if (body.groupChatWelcomeTips) {
           setStorage(
             'groupChatWelcomeTips',
-            JSON.stringify(body.groupChatWelcomeTips),
+            JSON.stringify(body.groupChatWelcomeTips)
           );
           sotreRoot.commit(
             'SET_GROUPCHATWELCOMETIPS',
-            body.groupChatWelcomeTips,
+            body.groupChatWelcomeTips
           );
         }
         if (body.userChatWelcomeTips) {
           setStorage(
             'userChatWelcomeTips',
-            JSON.stringify(body.userChatWelcomeTips),
+            JSON.stringify(body.userChatWelcomeTips)
           );
           sotreRoot.commit('SET_USERCHATWELCOMETIPS', body.userChatWelcomeTips);
         }
@@ -724,7 +738,7 @@ async function heartbeat(store: any) {
       'SET_TIMEOUT',
       setTimeout(() => {
         heartbeat(store);
-      }, 10000),
+      }, 10000)
     );
     await store.dispatch('postMsg', {
       query: null,

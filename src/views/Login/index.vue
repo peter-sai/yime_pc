@@ -122,6 +122,7 @@ import { useRouter } from 'vue-router';
 import { saveData } from '@/api/app';
 import { initRonyun } from '@/App.vue';
 import { getRoam, mergeData } from '../../hooks/window';
+import returnCitySN from 'returnCitySN';
 import config from '../../config';
 const logoPath = config.ELECTRON_NAME;
 const logo = require(`@/assets/${logoPath}/logo.svg`);
@@ -175,7 +176,7 @@ function useGetCode(
   query: TQuery,
   areaCode: Ref<number>,
   time: Ref<number>,
-  t: any,
+  t: any
 ) {
   return async () => {
     if (!query.phone) {
@@ -223,7 +224,7 @@ function useLogin(
   store: Store<initStore>,
   query: any,
   areaCode: Ref<number>,
-  t: (key: string) => string,
+  t: (key: string) => string
 ) {
   return async () => {
     const language = getStorage('language') || 0;
@@ -246,6 +247,7 @@ function useLogin(
         equipmentInformation: {
           deviceBrand: 'web',
           releaseVersion: '2.0.0',
+          devicePublicIp: returnCitySN.cip || '',
         },
       };
       const data = await store.dispatch('postMsg', {
@@ -275,6 +277,7 @@ function useLogin(
         equipmentInformation: {
           deviceBrand: 'web',
           releaseVersion: '2.0.0',
+          devicePublicIp: returnCitySN.cip || '',
         },
       };
 
@@ -305,6 +308,7 @@ function useLogin(
         equipmentInformation: {
           deviceBrand: 'web',
           releaseVersion: '2.0.0',
+          devicePublicIp: returnCitySN.cip || '',
         },
       };
 
@@ -324,7 +328,7 @@ async function useLoginCb(
   areaCode: Ref<number>,
   query: any,
   store: Store<initStore>,
-  t: (key: string) => string,
+  t: (key: string) => string
 ) {
   // 手机号码未注册 跳转到 注册页面
   if (data.body.resultCode === 1201) {

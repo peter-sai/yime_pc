@@ -96,6 +96,7 @@ const slots = useSlots();
       color: #999;
       // margin-top: 10px;
       line-height: 18px;
+      height: 18px;
       width: 200px;
       white-space: nowrap;
       text-overflow: ellipsis;
