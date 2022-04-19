@@ -596,10 +596,12 @@ const sendImg = useSendImg(store, 0, t)
 const bodyClickCb = () => {
   showMen.value = false
 }
+// 回复相关信息
+const replyData = computed(() => store.state.replyData)
+
 onMounted(() => {
   document.body.addEventListener('click', bodyClickCb)
-  store.commit('SET_REPLYMSG', {})
-  store.commit('SET_SHOWREPLYBOX', false)
+  store.commit('SET_REPLYMSG', replyData.value[store.state.activeUid]?.replyMsg)
 })
 onBeforeUnmount(() => {
   document.body.removeEventListener('click', bodyClickCb)
@@ -724,11 +726,13 @@ onUnmounted(() => {
 
 // 回复消息
 const reply = (item: IMsgInfo<string>) => {
-  console.log(item, 888)
-  store.commit('SET_SHOWREPLYBOX', true)
-  store.commit('SET_REPLYMSG', item)
-  store.commit('SET_REPLYUSER', getUserInfo(item).nickname)
-  console.log(store.state.replyMsg)
+  replyData.value[store.state.activeUid] = {
+    showReplyBox: true,
+    replyMsg: item,
+    replyUser: getUserInfo(item).nickname,
+  }
+  store.commit('SET_REPLYDATA', replyData)
+  store.commit('SET_REPLYMSG', replyData.value[store.state.activeUid].replyMsg)
 }
 
 // 撤回消息

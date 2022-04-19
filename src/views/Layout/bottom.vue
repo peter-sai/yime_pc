@@ -1,12 +1,12 @@
 <template>
   <div class="bottom">
-    <div class="reply" v-if="store.state.showReplyBox">
+    <div class="reply" v-if="replyActive?.showReplyBox">
       <div class="reply-left">
         <img src="../../assets/img/reply.svg" alt="" />
         <div class="line"></div>
         <div class="text">
-          <span>回复 {{ store.state.replyUser }}</span>
-          <span>{{ store.state.replyMsg?.msgContent?.stringContent }}</span>
+          <span>回复 {{ replyActive?.replyUser }}</span>
+          <span>{{ replyActive?.replyMsg?.msgContent?.stringContent }}</span>
         </div>
       </div>
       <img src="../../assets/img/close.svg" alt="" @click="closeReply" />
@@ -774,10 +774,16 @@ const delImgList = (key: number) => {
   copyImgList.value.splice(key, 1)
 }
 
+const replyData = computed(() => store.state.replyData)
+const replyActive = computed(() => replyData.value[store.state.activeUid])
 // 关闭回复面板
 const closeReply = () => {
-  store.commit('SET_REPLYMSG', {})
-  store.commit('SET_SHOWREPLYBOX', false)
+  replyData.value[store.state.activeUid] = {
+    showReplyBox: false,
+    replyMsg: {},
+    replyUser: '',
+  }
+  store.commit('SET_REPLYDATA', replyData)
 }
 
 // 设置焚毁时间

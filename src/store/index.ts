@@ -43,8 +43,7 @@ const initState = {
   ws: null,
   activeUid: undefined,
   activeIsGroup: false,
-  replyUser: null,
-  showReplyBox: false,
+  replyData: {},
   replyMsg: {
     msgId: null,
   },
@@ -270,14 +269,12 @@ const sotreRoot = createStore({
     SET_USERINFO: (state, val) => {
       state.userInfo = val;
     },
-    SET_REPLYUSER: (state, val) => {
-      state.replyUser = val;
-    },
-    SET_SHOWREPLYBOX: (state, res) => {
-      state.showReplyBox = res;
-    },
     SET_REPLYMSG: (state, res) => {
       state.replyMsg = res;
+    },
+    SET_REPLYDATA: (state, res) => {
+      state.replyData = res;
+      setStorage("replyData", JSON.stringify(res.value));
     },
     SET_TOKEN: (state, val) => {
       state.token = val;
@@ -345,8 +342,10 @@ const sotreRoot = createStore({
       const appAboutUsInfo = getStorage("appAboutUsInfo");
       const groupChatWelcomeTips = getStorage("groupChatWelcomeTips");
       const userChatWelcomeTips = getStorage("userChatWelcomeTips");
+      const replyData = getStorage("replyData");
       const msgList = getMsgList() || {};
       commit("SET_MSGLIST", msgList);
+      replyData && commit("SET_REPLYDATA", JSON.parse(replyData));
       appAboutUsInfo &&
         commit("SET_APPABOUTUSINFO", JSON.parse(appAboutUsInfo));
       groupChatWelcomeTips &&
