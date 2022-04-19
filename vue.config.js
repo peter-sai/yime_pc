@@ -36,6 +36,7 @@ module.exports = {
     externals: {
       Recorder: 'Recorder',
       ClipboardItem: 'ClipboardItem',
+      returnCitySN: 'returnCitySN',
     },
   },
   chainWebpack: (config) => {

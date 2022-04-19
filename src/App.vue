@@ -49,7 +49,7 @@ export async function initRonyun(store: Store<initStore>) {
   // RTC 客户端初始化
   const rtcClient: RCRTCClient = RongIMLib.installPlugin(
     rtcInstaller,
-    {},
+    {}
   ) as RCRTCClient;
   // 正在通话中的uid
   const rongIm = RongIMLib.installPlugin(callInstaller, {
@@ -295,7 +295,7 @@ const clientSendMsgAckToServer = (msgInfos: IMsgInfo<string>[]) => {
     const { msgId, fromId, toId } = lastMsgInfo;
     const ackToServer = useClientSendMsgAckToServer(
       store,
-      lastMsgInfo.isGroupMsg ? 1 : 0,
+      lastMsgInfo.isGroupMsg ? 1 : 0
     );
     ackToServer(msgId, fromId, toId, 0);
   }
@@ -321,11 +321,10 @@ const stop = watch(
           store,
           'destoryReaded',
           Number(
-            data1?.body?.userDetailInfo?.userInfo?.userAttachInfo
-              ?.destoryReaded,
+            data1?.body?.userDetailInfo?.userInfo?.userAttachInfo?.destoryReaded
           ),
           data.body.objectId,
-          true,
+          true
         );
       }
     }
@@ -367,7 +366,7 @@ const stop = watch(
           msgList[msgInfos[0].fromId]?.readList ||
           [];
         const revokeKey = readList.findIndex(
-          (e: any) => Number(e.msgId) === Number(revokeMsgId),
+          (e: any) => Number(e.msgId) === Number(revokeMsgId)
         );
         readList.splice(revokeKey, 1);
         store.commit('SET_MSGLIST', msgList);
@@ -381,7 +380,7 @@ const stop = watch(
           msgList[msgInfos[0].fromId]?.readList ||
           [];
         const fireKey = readList.findIndex(
-          (e: any) => Number(e.msgId) === Number(fireMsgId),
+          (e: any) => Number(e.msgId) === Number(fireMsgId)
         );
         if (readList[fireKey]) {
           readList[fireKey].fired = true;
@@ -393,7 +392,7 @@ const stop = watch(
       if (msgInfos[0].msgContent.msgContent === 'cleanInfo') {
         const { maxMsgId } = msgInfos[0].msgContent.cleanInfo;
         const newList = msgList[store.state.activeUid!].readList.filter(
-          (e: any) => Number(e.msgId) > Number(maxMsgId),
+          (e: any) => Number(e.msgId) > Number(maxMsgId)
         );
 
         msgList[store.state.activeUid!].readList = newList;
@@ -426,7 +425,7 @@ const stop = watch(
         res.groupDetailInfo = groupDetailInfo;
         if (store.state.groupInfos && store.state.groupInfos.length) {
           const groupItemIndex = (store.state.groupInfos || []).findIndex(
-            (e) => e.groupId === groupDetailInfo.groupId,
+            (e) => e.groupId === groupDetailInfo.groupId
           );
           if (groupItemIndex === -1) {
             store.state.groupInfos[store.state.groupInfos.length] =
@@ -491,7 +490,7 @@ const stop = watch(
         });
       }
     }
-  },
+  }
 );
 
 const audio = new Audio();
@@ -521,7 +520,7 @@ function msgNotice(item: any) {
       if (item.msgContent.msgContent === 'groupAtInfo') {
         const groupAtInfo = item?.msgContent?.groupAtInfo?.atUsers?.find(
           (e: any) =>
-            Number(e.uid) === Number(store.state.userInfo.uid) || e.type === 1,
+            Number(e.uid) === Number(store.state.userInfo.uid) || e.type === 1
         );
         if (Boolean(groupAttachInfo?.groupMsgAtNotify) && groupAtInfo) {
           //
@@ -531,7 +530,7 @@ function msgNotice(item: any) {
     } else {
       // 单聊
       isMsgMute = Boolean(
-        res?.userDetailInfo?.userInfo?.userAttachInfo?.msgMute,
+        res?.userDetailInfo?.userInfo?.userAttachInfo?.msgMute
       );
     }
   }

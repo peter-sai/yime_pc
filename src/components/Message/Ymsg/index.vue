@@ -76,7 +76,7 @@ const list = slots.default()[0].children
     margin: 5px 0;
   }
   .title {
-    font-size: 16px;
+    font-size: 12px;
     font-family: SourceHanSansCN-Regular, SourceHanSansCN;
     font-weight: 400;
     color: #999999;
