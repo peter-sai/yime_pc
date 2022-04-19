@@ -40,6 +40,7 @@
     </div>
     <div class="Message">
       <div v-for="(item, key) in itemChat.readList || []" :key="item.id">
+        {{ getReply(item) }}
         <Time v-if="isShowTime(key)">{{ formateTime(item.msgTime, t) }}</Time>
         <!-- 普通消息 -->
         <!-- 阅后即焚 -->
@@ -70,6 +71,7 @@
               @click="showUserInfo(getUserInfo(item).uid)"
               @menuClick="menuClick($event, item)"
               :isBurn="item.msgShowType === 3"
+              :replyMsg="getReply(item)"
               :userInfo="getUserInfo(item)"
               v-if="isShowHowComponent(item)"
             >
@@ -78,6 +80,7 @@
             <Mmsg
               @menuClick="menuClick($event, item)"
               :isRead="item.msgId <= readMsgId"
+              :replyMsg="getReply(item)"
               :isBurn="item.msgShowType === 3"
               v-else
             >
@@ -596,6 +599,8 @@ const bodyClickCb = () => {
 };
 onMounted(() => {
   document.body.addEventListener('click', bodyClickCb);
+  store.commit('SET_REPLYMSG', {});
+  store.commit('SET_SHOWREPLYBOX', false);
 });
 onBeforeUnmount(() => {
   document.body.removeEventListener('click', bodyClickCb);
@@ -611,6 +616,13 @@ const isShowHowComponent = (item: IMsgInfo<string>) => {
   return !activeIsGroup.value
     ? item.toId === userInfo.value.uid
     : item.fromId !== userInfo.value.uid;
+};
+
+// 获取回复的信息
+const getReply = (item: IMsgInfo<string>) => {
+  return itemChat.value.readList.find(
+    (e) => e.msgId === item.replyMsgId,
+  ) as IMsgInfo;
 };
 
 // 获取需要显示的头像信息
@@ -713,9 +725,11 @@ onUnmounted(() => {
 
 // 回复消息
 const reply = (item: IMsgInfo<string>) => {
+  console.log(item, 888);
   store.commit('SET_SHOWREPLYBOX', true);
-  store.commit('SET_REPLYMSG', item?.msgContent?.stringContent);
-  store.commit('SET_REPLYUSER', getUserInfo(item)?.nickname);
+  store.commit('SET_REPLYMSG', item);
+  store.commit('SET_REPLYUSER', getUserInfo(item).nickname);
+  console.log(store.state.replyMsg);
 };
 
 // 撤回消息

@@ -6,7 +6,7 @@
         <div class="line"></div>
         <div class="text">
           <span>回复 {{ store.state.replyUser }}</span>
-          <span>{{ store.state.replyMsg }}</span>
+          <span>{{ store.state.replyMsg?.msgContent?.stringContent }}</span>
         </div>
       </div>
       <img src="../../assets/img/close.svg" alt="" @click="closeReply" />
@@ -776,6 +776,7 @@ const delImgList = (key: number) => {
 
 // 关闭回复面板
 const closeReply = () => {
+  store.commit('SET_REPLYMSG', {});
   store.commit('SET_SHOWREPLYBOX', false);
 };
 
@@ -847,6 +848,7 @@ function useBeforeSwitch(
     &-left {
       display: flex;
       align-items: center;
+      width: 100%;
       .line {
         width: 1px;
         height: 30px;
@@ -856,6 +858,9 @@ function useBeforeSwitch(
       .text {
         display: flex;
         flex-direction: column;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
         span:nth-child(1) {
           font-size: 14px;
           font-weight: 400;
@@ -865,6 +870,9 @@ function useBeforeSwitch(
           font-size: 14px;
           font-weight: 400;
           color: #050505;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
         }
       }
     }

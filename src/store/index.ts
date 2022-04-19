@@ -1,5 +1,5 @@
-import { createStore, Store } from 'vuex';
-import { InjectionKey } from 'vue';
+import { createStore, Store } from "vuex";
+import { InjectionKey } from "vue";
 import {
   clearStorage,
   getMsgList,
@@ -7,18 +7,18 @@ import {
   getToken,
   setMsgList,
   setStorage,
-} from '@/utils/utils';
-import { useGetOfflineMsg } from '@/api/app';
-import { IMsgInfo, ImsgItem, TMsgContent } from '@/types/msg';
-import { IUserDetailInfo } from '@/types/user';
-import { useClientSendMsgAckToServer, mergeData } from '@/hooks/window';
-import { hideLoading } from '@/plugin/Loading';
-import { Toast } from '@/plugin/Toast';
-import { useI18n } from 'vue-i18n';
+} from "@/utils/utils";
+import { useGetOfflineMsg } from "@/api/app";
+import { IMsgInfo, ImsgItem, TMsgContent } from "@/types/msg";
+import { IUserDetailInfo } from "@/types/user";
+import { useClientSendMsgAckToServer, mergeData } from "@/hooks/window";
+import { hideLoading } from "@/plugin/Loading";
+import { Toast } from "@/plugin/Toast";
+import { useI18n } from "vue-i18n";
 
-const OSS = require('ali-oss');
+const OSS = require("ali-oss");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const protoRoot = require('@/protoBuild/proto');
+const protoRoot = require("@/protoBuild/proto");
 
 export const key: InjectionKey<Store<initStore>> = Symbol();
 
@@ -38,38 +38,40 @@ const initState = {
   timeOut: undefined,
   forwardMsgId: 0,
   lang: -1, // 设置语言
-  token: '',
+  token: "",
   isOnLine: false,
   ws: null,
   activeUid: undefined,
   activeIsGroup: false,
   replyUser: null,
   showReplyBox: false,
-  replyMsg: null,
+  replyMsg: {
+    msgId: null,
+  },
   t: null,
   config: {
-    cnd_access_key: '',
-    cnd_bucketName: '',
-    cnd_host: '',
-    cnd_secret_key: '',
-    h5_address: '',
-    ip_address: '',
+    cnd_access_key: "",
+    cnd_bucketName: "",
+    cnd_host: "",
+    cnd_secret_key: "",
+    h5_address: "",
+    ip_address: "",
     ip_port: null,
   },
   appAboutUsInfo: {
-    Jt: '',
-    Ft: '',
-    En: '',
+    Jt: "",
+    Ft: "",
+    En: "",
   },
   groupChatWelcomeTips: {
-    Jt: '',
-    Ft: '',
-    En: '',
+    Jt: "",
+    Ft: "",
+    En: "",
   },
   userChatWelcomeTips: {
-    Jt: '',
-    Ft: '',
-    En: '',
+    Jt: "",
+    Ft: "",
+    En: "",
   },
   switchSettingInfo: {
     pushSound: 1, ///离线消息push声音 0--打开,1--关闭
@@ -93,14 +95,14 @@ const initState = {
   userDetailInfo: {
     userInfo: {
       uid: 0,
-      nickname: '',
-      icon: '',
+      nickname: "",
+      icon: "",
       onlineState: 0,
-      imAccount: '',
+      imAccount: "",
       lastOnlineTime: 0,
       isBotUser: 0,
       userAttachInfo: {
-        remarkName: '', //备注名称
+        remarkName: "", //备注名称
         destoryReaded: 0, //阅后即焚开关,0--关闭(默认),1--开
         msgTop: 0, //消息置顶开关,0--关闭(默认),1--开
         msgMute: 0, //消息免打扰开关,0--关闭(默认),1--开
@@ -109,30 +111,30 @@ const initState = {
     },
     isFriend: 0, //是否为好友关系，0--不是(默认)，1--是
     friend_query_type: 1, //加好友的方式，1--搜索，2--扫描二维码， 3--个人名片
-    phone: '', //手机号
-    qrCode: '', //用户二维码url
+    phone: "", //手机号
+    qrCode: "", //用户二维码url
     isRealnameAuth: 0, //是否实名认证，0--未实名认证(默认)，1--已实名认证
     isInMyBlacklist: 0, //是否在我的黑名单中，0--不是(默认)，1--是
     isSetPassword: 0, //是否设置过密码，0--未设置(默认,不需要设置密码)，1--已设置(进入修改密码页)，2--强制退出时需要设置登录密码(进入设置密码页)
     userSex: 1, //1--男，2--女
-    cityCode: '', //设置的位置信息
-    userSign: '', //用户签名
+    cityCode: "", //设置的位置信息
+    userSign: "", //用户签名
     findMeGroup: 0, //通过群聊向我发起聊天 0--打开,1--关闭
-    source: '', //来源
+    source: "", //来源
     sourceId: 0, //来源id;用户id 群id
     source_type: 0, //0--群聊1-好友推荐2-分享链接3-手机号搜索4-YIME号搜索5-昵称搜索
     labelLists: [], // 好友标签信息
   },
   userInfo: {
     uid: 0,
-    nickname: '',
-    icon: '',
+    nickname: "",
+    icon: "",
     onlineState: 0,
-    imAccount: '',
+    imAccount: "",
     lastOnlineTime: 0,
     isBotUser: 0,
     userAttachInfo: {
-      remarkName: '', //备注名称
+      remarkName: "", //备注名称
       destoryReaded: 0, //阅后即焚开关,0--关闭(默认),1--开
       msgTop: 0, //消息置顶开关,0--关闭(默认),1--开
       msgMute: 0, //消息免打扰开关,0--关闭(默认),1--开
@@ -147,7 +149,7 @@ const initState = {
     userAgent: null,
   },
   msgList: {} as { [key: number]: ImsgItem },
-  playAudio: '', // 当前正在播放的音频
+  playAudio: "", // 当前正在播放的音频
   conversationIng: true, // 是否在通话中
 };
 
@@ -185,7 +187,7 @@ const sotreRoot = createStore({
     },
     SET_LANG: (state, res) => {
       state.lang = res;
-      setStorage('lang', res);
+      setStorage("lang", res);
     },
     SET_PLAYAUDIO: (state, res) => {
       state.playAudio = res;
@@ -296,12 +298,12 @@ const sotreRoot = createStore({
       onMessage();
       if (!ws.onopen) {
         ws.onopen = async () => {
-          console.log('open');
+          console.log("open");
           num = 0;
           setTimeout(() => {
             heartbeat(sotreRoot);
           }, 10000);
-          const userList = getStorage('userList');
+          const userList = getStorage("userList");
           if (!userList) return;
 
           if (getToken()) {
@@ -323,43 +325,43 @@ const sotreRoot = createStore({
     SET_CREDENTIALS: (state, val) => {
       state.client = new OSS({
         // yourRegion填写Bucket所在地域。以华东1（杭州）为例，Region填写为oss-cn-hangzhou。
-        region: 'oss-accelerate',
+        region: "oss-accelerate",
         // 从STS服务获取的临时访问密钥（AccessKey ID和AccessKey Secret）。
-        accessKeyId: 'LTAI5tA5EFq9V1JM8cDixTAy',
-        accessKeySecret: 'ORCVe49wnwZrSEp2EO78nUMUwnML84',
+        accessKeyId: "LTAI5tA5EFq9V1JM8cDixTAy",
+        accessKeySecret: "ORCVe49wnwZrSEp2EO78nUMUwnML84",
         // 从STS服务获取的安全令牌（SecurityToken）。
         // stsToken: val.SecurityToken,
         // 填写Bucket名称。
-        bucket: '123message',
+        bucket: "123message",
       });
     },
   },
   actions: {
     init({ commit }) {
-      const switchSettingInfo = getStorage('switchSettingInfo');
-      const userDetailInfo = getStorage('userDetailInfo');
-      const userInfo = getStorage('userInfo');
-      const userLoginToken = getStorage('userLoginToken');
-      const appAboutUsInfo = getStorage('appAboutUsInfo');
-      const groupChatWelcomeTips = getStorage('groupChatWelcomeTips');
-      const userChatWelcomeTips = getStorage('userChatWelcomeTips');
+      const switchSettingInfo = getStorage("switchSettingInfo");
+      const userDetailInfo = getStorage("userDetailInfo");
+      const userInfo = getStorage("userInfo");
+      const userLoginToken = getStorage("userLoginToken");
+      const appAboutUsInfo = getStorage("appAboutUsInfo");
+      const groupChatWelcomeTips = getStorage("groupChatWelcomeTips");
+      const userChatWelcomeTips = getStorage("userChatWelcomeTips");
       const msgList = getMsgList() || {};
-      commit('SET_MSGLIST', msgList);
+      commit("SET_MSGLIST", msgList);
       appAboutUsInfo &&
-        commit('SET_APPABOUTUSINFO', JSON.parse(appAboutUsInfo));
+        commit("SET_APPABOUTUSINFO", JSON.parse(appAboutUsInfo));
       groupChatWelcomeTips &&
-        commit('SET_GROUPCHATWELCOMETIPS', JSON.parse(groupChatWelcomeTips));
+        commit("SET_GROUPCHATWELCOMETIPS", JSON.parse(groupChatWelcomeTips));
       userChatWelcomeTips &&
-        commit('SET_USERCHATWELCOMETIPS', JSON.parse(userChatWelcomeTips));
+        commit("SET_USERCHATWELCOMETIPS", JSON.parse(userChatWelcomeTips));
       switchSettingInfo &&
-        commit('SET_SWITCHSETTINGINFO', JSON.parse(switchSettingInfo));
+        commit("SET_SWITCHSETTINGINFO", JSON.parse(switchSettingInfo));
       userDetailInfo &&
-        commit('SET_USERDETAILINFO', JSON.parse(userDetailInfo));
-      userInfo && commit('SET_USERINFO', JSON.parse(userInfo));
+        commit("SET_USERDETAILINFO", JSON.parse(userDetailInfo));
+      userInfo && commit("SET_USERINFO", JSON.parse(userInfo));
 
       const tokenObj = JSON.parse(userLoginToken);
       if (tokenObj && tokenObj.buffer) {
-        const bufferList = tokenObj.buffer.split(',');
+        const bufferList = tokenObj.buffer.split(",");
         const buffer = new ArrayBuffer(bufferList.length);
         const bufferUint = new Uint8Array(buffer);
 
@@ -369,26 +371,26 @@ const sotreRoot = createStore({
         const token = new Uint8Array(
           buffer,
           tokenObj.byteOffset,
-          tokenObj.byteLength,
+          tokenObj.byteLength
         );
-        tokenObj.uint8Array.split(',').forEach((e: number, k: number) => {
+        tokenObj.uint8Array.split(",").forEach((e: number, k: number) => {
           token[k] = e;
         });
-        commit('SET_TOKEN', token);
+        commit("SET_TOKEN", token);
       }
     },
     logout({ commit, state }) {
       console.log(state);
       setMsgList(state.msgList);
-      commit('SET_SWITCHSETTINGINFO', null);
-      commit('SET_USERDETAILINFO', null);
-      commit('SET_USERINFO', null);
-      commit('SET_TOKEN', null);
+      commit("SET_SWITCHSETTINGINFO", null);
+      commit("SET_USERDETAILINFO", null);
+      commit("SET_USERINFO", null);
+      commit("SET_TOKEN", null);
       clearStorage();
     },
     postMsg(
       { state, dispatch },
-      { query, cmd, encryption, auth = false, userToken = null },
+      { query, cmd, encryption, auth = false, userToken = null }
     ) {
       let data: any = null;
       if (encryption) {
@@ -405,7 +407,7 @@ const sotreRoot = createStore({
           setTimeout(() => {
             heartbeat(sotreRoot);
           }, 10000);
-          console.log('open');
+          console.log("open");
 
           ws.send(data);
         };
@@ -432,11 +434,11 @@ const sotreRoot = createStore({
       if (state.msgList[id]) {
         if (
           !state.msgList[id].readList.find(
-            (e: IMsgInfo<TMsgContent>) => Number(e.msgId) === Number(res.msgId),
+            (e: IMsgInfo<TMsgContent>) => Number(e.msgId) === Number(res.msgId)
           )
         ) {
           // push消息
-          commit('ADD_MSGLIST', { res, id });
+          commit("ADD_MSGLIST", { res, id });
         }
       } else {
         const item = {
@@ -454,27 +456,27 @@ const sotreRoot = createStore({
         };
         if (res.isGroupMsg === 0) {
           // 单聊获取用户详情
-          const data = await dispatch('postMsg', {
+          const data = await dispatch("postMsg", {
             query: {
               uid: id,
             },
             cmd: 1011,
-            encryption: 'Aoelailiao.Login.ClientGetUserInfoReq',
+            encryption: "Aoelailiao.Login.ClientGetUserInfoReq",
             auth: true,
           });
           const userDetailInfo = data.body.userDetailInfo;
           // push 消息
-          commit('ADD_MSGLIST', { res: item, id, userDetailInfo });
+          commit("ADD_MSGLIST", { res: item, id, userDetailInfo });
         } else {
           // 群聊获取群详情
-          const data = await dispatch('postMsg', {
+          const data = await dispatch("postMsg", {
             query: { groupId: id },
             cmd: 1029,
-            encryption: 'Aoelailiao.Login.ClientGetGroupInfoReq',
+            encryption: "Aoelailiao.Login.ClientGetGroupInfoReq",
             auth: true,
           });
           const groupDetailInfo = data.body.groupDetailInfo;
-          commit('ADD_MSGLIST', { res: item, id, groupDetailInfo });
+          commit("ADD_MSGLIST", { res: item, id, groupDetailInfo });
         }
       }
     },
@@ -486,7 +488,7 @@ function getProtocolHeader(
   bodybuffer: any,
   cmd: any,
   auth: boolean,
-  userToken: any,
+  userToken: any
 ) {
   // 2 版本
 
@@ -528,7 +530,7 @@ function getMessage(cmd: any, encryption: any, state: any) {
     cb[cmd] = (evt: any) => {
       try {
         const decrypt = encryption
-          ? encryption.substr(0, encryption.length - 3) + 'Ans'
+          ? encryption.substr(0, encryption.length - 3) + "Ans"
           : null;
         const dataview = new DataView(evt.data);
         const bodyBuf = new Uint8Array(evt.data.slice(26));
@@ -539,56 +541,56 @@ function getMessage(cmd: any, encryption: any, state: any) {
         // 获取后台自动推送的上线和离线消息
         if (ansCmd === 2129) {
           LogOutAns = protoRoot.lookup(
-            'Aoelailiao.Message.UserOnlineStateNotifyToClient',
+            "Aoelailiao.Message.UserOnlineStateNotifyToClient"
           );
         }
         if (ansCmd === 2004) {
           LogOutAns = protoRoot.lookup(
-            'Aoelailiao.Message.ServerSendMsgToClientNotify',
+            "Aoelailiao.Message.ServerSendMsgToClientNotify"
           );
         }
         if (ansCmd === 5002) {
           LogOutAns = protoRoot.lookup(
-            'Aoelailiao.Message.ServerSendMsgToClientNotify',
+            "Aoelailiao.Message.ServerSendMsgToClientNotify"
           );
         }
         if (ansCmd === 2148) {
           LogOutAns = protoRoot.lookup(
-            'Aoelailiao.Message.ServerSendMsgHasReadedInfoToClientNotify',
+            "Aoelailiao.Message.ServerSendMsgHasReadedInfoToClientNotify"
           );
         }
         if (ansCmd === 2054) {
           LogOutAns = protoRoot.lookup(
-            'Aoelailiao.Message.ClientGetSectionOfflineMsgAns',
+            "Aoelailiao.Message.ClientGetSectionOfflineMsgAns"
           );
         }
 
         if (ansCmd === 2125) {
           LogOutAns = protoRoot.lookup(
-            'Aoelailiao.Message.WriteStateNotifyToClient',
+            "Aoelailiao.Message.WriteStateNotifyToClient"
           );
         }
 
         if (ansCmd === 2024) {
           LogOutAns = protoRoot.lookup(
-            'Aoelailiao.Message.ServerSendSystemNotifyMsg',
+            "Aoelailiao.Message.ServerSendSystemNotifyMsg"
           );
         }
 
         if (ansCmd === 2156) {
           LogOutAns = protoRoot.lookup(
-            'Aoelailiao.Message.GroupCallNotifyToClient',
+            "Aoelailiao.Message.GroupCallNotifyToClient"
           );
         }
 
         if (ansCmd === 2162) {
           LogOutAns = protoRoot.lookup(
-            'Aoelailiao.Message.GroupCallApplyJoinToClient',
+            "Aoelailiao.Message.GroupCallApplyJoinToClient"
           );
         }
 
         if (ansCmd === 2170) {
-          LogOutAns = protoRoot.lookup('Aoelailiao.Message.SessionSyncNotify');
+          LogOutAns = protoRoot.lookup("Aoelailiao.Message.SessionSyncNotify");
         }
 
         const query = {
@@ -611,48 +613,48 @@ function getMessage(cmd: any, encryption: any, state: any) {
 
         if (body.resultCode === 1101) {
           // 登录凭证失效
-          sotreRoot.dispatch('logout');
+          sotreRoot.dispatch("logout");
 
           location.reload();
           return;
         }
 
         if (body.resultCode === 1102) {
-          Toast(state.t('您的ip有风险，为了您的安全，您已被暂时限制登录'));
+          Toast(state.t("您的ip有风险，为了您的安全，您已被暂时限制登录"));
           setTimeout(() => {
             // 登录凭证失效
-            sotreRoot.dispatch('logout');
+            sotreRoot.dispatch("logout");
             location.reload();
           }, 2000);
           return;
         }
         if (body.switchSettingInfo) {
           setStorage(
-            'switchSettingInfo',
-            JSON.stringify(body.switchSettingInfo),
+            "switchSettingInfo",
+            JSON.stringify(body.switchSettingInfo)
           );
-          sotreRoot.commit('SET_SWITCHSETTINGINFO', body.switchSettingInfo);
+          sotreRoot.commit("SET_SWITCHSETTINGINFO", body.switchSettingInfo);
         }
         if (body.appAboutUsInfo) {
-          setStorage('appAboutUsInfo', JSON.stringify(body.appAboutUsInfo));
-          sotreRoot.commit('SET_APPABOUTUSINFO', body.appAboutUsInfo);
+          setStorage("appAboutUsInfo", JSON.stringify(body.appAboutUsInfo));
+          sotreRoot.commit("SET_APPABOUTUSINFO", body.appAboutUsInfo);
         }
         if (body.groupChatWelcomeTips) {
           setStorage(
-            'groupChatWelcomeTips',
-            JSON.stringify(body.groupChatWelcomeTips),
+            "groupChatWelcomeTips",
+            JSON.stringify(body.groupChatWelcomeTips)
           );
           sotreRoot.commit(
-            'SET_GROUPCHATWELCOMETIPS',
-            body.groupChatWelcomeTips,
+            "SET_GROUPCHATWELCOMETIPS",
+            body.groupChatWelcomeTips
           );
         }
         if (body.userChatWelcomeTips) {
           setStorage(
-            'userChatWelcomeTips',
-            JSON.stringify(body.userChatWelcomeTips),
+            "userChatWelcomeTips",
+            JSON.stringify(body.userChatWelcomeTips)
           );
-          sotreRoot.commit('SET_USERCHATWELCOMETIPS', body.userChatWelcomeTips);
+          sotreRoot.commit("SET_USERCHATWELCOMETIPS", body.userChatWelcomeTips);
         }
 
         state.msgInfo = query;
@@ -678,7 +680,7 @@ function onMessage() {
   const cmdList = [2129, 2004, 2125, 2148, 2024, 2156, 2162, 2170];
   ws.onmessage = (evt: any) => {
     if (sotreRoot.state.isOnLine) {
-      sotreRoot.commit('SET_ISONLINE', false);
+      sotreRoot.commit("SET_ISONLINE", false);
     }
     const dataview = new DataView(evt.data);
     const ansCmd = dataview.getUint16(5);
@@ -728,12 +730,12 @@ async function heartbeat(store: any) {
     //////////////
 
     store.commit(
-      'SET_TIMEOUT',
+      "SET_TIMEOUT",
       setTimeout(() => {
         heartbeat(store);
-      }, 10000),
+      }, 10000)
     );
-    await store.dispatch('postMsg', {
+    await store.dispatch("postMsg", {
       query: null,
       cmd: 1,
     });
