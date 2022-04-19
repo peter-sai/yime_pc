@@ -75,6 +75,7 @@ import { saveData } from '@/api/app';
 import { Store, useStore } from 'vuex';
 import { initStore, key } from '@/store';
 import { initRonyun } from '@/App.vue';
+import returnCitySN from 'returnCitySN';
 const { t } = useI18n();
 
 const store = useStore(key);
@@ -137,6 +138,7 @@ function useReg(
       equipmentInformation: {
         deviceBrand: 'web',
         releaseVersion: '2.0.0',
+        devicePublicIp: returnCitySN.cip || '',
       },
     };
     const data = await store.dispatch('postMsg', {

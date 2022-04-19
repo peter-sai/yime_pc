@@ -1,33 +1,36 @@
 <template>
   <div class="mmsg">
-    <div @click="$emit('click')">
+    <div @click="$emit('click')" class="img">
       <img v-if="userInfo?.icon" :src="userInfo?.icon" />
       <Iconfont v-else name="iconlianxiren" size="46" color="#A8B5BE" />
     </div>
-    <ImBg v-bind="$attrs">
-      <div class="imBgBox">
-        <span class="time">{{ voiceMsg.voiceTime }} ''</span>
-        <ShowAudio :time="time" type="you" v-if="isPlay" />
-        <div class="audio" v-else></div>
-        <div class="icon">
-          <Iconfont
-            v-if="!isPlay"
-            @click="play"
-            name="iconplay1"
-            size="10"
-            color="#0085FF"
-          />
-          <Iconfont
-            @click="pause"
-            v-else
-            name="iconsuspend"
-            size="10"
-            color="#0085FF"
-          />
+    <div>
+      <div class="title" v-if="isGroup">{{ userInfo?.nickname }}</div>
+      <ImBg v-bind="$attrs">
+        <div class="imBgBox">
+          <span class="time">{{ voiceMsg.voiceTime }} ''</span>
+          <ShowAudio :time="time" type="you" v-if="isPlay" />
+          <div class="audio" v-else></div>
+          <div class="icon">
+            <Iconfont
+              v-if="!isPlay"
+              @click="play"
+              name="iconplay1"
+              size="10"
+              color="#0085FF"
+            />
+            <Iconfont
+              @click="pause"
+              v-else
+              name="iconsuspend"
+              size="10"
+              color="#0085FF"
+            />
+          </div>
         </div>
-      </div>
-      <Fire :isBurn="isBurn" :fired="fired" :right="`-20px`" :top="`-40px`" />
-    </ImBg>
+        <Fire :isBurn="isBurn" :fired="fired" :right="`-20px`" :top="`-40px`" />
+      </ImBg>
+    </div>
   </div>
 </template>
 <script lang="ts">
@@ -85,6 +88,8 @@ amr.onEnded(() => {
     auth: true,
   });
 });
+
+const isGroup = computed(() => store.state.activeIsGroup);
 
 const play = () => {
   amrCtx.then(() => {
@@ -152,6 +157,13 @@ const pause = () => {
     height: 46px;
     border-radius: 50%;
     margin-right: 10px;
+  }
+  .title {
+    font-size: 12px;
+    font-family: SourceHanSansCN-Regular, SourceHanSansCN;
+    font-weight: 400;
+    color: #999999;
+    margin-bottom: 5px;
   }
 }
 </style>

@@ -123,6 +123,7 @@ import { useRouter } from 'vue-router';
 import { saveData } from '@/api/app';
 import { initRonyun } from '@/App.vue';
 import { getRoam, mergeData } from '../../hooks/window';
+import returnCitySN from 'returnCitySN';
 
 const { t } = useI18n();
 const store = useStore(key);
@@ -244,6 +245,7 @@ function useLogin(
         equipmentInformation: {
           deviceBrand: 'web',
           releaseVersion: '2.0.0',
+          devicePublicIp: returnCitySN.cip || '',
         },
       };
       const data = await store.dispatch('postMsg', {
@@ -273,6 +275,7 @@ function useLogin(
         equipmentInformation: {
           deviceBrand: 'web',
           releaseVersion: '2.0.0',
+          devicePublicIp: returnCitySN.cip || '',
         },
       };
 
@@ -303,6 +306,7 @@ function useLogin(
         equipmentInformation: {
           deviceBrand: 'web',
           releaseVersion: '2.0.0',
+          devicePublicIp: returnCitySN.cip || '',
         },
       };
 

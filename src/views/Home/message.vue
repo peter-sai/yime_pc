@@ -305,6 +305,7 @@ import { IGroupListItem } from '@/types/group';
 export default defineComponent({
   name: 'message',
 });
+
 const isSearch = ref(false);
 
 const rightClickItem = ref({}) as Ref<ImsgItem>;
