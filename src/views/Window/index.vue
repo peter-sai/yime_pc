@@ -51,11 +51,11 @@
     <!-- 陌生人 -->
     <div class="stranger" v-if="strangerInfo">
       <div class="title">
-        {{ formate(t('通过%@发来消息'), strangerInfo.source) }}
+        {{ formate(t('对方通过%@发来消息'), strangerInfo.source) }}
       </div>
       <div class="btn">
-        <div class="addBlackList" @click="addBlock">加入黑名单</div>
-        <div class="chat" @click="addFriend">继续聊天</div>
+        <div class="addBlackList" @click="addBlock">{{ t('加入黑名单') }}</div>
+        <div class="chat" @click="addFriend">{{ t('继续聊天') }}</div>
       </div>
     </div>
     <!-- 弹框 -->
