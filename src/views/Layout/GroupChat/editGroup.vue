@@ -96,7 +96,7 @@ const submit = async () => {
 
   if (
     notice.value !==
-      props.groupDetailInfo?.groupNoticeInfo.groupNoticeContent &&
+      props.groupDetailInfo?.groupNoticeInfo?.groupNoticeContent &&
     notice.value
   ) {
     try {

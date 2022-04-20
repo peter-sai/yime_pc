@@ -200,4 +200,10 @@ init();
 .SystemWindowContent {
   font-size: 16px;
 }
+.SystemWindowContent > * {
+  font-size: revert;
+}
+sub {
+  font-size: revert;
+}
 </style>

@@ -51,11 +51,11 @@
     <!-- 陌生人 -->
     <div class="stranger" v-if="strangerInfo">
       <div class="title">
-        {{ formate(t('通过%@发来消息'), strangerInfo.source) }}
+        {{ formate(t('对方通过%@发来消息'), strangerInfo.source) }}
       </div>
       <div class="btn">
-        <div class="addBlackList" @click="addBlock">加入黑名单</div>
-        <div class="chat" @click="addFriend">继续聊天</div>
+        <div class="addBlackList" @click="addBlock">{{ t('加入黑名单') }}</div>
+        <div class="chat" @click="addFriend">{{ t('继续聊天') }}</div>
       </div>
     </div>
     <!-- 弹框 -->
@@ -127,8 +127,8 @@
   </div>
 </template>
 <script lang="ts">
-import { initStore, key } from '@/store'
-import { IGroupInfo, IUserDetailInfo, IUserInfo } from '@/types/user'
+import { initStore, key } from '@/store';
+import { IGroupInfo, IUserDetailInfo, IUserInfo } from '@/types/user';
 import {
   defineComponent,
   ref,
@@ -141,27 +141,27 @@ import {
   computed,
   onUnmounted,
   ComputedRef,
-} from 'vue'
-import Message from './message.vue'
-import { useI18n } from 'vue-i18n'
-import { getTime } from '@/utils/utils'
-import { Store, useStore } from 'vuex'
-import UserInfo, { useToggleFriend } from '../Layout/Chat/userInfo.vue'
-import Forward from '../Layout/Chat/Forward.vue'
-import CloudFile from '../Layout/Chat/cloudFile.vue'
-import CommonGroup from '../Layout/Chat/commonGroup.vue'
-import Recommend from '../Layout/Chat/recommend.vue'
-import { useEnter, useCbImg, useSendImg } from '@/hooks/window'
-import GroupInfo from '../Layout/GroupChat/groupInfo.vue'
-import ChatHeader from './header.vue'
-import Bottom from '../Layout/bottom.vue'
-import { Etag } from '../Layout/index.vue'
-import { ImsgItem } from '@/types/msg'
-import { useBeforeBlacklist } from '../Layout/Chat/userInfo.vue'
+} from 'vue';
+import Message from './message.vue';
+import { useI18n } from 'vue-i18n';
+import { getTime } from '@/utils/utils';
+import { Store, useStore } from 'vuex';
+import UserInfo, { useToggleFriend } from '../Layout/Chat/userInfo.vue';
+import Forward from '../Layout/Chat/Forward.vue';
+import CloudFile from '../Layout/Chat/cloudFile.vue';
+import CommonGroup from '../Layout/Chat/commonGroup.vue';
+import Recommend from '../Layout/Chat/recommend.vue';
+import { useEnter, useCbImg, useSendImg } from '@/hooks/window';
+import GroupInfo from '../Layout/GroupChat/groupInfo.vue';
+import ChatHeader from './header.vue';
+import Bottom from '../Layout/bottom.vue';
+import { Etag } from '../Layout/index.vue';
+import { ImsgItem } from '@/types/msg';
+import { useBeforeBlacklist } from '../Layout/Chat/userInfo.vue';
 
 export default defineComponent({
   name: 'window',
-})
+});
 
 // 获取详情
 const useGetDetail = async (
@@ -170,33 +170,33 @@ const useGetDetail = async (
   isBotUser: Ref<boolean>,
   yUserInfo: Ref<IUserInfo>
 ) => {
-  if (!store.state.activeUid) return
+  if (!store.state.activeUid) return;
 
-  let msgItem: ImsgItem = store.state.msgList[store.state.activeUid!]
+  let msgItem: ImsgItem = store.state.msgList[store.state.activeUid!];
 
   // 如果不存在则获取 (单聊不在聊天列表中会没有信息)
   if (!msgItem) {
     const res = {
       uid: store.state.activeUid,
-    }
+    };
     const data = await store.dispatch('postMsg', {
       query: res,
       cmd: 1011,
       encryption: 'Aoelailiao.Login.ClientGetUserInfoReq',
       auth: true,
-    })
-    msgItem = data.body
+    });
+    msgItem = data.body;
   }
 
   if (msgItem?.userDetailInfo?.userInfo?.isBotUser) {
-    isBotUser.value = true
+    isBotUser.value = true;
   } else {
-    isBotUser.value = false
+    isBotUser.value = false;
   }
 
-  userDetailInfo.value = msgItem.userDetailInfo || {}
-  yUserInfo.value = msgItem.userDetailInfo?.userInfo || {}
-}
+  userDetailInfo.value = msgItem.userDetailInfo || {};
+  yUserInfo.value = msgItem.userDetailInfo?.userInfo || {};
+};
 
 // 获取用户登录状态
 const useStatus = async (
@@ -207,15 +207,15 @@ const useStatus = async (
     userOnlineState: {
       uid: store.state.activeUid,
     },
-  }
+  };
   const data = await store.dispatch('postMsg', {
     query: res,
     cmd: 2127,
     encryption: 'Aoelailiao.Message.UserOnlineStateNotifyReq',
     auth: true,
-  })
-  onlineInfo.value = data.body?.userOnlineState || {}
-}
+  });
+  onlineInfo.value = data.body?.userOnlineState || {};
+};
 
 // init
 async function init(
@@ -226,157 +226,157 @@ async function init(
   onlineInfo: Ref<IUserInfo>
 ) {
   // 获取用户详细资料
-  await useGetDetail(store, userDetailInfo, isBotUser, yUserInfo)
+  await useGetDetail(store, userDetailInfo, isBotUser, yUserInfo);
   // 获取用户登录状态
-  await useStatus(store, onlineInfo)
+  await useStatus(store, onlineInfo);
 }
 </script>
 
 <script setup lang="ts">
-defineEmits(['toggleBox', 'changeTag'])
-const { t } = useI18n()
-const writeState = ref(0) //0--结束输入(未输入), 1--正在输入
-const store = useStore(key)
-const yUserInfo: Ref<IUserInfo> = ref({}) as Ref<IUserInfo> // 当前聊天用户信息
-const userInfo: Ref<IUserInfo> = ref({}) as Ref<IUserInfo> // 需要显示详情用户的信息
-const userDetailInfo: Ref<IUserDetailInfo> = ref({}) as Ref<IUserDetailInfo> // 需要显示详情用户的信息
-const isBotUser = ref(false)
-const onlineInfo: Ref<IUserInfo> = ref({}) as Ref<IUserInfo>
-const files = ref('')
+defineEmits(['toggleBox', 'changeTag']);
+const { t } = useI18n();
+const writeState = ref(0); //0--结束输入(未输入), 1--正在输入
+const store = useStore(key);
+const yUserInfo: Ref<IUserInfo> = ref({}) as Ref<IUserInfo>; // 当前聊天用户信息
+const userInfo: Ref<IUserInfo> = ref({}) as Ref<IUserInfo>; // 需要显示详情用户的信息
+const userDetailInfo: Ref<IUserDetailInfo> = ref({}) as Ref<IUserDetailInfo>; // 需要显示详情用户的信息
+const isBotUser = ref(false);
+const onlineInfo: Ref<IUserInfo> = ref({}) as Ref<IUserInfo>;
+const files = ref('');
 
 const groupDetailInfo: ComputedRef<IGroupInfo> = computed(
   () => store.state.msgList[store.state.userUid]?.groupDetailInfo || {}
-)
+);
 
 // 群聊陌生人
 const strangerInfo = computed(() => {
-  const userInfo = store.state?.msgList[store.state?.activeUid]
+  const userInfo = store.state?.msgList[store.state?.activeUid];
   if (
     userInfo?.userDetailInfo?.isFriend ||
     userInfo?.userDetailInfo?.isInMyBlacklist ||
     userInfo?.readList?.length > 1
   ) {
-    return null
+    return null;
   }
-  const msgSource = userInfo?.lastMsg?.attachInfo?.msgSource
+  const msgSource = userInfo?.lastMsg?.attachInfo?.msgSource;
   try {
     if (msgSource) {
-      const item = JSON.parse(msgSource)
+      const item = JSON.parse(msgSource);
       if (item.sourceId != store.state.activeUid) {
-        return item
+        return item;
       } else {
-        return null
+        return null;
       }
     } else {
-      return null
+      return null;
     }
   } catch (error) {
-    return null
+    return null;
   }
-})
+});
 
 // 加入黑名单
 const addBlock = async () => {
-  const userInfo = store.state?.msgList[store.state?.activeUid]
+  const userInfo = store.state?.msgList[store.state?.activeUid];
   const query = {
     uid: userInfo?.lastMsg.fromId,
-  }
+  };
   if (userInfo) {
-    await useBeforeBlacklist(store, t, query as IUserInfo)(true)
+    await useBeforeBlacklist(store, t, query as IUserInfo)(true);
     if (store.state.msgList[userInfo?.lastMsg.fromId]) {
-      delete store.state.msgList[userInfo?.lastMsg.fromId]
-      store.commit('SET_ACTIVEUID', null)
+      delete store.state.msgList[userInfo?.lastMsg.fromId];
+      store.commit('SET_ACTIVEUID', null);
     }
   }
-}
+};
 
 // 点击继续聊天
 const addFriend = async () => {
-  const userInfo = store.state?.msgList[store.state?.activeUid]
+  const userInfo = store.state?.msgList[store.state?.activeUid];
   const query = {
     uid: userInfo?.lastMsg.fromId,
-  }
-  await useToggleFriend(store, t, query as IUserInfo)(true)
-}
+  };
+  await useToggleFriend(store, t, query as IUserInfo)(true);
+};
 
 const formate = (temp: string, info: string) => {
-  return temp.replace('%@', info)
-}
+  return temp.replace('%@', info);
+};
 
 // 文件选择类型
-const accept = ref('image/*,video/*')
-const changUserImg: Ref<HTMLInputElement | null> = ref(null)
+const accept = ref('image/*,video/*');
+const changUserImg: Ref<HTMLInputElement | null> = ref(null);
 
 // 是否显示右侧
-const showBox = ref(false)
+const showBox = ref(false);
 const toggleBox = async (uid?: number) => {
   if (!showBox.value) {
-    const userId = uid || store.state.activeUid
-    store.commit('SET_USERUID', userId)
+    const userId = uid || store.state.activeUid;
+    store.commit('SET_USERUID', userId);
   }
-  let msgItem: ImsgItem | null = null
+  let msgItem: ImsgItem | null = null;
   // let msgItem: ImsgItem = store.state.msgList[store.state.userUid!];
   // 如果不存在则获取 (单聊不在聊天列表中会没有信息)
   if (!msgItem) {
     const res = {
       uid: store.state.userUid,
-    }
+    };
     const data = await store.dispatch('postMsg', {
       query: res,
       cmd: 1011,
       encryption: 'Aoelailiao.Login.ClientGetUserInfoReq',
       auth: true,
-    })
-    msgItem = data.body
+    });
+    msgItem = data.body;
   }
 
-  userDetailInfo.value = msgItem?.userDetailInfo || {}
-  userInfo.value = msgItem?.userDetailInfo?.userInfo || {}
-  showBox.value = !showBox.value
-  const newMsgItem: ImsgItem = store.state.msgList[store.state.userUid!]
-  if (!newMsgItem) return
-  newMsgItem.userDetailInfo = msgItem?.userDetailInfo
+  userDetailInfo.value = msgItem?.userDetailInfo || {};
+  userInfo.value = msgItem?.userDetailInfo?.userInfo || {};
+  showBox.value = !showBox.value;
+  const newMsgItem: ImsgItem = store.state.msgList[store.state.userUid!];
+  if (!newMsgItem) return;
+  newMsgItem.userDetailInfo = msgItem?.userDetailInfo;
   store.commit('SET_MSGLISTITEM', {
     uid: store.state.userUid,
     res: newMsgItem,
-  })
-}
+  });
+};
 
 // 右侧显示的内容
-const tag = ref<Etag>(Etag['UserInfo'])
+const tag = ref<Etag>(Etag['UserInfo']);
 const changeTag = (val: Etag) => {
-  tag.value = val
-}
+  tag.value = val;
+};
 
 // 输入框值
-const inputVal = ref('')
+const inputVal = ref('');
 
 // 分享
 const recommend = () => {
-  toggleBox()
-  changeTag(Etag.Recommend)
-}
+  toggleBox();
+  changeTag(Etag.Recommend);
+};
 
 // 初始化
-init(store, userDetailInfo, isBotUser, yUserInfo, onlineInfo)
+init(store, userDetailInfo, isBotUser, yUserInfo, onlineInfo);
 
-const cbImg = useCbImg(store, accept, t)
+const cbImg = useCbImg(store, accept, t);
 
 onMounted(async () => {
   changUserImg.value!.addEventListener('change', (e) => {
-    cbImg(e, store.state.activeUid!)
-    changUserImg.value?.setAttribute('type', 'text')
-  })
-})
+    cbImg(e, store.state.activeUid!);
+    changUserImg.value?.setAttribute('type', 'text');
+  });
+});
 
 onBeforeUnmount(() => {
-  changUserImg.value!.removeEventListener('change', cbImg)
-})
+  changUserImg.value!.removeEventListener('change', cbImg);
+});
 
 // 发送消息
-const enter = useEnter(store, inputVal, 0, t)
+const enter = useEnter(store, inputVal, 0, t);
 // 发送图片
-const sendImg = useSendImg(store, 0, t, changUserImg, accept, nextTick)
+const sendImg = useSendImg(store, 0, t, changUserImg, accept, nextTick);
 
 const stop = watch(
   computed(() => store.state.msgInfo),
@@ -386,22 +386,22 @@ const stop = watch(
       if (
         Number(store.state.activeUid) === Number(data.body.userOnlineState.uid)
       ) {
-        onlineInfo.value = data.body?.userOnlineState || {}
+        onlineInfo.value = data.body?.userOnlineState || {};
       }
     }
     // 监听输入状态
     if (data.cmd === 2125) {
-      const userWriteState = data.body?.userWriteState || {}
-      const uid = Number(store.state.activeUid)
+      const userWriteState = data.body?.userWriteState || {};
+      const uid = Number(store.state.activeUid);
       if (userWriteState.fromId === uid) {
-        writeState.value = userWriteState.writeState
+        writeState.value = userWriteState.writeState;
       }
     }
   }
-)
+);
 onUnmounted(() => {
-  stop()
-})
+  stop();
+});
 </script>
 
 <style lang="scss" scoped>

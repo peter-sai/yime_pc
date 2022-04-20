@@ -391,9 +391,9 @@ const stop = watch(
       // 处理双向清空消息
       if (msgInfos[0].msgContent.msgContent === 'cleanInfo') {
         const { maxMsgId } = msgInfos[0].msgContent.cleanInfo;
-        const newList = msgList[store.state.activeUid!].readList.filter(
-          (e: any) => Number(e.msgId) > Number(maxMsgId)
-        );
+        const newList = (
+          msgList[store.state.activeUid!]?.readList || []
+        ).filter((e: any) => Number(e.msgId) > Number(maxMsgId));
 
         msgList[store.state.activeUid!].readList = newList;
         store.commit('SET_MSGLIST', msgList);

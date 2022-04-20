@@ -168,7 +168,7 @@
         @click="
           groupBeforeTop(
             !rightClickItem.groupDetailInfo?.groupAttachInfo?.groupTop,
-            rightClickItem.id,
+            rightClickItem.id
           )
         "
       >
@@ -185,7 +185,7 @@
         @click="
           userBeforeTop(
             !rightClickItem.userDetailInfo?.userInfo?.userAttachInfo?.msgTop,
-            rightClickItem.id,
+            rightClickItem.id
           )
         "
       >
@@ -214,7 +214,7 @@
         @click="
           beforeMsgNotdisturb(
             rightClickItem.groupDetailInfo?.groupAttachInfo?.groupMsgMute,
-            rightClickItem,
+            rightClickItem
           )
         "
       >
@@ -232,7 +232,7 @@
         @click="
           beforeMsgNotdisturb(
             rightClickItem.userDetailInfo?.userInfo?.userAttachInfo?.msgMute,
-            rightClickItem,
+            rightClickItem
           )
         "
       >
@@ -318,7 +318,7 @@ const changeIsSearch = (res: boolean) => {
 function useBeforeSwitchChat(
   store: Store<initStore>,
   settingItemId: number,
-  t: { (key: string | number): string },
+  t: { (key: string | number): string }
 ) {
   return async (e: boolean, item: ImsgItem) => {
     const res = {
@@ -401,7 +401,7 @@ onMounted(() => {
     () => {
       showMenu.value = false;
     },
-    true,
+    true
   );
 });
 
@@ -416,7 +416,7 @@ const msgList: ComputedRef<TMsgItem[]> = computed(() => {
   list
     .filter(
       (e: TMsgItem) =>
-        e.msgClassId! || (e.lastMsg && e.lastMsg.msgId && !e.isDel),
+        e.msgClassId! || (e.lastMsg && e.lastMsg.msgId && !e.isDel)
     )
     .forEach((e: TMsgItem) => {
       if (e.isGroup && e.groupDetailInfo?.groupAttachInfo?.groupTop) {
@@ -435,12 +435,12 @@ const msgList: ComputedRef<TMsgItem[]> = computed(() => {
   topList.sort(
     (a: TMsgItem, b: TMsgItem) =>
       (b.updateTime || b.lastMsg?.msgTime) -
-      (a.updateTime || a.lastMsg?.msgTime),
+      (a.updateTime || a.lastMsg?.msgTime)
   );
   defList.sort(
     (a: TMsgItem, b: TMsgItem) =>
       (b.updateTime || b.lastMsg?.msgTime) -
-      (a.updateTime || a.lastMsg?.msgTime),
+      (a.updateTime || a.lastMsg?.msgTime)
   );
 
   return topList.concat(defList);
@@ -477,7 +477,7 @@ const clientSendMsgAckToServer = (msgInfos: IMsgInfo<TMsgContent>[]) => {
     const { msgId, fromId, toId } = lastMsgInfo;
     const ackToServer = useClientSendMsgAckToServer(
       store,
-      lastMsgInfo.isGroupMsg ? 1 : 0,
+      lastMsgInfo.isGroupMsg ? 1 : 0
     );
     ackToServer(msgId, fromId, toId, 1);
   }
@@ -594,7 +594,7 @@ const quitGroupChat = async (item: ImsgItem) => {
 const del = (item: any) => {
   Dialog({
     title: t(
-      '当前会话删除后，所有聊天记录将被被删除，收到新消息，或通过搜索会话名称，会话将再次显示',
+      '当前会话删除后，所有聊天记录将被被删除，收到新消息，或通过搜索会话名称，会话将再次显示'
     ),
     callBack: async () => {
       if (store.state.msgList[item.id]) {
@@ -646,7 +646,7 @@ const del = (item: any) => {
 const hide = (item: any) => {
   Dialog({
     title: t(
-      '当前会话隐藏后，聊天记录不会被删除。收到新消息，或通过搜索会话名称，会话将再次显示',
+      '当前会话隐藏后，聊天记录不会被删除。收到新消息，或通过搜索会话名称，会话将再次显示'
     ),
     callBack: async () => {
       if (store.state.msgList[item.id]) {
@@ -698,7 +698,7 @@ const userBeforeTop = useBeforeSwitch(store, 1004, t);
 function useBeforeSwitch(
   store: Store<initStore>,
   settingItemId: number,
-  t: { (key: string | number): string },
+  t: { (key: string | number): string }
 ) {
   return async (e: boolean, uid: number) => {
     const res = {
