@@ -345,7 +345,9 @@ const sotreRoot = createStore({
       const replyData = getStorage("replyData");
       const msgList = getMsgList() || {};
       commit("SET_MSGLIST", msgList);
-      replyData && commit("SET_REPLYDATA", JSON.parse(replyData));
+      replyData !== 'undefined' &&
+      replyData &&
+      commit('SET_REPLYDATA', JSON.parse(replyData));
       appAboutUsInfo &&
         commit("SET_APPABOUTUSINFO", JSON.parse(appAboutUsInfo));
       groupChatWelcomeTips &&

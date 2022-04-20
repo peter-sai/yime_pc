@@ -688,7 +688,7 @@ async function sendRec(duration: number) {
       auth: true,
     });
     if (data.body.resultCode !== 0) {
-      Toast(t(data.body.resultString));
+      return Toast(t(data.body.resultString));
     }
   } catch (error) {
     console.log(error);

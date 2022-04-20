@@ -272,8 +272,8 @@ const useEnter = (
         },
       };
     }
-    if (store.state.replyMsg.msgId) {
-      res.msgInfo.replyMsgId = store.state.replyMsg.msgId;
+    if (store.state.replyMsg?.msgId) {
+      res.msgInfo.replyMsgId = store.state.replyMsg?.msgId;
     }
     const data = await store.dispatch("postMsg", {
       query: res,
@@ -284,8 +284,6 @@ const useEnter = (
 
     if (data.body.resultCode === 0) {
       search.value = "";
-      store.commit("SET_REPLYMSG", {});
-      store.commit("SET_SHOWREPLYBOX", false);
     } else {
       Toast(t(data.body.resultString));
     }

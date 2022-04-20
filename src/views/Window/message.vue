@@ -730,6 +730,7 @@ onUnmounted(() => {
 
 // 回复消息
 const reply = (item: IMsgInfo<string>) => {
+  console.log(store.state.activeUid);
   replyData.value[store.state.activeUid] = {
     showReplyBox: true,
     replyMsg: item,
