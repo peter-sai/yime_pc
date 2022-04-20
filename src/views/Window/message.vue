@@ -170,7 +170,7 @@
               showUserInfo(
                 item.msgContent.visitingCard.uid,
                 'card',
-                item.msgContent.visitingCard,
+                item.msgContent.visitingCard
               )
             "
             @click="showUserInfo(getUserInfo(item).uid)"
@@ -185,7 +185,7 @@
               showUserInfo(
                 item.msgContent.visitingCard.uid,
                 'card',
-                item.msgContent.visitingCard,
+                item.msgContent.visitingCard
               )
             "
             :item="item.msgContent.visitingCard"
@@ -451,7 +451,7 @@ const msgWindow: Ref<HTMLDivElement> = ref() as Ref<HTMLDivElement>;
 const showUserInfo = async (
   uid: number,
   isCard?: string,
-  visitingCard?: IVisitingCard,
+  visitingCard?: IVisitingCard
 ) => {
   if (isCard) {
     // 群名片
@@ -597,10 +597,15 @@ const sendImg = useSendImg(store, 0, t);
 const bodyClickCb = () => {
   showMen.value = false;
 };
+// 回复相关信息
+const replyData = computed(() => store.state.replyData);
+
 onMounted(() => {
   document.body.addEventListener('click', bodyClickCb);
-  store.commit('SET_REPLYMSG', {});
-  store.commit('SET_SHOWREPLYBOX', false);
+  store.commit(
+    'SET_REPLYMSG',
+    replyData.value[store.state.activeUid]?.replyMsg
+  );
 });
 onBeforeUnmount(() => {
   document.body.removeEventListener('click', bodyClickCb);
@@ -621,7 +626,7 @@ const isShowHowComponent = (item: IMsgInfo<string>) => {
 // 获取回复的信息
 const getReply = (item: IMsgInfo<string>) => {
   return itemChat.value.readList.find(
-    (e) => e.msgId === item.replyMsgId,
+    (e) => e.msgId === item.replyMsgId
   ) as IMsgInfo;
 };
 
@@ -656,7 +661,7 @@ const init = async () => {
   // 获取最大msgId
   const msgHasReadedInfos = await userGetConversationHasReadedMsgInfo(
     store.state.activeUid!,
-    store.state.userInfo.uid,
+    store.state.userInfo.uid
   );
   readMsgId.value = msgHasReadedInfos[0].msgIdMax;
 
@@ -705,7 +710,7 @@ let stop = watch(
       await nextTick;
       scroll();
     }
-  },
+  }
 );
 
 watch(
@@ -716,7 +721,7 @@ watch(
         scroll();
       });
     }
-  },
+  }
 );
 
 onUnmounted(() => {
@@ -725,11 +730,14 @@ onUnmounted(() => {
 
 // 回复消息
 const reply = (item: IMsgInfo<string>) => {
-  console.log(item, 888);
-  store.commit('SET_SHOWREPLYBOX', true);
-  store.commit('SET_REPLYMSG', item);
-  store.commit('SET_REPLYUSER', getUserInfo(item).nickname);
-  console.log(store.state.replyMsg);
+  console.log(store.state.activeUid);
+  replyData.value[store.state.activeUid] = {
+    showReplyBox: true,
+    replyMsg: item,
+    replyUser: getUserInfo(item).nickname,
+  };
+  store.commit('SET_REPLYDATA', replyData);
+  store.commit('SET_REPLYMSG', replyData.value[store.state.activeUid].replyMsg);
 };
 
 // 撤回消息
@@ -856,7 +864,7 @@ const copyImg = (url: string) => {
         },
         () => {
           console.error('Unable to write to clipboard.');
-        },
+        }
       );
     });
   };

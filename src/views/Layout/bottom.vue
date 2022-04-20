@@ -1,12 +1,12 @@
 <template>
   <div class="bottom">
-    <div class="reply" v-if="store.state.showReplyBox">
+    <div class="reply" v-if="replyActive?.showReplyBox">
       <div class="reply-left">
         <img src="../../assets/img/reply.svg" alt="" />
         <div class="line"></div>
         <div class="text">
-          <span>回复 {{ store.state.replyUser }}</span>
-          <span>{{ store.state.replyMsg?.msgContent?.stringContent }}</span>
+          <span>回复 {{ replyActive?.replyUser }}</span>
+          <span>{{ replyActive?.replyMsg?.msgContent?.stringContent }}</span>
         </div>
       </div>
       <img src="../../assets/img/close.svg" alt="" @click="closeReply" />
@@ -287,7 +287,7 @@ interface IexpressionItem {
 function useInput(
   emit: (event: 'update:modelValue', ...args: any[]) => void,
   emojiList: Ref<IexpressionItem[]>,
-  input: Ref<HTMLInputElement | null>,
+  input: Ref<HTMLInputElement | null>
 ) {
   // 选择
   const select = (e: any, modelValue: string) => {
@@ -297,7 +297,7 @@ function useInput(
     }
     emit(
       'update:modelValue',
-      modelValue + String.fromCodePoint(parseInt(e.name, 16)),
+      modelValue + String.fromCodePoint(parseInt(e.name, 16))
     );
     if (emojiList.value.length) {
       setStorage('emojiList', JSON.stringify(emojiList.value));
@@ -331,7 +331,7 @@ const dropFile = computed(() => store.state.dropFile);
 const destoryReaded = computed(
   () =>
     store.state.msgList[store.state.activeUid]?.userDetailInfo?.userInfo
-      ?.userAttachInfo?.destoryReaded,
+      ?.userAttachInfo?.destoryReaded
 );
 
 watch(dropFile, (e) => {
@@ -351,7 +351,7 @@ const newAtUserInfoList = computed(() => {
   const list = atUserInfoList.value.filter((e) =>
     e.nickname
       .toLocaleLowerCase()
-      .includes(ats[ats.length - 1].toLocaleLowerCase()),
+      .includes(ats[ats.length - 1].toLocaleLowerCase())
   );
   if (ats.length <= 1) {
     // eslint-disable-next-line vue/no-side-effects-in-computed-properties
@@ -480,7 +480,7 @@ async function getGroupMemberUserInfos() {
     auth: true,
   });
   atUserInfoList.value = (res.body.userInfo || []).filter(
-    (e: IUserInfo) => Number(e.uid) !== Number(store.state.userInfo.uid),
+    (e: IUserInfo) => Number(e.uid) !== Number(store.state.userInfo.uid)
   );
   atUserInfoList.value.unshift({
     uid: 0,
@@ -621,7 +621,7 @@ async function startRec() {
     function (msg: string, isUserNotAllow: boolean) {
       //用户拒绝了权限或浏览器不支持
       alert((isUserNotAllow ? '用户拒绝了权限，' : '') + '无法录音:' + msg);
-    },
+    }
   );
 }
 
@@ -635,7 +635,7 @@ function stop() {
       },
       function (msg: string) {
         alert('录音失败:' + msg);
-      },
+      }
     );
   });
 }
@@ -688,7 +688,7 @@ async function sendRec(duration: number) {
       auth: true,
     });
     if (data.body.resultCode !== 0) {
-      Toast(t(data.body.resultString));
+      return Toast(t(data.body.resultString));
     }
   } catch (error) {
     console.log(error);
@@ -774,10 +774,16 @@ const delImgList = (key: number) => {
   copyImgList.value.splice(key, 1);
 };
 
+const replyData = computed(() => store.state.replyData);
+const replyActive = computed(() => replyData.value[store.state.activeUid]);
 // 关闭回复面板
 const closeReply = () => {
-  store.commit('SET_REPLYMSG', {});
-  store.commit('SET_SHOWREPLYBOX', false);
+  replyData.value[store.state.activeUid] = {
+    showReplyBox: false,
+    replyMsg: {},
+    replyUser: '',
+  };
+  store.commit('SET_REPLYDATA', replyData);
 };
 
 // 设置焚毁时间
@@ -786,7 +792,7 @@ const userBeforeFire = useBeforeSwitch(store, 1001, t);
 function useBeforeSwitch(
   store: Store<initStore>,
   settingItemId: number,
-  t: { (key: string | number): string },
+  t: { (key: string | number): string }
 ) {
   return async (id: number) => {
     burnInfo.active = id;
@@ -816,7 +822,7 @@ function useBeforeSwitch(
             'destoryReaded',
             Number(id),
             store.state.activeUid,
-            true,
+            true
           );
         }
         resovle(true);
