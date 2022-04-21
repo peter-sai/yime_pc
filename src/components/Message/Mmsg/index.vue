@@ -18,9 +18,9 @@
             :left="`-20px`"
             :top="`-15px`"
           />
-          {{ replyMsg?.msgContent?.stringContent }}
-          <div class="line" v-if="replyMsg?.msgContent?.stringContent"></div>
           <slot />
+          <div class="line" v-if="replyMsg?.msgContent?.stringContent"></div>
+          {{ replyMsg?.msgContent?.stringContent }}
         </ImgBg>
       </div>
       <IsRead :isRead="isRead" />
@@ -28,15 +28,15 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, defineProps, PropType } from 'vue'
-import ImgBg from '../ImgBg/index.vue'
-import Fire from '../Fire/index.vue'
-import Sending from '@/components/Sending/index.vue'
-import IsRead from '@/components/IsRead/index.vue'
-import { IMsgInfo } from '@/types/msg'
+import { defineComponent, defineProps, PropType } from 'vue';
+import ImgBg from '../ImgBg/index.vue';
+import Fire from '../Fire/index.vue';
+import Sending from '@/components/Sending/index.vue';
+import IsRead from '@/components/IsRead/index.vue';
+import { IMsgInfo } from '@/types/msg';
 export default defineComponent({
   name: 'Mmsg',
-})
+});
 </script>
 <script lang="ts" setup>
 defineProps({
@@ -57,7 +57,7 @@ defineProps({
   replyMsg: {
     type: Object as PropType<IMsgInfo>,
   },
-})
+});
 </script>
 <style lang="scss" scoped>
 @import '@/style/base.scss';
