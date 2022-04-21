@@ -1,7 +1,7 @@
-import { hideLoading, showLoading } from "@/plugin/Loading";
-import { Toast } from "@/plugin/Toast";
-import { initStore } from "@/store";
-import * as RongIMLib from "@rongcloud/imlib-next";
+import { hideLoading, showLoading } from '@/plugin/Loading';
+import { Toast } from '@/plugin/Toast';
+import { initStore } from '@/store';
+import * as RongIMLib from '@rongcloud/imlib-next';
 import {
   IFireInfo,
   IGroupAtInfo,
@@ -11,23 +11,23 @@ import {
   ISystemNotifyInfo,
   IVideoCallMsgInfo,
   TMsgContent,
-} from "@/types/msg";
-import { IGroupInfo, IUserDetailInfo, IUserInfo } from "@/types/user";
-import { getToken as getUserToken } from "@/utils/utils";
-import { getOssInfo, getToken, upload } from "../api";
-import { number } from "@intlify/core-base";
-import moment from "moment";
-import { ComputedRef, Ref } from "vue";
-import { useI18n } from "vue-i18n";
-import { stringifyQuery } from "vue-router";
-import { Store } from "vuex";
-import { RCCallClient } from "@rongcloud/plugin-call";
+} from '@/types/msg';
+import { IGroupInfo, IUserDetailInfo, IUserInfo } from '@/types/user';
+import { getToken as getUserToken } from '@/utils/utils';
+import { getOssInfo, getToken, upload } from '../api';
+import { number } from '@intlify/core-base';
+import moment from 'moment';
+import { ComputedRef, Ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { stringifyQuery } from 'vue-router';
+import { Store } from 'vuex';
+import { RCCallClient } from '@rongcloud/plugin-call';
 
 // 获取阿里存储信息
 export async function initOss(store: Store<initStore>) {
   try {
     // const config: any = await getOssInfo();
-    store.commit("SET_CREDENTIALS", "");
+    store.commit('SET_CREDENTIALS', '');
   } catch (error) {
     console.log(error);
   }
@@ -40,10 +40,10 @@ const useUserOperateGroupInfo = (store: Store<initStore>) => {
       groupInfo,
     };
 
-    const data = await store.dispatch("postMsg", {
+    const data = await store.dispatch('postMsg', {
       query,
       cmd: 1027,
-      encryption: "Aoelailiao.Login.UserOperateGroupInfoReq",
+      encryption: 'Aoelailiao.Login.UserOperateGroupInfoReq',
       auth: true,
     });
     return data;
@@ -60,7 +60,7 @@ function useBeforeSwitch(
   groupAttachInfo?: any
 ) {
   return async (e: boolean | number, uid?: number) => {
-    const switchState = typeof e === "number" ? e : e ? 1 : 0;
+    const switchState = typeof e === 'number' ? e : e ? 1 : 0;
     const res = {
       objectType: 2,
       objectId: uid || store.state.activeUid,
@@ -72,10 +72,10 @@ function useBeforeSwitch(
     }
     showLoading();
 
-    const data = await store.dispatch("postMsg", {
+    const data = await store.dispatch('postMsg', {
       query: res,
       cmd: 1041,
-      encryption: "Aoelailiao.Login.UserOperateSettingItemSwitchReq",
+      encryption: 'Aoelailiao.Login.UserOperateSettingItemSwitchReq',
       auth: true,
     });
     return new Promise((resovle, reject) => {
@@ -83,16 +83,16 @@ function useBeforeSwitch(
         // 更新缓存
         if (settingItemId === 1005) {
           // 消息通知
-          upDateStore(store, "groupMsgMute", res.switchState);
+          upDateStore(store, 'groupMsgMute', res.switchState);
         } else if (settingItemId === 1004) {
           // 置顶
-          upDateStore(store, "groupTop", switchState, uid);
+          upDateStore(store, 'groupTop', switchState, uid);
         } else if (settingItemId === 2108) {
           //
-          upDateStore(store, "groupMsgAtNotify", switchState);
+          upDateStore(store, 'groupMsgAtNotify', switchState);
         } else {
           // 设置进群权限
-          upDateStore(store, "groupInviteState", switchState);
+          upDateStore(store, 'groupInviteState', switchState);
           if (inGroupType) {
             inGroupType.value = groupInviteState(switchState, t);
           }
@@ -132,7 +132,7 @@ function upDateStore(
     } else {
       newMsgList.groupDetailInfo.groupAttachInfo[group] = switchState;
     }
-    store.commit("SET_MSGLISTITEM", { res: newMsgList, uid: activeUid });
+    store.commit('SET_MSGLISTITEM', { res: newMsgList, uid: activeUid });
   }
 }
 
@@ -142,13 +142,13 @@ function groupInviteState(
 ) {
   switch (val) {
     case 0:
-      return t("允许任何人加群");
+      return t('允许任何人加群');
     case 1:
-      return t("仅限邀请入群");
+      return t('仅限邀请入群');
     case 2:
-      return t("不允许任何人加群");
+      return t('不允许任何人加群');
     default:
-      return t("允许任何人加群");
+      return t('允许任何人加群');
   }
 }
 
@@ -167,13 +167,13 @@ const useEnter = (
     for (const e of copyImgList || []) {
       const info: any = e;
       if (
-        info?.file?.type?.includes("image") ||
-        info?.file?.type?.includes("video")
+        info?.file?.type?.includes('image') ||
+        info?.file?.type?.includes('video')
       ) {
         await sendImgInfo(
           info.file,
           store,
-          { value: "image/*,video/*" } as Ref<string>,
+          { value: 'image/*,video/*' } as Ref<string>,
           t,
           isGroupMsg
         );
@@ -181,7 +181,7 @@ const useEnter = (
         await sendImgInfo(
           info.file,
           store,
-          { value: ".xls,.doc,.docx,.txt,.pdf,video/*" } as Ref<string>,
+          { value: '.xls,.doc,.docx,.txt,.pdf,video/*' } as Ref<string>,
           t,
           isGroupMsg
         );
@@ -200,12 +200,12 @@ const useEnter = (
         isEncrypt: 0,
         msgContent: {
           msgContentType: 1,
-          msgContent: "stringContent",
+          msgContent: 'stringContent',
           stringContent: search.value,
         },
-        type: "stringContent",
+        type: 'stringContent',
         attachInfo: {
-          msgSource: "",
+          msgSource: '',
         },
       },
     };
@@ -218,14 +218,14 @@ const useEnter = (
         !userMsgInfo?.readList?.length &&
         msgSource.sourceId === store.state?.activeUid
       ) {
-        res.msgInfo.attachInfo.msgSource = JSON.stringify(msgSource) || "";
+        res.msgInfo.attachInfo.msgSource = JSON.stringify(msgSource) || '';
       }
     }
     if (isUrl) {
-      res.msgInfo.type = "linkUrlInfo";
+      res.msgInfo.type = 'linkUrlInfo';
       res.msgInfo.msgContent = {
         msgContentType: 25,
-        msgContent: "linkUrlInfo",
+        msgContent: 'linkUrlInfo',
         linkUrlInfo: {
           url: search.value,
           needParse: 1,
@@ -234,18 +234,18 @@ const useEnter = (
     }
 
     // 处理@消息
-    const atList = search.value.split("@");
+    const atList = search.value.split('@');
     if (atList.length && groupList.length) {
       const list = groupList.filter((e) =>
         search.value.includes(`@${e.nickname}`)
       );
       const ats = list.map((v) => {
         const item = v.nickname;
-        if (item === "All") {
+        if (item === 'All') {
           return {
             type: 1,
             uid: null,
-            name: t("所有人"),
+            name: t('所有人'),
           };
         } else {
           const info: any = groupList.find((e: any) => e.nickname === item);
@@ -257,10 +257,10 @@ const useEnter = (
         }
       });
 
-      res.msgInfo.type = "groupAtInfo";
+      res.msgInfo.type = 'groupAtInfo';
       res.msgInfo.msgContent = {
         msgContentType: 7,
-        msgContent: "groupAtInfo",
+        msgContent: 'groupAtInfo',
         groupAtInfo: {
           stringContent: search.value,
           atUsers: ats.map((e) => {
@@ -275,15 +275,15 @@ const useEnter = (
     if (store.state.replyMsg?.msgId) {
       res.msgInfo.replyMsgId = store.state.replyMsg?.msgId;
     }
-    const data = await store.dispatch("postMsg", {
+    const data = await store.dispatch('postMsg', {
       query: res,
       cmd: 2001,
-      encryption: "Aoelailiao.Message.ClientSendMsgToServerReq",
+      encryption: 'Aoelailiao.Message.ClientSendMsgToServerReq',
       auth: true,
     });
 
     if (data.body.resultCode === 0) {
-      search.value = "";
+      search.value = '';
     } else {
       Toast(t(data.body.resultString));
     }
@@ -300,8 +300,8 @@ const useSendImg = (
   nextTick?: any
 ) => {
   return async (type: string) => {
-    changUserImg?.value?.setAttribute("type", "file");
-    if (type === "sayHello") {
+    changUserImg?.value?.setAttribute('type', 'file');
+    if (type === 'sayHello') {
       const res = {
         msgInfo: {
           isGroupMsg,
@@ -311,15 +311,15 @@ const useSendImg = (
           isEncrypt: 0,
           msgContent: {
             msgContentType: 2,
-            msgContent: "imageMsg",
+            msgContent: 'imageMsg',
             imageMsg: {
-              imageUrl: "emoji_1",
+              imageUrl: 'emoji_1',
               imageWidth: 168,
               imageHeight: 168,
             },
           },
           attachInfo: {
-            msgSource: "",
+            msgSource: '',
           },
         },
       };
@@ -331,25 +331,25 @@ const useSendImg = (
           !userInfo?.readList?.length &&
           msgSource.sourceId === store.state?.activeUid
         ) {
-          res.msgInfo.attachInfo.msgSource = JSON.stringify(msgSource) || "";
+          res.msgInfo.attachInfo.msgSource = JSON.stringify(msgSource) || '';
         }
       }
 
-      const data = await store.dispatch("postMsg", {
+      const data = await store.dispatch('postMsg', {
         query: res,
         cmd: 2001,
-        encryption: "Aoelailiao.Message.ClientSendMsgToServerReq",
+        encryption: 'Aoelailiao.Message.ClientSendMsgToServerReq',
         auth: true,
       });
       if (data.body.resultCode !== 0) {
         Toast(t(data.body.resultString));
       }
-    } else if (type === "img") {
-      accept!.value = "image/*,video/*";
+    } else if (type === 'img') {
+      accept!.value = 'image/*,video/*';
       await nextTick();
       changUserImg.value.click();
-    } else if (type === "file") {
-      accept!.value = ".xls,.doc,.docx,.txt,.pdf,video/*";
+    } else if (type === 'file') {
+      accept!.value = '.xls,.doc,.docx,.txt,.pdf,video/*';
       await nextTick();
       changUserImg.value.click();
     }
@@ -361,7 +361,7 @@ function fileToBuf(file: File) {
     const fr = new FileReader();
     fr.readAsArrayBuffer(file);
     fr.addEventListener(
-      "loadend",
+      'loadend',
       (e: any) => {
         resovle(e.target.result);
       },
@@ -378,21 +378,21 @@ export async function upLoadFile(
   // const filebuf: any = await fileToBuf(file);
   // const buffer = new Uint8Array(filebuf);
   const formData = new FormData();
-  formData.append("file", file);
-  formData.append("auth_token", "9ijn0okm");
-  formData.append("path", store.state.userInfo.uid.toString());
-  formData.append("output", "json");
+  formData.append('file', file);
+  formData.append('auth_token', '9ijn0okm');
+  formData.append('path', store.state.userInfo.uid.toString());
+  formData.append('output', 'json');
 
   try {
     const data: any = await upload(store.state.config.h5_address, formData);
     if (!data.path) {
-      Toast(data.message || t("操作失败"));
+      Toast(data.message || t('操作失败'));
       return null;
     } else {
       return store.state.config.h5_address + data.path;
     }
   } catch (error) {
-    Toast(error.message || t("操作失败"));
+    Toast(error.message || t('操作失败'));
     return null;
   }
 }
@@ -405,16 +405,16 @@ function getFristImg(
   videoSize: any
 ) {
   return new Promise((resovle, reject) => {
-    const canvas: any = document.createElement("canvas");
-    const video = document.createElement("video");
+    const canvas: any = document.createElement('canvas');
+    const video = document.createElement('video');
     video.src = url;
-    video.setAttribute("crossOrigin", "anonymous");
+    video.setAttribute('crossOrigin', 'anonymous');
     video.currentTime = 1;
     canvas.width = videoSize.videoWidth;
     canvas.height = videoSize.videoHeight;
     video.onloadeddata = () => {
       canvas
-        .getContext("2d")
+        .getContext('2d')
         .drawImage(video, 0, 0, canvas.width, canvas.height);
       canvas.toBlob(
         async function (blob: any) {
@@ -422,14 +422,14 @@ function getFristImg(
             [blob],
             `${parseInt((Math.random() * 5000).toString())}.jpeg`,
             {
-              type: "image/jpeg",
+              type: 'image/jpeg',
             }
           );
           // const url = await upLoadFile(files, store, t);
           const info: any = await store.state.client.put(files.name, files);
-          resovle(info.url || "");
+          resovle(info.url || '');
         },
-        "image/jpeg",
+        'image/jpeg',
         0.8
       );
     };
@@ -442,8 +442,8 @@ function getFristImg(
 function getVideoSize(url: string) {
   return new Promise((resolve, reject) => {
     // 该file中可以获取到文件名，大小等信息
-    const video = document.createElement("video");
-    video.preload = "metadata";
+    const video = document.createElement('video');
+    video.preload = 'metadata';
     video.src = url;
     video.onloadedmetadata = () => {
       resolve(video);
@@ -499,8 +499,8 @@ async function sendImgInfo(
     // 参数
     let res = {};
 
-    if (accept.value === "image/*,video/*") {
-      if (file.type.includes("video")) {
+    if (accept.value === 'image/*,video/*') {
+      if (file.type.includes('video')) {
         let image_url: any, videoSize: any;
         try {
           ////  获取视频首帧 ////
@@ -520,7 +520,7 @@ async function sendImgInfo(
             isEncrypt: 0,
             msgContent: {
               msgContentType: 23,
-              msgContent: "videoMsgInfo",
+              msgContent: 'videoMsgInfo',
               videoMsgInfo: {
                 url: info.url,
                 name: file.name,
@@ -547,7 +547,7 @@ async function sendImgInfo(
             isEncrypt: 0,
             msgContent: {
               msgContentType: 2,
-              msgContent: "imageMsg",
+              msgContent: 'imageMsg',
               imageMsg: {
                 imageUrl: info.url,
                 imageWidth: size.width,
@@ -568,7 +568,7 @@ async function sendImgInfo(
           isEncrypt: 0,
           msgContent: {
             msgContentType: 19,
-            msgContent: "fileInfo",
+            msgContent: 'fileInfo',
             fileInfo: {
               fileName: file.name,
               fileSize: file.size,
@@ -580,10 +580,10 @@ async function sendImgInfo(
     }
     console.log(res);
 
-    const data = await store.dispatch("postMsg", {
+    const data = await store.dispatch('postMsg', {
       query: res,
       cmd: 2001,
-      encryption: "Aoelailiao.Message.ClientSendMsgToServerReq",
+      encryption: 'Aoelailiao.Message.ClientSendMsgToServerReq',
       auth: true,
     });
     if (data.body.resultCode !== 0) {
@@ -637,16 +637,16 @@ const useSystemNotifyInfo = (
 
     const frestMsg = systemNotifyInfo.appointUserSystemNotifyInfos[0];
     if ((frestMsg.userIds || []).includes(store.state.userInfo.uid)) {
-      const msg = frestMsg.appointUserNotifyInfo.msgText || "";
+      const msg = frestMsg.appointUserNotifyInfo.msgText || '';
       // 格式化消息
       return formatMsg(msg, t);
     } else {
-      let str = "";
+      let str = '';
       if (item.isGroupMsg === 0) {
         const lastMsg = systemNotifyInfo.appointUserSystemNotifyInfos[1];
         if (lastMsg) {
-          const msgText = lastMsg.appointUserNotifyInfo.msgText || "";
-          const spileText = lastMsg.appointUserNotifyInfo.spileText || "";
+          const msgText = lastMsg.appointUserNotifyInfo.msgText || '';
+          const spileText = lastMsg.appointUserNotifyInfo.spileText || '';
           const replaceMsgItems =
             lastMsg.appointUserNotifyInfo.replaceMsgItems || [];
           // 格式化消息
@@ -661,7 +661,7 @@ const useSystemNotifyInfo = (
         const replaceMsgItems =
           systemNotifyInfo?.otherUserNotifyInfo?.replaceMsgItems;
         const spileText = systemNotifyInfo?.otherUserNotifyInfo?.spileText;
-        const msgText = t(systemNotifyInfo?.otherUserNotifyInfo?.msgText || "");
+        const msgText = t(systemNotifyInfo?.otherUserNotifyInfo?.msgText || '');
         if (replaceMsgItems && replaceMsgItems.length) {
           return msgText.replace(spileText, replaceMsgItems[0].showContent);
         } else {
@@ -680,13 +680,13 @@ export const formatMsg = (
   t: { (key: string | number): string }
 ) => {
   try {
-    const [fristMsg, ...msgs] = msgText.split("#");
+    const [fristMsg, ...msgs] = msgText.split('#');
     const msg = t(fristMsg);
     if (msgs.length) {
-      let newMsg = "";
+      let newMsg = '';
       msgs.forEach((e, k) => {
         if (k === 0) {
-          newMsg = msg.replace("<spile>", e);
+          newMsg = msg.replace('<spile>', e);
         } else {
           newMsg = newMsg.replace(`<spile${k}>`, e);
         }
@@ -696,7 +696,7 @@ export const formatMsg = (
       return t(msgText);
     }
   } catch (error) {
-    return "";
+    return '';
   }
 };
 
@@ -710,11 +710,11 @@ const switchMsg = (
 ) => {
   // 格式化 systemNotifyInfo
   const systemNotifyInfo = useSystemNotifyInfo(store, t);
-  const userName = "";
+  const userName = '';
   // let fireInfo, infoList;
   // 阅后即焚
-  if (Number(item.msgShowType) === 3 && item.type === "stringContent") {
-    return t("[阅后即焚]");
+  if (Number(item.msgShowType) === 3 && item.type === 'stringContent') {
+    return t('[阅后即焚]');
   }
 
   // 处理@信息
@@ -724,7 +724,7 @@ const switchMsg = (
     const length = readList.length;
     const newList = readList.slice(length - unReadNum, length);
     const isAt = newList.find((e) => {
-      if (e.type === "groupAtInfo") {
+      if (e.type === 'groupAtInfo') {
         const atUsers = e.msgContent.groupAtInfo.atUsers[0];
         if (atUsers.type === 1) {
           return true;
@@ -737,68 +737,68 @@ const switchMsg = (
     });
 
     if (isAt) {
-      return t("有提到你的信息");
+      return t('有提到你的信息');
     }
   }
 
   switch (item.type || (item.msgContent && item.msgContent.msgContent)) {
-    case "stringContent":
+    case 'stringContent':
       return item.msgContent.stringContent;
-    case "imageMsg":
-      return t("[图片]");
-    case "fileInfo":
-      return t("[文件]");
-    case "fireInfo":
+    case 'imageMsg':
+      return t('[图片]');
+    case 'fileInfo':
+      return t('[文件]');
+    case 'fireInfo':
       return (item.msgContent.fireInfo as IFireInfo).stringContent;
     //   fireInfo = item.msgContent.fireInfo.stringContent;
     //   infoList = fireInfo.substr(7, fireInfo.length).split('#');
     //   return infoList[1] + infoList[0];
-    case "revokeInfo":
+    case 'revokeInfo':
       return formatMsg(
         (item.msgContent.revokeInfo as IRevokeInfo).stringContent,
         t
       );
-    case "systemNotifyInfo":
+    case 'systemNotifyInfo':
       return systemNotifyInfo(item as IMsgInfo<ISystemNotifyInfo>);
-    case "visitingCard":
-      return t("[名片]");
-    case "linkUrlInfo":
-      return t("[链接]");
-    case "voiceMsg":
-      return t("[语音]");
-    case "cleanInfo":
-      return t("[清理消息]");
-    case "videoCallInfo":
+    case 'visitingCard':
+      return t('[名片]');
+    case 'linkUrlInfo':
+      return t('[链接]');
+    case 'voiceMsg':
+      return t('[语音]');
+    case 'cleanInfo':
+      return t('[清理消息]');
+    case 'videoCallInfo':
       if (
         (item.msgContent.videoCallInfo as IVideoCallMsgInfo).videoType === 1
       ) {
-        return t("[语音通话]");
+        return t('[语音通话]');
       } else {
-        return t("[视频通话]");
+        return t('[视频通话]');
       }
-    case "gpsMsgInfo":
-      return t("[位置]");
-    case "groupAtInfo":
+    case 'gpsMsgInfo':
+      return t('[位置]');
+    case 'groupAtInfo':
       return (item.msgContent.groupAtInfo as IGroupAtInfo).stringContent;
-    case "videoMsgInfo":
-      return t("[视频]");
+    case 'videoMsgInfo':
+      return t('[视频]');
     default:
-      return "";
+      return '';
   }
 };
 
 // 离线数据
 const useGetOfflineMsg = async (store: any) => {
   const res = {};
-  const data = await store.dispatch("postMsg", {
+  const data = await store.dispatch('postMsg', {
     query: res,
     cmd: 2053,
-    encryption: "Aoelailiao.Message.ClientGetSectionOfflineMsgReq",
+    encryption: 'Aoelailiao.Message.ClientGetSectionOfflineMsgReq',
     auth: true,
   });
 
   const offlineMsg = data.body.offlineMsgInfos.filter(
-    (e: any) => e.msgContent.msgContent !== "videoCallInfo"
+    (e: any) => e.msgContent.msgContent !== 'videoCallInfo'
   );
 
   const offlineMsgInfos = offlineMsg.sort(
@@ -826,7 +826,7 @@ const mergeData = async (
     e.type = e.msgContent.msgContent;
     e.isRoamMsg = roamList.length ? true : false;
 
-    await store.dispatch("addMsgList", e);
+    await store.dispatch('addMsgList', e);
   }
 };
 
@@ -849,10 +849,10 @@ const useClientSendMsgAckToServer = (
       toId, //单聊B的uid，群聊时填群ID
       isOffLine, //是否为离线消息：0--在线消息，1--离线消息
     };
-    await store.dispatch("postMsg", {
+    await store.dispatch('postMsg', {
       query: res,
       cmd: 2005,
-      encryption: "Aoelailiao.Message.ClientSendMsgAckToServerReq",
+      encryption: 'Aoelailiao.Message.ClientSendMsgAckToServerReq',
       auth: true,
     });
   };
@@ -870,10 +870,10 @@ const useUserGetConversationHasReadedMsgInfo = (store: Store<initStore>) => {
         },
       ],
     };
-    const data = await store.dispatch("postMsg", {
+    const data = await store.dispatch('postMsg', {
       query: res,
       cmd: 2145,
-      encryption: "Aoelailiao.Message.UserGetConversationHasReadedMsgInfoReq",
+      encryption: 'Aoelailiao.Message.UserGetConversationHasReadedMsgInfoReq',
       auth: true,
     });
     return data.body.msgHasReadedInfos;
@@ -888,15 +888,15 @@ const useRevoke = (
   return async (msg: any) => {
     // 时间多于两分钟的不可以撤回
     if (Date.now() - msg.msgTime * 1000 > 120000) {
-      return Toast("只能撤回两分钟内的消息");
+      return Toast('只能撤回两分钟内的消息');
     }
     const res = {
       msgId: msg.msgId,
     };
-    const data = await store.dispatch("postMsg", {
+    const data = await store.dispatch('postMsg', {
       query: res,
       cmd: 2007,
-      encryption: "Aoelailiao.Message.ClientRevokeMsgReq",
+      encryption: 'Aoelailiao.Message.ClientRevokeMsgReq',
       auth: true,
     });
     Toast(t(data.body.resultString));
@@ -910,26 +910,27 @@ const useDelMsg = (
 ) => {
   return async (msg: any) => {
     const res = {
-      msgId: msg.msgId,
+      msgIds: [msg.msgId],
     };
-    console.log(msg, 111);
-    const data = await store.dispatch("postMsg", {
+    const data = await store.dispatch('postMsg', {
       query: res,
       cmd: 2167,
-      encryption: "Aoelailiao.Message.DeleteMsgReq",
+      encryption: 'Aoelailiao.Message.DeleteMsgReq',
       auth: true,
     });
     Toast(t(data.body.resultString));
     if (data.body.resultCode === 0) {
       const msgList = store.state.msgList;
       // 处理删除消息
-      const readList =
-        msgList[msg.toId]?.readList || msgList[msg.fromId]?.readList || [];
+      const msgInfo = msgList[msg.toId] || msgList[msg.fromId];
+
+      const readList = msgInfo?.readList || [];
       const delKey = readList.findIndex(
         (e: any) => Number(e.msgId) === Number(msg.msgId)
       );
       readList.splice(delKey, 1);
-      store.commit("SET_MSGLIST", msgList);
+      store.commit('SET_MSGLIST', msgList);
+      store.commit('set_Key', Math.random());
     }
   };
 };
@@ -939,25 +940,25 @@ const useFormateTime = () => {
   return (msgTime: number) => {
     const { t } = useI18n();
     if (!msgTime) {
-      return "";
+      return '';
     }
     const time = msgTime * 1000;
-    const minute = moment().diff(moment(time), "minute");
-    const day = moment().diff(moment(time), "day");
+    const minute = moment().diff(moment(time), 'minute');
+    const day = moment().diff(moment(time), 'day');
     if (minute < 10) {
-      return t("刚刚");
+      return t('刚刚');
     } else if (minute < 3600) {
-      if (moment(time).format("DD") === moment().format("DD")) {
+      if (moment(time).format('DD') === moment().format('DD')) {
         // 今天
-        return moment(time).format("HH:mm");
+        return moment(time).format('HH:mm');
       } else {
         // 昨天
-        return t("昨天") + " " + moment(time).format("HH:mm");
+        return t('昨天') + ' ' + moment(time).format('HH:mm');
       }
     } else if (day < 30) {
-      return moment(time).format("MM/DD");
+      return moment(time).format('MM/DD');
     }
-    return moment(time).format("YYYY/MM/DD");
+    return moment(time).format('YYYY/MM/DD');
   };
 };
 
@@ -974,11 +975,11 @@ const initRongConnect = async (
     });
     const data: any = await RongIMLib.connect(res.token);
     if (data.code === 0) {
-      console.log("链接成功, 链接用户 id 为: ", data.data.userId);
-      store.commit("SET_RONGIM", rongIm);
+      console.log('链接成功, 链接用户 id 为: ', data.data.userId);
+      store.commit('SET_RONGIM', rongIm);
     } else {
-      console.warn("链接失败, code:", data.code);
-      throw new Error("链接失败, code:" + data.code);
+      console.warn('链接失败, code:', data.code);
+      throw new Error('链接失败, code:' + data.code);
     }
   } catch (error) {
     console.log(error);
@@ -989,13 +990,13 @@ const initRongConnect = async (
 // 漫游数据
 async function getRoam(store: Store<initStore>) {
   if (getUserToken()) {
-    const res = await store.dispatch("postMsg", {
+    const res = await store.dispatch('postMsg', {
       query: {
         type: 0,
         uid: store.state.userInfo.uid,
       },
       cmd: 5001,
-      encryption: "Aoelailiao.Message.AtInfo",
+      encryption: 'Aoelailiao.Message.AtInfo',
       auth: true,
     });
     return res.body.msgInfos || [];
@@ -1005,7 +1006,7 @@ async function getRoam(store: Store<initStore>) {
 
 //下载文件
 function saveAs(blob: Blob, filename: string) {
-  const link = document.createElement("a");
+  const link = document.createElement('a');
   link.href = window.URL.createObjectURL(blob);
   link.download = filename;
   link.click();
@@ -1014,8 +1015,8 @@ function saveAs(blob: Blob, filename: string) {
 function getBlob(url: string) {
   return new Promise((resolve) => {
     const xhr = new XMLHttpRequest();
-    xhr.open("GET", url, true);
-    xhr.responseType = "blob";
+    xhr.open('GET', url, true);
+    xhr.responseType = 'blob';
     xhr.onload = () => {
       if (xhr.status === 200) {
         resolve(xhr.response);

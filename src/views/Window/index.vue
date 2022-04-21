@@ -23,6 +23,7 @@
     <!-- 消息内容 -->
     <div class="msg">
       <Message
+        :key="store.state.key"
         :yUserInfo="yUserInfo"
         :userDetailInfo="userDetailInfo"
         @toggleBox="toggleBox"

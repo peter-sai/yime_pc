@@ -15,6 +15,7 @@ import { IUserDetailInfo } from '@/types/user';
 import { useClientSendMsgAckToServer, mergeData } from '@/hooks/window';
 import Electron from 'Electron';
 import { Toast } from '@/plugin/Toast';
+import { hideLoading } from '@/plugin/Loading';
 
 const OSS = require('ali-oss');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -149,7 +150,8 @@ const initState = {
   },
   msgList: {} as { [key: number]: ImsgItem },
   playAudio: '', // 当前正在播放的音频
-  conversationIng: true, // 是否在通话中
+  conversationIng: true, // 是否在通话中,
+  key: 0,
 };
 
 export type initStore = typeof initState;
@@ -157,6 +159,9 @@ export type initStore = typeof initState;
 const sotreRoot = createStore({
   state: initState,
   mutations: {
+    set_Key: (state, res) => {
+      state.key = res;
+    },
     set_T: (state, res) => {
       state.t = res;
     },
