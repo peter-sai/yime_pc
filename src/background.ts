@@ -11,6 +11,7 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
 const Badge = require('electron-windows-badge');
 
 const { ipcMain } = require('electron');
+let win: any;
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -19,7 +20,7 @@ protocol.registerSchemesAsPrivileged([
 
 async function createWindow() {
   // Create the browser window.
-  const win = new BrowserWindow({
+  win = new BrowserWindow({
     width: 1024,
     height: 768,
     webPreferences: {
@@ -76,13 +77,17 @@ async function createWindow() {
   });
   win.webContents.session.on('will-download', (event, item) => {
     item.setSavePath(dowUrl);
-    item.once('done', (event, state) => {
+    item.once('done', (_, state) => {
       if (state === 'completed') {
         shell.openPath(dowUrl);
       } else {
         console.log(`Download failed: ${state}`);
       }
     });
+  });
+
+  win.on('close', () => {
+    win.webContents.send('close');
   });
 }
 

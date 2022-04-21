@@ -603,7 +603,7 @@ const unReadNum = computed(() => {
   } else {
     Electron.ipcRenderer.sendSync(
       'update-badge',
-      (num && num.toString()) || null,
+      (num && num.toString()) || null
     );
   }
 
@@ -612,6 +612,11 @@ const unReadNum = computed(() => {
 
 watch(unReadNum, (e) => {
   //
+});
+
+Electron.ipcRenderer.on('close', () => {
+  setMsgList(store.state.msgList);
+  console.log(11);
 });
 </script>
 <style lang="scss">
