@@ -17,7 +17,7 @@ import { getToken as getUserToken } from '@/utils/utils';
 import { getOssInfo, getToken, upload } from '../api';
 import { number } from '@intlify/core-base';
 import moment from 'moment';
-import { ComputedRef, Ref } from 'vue';
+import { ComputedRef, Ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { stringifyQuery } from 'vue-router';
 import { Store } from 'vuex';
@@ -284,6 +284,17 @@ const useEnter = (
 
     if (data.body.resultCode === 0) {
       search.value = '';
+      const replyData: any = computed(() => store.state.replyData);
+      const activeUid: any = computed(() => store.state.activeUid);
+      if (replyData.value && activeUid.value) {
+        replyData.value[activeUid.value] = {
+          showReplyBox: false,
+          replyMsg: {},
+          replyUser: '',
+        };
+        store.commit('SET_REPLYDATA', replyData);
+        store.commit('SET_REPLYMSG', {});
+      }
     } else {
       Toast(t(data.body.resultString));
     }
