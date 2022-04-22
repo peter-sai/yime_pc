@@ -6,7 +6,7 @@
         <div class="line"></div>
         <div class="text">
           <span>回复 {{ replyActive?.replyUser }}</span>
-          <span>{{ replyActive?.replyMsg?.msgContent?.stringContent }}</span>
+          <span>{{ replyContent }}</span>
         </div>
       </div>
       <img src="../../assets/img/close.svg" alt="" @click="closeReply" />
@@ -776,6 +776,29 @@ const delImgList = (key: number) => {
 
 const replyData = computed(() => store.state.replyData);
 const replyActive = computed(() => replyData.value[store.state.activeUid]);
+
+const replyContent = computed(() => {
+  let name: string;
+  const msgContentType =
+    replyActive?.value?.replyMsg?.msgContent?.msgContentType;
+  if (msgContentType === 1) {
+    name = replyActive?.value?.replyMsg?.msgContent?.stringContent;
+  } else if (msgContentType === 2) {
+    name = t('[图片]');
+  } else if (msgContentType === 3) {
+    name = t('[语音]');
+  } else if (msgContentType === 23) {
+    name = t('[视频]');
+  } else {
+    const res =
+      replyActive?.value?.replyMsg?.msgContent?.fileInfo?.fileName?.split('.');
+    if (res.length > 1) {
+      const suffix = res[1];
+      name = `[ ${suffix.toLocaleLowerCase()} ]`;
+    }
+  }
+  return name;
+});
 // 关闭回复面板
 const closeReply = () => {
   replyData.value[store.state.activeUid] = {
