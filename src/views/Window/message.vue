@@ -40,7 +40,6 @@
     </div>
     <div class="Message">
       <div v-for="(item, key) in itemChat.readList || []" :key="item.id">
-        {{ getReply(item) }}
         <Time v-if="isShowTime(key)">{{ formateTime(item.msgTime, t) }}</Time>
         <!-- 普通消息 -->
         <!-- 阅后即焚 -->
@@ -81,6 +80,7 @@
               @menuClick="menuClick($event, item)"
               :isRead="item.msgId <= readMsgId"
               :replyMsg="getReply(item)"
+              :replyUserInfo="getUserInfo(getReply(item))"
               :isBurn="item.msgShowType === 3"
               v-else
             >
@@ -635,7 +635,7 @@ const getUserInfo: (item: IMsgInfo<string>) => IUserInfo = (item) => {
   return (
     !activeIsGroup.value
       ? props.yUserInfo
-      : groupMemberLists.value.find((e) => e.uid === item.fromId)
+      : groupMemberLists.value.find((e) => e.uid === item?.fromId)
   ) as IUserInfo;
 };
 

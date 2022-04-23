@@ -18,9 +18,8 @@
             :left="`-20px`"
             :top="`-15px`"
           />
+          <Reply :replyMsg="replyMsg" :userInfo="replyUserInfo" />
           <slot />
-          <div class="line" v-if="replyMsg?.msgContent?.stringContent"></div>
-          {{ replyMsg?.msgContent?.stringContent }}
         </ImgBg>
       </div>
       <IsRead :isRead="isRead" />
@@ -31,9 +30,11 @@
 import { defineComponent, defineProps, PropType } from 'vue';
 import ImgBg from '../ImgBg/index.vue';
 import Fire from '../Fire/index.vue';
+import Reply from '../Reply/index.vue';
 import Sending from '@/components/Sending/index.vue';
 import IsRead from '@/components/IsRead/index.vue';
 import { IMsgInfo } from '@/types/msg';
+import { IUserInfo } from '@/types/user';
 export default defineComponent({
   name: 'Mmsg',
 });
@@ -53,6 +54,9 @@ defineProps({
   },
   fired: {
     type: Boolean,
+  },
+  replyUserInfo: {
+    type: Object as PropType<IUserInfo>,
   },
   replyMsg: {
     type: Object as PropType<IMsgInfo>,
