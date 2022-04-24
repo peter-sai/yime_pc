@@ -40,6 +40,7 @@
     </div>
     <div class="Message">
       <div v-for="(item, key) in itemChat.readList || []" :key="item.id">
+        {{ item }}
         <Time v-if="isShowTime(key)">{{ formateTime(item.msgTime, t) }}</Time>
         <!-- 普通消息 -->
         <!-- 阅后即焚 -->
