@@ -10,7 +10,10 @@
     <div class="reply-content" v-else>
       <div class="left">
         <span>{{ userInfo?.nickname }}</span>
-        <span>{{ replyContent }}</span>
+        <span
+          ><span class="quot">“</span> {{ replyContent }}
+          <span class="quot">”</span></span
+        >
       </div>
       <div class="right">
         <div class="icon" v-if="replyContentImg === 'voiceMsg'">
@@ -121,6 +124,11 @@ const replyContentImg = computed(() => {
         color: #99ceff;
         line-height: 18px;
         display: block;
+      }
+      .quot {
+        font-size: 18px;
+        font-weight: bold;
+        display: inline;
       }
     }
     .right {
