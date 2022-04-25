@@ -73,6 +73,7 @@
               :isBurn="item.msgShowType === 3"
               :replyMsg="getReply(item)"
               :userInfo="getUserInfo(item)"
+              :replyUserInfo="getUserInfo(getReply(item))"
               v-if="isShowHowComponent(item)"
             >
               {{ item.msgContent.stringContent }}
@@ -635,7 +636,9 @@ const getReply = (item: IMsgInfo<string>) => {
 const getUserInfo: (item: IMsgInfo<string>) => IUserInfo = (item) => {
   return (
     !activeIsGroup.value
-      ? props.yUserInfo
+      ? userInfo.value.uid === item?.fromId
+        ? userInfo.value
+        : props.yUserInfo
       : groupMemberLists.value.find((e) => e.uid === item?.fromId)
   ) as IUserInfo;
 };

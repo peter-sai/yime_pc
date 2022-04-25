@@ -18,7 +18,7 @@
             :left="`-20px`"
             :top="`-15px`"
           />
-          <Mreply :replyMsg="replyMsg" :userInfo="replyUserInfo" />
+          <Reply :replyMsg="replyMsg" :userInfo="replyUserInfo" isMe />
           <slot />
         </ImgBg>
       </div>
@@ -30,7 +30,7 @@
 import { defineComponent, defineProps, PropType } from 'vue';
 import ImgBg from '../ImgBg/index.vue';
 import Fire from '../Fire/index.vue';
-import Mreply from '../Mreply/index.vue';
+import Reply from '../Reply/index.vue';
 import Sending from '@/components/Sending/index.vue';
 import IsRead from '@/components/IsRead/index.vue';
 import { IMsgInfo } from '@/types/msg';

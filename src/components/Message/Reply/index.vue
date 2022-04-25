@@ -20,20 +20,25 @@
           class="image"
           v-else-if="
             replyMsg?.msgContent?.msgContentType === 2 ||
-            replyMsg?.msgContent?.msgContentType === 23
+            replyMsg?.msgContent?.msgContentType === 23 ||
+            replyMsg?.msgContent?.msgContentType === 15
           "
           :src="replyContentImg"
         />
-        <img class="file" v-else :src="replyContentImg" />
+        <Iconfont v-else :name="replyContentImg" size="32" />
+        <!-- <img class="file" v-else :src="replyContentImg" /> -->
       </div>
     </div>
-    <div class="line"></div>
+    <div
+      class="line"
+      :style="isMe ? 'background:#ffffff' : 'background:#000000'"
+    ></div>
   </div>
 </template>
 <script lang="ts">
 import { defineComponent, defineProps, PropType, computed } from 'vue';
 export default defineComponent({
-  name: 'Mreply',
+  name: 'Reply',
 });
 </script>
 <script lang="ts" setup>
@@ -42,6 +47,9 @@ import { IUserInfo } from '@/types/user';
 import { useI18n } from 'vue-i18n';
 import Iconfont from '@/iconfont/index.vue';
 const props = defineProps({
+  isMe: {
+    type: Boolean,
+  },
   userInfo: {
     type: Object as PropType<IUserInfo>,
   },
@@ -83,7 +91,16 @@ const replyContentImg = computed(() => {
     const res = props?.replyMsg?.msgContent?.fileInfo?.fileName?.split('.');
     if (res.length > 1) {
       const suffix = res[1];
-      imageUrl = require(`../../../assets/img/${suffix.toLocaleLowerCase()}.svg`);
+      if (suffix.toLocaleLowerCase().includes('doc')) {
+        imageUrl = 'iconWORD';
+      } else if (suffix.toLocaleLowerCase().includes('xls')) {
+        imageUrl = 'iconexcel';
+      } else if (suffix.toLocaleLowerCase().includes('pdf')) {
+        imageUrl = 'iconpdf';
+      } else {
+        imageUrl = 'iconwenjian';
+      }
+      // imageUrl = require(`../../../assets/img/${suffix.toLocaleLowerCase()}.svg`);
     }
   }
   return imageUrl;

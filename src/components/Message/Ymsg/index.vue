@@ -9,11 +9,10 @@
       <div class="title" v-if="isGroup">{{ userInfo?.nickname }}</div>
       <ImBg v-bind="$attrs">
         <Fire :isBurn="isBurn" :fired="fired" :right="`-20px`" :top="`-15px`" />
+        <Reply :replyMsg="replyMsg" :userInfo="replyUserInfo" />
         <p v-for="item in list" :key="item" class="text">
           {{ item.replace(/\u0000/g, '') }}
         </p>
-        <div class="line" v-if="replyMsg?.msgContent?.stringContent"></div>
-        {{ replyMsg?.msgContent?.stringContent }}
       </ImBg>
     </div>
   </div>
@@ -29,6 +28,7 @@ import {
 } from 'vue';
 import ImBg from '../ImgBg/index.vue';
 import Fire from '../Fire/index.vue';
+import Reply from '../Reply/index.vue';
 import Iconfont from '@/iconfont/index.vue';
 import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
@@ -49,6 +49,9 @@ defineProps({
     type: Boolean,
   },
   userInfo: {
+    type: Object as PropType<IUserInfo>,
+  },
+  replyUserInfo: {
     type: Object as PropType<IUserInfo>,
   },
   replyMsg: {
