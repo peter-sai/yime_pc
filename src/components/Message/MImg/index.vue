@@ -1,9 +1,34 @@
 <template>
   <div class="mImg">
     <div style="flex: 1">
-      <div>
+      <div
+        style="
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-end;
+          align-items: flex-end;
+        "
+      >
         <!-- <img :width="width" :height="height" :src="src" alt="" /> -->
         <SayHello v-if="src === 'emoji_1'" />
+        <div class="box" v-else-if="replyMsg?.msgId">
+          <ImgBg v-bind="$attrs" isMe :fired="fired">
+            <Fire
+              :isBurn="isBurn"
+              :fired="fired"
+              :left="`-15px`"
+              :top="`-8px`"
+            />
+            <Reply :replyMsg="replyMsg" :userInfo="replyUserInfo" isMe />
+            <img
+              @click="shogImg"
+              style="max-width: 100%; max-height: 100%; cursor: pointer"
+              :src="src"
+              alt=""
+            />
+          </ImgBg>
+        </div>
         <div class="imgBg" v-else @contextmenu="contextmenu">
           <Fire :isBurn="isBurn" :fired="fired" :left="`-15px`" :top="`-8px`" />
           <img
@@ -19,10 +44,14 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, defineProps, defineEmits } from 'vue';
+import { defineComponent, defineProps, defineEmits, PropType } from 'vue';
 import SayHello from '../SayHello/index.vue';
 import Fire from '../Fire/index.vue';
 import IsRead from '@/components/IsRead/index.vue';
+import Reply from '../Reply/index.vue';
+import { IMsgInfo } from '@/types/msg';
+import { IUserInfo } from '@/types/user';
+import ImgBg from '../ImgBg/index.vue';
 export default defineComponent({
   name: 'MImg',
 });
@@ -50,6 +79,12 @@ const props = defineProps({
   },
   fired: {
     type: Boolean,
+  },
+  replyUserInfo: {
+    type: Object as PropType<IUserInfo>,
+  },
+  replyMsg: {
+    type: Object as PropType<IMsgInfo>,
   },
 });
 
@@ -90,5 +125,11 @@ const shogImg = () => {
       max-height: 100%;
     }
   }
+}
+.box {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  max-width: 70%;
 }
 </style>

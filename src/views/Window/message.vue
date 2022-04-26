@@ -130,6 +130,8 @@
             :isBurn="item.msgShowType === 3"
             :fired="false"
             :userInfo="getUserInfo(item)"
+            :replyMsg="getReply(item)"
+            :replyUserInfo="getUserInfo(getReply(item))"
             :src="item.msgContent.imageMsg.imageUrl"
             @showBigImg="showBigImg(item)"
           />
@@ -140,6 +142,8 @@
             @menuClick="menuClick($event, item)"
             :isBurn="item.msgShowType === 3"
             :fired="false"
+            :replyMsg="getReply(item)"
+            :replyUserInfo="getUserInfo(getReply(item))"
             :src="item.msgContent.imageMsg.imageUrl"
           />
         </div>
