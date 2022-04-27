@@ -7,6 +7,18 @@
     <div>
       <!-- <img :width="width" :height="height" :src="src" alt="" /> -->
       <SayHello v-if="src === 'emoji_1'" />
+      <div class="box" v-else-if="replyMsg?.msgId">
+        <ImgBg v-bind="$attrs" :fired="fired">
+          <Fire :isBurn="isBurn" :fired="fired" :left="`-15px`" :top="`-8px`" />
+          <Reply :replyMsg="replyMsg" :userInfo="replyUserInfo" />
+          <img
+            @click="shogImg"
+            style="max-width: 100%; max-height: 100%; cursor: pointer"
+            :src="src"
+            alt=""
+          />
+        </ImgBg>
+      </div>
       <div v-else class="imgBg" @contextmenu="contextmenu">
         <div class="title" v-if="isGroup">{{ userInfo?.nickname }}</div>
         <Fire :isBurn="isBurn" :fired="fired" :right="`-15px`" :top="`-10px`" />
@@ -31,8 +43,11 @@ import {
 import Iconfont from '@/iconfont/index.vue';
 import SayHello from '../SayHello/index.vue';
 import Fire from '../Fire/index.vue';
+import ImgBg from '../ImgBg/index.vue';
+import Reply from '../Reply/index.vue';
 import { useI18n } from 'vue-i18n';
 import { IUserInfo } from '@/types/user';
+import { IMsgInfo } from '@/types/msg';
 import { key } from '@/store';
 import { useStore } from 'vuex';
 export default defineComponent({
@@ -67,6 +82,12 @@ const props = defineProps({
   },
   fired: {
     type: Boolean,
+  },
+  replyUserInfo: {
+    type: Object as PropType<IUserInfo>,
+  },
+  replyMsg: {
+    type: Object as PropType<IMsgInfo>,
   },
 });
 const { t } = useI18n();
@@ -112,5 +133,11 @@ const shogImg = () => {
       max-height: 100%;
     }
   }
+}
+.box {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  max-width: 70%;
 }
 </style>
