@@ -8,7 +8,7 @@
       {{ replyMsg?.msgContent?.stringContent }}
     </div>
     <div class="reply-content" v-else>
-      <div class="left">
+      <div class="left" :style="isMe ? 'color: #99ceff' : 'color:gray'">
         <span>{{ userInfo?.nickname }}</span>
         <span
           ><span class="quot">“</span> {{ replyContent }}
@@ -121,7 +121,7 @@ const replyContentImg = computed(() => {
       span {
         font-size: 12px;
         font-weight: 400;
-        color: #99ceff;
+        // color: #99ceff;
         line-height: 18px;
         display: block;
       }
