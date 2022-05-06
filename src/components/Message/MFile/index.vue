@@ -166,14 +166,5 @@ const contextmenu = (e: any) => {
     color: #fff;
     background: #0085ff;
   }
-  &.sys {
-    background: #0085ff;
-  }
-  &.fireInfo {
-    padding: 20px 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
 }
 </style>
