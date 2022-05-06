@@ -270,6 +270,10 @@
             @menuClick="menuClick($event, item)"
             :videoMsgInfo="item.msgContent.videoMsgInfo"
             :msgId="item.msgId"
+            :isBurn="item.msgShowType === 3"
+            :replyMsg="getReply(item)"
+            :replyUserInfo="getUserInfo(getReply(item))"
+            :fired="false"
             @onPlay="playMsgId = item.msgId"
             :playMsgId="playMsgId"
           />
@@ -279,6 +283,10 @@
             @menuClick="menuClick($event, item)"
             :videoMsgInfo="item.msgContent.videoMsgInfo"
             :msgId="item.msgId"
+            :isBurn="item.msgShowType === 3"
+            :replyMsg="getReply(item)"
+            :replyUserInfo="getUserInfo(getReply(item))"
+            :fired="false"
             @onPlay="playMsgId = item.msgId"
             :playMsgId="playMsgId"
           />
