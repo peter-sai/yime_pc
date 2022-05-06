@@ -5,11 +5,38 @@
       <Iconfont v-else name="iconlianxiren" size="46" color="#A8B5BE" />
     </div>
     <div>
-      <div class="imgBg" @contextmenu="contextmenu">
+      <ImgBg v-bind="$attrs" :fired="fired" v-if="replyMsg?.msgId">
+        <Fire :isBurn="isBurn" :fired="fired" :right="`-18px`" :top="`-15px`" />
+        <Reply :replyMsg="replyMsg" :userInfo="replyUserInfo" />
+        <div class="imgBg" @contextmenu="contextmenu">
+          <div class="imgBox" ref="imgBox" :style="style">
+            <div
+              v-if="!isPlay"
+              style="width: 100%; height: 100%; text-align: center"
+            >
+              <img
+                style="max-width: 100%; max-height: 100%"
+                :src="videoMsgInfo?.imageUrl"
+                alt=""
+              />
+              <div class="icon" @click="play">
+                <Iconfont name="iconplay1" size="20" color="#fff" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </ImgBg>
+      <div class="imgBg" @contextmenu="contextmenu" v-else>
         <div v-if="isGroup" class="title">
           {{ userInfo?.nickname }}
         </div>
         <div class="imgBox" ref="imgBox" :style="style">
+          <Fire
+            :isBurn="isBurn"
+            :fired="fired"
+            :right="`-18px`"
+            :top="`-15px`"
+          />
           <div
             v-if="!isPlay"
             style="width: 100%; height: 100%; text-align: center"
@@ -44,6 +71,10 @@ import { IUserInfo } from '@/types/user';
 import { key } from '@/store';
 import { useStore } from 'vuex';
 import { IVideoMsgInfo } from '@/types/msg';
+import { IMsgInfo } from '@/types/msg';
+import Fire from '../Fire/index.vue';
+import Reply from '../Reply/index.vue';
+import ImgBg from '../ImgBg/index.vue';
 export default defineComponent({
   name: 'Message',
 });
@@ -70,6 +101,18 @@ const props = defineProps({
   },
   playMsgId: {
     type: Number,
+  },
+  isBurn: {
+    type: Boolean,
+  },
+  fired: {
+    type: Boolean,
+  },
+  replyUserInfo: {
+    type: Object as PropType<IUserInfo>,
+  },
+  replyMsg: {
+    type: Object as PropType<IMsgInfo>,
   },
 });
 
