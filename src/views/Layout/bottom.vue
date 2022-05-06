@@ -681,6 +681,9 @@ async function sendRec(duration: number) {
         // },
       },
     };
+    if (store.state.replyMsg?.msgId) {
+      res.msgInfo.replyMsgId = store.state.replyMsg?.msgId;
+    }
     const data = await store.dispatch('postMsg', {
       query: res,
       cmd: 2001,
@@ -689,11 +692,27 @@ async function sendRec(duration: number) {
     });
     if (data.body.resultCode !== 0) {
       return Toast(t(data.body.resultString));
+    } else {
+      reset();
     }
   } catch (error) {
     console.log(error);
   }
   hideLoading();
+}
+
+function reset() {
+  const replyData: any = computed(() => store.state.replyData);
+  const activeUid: any = computed(() => store.state.activeUid);
+  if (replyData.value && activeUid.value) {
+    replyData.value[activeUid.value] = {
+      showReplyBox: false,
+      replyMsg: {},
+      replyUser: '',
+    };
+    store.commit('SET_REPLYDATA', replyData);
+    store.commit('SET_REPLYMSG', {});
+  }
 }
 
 // 取消发送

@@ -211,6 +211,8 @@
             @menuClick="menuClick($event, item)"
             :userInfo="getUserInfo(item)"
             :isBurn="item.msgShowType === 3"
+            :replyMsg="getReply(item)"
+            :replyUserInfo="getUserInfo(getReply(item))"
             :fired="false"
             :voiceMsg="item.msgContent.voiceMsg"
             :msgId="item.msgId"
@@ -220,6 +222,8 @@
             @menuClick="menuClick($event, item)"
             :isRead="item.msgId <= readMsgId"
             :isBurn="item.msgShowType === 3"
+            :replyMsg="getReply(item)"
+            :replyUserInfo="getUserInfo(getReply(item))"
             :fired="false"
             :voiceMsg="item.msgContent.voiceMsg"
           />
