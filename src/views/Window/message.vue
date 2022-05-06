@@ -165,6 +165,8 @@
             @menuClick="menuClick($event, item)"
             :item="item.msgContent.fileInfo"
             :isBurn="item.msgShowType === 3"
+            :replyMsg="getReply(item)"
+            :replyUserInfo="getUserInfo(getReply(item))"
             :fired="false"
             @download="download(item.msgContent.fileInfo)"
           />

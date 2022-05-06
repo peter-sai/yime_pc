@@ -34,7 +34,7 @@
     </div>
     <div
       class="line"
-      :style="isMe ? 'background:#ffffff' : 'background:#000000'"
+      :style="isMe ? 'background:#ffffff' : 'background:rgba(0, 0, 0,0.3);'"
     ></div>
   </div>
 </template>
@@ -114,7 +114,7 @@ const replyContentImg = computed(() => {
   &-content {
     font-size: 16px;
     display: flex;
-    justify-content: space-between;
+    //justify-content: space-between;
     align-items: center;
     .left {
       margin-right: 11px;
