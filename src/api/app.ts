@@ -11,11 +11,11 @@ const useGetOfflineMsg = async (store: any) => {
   });
 
   const offlineMsg = data.body.offlineMsgInfos.filter(
-    (e: any) => e.msgContent.msgContent !== 'videoCallInfo',
+    (e: any) => e.msgContent.msgContent !== 'videoCallInfo'
   );
 
   const offlineMsgInfos = offlineMsg.sort(
-    (a: any, b: any) => a.msgId - b.msgId,
+    (a: any, b: any) => a.msgId - b.msgId
   );
   const lastOfflineMsgInfo =
     offlineMsgInfos.length > 0

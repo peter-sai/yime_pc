@@ -1,9 +1,49 @@
 <template>
   <div class="mImg">
-    <div>
+    <div
+      style="
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: flex-end;
+      "
+    >
       <div style="display: flex; justify-content: flex-end">
-        <div class="imgBg" @contextmenu="contextmenu">
+        <ImgBg v-bind="$attrs" isMe :fired="fired" v-if="replyMsg?.msgId">
+          <Fire
+            :isBurn="isBurn"
+            :fired="fired"
+            :left="`-15px`"
+            :top="`-15px`"
+          />
+          <Reply :replyMsg="replyMsg" :userInfo="replyUserInfo" isMe />
+          <div class="imgBg" @contextmenu="contextmenu">
+            <div class="imgBox me" ref="imgBox" :style="style">
+              <div
+                v-if="!isPlay"
+                style="width: 100%; height: 100%; text-align: center"
+              >
+                <img
+                  style="max-width: 100%; max-height: 100%"
+                  :src="videoMsgInfo?.imageUrl"
+                  alt=""
+                />
+                <div class="icon" @click="play">
+                  <Iconfont name="iconplay1" size="20" color="#fff" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </ImgBg>
+        <div class="imgBg" @contextmenu="contextmenu" v-else>
           <div class="imgBox" ref="imgBox" :style="style">
+            <Fire
+              :isBurn="isBurn"
+              :fired="fired"
+              :left="`-15px`"
+              :top="`-15px`"
+            />
             <div
               v-if="!isPlay"
               style="width: 100%; height: 100%; text-align: center"
@@ -38,6 +78,11 @@ import {
 import Iconfont from '../../../iconfont/index.vue';
 import IsRead from '@/components/IsRead/index.vue';
 import { IVideoMsgInfo } from '@/types/msg';
+import { IMsgInfo } from '@/types/msg';
+import { IUserInfo } from '@/types/user';
+import Fire from '../Fire/index.vue';
+import Reply from '../Reply/index.vue';
+import ImgBg from '../ImgBg/index.vue';
 export default defineComponent({
   name: 'MImg',
 });
@@ -65,6 +110,18 @@ const props = defineProps({
   playMsgId: {
     type: Number,
     required: true,
+  },
+  isBurn: {
+    type: Boolean,
+  },
+  fired: {
+    type: Boolean,
+  },
+  replyUserInfo: {
+    type: Object as PropType<IUserInfo>,
+  },
+  replyMsg: {
+    type: Object as PropType<IMsgInfo>,
   },
 });
 
@@ -152,6 +209,11 @@ const contextmenu = (e: any) => {
     display: block;
     max-height: 400px;
     max-width: 400px;
+    &.me {
+      border-radius: 14px 0px 14px 14px;
+      color: #fff;
+      background: #0085ff;
+    }
     img {
       max-height: 100%;
       max-width: 100%;

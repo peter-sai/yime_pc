@@ -6,7 +6,34 @@
     </div>
     <div>
       <div class="title1" v-if="isGroup">{{ userInfo?.nickname }}</div>
-      <div class="fileBg" @contextmenu="contextmenu" @click="$emit('download')">
+      <div class="imgBgBox me" v-else-if="replyMsg?.msgId">
+        <Reply :replyMsg="replyMsg" :userInfo="replyUserInfo" />
+        <div
+          class="fileBg"
+          @contextmenu="contextmenu"
+          @click="$emit('download')"
+        >
+          <Fire
+            :isBurn="isBurn"
+            :fired="fired"
+            :right="`-230px`"
+            :top="`-120px`"
+          />
+          <div class="left">
+            <div class="title">{{ item?.fileName }}</div>
+            <div class="size">{{ size }}</div>
+          </div>
+          <div class="right">
+            <Iconfont :name="name" size="44" />
+          </div>
+        </div>
+      </div>
+      <div
+        v-else
+        class="fileBg"
+        @contextmenu="contextmenu"
+        @click="$emit('download')"
+      >
         <div class="left">
           <div class="title">{{ item?.fileName }}</div>
           <div class="size">{{ getSize() }}</div>
@@ -38,8 +65,10 @@ import { Toast } from '@/plugin/Toast';
 import { useI18n } from 'vue-i18n';
 import { IUserInfo } from '@/types/user';
 import { getTag } from '@/utils/utils';
+import { IMsgInfo } from '@/types/msg';
 import { IFileInfo } from '@/types/msg';
 import { key } from '@/store';
+import Reply from '../Reply/index.vue';
 
 defineComponent({
   name: 'Yfile',
@@ -58,6 +87,12 @@ const props = defineProps({
   },
   item: {
     type: Object as PropType<IFileInfo>,
+  },
+  replyUserInfo: {
+    type: Object as PropType<IUserInfo>,
+  },
+  replyMsg: {
+    type: Object as PropType<IMsgInfo>,
   },
 });
 
@@ -154,5 +189,16 @@ const contextmenu = (e: any) => {
       }
     }
   }
+}
+.imgBgBox {
+  padding: 10px;
+  background: #f3f3f6;
+  display: inline-block;
+  font-size: 16px;
+  color: #333333;
+  border-radius: 0px 14px 14px 14px;
+  word-break: break-all;
+  // display: inline-flex;
+  align-items: center;
 }
 </style>

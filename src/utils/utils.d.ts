@@ -2,7 +2,7 @@
 export function md5(res: string): string
 export function ab2str(res: string): Promise
 export function getThemeColor(res: string): string | null
-export function setStorage(key:string, val: string): void
+export function setStorage(key:string, val: string | undefined): void
 export function getStorage(key:string): string
 export function clearStorage(): void
 export function getToken(): string

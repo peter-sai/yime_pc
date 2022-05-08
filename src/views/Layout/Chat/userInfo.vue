@@ -128,6 +128,14 @@
               <Iconfont name="iconshuangxiangsudicopy" size="15" />
             </template>
           </Table>
+          <Table
+            title="设置聊天背景"
+            @click="$emit('changeTag', Etag.SetBackground)"
+          >
+            <template v-slot:left>
+              <Iconfont name="iconhuaban" size="15" />
+            </template>
+          </Table>
           <Table title="加入黑名单" hide-more>
             <template v-slot:left>
               <Iconfont name="iconheimingdan" size="15" />
@@ -177,7 +185,7 @@ export default defineComponent({
 export function useToggleFriend(
   store: Store<initStore>,
   t: { (key: string | number): string },
-  yUserInfo: IUserInfo,
+  yUserInfo: IUserInfo
 ) {
   return async (e: boolean) => {
     const res = {
@@ -210,7 +218,7 @@ function useBeforeSwitch(
   settingItemId: number,
   t: { (key: string | number): string },
   yUserInfo: IUserInfo,
-  isBack?: boolean,
+  isBack?: boolean
 ) {
   return async (e: boolean) => {
     const res = {
@@ -261,7 +269,7 @@ export async function upDateStore(
   e: number,
   store: Store<initStore>,
   isBack: boolean | undefined,
-  uid?: number,
+  uid?: number
 ) {
   const msgList = store.state.msgList;
   let activeUid: number = store.state.userUid!;
@@ -325,7 +333,7 @@ async function upDateContact(store: Store<initStore>, val: boolean) {
 export function useBeforeBlacklist(
   store: Store<initStore>,
   t: { (key: string | number): string },
-  yUserInfo: IUserInfo,
+  yUserInfo: IUserInfo
 ) {
   return async (e: boolean) => {
     const res = {
@@ -374,7 +382,7 @@ const beforeMsgNotdisturb = useBeforeSwitch(
   1005,
   t,
   props.yUserInfo,
-  true,
+  true
 );
 
 // @我时显示通知

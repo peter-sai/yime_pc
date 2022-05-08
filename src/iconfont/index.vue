@@ -33,6 +33,7 @@ import iconfuzhi from './iconfuzhi.vue';
 import icongantanhao from './icongantanhao.vue';
 import iconguanyu from './iconguanyu.vue';
 import iconheimingdan from './iconheimingdan.vue';
+import iconhuaban from './iconhuaban.vue';
 import iconicon_xiaolian from './iconicon_xiaolian.vue';
 import iconicon_yuyinshipin from './iconicon_yuyinshipin.vue';
 import iconicon_yuyinshipin1 from './iconicon_yuyinshipin1.vue';
@@ -126,6 +127,7 @@ export default {
     icongantanhao,
     iconguanyu,
     iconheimingdan,
+    iconhuaban,
     iconicon_xiaolian,
     iconicon_yuyinshipin,
     iconicon_yuyinshipin1,

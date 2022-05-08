@@ -94,8 +94,8 @@ const props = defineProps({
 
 const newList = computed(() =>
   list.value.filter((e) =>
-    e.name.toLocaleLowerCase().includes(search.value.toLocaleLowerCase()),
-  ),
+    e.name.toLocaleLowerCase().includes(search.value.toLocaleLowerCase())
+  )
 );
 // 获取列表
 const init = async () => {
@@ -111,11 +111,11 @@ const init = async () => {
 
     const memberUserInfos =
       props.groupDetailInfo?.groupMemberLists.memberUserInfos.map(
-        (e) => e.memberUid,
+        (e) => e.memberUid
       ) || [];
 
     list.value = data.body.friendInfos.filter(
-      (e: IContacts) => !memberUserInfos.includes(e.uid),
+      (e: IContacts) => !memberUserInfos.includes(e.uid)
     );
     list.value.forEach((e: IContacts) => {
       e.name = (e.userAttachInfo && e.userAttachInfo.remarkName) || e.nickname;

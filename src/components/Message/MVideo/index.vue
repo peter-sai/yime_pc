@@ -62,8 +62,8 @@ const props = defineProps({
 const store = useStore(key);
 const filterData = computed(() =>
   props.data.sendShowMsg.filter((e) =>
-    e.userIds.includes(store.state.userInfo.uid),
-  ),
+    e.userIds.includes(store.state.userInfo.uid)
+  )
 );
 
 const formateTime = (s: number) => {

@@ -151,7 +151,7 @@ const init = async (
   hungup: () => void,
   videoCallActionUploadReq: (num: number) => void,
   t: { (key: string | number): string },
-  pause: () => void,
+  pause: () => void
 ) => {
   // 发送者
   const { session } = await (store.state.rongIm as any).call({
@@ -195,7 +195,7 @@ const init = async (
       onHungup(
         sender: ISenderInfo,
         reason: RCCallEndReason,
-        session: RCCallSession,
+        session: RCCallSession
       ) {
         const { userId } = sender;
         // 对方挂断
@@ -229,13 +229,13 @@ const init = async (
           const video = document.createElement('video');
           if (document.getElementById('yVideo1')) {
             const videoBox = document.getElementById(
-              'videoBox',
+              'videoBox'
             ) as HTMLVideoElement;
             video.setAttribute('id', 'videoBox1');
             videoBox.append(video);
           } else {
             const videoBox = document.getElementById(
-              'yVideo',
+              'yVideo'
             ) as HTMLVideoElement;
             video.setAttribute('id', 'yVideo1');
             videoBox.append(video);
@@ -325,7 +325,7 @@ onMounted(async () => {
       hungup,
       videoCallActionUploadReq,
       t,
-      pause,
+      pause
     );
   } else {
     // 接听方
@@ -385,13 +385,13 @@ onMounted(async () => {
           const video = document.createElement('video');
           if (document.getElementById('yVideo1')) {
             const videoBox = document.getElementById(
-              'videoBox',
+              'videoBox'
             ) as HTMLVideoElement;
             video.setAttribute('id', 'videoBox1');
             videoBox.append(video);
           } else {
             const videoBox = document.getElementById(
-              'yVideo',
+              'yVideo'
             ) as HTMLVideoElement;
             video.setAttribute('id', 'yVideo1');
             videoBox.append(video);

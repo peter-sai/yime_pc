@@ -91,11 +91,11 @@ async function getGroupMemberUserInfos(
   groupMemberUserInfos: Ref<IContacts[]>,
   props: Readonly<{
     groupDetailInfo?: IGroupInfo | undefined;
-  }>,
+  }>
 ) {
   const groupMemberUids =
     props.groupDetailInfo?.groupMemberLists.memberUserInfos.map(
-      (e) => e.memberUid,
+      (e) => e.memberUid
     );
   const res = await store.dispatch('postMsg', {
     query: { uid: groupMemberUids },
@@ -128,7 +128,7 @@ async function getGroupMemberUserInfos(
     e.tag = getTag(e);
   });
   groupMemberUserInfos.value.sort(
-    (a: IContacts, b: IContacts) => a.tag.charCodeAt(0) - b.tag.charCodeAt(0),
+    (a: IContacts, b: IContacts) => a.tag.charCodeAt(0) - b.tag.charCodeAt(0)
   );
 }
 </script>
@@ -154,8 +154,8 @@ init();
 
 const newList = computed(() =>
   groupMemberUserInfos.value.filter((e) =>
-    e.name.toLocaleLowerCase().includes(search.value.toLocaleLowerCase()),
-  ),
+    e.name.toLocaleLowerCase().includes(search.value.toLocaleLowerCase())
+  )
 );
 
 // 提交

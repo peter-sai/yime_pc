@@ -138,7 +138,7 @@
           <Table
             title="群管理"
             v-if="isRoot || isAdmin"
-            @click="Toast(t('为了您的帐户安全，请用手机app进行群设置'))"
+            @click="$emit('changeTag', Etag.GroupSetting)"
           >
             <template v-slot:left>
               <Iconfont name="iconyaoqinghaoyou" size="15" />
@@ -171,6 +171,7 @@
           <!-- 群列表 -->
           <div class="groupList">
             <TableDouble
+              @contextmenu="contextmenu($event, item)"
               :title="item?.userAttachInfo?.remarkName || item.nickname"
               :sub-title="item.onlineState ? t('在线') : t('离线')"
               @click.stop="userClick(item.uid)"
@@ -195,16 +196,54 @@
                   color="#A8B5BE"
                 />
               </template>
-              <template
+              <template v-slot:right v-if="item.isRoot">
+                <div class="root">{{ t('群主') }}</div>
+              </template>
+              <template v-slot:right v-else-if="item.isAdmin">
+                <div class="admin">{{ t('管理') }}</div>
+              </template>
+              <!-- <template
                 v-slot:right
                 v-if="(isRoot || isAdmin) && !item.isRoot && !item.isAdmin"
               >
                 <div class="del" @click.stop="del(item)">{{ t('删除') }}</div>
-              </template>
+              </template> -->
             </TableDouble>
           </div>
         </div>
       </div>
+    </div>
+
+    <div
+      class="menu"
+      v-if="showMenu && !rightClickItem.isRoot"
+      @contextmenu="(e) => e?.preventDefault()"
+      :style="{ left: style.left + 'px', top: style.top + 'px' }"
+    >
+      <span
+        v-if="isRoot && !rightClickItem.isAdmin"
+        @click="addAdmin(rightClickItem)"
+        class="copyMsg"
+        >{{ t('设为管理员') }}</span
+      >
+      <span
+        v-else-if="isRoot && rightClickItem.isAdmin"
+        class="copyMsg"
+        @click="closeAdmin(rightClickItem)"
+        >{{ t('取消管理员') }}</span
+      >
+      <span
+        v-if="isRoot"
+        class="copyMsg"
+        @click="groupOwnerTransfer(rightClickItem)"
+        >{{ t('转让群主') }}</span
+      >
+      <span
+        v-if="isRoot || isAdmin"
+        class="copyMsg"
+        @click.stop="del(rightClickItem)"
+        >{{ t('移出') }}</span
+      >
     </div>
   </div>
 </template>
@@ -244,11 +283,11 @@ async function getGroupMemberUserInfos(
   groupMemberUserInfos: Ref<IUserInfo[]>,
   props: Readonly<{
     groupDetailInfo?: IGroupInfo | undefined;
-  }>,
+  }>
 ) {
   const groupMemberUids =
     props.groupDetailInfo?.groupMemberLists?.memberUserInfos.map(
-      (e) => e.memberUid,
+      (e) => e.memberUid
     );
   const res = await store.dispatch('postMsg', {
     query: { uid: groupMemberUids },
@@ -278,7 +317,7 @@ async function getGroupMemberUserInfos(
 async function linkChange(
   store: Store<initStore>,
   linkUrl: string,
-  type: number,
+  type: number
 ) {
   const data = await store.dispatch('postMsg', {
     query: {
@@ -320,12 +359,26 @@ const store = useStore(key);
 const groupMemberUserInfos: Ref<IUserInfo[]> = ref([]);
 const shareLink = ref('');
 const inGroupType = ref('');
+
+const showMenu = ref(false);
+const rightClickItem = ref({}) as Ref<IUserInfo>;
+const style = ref({ left: '0px', top: '0px' });
+const contextmenu = (e: any, item: IUserInfo) => {
+  if (!isRoot.value && !isAdmin.value) return;
+
+  style.value.left = e.pageX;
+  style.value.top = e.pageY;
+  e?.preventDefault();
+  showMenu.value = true;
+  rightClickItem.value = item;
+};
+
 const groupAttachInfo: Ref<IGroupAttachInfo> = ref({}) as Ref<IGroupAttachInfo>;
 groupAttachInfo.value = props.groupDetailInfo
   ?.groupAttachInfo as IGroupAttachInfo;
 inGroupType.value = getGroupInviteState(
   props.groupDetailInfo?.groupAttachInfo?.groupInviteState,
-  t,
+  t
 );
 
 // 群管理员
@@ -431,7 +484,7 @@ async function init() {
   const getLongLink = await linkChange(
     store,
     props.groupDetailInfo?.qrCode as string,
-    1,
+    1
   );
   const linkUrl = getLongLink.body.linkUrl;
 
@@ -439,9 +492,9 @@ async function init() {
   const getLink = await linkChange(
     store,
     `${linkUrl}&s=${store.state.userInfo.uid}&t=${parseInt(
-      (Date.now() / 1000).toString(),
+      (Date.now() / 1000).toString()
     )}`,
-    0,
+    0
   );
   shareLink.value = getLink.body.linkUrl;
 }
@@ -450,6 +503,7 @@ init();
 
 // 删除
 const del = async (e: IUserInfo) => {
+  showMenu.value = false;
   const query = {
     groupId: store.state.activeUid,
     groupMemberLists: {
@@ -475,12 +529,146 @@ const del = async (e: IUserInfo) => {
     emit('toggleBox');
   }
 };
+
+// 添加群管理
+const addAdmin = async (e: IUserInfo) => {
+  showMenu.value = false;
+  const query = {
+    operateType: 6,
+    groupInfo: {
+      groupId: store.state.activeUid,
+      groupMemberLists: {
+        adminUidList: [
+          ...(props.groupDetailInfo?.groupMemberLists?.adminUidList || []),
+          e.uid,
+        ],
+      },
+    },
+  };
+  const data = await store.dispatch('postMsg', {
+    query,
+    cmd: 1027,
+    encryption: 'Aoelailiao.Login.UserOperateGroupInfoReq',
+    auth: true,
+  });
+  if (data.body.resultCode === 0) {
+    emit('toggleBox');
+    uploadGroupInfo();
+  }
+  Toast(t(data.body.resultString));
+};
+
+// 取消群管理
+const closeAdmin = async (e: IUserInfo) => {
+  showMenu.value = false;
+  const adminList =
+    props.groupDetailInfo?.groupMemberLists?.adminUidList.filter(
+      (v) => v !== e.uid
+    );
+  const query = {
+    operateType: 6,
+    groupInfo: {
+      groupId: store.state.activeUid,
+      groupMemberLists: {
+        adminUidList: adminList,
+      },
+    },
+  };
+  const data = await store.dispatch('postMsg', {
+    query,
+    cmd: 1027,
+    encryption: 'Aoelailiao.Login.UserOperateGroupInfoReq',
+    auth: true,
+  });
+  if (data.body.resultCode === 0) {
+    emit('toggleBox');
+    uploadGroupInfo();
+  }
+  Toast(t(data.body.resultString));
+};
+
+// 群主转让
+const groupOwnerTransfer = async (item: IUserInfo) => {
+  showMenu.value = false;
+  Dialog({
+    title: `确定选择 ${item.nickname} 为新群主, 您将主动放弃群主身份`,
+    callBack: async () => {
+      const res = {
+        operateType: 7,
+        groupInfo: {
+          groupId: store.state.activeUid,
+          groupMemberLists: {
+            rootUid: item.uid,
+          },
+        },
+      };
+      const data = await store.dispatch('postMsg', {
+        query: res,
+        cmd: 1027,
+        encryption: 'Aoelailiao.Login.UserOperateGroupInfoReq',
+        auth: true,
+      });
+      Toast(t(data.body.resultString));
+      if (data.body.resultCode === 0) {
+        emit('toggleBox');
+        uploadGroupInfo();
+      }
+    },
+  });
+};
+
+// 更新群信息
+async function uploadGroupInfo() {
+  const data = await store.dispatch('postMsg', {
+    query: {
+      groupId: store.state.activeUid,
+    },
+    cmd: 1029,
+    encryption: 'Aoelailiao.Login.ClientGetGroupInfoReq',
+    auth: true,
+  });
+  const { msgList, activeUid } = store.state;
+  const msgItem = msgList[activeUid!];
+  msgItem.groupDetailInfo = data.body.groupDetailInfo;
+  store.commit('SET_MSGLISTITEM', { res: msgItem });
+}
 </script>
 <style lang="scss" scoped>
 @import '@/style/base.scss';
 .groupInfo {
   height: 100%;
   padding-bottom: 40px;
+  .menu {
+    position: fixed;
+    left: 88px;
+    top: 36px;
+    background: #ffffff;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.07);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    box-sizing: border-box;
+    padding: 8px 5px;
+    span {
+      font-size: 12px;
+      font-family: PingFangSC-Regular, PingFang SC;
+      font-weight: 400;
+      width: 80px;
+      color: #333333;
+      border-radius: 4px;
+      cursor: pointer;
+      text-align: center;
+      padding: 3px 0;
+      margin: 2px 0;
+      line-height: 17px;
+      &:hover {
+        background: #0085ff;
+        color: #fff;
+      }
+    }
+  }
   .iconfont {
     &.pointer {
       cursor: pointer;
@@ -516,6 +704,10 @@ const del = async (e: IUserInfo) => {
       color: #2b2c33;
       line-height: 20px;
       letter-spacing: 0px;
+      max-width: 90%;
+      margin: 0 auto;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .subTitle {
       width: 252px;
@@ -602,7 +794,7 @@ const del = async (e: IUserInfo) => {
             border-radius: 50%;
             overflow: hidden;
           }
-          &:hover .del {
+          .del {
             font-size: 12px;
             cursor: pointer;
             font-family: SourceHanSansCN, SourceHanSansCN-Regular;
@@ -612,6 +804,34 @@ const del = async (e: IUserInfo) => {
             height: 18px;
             border: 1px solid #2b2c33;
             border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          }
+          .root {
+            font-size: 12px;
+            cursor: pointer;
+            font-family: SourceHanSansCN, SourceHanSansCN-Regular;
+            font-weight: 400;
+            color: #0085ff;
+            width: 42px;
+            height: 18px;
+            border: 1px solid #0085ff;
+            border-radius: 3px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          }
+          .admin {
+            font-size: 12px;
+            cursor: pointer;
+            font-family: SourceHanSansCN, SourceHanSansCN-Regular;
+            font-weight: 400;
+            color: #dc734b;
+            width: 42px;
+            height: 18px;
+            border: 1px solid #dc734b;
+            border-radius: 3px;
             display: flex;
             justify-content: center;
             align-items: center;
