@@ -75,6 +75,8 @@ export enum Etag {
   AddGroupMembers,
   Forward,
   SelectGroupMemberVideos,
+  SetBackground,
+  GroupSetting,
 }
 export default defineComponent({
   name: 'Layout',

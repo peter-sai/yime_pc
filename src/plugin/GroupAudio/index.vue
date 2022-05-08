@@ -136,11 +136,11 @@ const init = async (
   nextTick: any,
   t: { (key: string | number): string },
   videoCallActionUploadReq: (num: number, str: string) => void,
-  pause: () => void,
+  pause: () => void
 ) => {
   const videoBox = document.getElementById('videoBox') as HTMLVideoElement;
   const yVideoGroup = document.getElementById(
-    'yVideoGroup',
+    'yVideoGroup'
   ) as HTMLVideoElement;
 
   // 发送者
@@ -185,7 +185,7 @@ const init = async (
       onHungup(
         sender: ISenderInfo,
         reason: RCCallEndReason,
-        session: RCCallSession,
+        session: RCCallSession
       ) {
         const { userId } = sender;
         // 对方挂断
@@ -217,7 +217,7 @@ const init = async (
             const div = document.createElement('div');
             const img = document.createElement('img');
             const userInfo = userInfos.value.find(
-              (v) => Number(v.uid) === Number(e.userId),
+              (v) => Number(v.uid) === Number(e.userId)
             );
             img.setAttribute('src', userInfo?.icon || '');
             div.setAttribute('id', `div_${e.userId}`);
@@ -335,7 +335,7 @@ const toggleVideo = () => {
       sessionRoot.value.disableVideoTrack();
       const videoBox = document.getElementById('videoBox');
       const meVideo = document.getElementById(
-        store.state.userInfo.uid.toString(),
+        store.state.userInfo.uid.toString()
       );
       videoBox?.removeChild(meVideo!);
     } else {
@@ -391,7 +391,7 @@ const startTimeOut = () => {
 const getGroupMemberUserInfos = async () => {
   const groupMemberUids =
     props.groupDetailInfo?.groupMemberLists.memberUserInfos.map(
-      (e) => e.memberUid,
+      (e) => e.memberUid
     );
   const res = await store.dispatch('postMsg', {
     query: { uid: groupMemberUids },
@@ -420,13 +420,13 @@ onMounted(async () => {
       nextTick,
       t,
       videoCallActionUploadReq,
-      pause,
+      pause
     );
     videoCallActionUploadReq(1, sessionRoot.value.getChannelId());
   } else {
     const videoBox = document.getElementById('videoBox') as HTMLVideoElement;
     const yVideoGroup = document.getElementById(
-      'yVideoGroup',
+      'yVideoGroup'
     ) as HTMLVideoElement;
     // 接听方
     sessionRoot.value = props.session!;
@@ -468,7 +468,7 @@ onMounted(async () => {
       onHungup(
         sender: ISenderInfo,
         reason: RCCallEndReason,
-        session: RCCallSession,
+        session: RCCallSession
       ) {
         console.log(sender, map[reason]);
         const tar = document.getElementById(`div_${sender.userId}`);
@@ -494,7 +494,7 @@ onMounted(async () => {
             const div = document.createElement('div');
             const img = document.createElement('img');
             const userInfo = userInfos.value.find(
-              (v) => Number(v.uid) === Number(e.userId),
+              (v) => Number(v.uid) === Number(e.userId)
             );
             img.setAttribute('src', userInfo?.icon || '');
             div.setAttribute('id', `div_${e.userId}`);
@@ -554,7 +554,7 @@ onMounted(async () => {
 
 const videoCallActionUploadReq = async (
   actionType: number,
-  channelId: string,
+  channelId: string
 ) => {
   const query = {
     actionType,
@@ -586,7 +586,7 @@ watch(
     if (data.cmd === 2162) {
       sessionRoot.value.invite([data.body.userId.toString()]);
     }
-  },
+  }
 );
 </script>
 <style lang="scss" scoped>

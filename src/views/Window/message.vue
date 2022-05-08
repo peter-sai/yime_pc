@@ -330,6 +330,9 @@
           @click="del(copyItem)"
           >{{ t('撤销') }}</span
         >
+        <span v-if="['imageMsg'].includes(copyItem.type)">{{
+          t('添加到收藏')
+        }}</span>
         <span v-if="isShowHowComponent(copyItem)" @click="delMsg(copyItem)">{{
           t('删除')
         }}</span>
@@ -470,6 +473,10 @@ const showUserInfo = async (
       store.commit('SET_ACTIVEISGROUP', false);
     }
   } else {
+    if (props.groupDetailInfo?.groupAttachInfo?.groupMemberSplit) {
+      return Toast('群员不能互相访问详情，请咨询管理员');
+    }
+
     emit('toggleBox', uid);
     emit('changeTag', Etag.UserInfo);
   }
@@ -923,7 +930,7 @@ const arrDistinctByProp = (arr: Array<any>, prop: string) => {
       font-size: 12px;
       font-family: PingFangSC-Regular, PingFang SC;
       font-weight: 400;
-      width: 45px;
+      width: 65px;
       color: #333333;
       border-radius: 4px;
       cursor: pointer;

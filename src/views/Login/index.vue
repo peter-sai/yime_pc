@@ -52,7 +52,7 @@
         <InputGroup
           v-if="btns.active === 1"
           :placeholder="t('请输入IM号')"
-          v-model="query.phone"
+          v-model="query.im"
         ></InputGroup>
         <InputGroup
           v-if="btns.active === 2"
@@ -63,19 +63,49 @@
           <template v-slot:getCode>{{ codeMsg }}</template>
         </InputGroup>
         <InputGroup
-          v-if="btns.active === 0 || btns.active === 1"
+          v-if="btns.active === 0"
           type="password"
           :placeholder="t('请输入密码')"
           v-model="query.password"
         ></InputGroup>
+        <InputGroup
+          v-if="btns.active === 1"
+          type="password"
+          :placeholder="t('请输入密码')"
+          v-model="query.imPassword"
+        ></InputGroup>
       </div>
-      <!-- 忘记密码 -->
       <div
-        class="forgetPassword"
-        @click="goTo('/ForgetPassword')"
-        v-if="btns.active !== 2"
+        style="
+          justify-content: space-between;
+          display: flex;
+          align-items: center;
+        "
       >
-        {{ t('忘记密码') }}?
+        <!-- 记住密码 -->
+        <div
+          v-if="btns.active !== 0"
+          style="display: flex; align-items: center; margin-top: 20px"
+          @click="changeRememberPwd"
+        >
+          <Iconfont
+            v-if="rememberPwd"
+            name="icondanxuankuang"
+            color="#0085FF"
+            size="17"
+          />
+          <Iconfont v-else name="iconradio" color="#666" size="17" />
+          <div class="rememberPwd">
+            {{ t('记住密码') }}
+          </div>
+        </div>
+        <div
+          class="forgetPassword"
+          @click="goTo('/ForgetPassword')"
+          v-if="btns.active !== 2"
+        >
+          {{ t('忘记密码') }}?
+        </div>
       </div>
       <!-- button -->
       <div class="button" @click="login" :class="{ isPwd: btns.active !== 0 }">
@@ -125,6 +155,12 @@ import { initRonyun } from '@/App.vue';
 import { getRoam, mergeData } from '../../hooks/window';
 import returnCitySN from 'returnCitySN';
 
+// 记住密码
+const rememberPwd = ref(false);
+const changeRememberPwd = () => {
+  rememberPwd.value = !rememberPwd.value;
+};
+
 const { t } = useI18n();
 const store = useStore(key);
 
@@ -142,10 +178,26 @@ function changeBtnActive(item: ILoginBtnItem) {
   btns.active = item.id;
 }
 
+let rememberPwdInfo = {
+  userName: '',
+  password: '',
+};
+try {
+  const remember = getStorage('rememberPwd');
+  if (remember) {
+    rememberPwdInfo = JSON.parse(remember);
+    rememberPwd.value = true;
+  }
+} catch (error) {
+  //
+}
+
 // 参数
 const query = reactive({
   phone: '',
   verificationCode: '',
+  im: rememberPwdInfo?.userName || '',
+  imPassword: rememberPwdInfo?.password || '',
   userName: '',
   password: '',
 });
@@ -174,7 +226,7 @@ function useGetCode(
   query: TQuery,
   areaCode: Ref<number>,
   time: Ref<number>,
-  t: any,
+  t: any
 ) {
   return async () => {
     if (!query.phone) {
@@ -222,10 +274,11 @@ function useLogin(
   store: Store<initStore>,
   query: any,
   areaCode: Ref<number>,
-  t: (key: string) => string,
+  t: (key: string) => string
 ) {
   return async () => {
     const language = getStorage('language') || 0;
+
     if (btns.active === 0) {
       if (!query.phone) {
         return Toast(t('请输入手机号'));
@@ -287,11 +340,20 @@ function useLogin(
       useLoginCb(data, goTo, areaCode, query, store, t);
     } else {
       // IM登录
-      if (!query.phone) {
+      if (!query.im) {
         return Toast(t('请输入IM号'));
       }
-      if (!query.password) {
+      if (!query.imPassword) {
         return Toast(t('请输入密码'));
+      }
+      if (rememberPwd.value) {
+        const obj = {
+          userName: query.im,
+          password: query.imPassword,
+        };
+        setStorage('rememberPwd', JSON.stringify(obj));
+      } else {
+        setStorage('rememberPwd', undefined);
       }
 
       showLoading();
@@ -299,8 +361,8 @@ function useLogin(
       const res = {
         loginInfo: {
           loginType: 9,
-          loginId: query.phone,
-          loginPasswdToken: md5(query.password),
+          loginId: query.im,
+          loginPasswdToken: md5(query.imPassword),
         },
         clientLanguageType: language,
         equipmentInformation: {
@@ -326,7 +388,7 @@ async function useLoginCb(
   areaCode: Ref<number>,
   query: any,
   store: Store<initStore>,
-  t: (key: string) => string,
+  t: (key: string) => string
 ) {
   // 手机号码未注册 跳转到 注册页面
   if (data.body.resultCode === 1201) {
@@ -340,7 +402,6 @@ async function useLoginCb(
     });
   }
   if (data.body.resultCode === 0) {
-    // showLoading(t('获取取数据中'));
     Toast1(t('登录成功正在获取数据'));
     // 设置切换账号
     const userList = JSON.parse(getStorage('userList')) || {};
@@ -492,12 +553,20 @@ onUnmounted(() => {
         margin-top: 20px;
       }
     }
+    .rememberPwd {
+      color: #999999;
+      font-size: 14px;
+      cursor: pointer;
+      margin-left: 5px;
+      flex: 1;
+    }
     .forgetPassword {
       color: #0085ff;
       font-size: 14px;
       margin-top: 20px;
       cursor: pointer;
       text-align: right;
+      flex: 1;
     }
     .info {
       font-size: 12px;

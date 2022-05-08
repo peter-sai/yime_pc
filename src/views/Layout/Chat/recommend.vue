@@ -117,7 +117,7 @@ const init = async () => {
 
     list.value = data.body.friendInfos.filter(
       (e: IContacts) =>
-        Number(e.uid) !== Number(activeUid) || props.isCreateGroupChat,
+        Number(e.uid) !== Number(activeUid) || props.isCreateGroupChat
     );
     list.value.forEach((e: IContacts) => {
       e.name = (e.userAttachInfo && e.userAttachInfo.remarkName) || e.nickname;
@@ -136,7 +136,7 @@ const init = async () => {
 init();
 
 const newList = computed(() =>
-  list.value.filter((e) => e.name.includes(search.value)),
+  list.value.filter((e) => e.name.includes(search.value))
 );
 
 // 切换选中状态

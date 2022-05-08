@@ -111,7 +111,7 @@ watch(
       isPlay.value = false;
       amr && amr.stop();
     }
-  },
+  }
 );
 
 onDeactivated(() => {
@@ -152,11 +152,13 @@ const pause = () => {
     justify-content: center;
     align-items: center;
   }
+  .img {
+    margin-right: 10px;
+  }
   img {
     width: 46px;
     height: 46px;
     border-radius: 50%;
-    margin-right: 10px;
   }
   .title {
     font-size: 12px;

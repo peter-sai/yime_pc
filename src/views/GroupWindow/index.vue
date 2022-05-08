@@ -21,6 +21,7 @@
     <!-- 消息内容 -->
     <div class="msg">
       <Message
+        :key="store.state.key"
         v-if="groupDetailInfo.groupId"
         :groupDetailInfo="groupDetailInfo"
         @toggleBox="toggleBox"
@@ -38,7 +39,7 @@
       :groupDetailInfo="groupDetailInfo.groupId ? groupDetailInfo : undefined"
       :isGroupMember="
         (groupDetailInfo?.groupMemberLists?.memberUserInfos || []).some(
-          (e) => Number(e.memberUid) === Number(store.state.userInfo.uid),
+          (e) => Number(e.memberUid) === Number(store.state.userInfo.uid)
         )
       "
       @sendImg="sendImg('img')"
@@ -148,6 +149,16 @@
           <Forward @toggleBox="toggleBox" @changeTag="changeTag" />
         </div>
       </transition>
+      <!-- 群管理 -->
+      <transition name="fade-transform1" mode="out-in">
+        <div v-if="showBox && tag === Etag.GroupSetting" class="boxContent">
+          <GroupSetting
+            @toggleBox="toggleBox"
+            @changeTag="changeTag"
+            :groupDetailInfo="groupDetailInfo"
+          />
+        </div>
+      </transition>
       <!-- 选择群视频成员 -->
       <transition name="fade-transform1" mode="out-in">
         <div
@@ -190,6 +201,7 @@ import Message from '../Window/message.vue';
 import { Store, useStore } from 'vuex';
 import GroupChatHeader from './header.vue';
 import GroupInfo from '../Layout/GroupChat/groupInfo.vue';
+import GroupSetting from '../Layout/GroupChat/GroupSetting.vue';
 import EditGroup from '../Layout/GroupChat/editGroup.vue';
 import AddGroupType from '../Layout/GroupChat/addGroupType.vue';
 import AddGroupMembers from '../Layout/GroupChat/addGroupMembers.vue';
@@ -243,10 +255,10 @@ const atUserInfoList: Ref<IUserInfo[]> = ref([]);
 const { t } = useI18n();
 const userUid = computed(() => store.state.userUid);
 const userInfo: ComputedRef<IUserInfo> = computed(
-  () => store.state.msgList[userUid.value!]?.userDetailInfo?.userInfo || {},
+  () => store.state.msgList[userUid.value!]?.userDetailInfo?.userInfo || {}
 ); // 需要显示详情用户的信息
 const userDetailInfo: ComputedRef<IUserDetailInfo | null> = computed(
-  () => store.state.msgList[userUid.value!]?.userDetailInfo || {},
+  () => store.state.msgList[userUid.value!]?.userDetailInfo || {}
 );
 const groupCallState: Ref<{
   callState: number;
@@ -356,14 +368,14 @@ const changeTag = (val: Etag) => {
 const store = useStore(key);
 
 const groupDetailInfo: ComputedRef<IGroupInfo> = computed(
-  () => store.state.msgList[store.state.activeUid!]?.groupDetailInfo || {},
+  () => store.state.msgList[store.state.activeUid!]?.groupDetailInfo || {}
 );
 
 const memberUserInfos = computed(
   () =>
     groupDetailInfo.value?.groupMemberLists?.memberUserInfos?.map(
-      (e) => e.memberUid,
-    ) || [],
+      (e) => e.memberUid
+    ) || []
 );
 
 async function init() {
@@ -390,7 +402,7 @@ watch(
     if (data.cmd === 2156) {
       groupCallState.value = data.body.groupCallState;
     }
-  },
+  }
 );
 
 const inputVal = ref('');

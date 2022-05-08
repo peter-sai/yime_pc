@@ -45,12 +45,14 @@ export const clearStorage = () => {
   const info = getStorage('info');
   const lang = getStorage('lang');
   const theme = getStorage('theme');
+  const rememberPwd = getStorage('rememberPwd');
   window.localStorage.clear();
   setStorage('userList', userList);
   setStorage('msgList', msgList);
   setStorage('info', info);
   setStorage('lang', lang);
   setStorage('theme', theme);
+  setStorage('rememberPwd', rememberPwd);
 };
 
 // 获取token
@@ -121,7 +123,7 @@ export function getTag(e) {
         (e.userAttachInfo && e.userAttachInfo.remarkName) ||
           e.nickname ||
           e.groupName,
-        'first',
+        'first'
       )
       .substr(0, 1);
     if (res.charCodeAt() >= 65 && res.charCodeAt() <= 122) {

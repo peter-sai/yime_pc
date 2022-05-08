@@ -22,15 +22,15 @@ defineProps({
 });
 const store = useStore(key);
 const readMessageState = ref(
-  Boolean(store.state.switchSettingInfo.readMessageState),
+  Boolean(store.state.switchSettingInfo.readMessageState)
 );
 watch(
   computed(() => store.state.switchSettingInfo),
   (e) => {
     readMessageState.value = Boolean(
-      store.state.switchSettingInfo.readMessageState,
+      store.state.switchSettingInfo.readMessageState
     );
-  },
+  }
 );
 </script>
 

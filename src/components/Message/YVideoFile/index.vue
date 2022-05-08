@@ -1,6 +1,6 @@
 <template>
   <div class="yImg">
-    <div @click="$emit('click')">
+    <div @click="$emit('click')" class="img">
       <img v-if="userInfo?.icon" class="userImg" :src="userInfo?.icon" />
       <Iconfont v-else name="iconlianxiren" size="46" color="#A8B5BE" />
     </div>
@@ -197,8 +197,9 @@ watch(playMsgId, (val) => {
     margin-right: 10px;
   }
   .img {
-    width: 160px;
-    height: 90px;
+    width: 45px;
+    height: 45px;
+    margin-right: 10px;
     img {
       max-width: 100%;
       max-height: 100%;

@@ -151,6 +151,7 @@ const initState = {
   playAudio: '', // 当前正在播放的音频
   conversationIng: true, // 是否在通话中,
   key: 0,
+  chatbg: '',
 };
 
 export type initStore = typeof initState;
@@ -160,6 +161,9 @@ const sotreRoot = createStore({
   mutations: {
     set_Key: (state, res) => {
       state.key = res;
+    },
+    SET_CHATBG: (state, res) => {
+      state.chatbg = res;
     },
     set_T: (state, res) => {
       state.t = res;

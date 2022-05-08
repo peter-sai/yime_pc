@@ -110,7 +110,7 @@ function useReg(
   query: Tquery,
   agreement: Ref<boolean>,
   route: RouteLocationNormalizedLoaded,
-  t: any,
+  t: any
 ) {
   return async () => {
     if (!query.nickname) {

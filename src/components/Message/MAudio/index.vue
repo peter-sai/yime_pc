@@ -102,7 +102,7 @@ watch(
       isPlay.value = false;
       amr && amr.stop();
     }
-  },
+  }
 );
 
 onDeactivated(() => {

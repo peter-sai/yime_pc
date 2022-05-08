@@ -62,8 +62,8 @@ const { t } = useI18n();
 const store = useStore(key);
 const filterData = computed(() =>
   props.data.sendShowMsg.filter((e) =>
-    e.userIds.includes(store.state.userInfo.uid),
-  ),
+    e.userIds.includes(store.state.userInfo.uid)
+  )
 );
 
 const time = (num: number) => {
