@@ -6,7 +6,37 @@
     </div>
     <div>
       <div class="title" v-if="isGroup">{{ userInfo?.nickname }}</div>
-      <ImBg v-bind="$attrs">
+      <ImBg v-bind="$attrs" v-if="replyMsg?.msgId">
+        <Reply :replyMsg="replyMsg" :userInfo="replyUserInfo" />
+        <div class="imBgBox">
+          <span class="time">{{ voiceMsg.voiceTime }} ''</span>
+          <ShowAudio :time="time" type="you" v-if="isPlay" />
+          <div class="audio" v-else></div>
+          <div class="icon">
+            <Iconfont
+              v-if="!isPlay"
+              @click="play"
+              name="iconplay1"
+              size="10"
+              color="#0085FF"
+            />
+            <Iconfont
+              @click="pause"
+              v-else
+              name="iconsuspend"
+              size="10"
+              color="#0085FF"
+            />
+          </div>
+        </div>
+        <Fire
+          :isBurn="isBurn"
+          :fired="fired"
+          :right="`-20px`"
+          :top="`-100px`"
+        />
+      </ImBg>
+      <ImBg v-bind="$attrs" v-else>
         <div class="imBgBox">
           <span class="time">{{ voiceMsg.voiceTime }} ''</span>
           <ShowAudio :time="time" type="you" v-if="isPlay" />
@@ -34,7 +64,7 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, defineProps, defineEmits } from 'vue';
+import { defineComponent, defineProps, defineEmits, PropType } from 'vue';
 import ImBg from '../ImgBg/index.vue';
 import Fire from '../Fire/index.vue';
 import Iconfont from '@/iconfont/index.vue';
@@ -44,6 +74,9 @@ import { useStore } from 'vuex';
 import BenzAMRRecorder from 'benz-amr-recorder';
 import { useI18n } from 'vue-i18n';
 import ShowAudio from '../ShowAudio/index.vue';
+import { IMsgInfo } from '@/types/msg';
+import { IUserInfo } from '@/types/user';
+import Reply from '../Reply/index.vue';
 import { key } from '@/store';
 export default defineComponent({
   name: 'YAudio',
@@ -70,6 +103,12 @@ const props = defineProps({
   },
   msgId: {
     type: Number,
+  },
+  replyUserInfo: {
+    type: Object as PropType<IUserInfo>,
+  },
+  replyMsg: {
+    type: Object as PropType<IMsgInfo>,
   },
 });
 const { t } = useI18n();
