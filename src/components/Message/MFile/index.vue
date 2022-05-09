@@ -1,7 +1,34 @@
 <template>
   <div class="mmsg">
     <div style="flex: 1">
-      <div class="fileBg" @contextmenu="contextmenu" @click="$emit('download')">
+      <div class="imgBgBox me" v-if="replyMsg?.msgId">
+        <Reply :replyMsg="replyMsg" :userInfo="replyUserInfo" isMe />
+        <div
+          class="fileBg"
+          @contextmenu="contextmenu"
+          @click="$emit('download')"
+        >
+          <Fire
+            :isBurn="isBurn"
+            :fired="fired"
+            :left="`-33px`"
+            :top="`-120px`"
+          />
+          <div class="left">
+            <div class="title">{{ item?.fileName }}</div>
+            <div class="size">{{ size }}</div>
+          </div>
+          <div class="right">
+            <Iconfont :name="name" size="44" />
+          </div>
+        </div>
+      </div>
+      <div
+        class="fileBg"
+        v-else
+        @contextmenu="contextmenu"
+        @click="$emit('download')"
+      >
         <Fire :isBurn="isBurn" :fired="fired" :left="`-23px`" :top="`-48px`" />
         <div class="left">
           <div class="title">{{ item?.fileName }}</div>
@@ -22,7 +49,10 @@ import { getSize } from '@/utils/utils';
 import { ref, defineComponent, defineProps, PropType, defineEmits } from 'vue';
 import IsRead from '@/components/IsRead/index.vue';
 import Fire from '../Fire/index.vue';
+import Reply from '../Reply/index.vue';
 import { IFileInfo } from '@/types/msg';
+import { IMsgInfo } from '@/types/msg';
+import { IUserInfo } from '@/types/user';
 defineComponent({
   name: 'MFile',
 });
@@ -41,6 +71,12 @@ const props = defineProps({
   },
   fired: {
     type: Boolean,
+  },
+  replyUserInfo: {
+    type: Object as PropType<IUserInfo>,
+  },
+  replyMsg: {
+    type: Object as PropType<IMsgInfo>,
   },
 });
 
@@ -113,6 +149,22 @@ const contextmenu = (e: any) => {
     img {
       width: 12px;
     }
+  }
+}
+.imgBgBox {
+  padding: 10px;
+  background: #f3f3f6;
+  display: inline-block;
+  font-size: 16px;
+  color: #333333;
+  border-radius: 0px 14px 14px 14px;
+  word-break: break-all;
+  // display: inline-flex;
+  align-items: center;
+  &.me {
+    border-radius: 14px 0px 14px 14px;
+    color: #fff;
+    background: #0085ff;
   }
 }
 </style>

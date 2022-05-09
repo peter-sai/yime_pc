@@ -1,6 +1,31 @@
 <template>
   <div class="mmsg">
-    <ImBg v-bind="$attrs" isMe>
+    <ImBg v-bind="$attrs" isMe v-if="replyMsg?.msgId">
+      <Reply :replyMsg="replyMsg" :userInfo="replyUserInfo" isMe />
+      <div class="imBgBox">
+        <div class="icon">
+          <Iconfont
+            @click="play"
+            name="iconplay1"
+            v-if="!isPlay"
+            size="10"
+            color="#0085FF"
+          />
+          <Iconfont
+            @click="pause"
+            v-else
+            name="iconsuspend"
+            size="10"
+            color="#0085FF"
+          />
+        </div>
+        <ShowAudio type="me" :time="time" v-if="isPlay" />
+        <div class="audio" v-else></div>
+        <span class="time">{{ voiceMsg.voiceTime }} ''</span>
+      </div>
+      <Fire :isBurn="isBurn" :fired="fired" :left="`-20px`" :top="`-100px`" />
+    </ImBg>
+    <ImBg v-bind="$attrs" isMe v-else>
       <div class="imBgBox">
         <div class="icon">
           <Iconfont
@@ -29,7 +54,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, defineProps } from 'vue';
+import { defineComponent, defineProps, PropType } from 'vue';
 import ImBg from '../ImgBg/index.vue';
 import Fire from '../Fire/index.vue';
 import Iconfont from '@/iconfont/index.vue';
@@ -39,6 +64,9 @@ import { useStore } from 'vuex';
 import { watch, computed } from '@vue/runtime-core';
 import BenzAMRRecorder from 'benz-amr-recorder';
 import ShowAudio from '../ShowAudio/index.vue';
+import { IMsgInfo } from '@/types/msg';
+import { IUserInfo } from '@/types/user';
+import Reply from '../Reply/index.vue';
 import { key } from '@/store';
 export default defineComponent({
   name: 'MAudio',
@@ -62,6 +90,12 @@ const props = defineProps({
   },
   fired: {
     type: Boolean,
+  },
+  replyUserInfo: {
+    type: Object as PropType<IUserInfo>,
+  },
+  replyMsg: {
+    type: Object as PropType<IMsgInfo>,
   },
 });
 const isPlay = ref(false);
@@ -102,7 +136,7 @@ watch(
       isPlay.value = false;
       amr && amr.stop();
     }
-  },
+  }
 );
 
 onDeactivated(() => {

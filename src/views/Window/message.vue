@@ -40,7 +40,7 @@
     </div>
     <div class="Message">
       <div v-for="(item, key) in itemChat.readList || []" :key="item.id">
-        {{ getReply(item) }}
+        {{ item }}
         <Time v-if="isShowTime(key)">{{ formateTime(item.msgTime, t) }}</Time>
         <!-- 普通消息 -->
         <!-- 阅后即焚 -->
@@ -73,6 +73,7 @@
               :isBurn="item.msgShowType === 3"
               :replyMsg="getReply(item)"
               :userInfo="getUserInfo(item)"
+              :replyUserInfo="getUserInfo(getReply(item))"
               v-if="isShowHowComponent(item)"
             >
               {{ item.msgContent.stringContent }}
@@ -81,6 +82,7 @@
               @menuClick="menuClick($event, item)"
               :isRead="item.msgId <= readMsgId"
               :replyMsg="getReply(item)"
+              :replyUserInfo="getUserInfo(getReply(item))"
               :isBurn="item.msgShowType === 3"
               v-else
             >
@@ -128,6 +130,8 @@
             :isBurn="item.msgShowType === 3"
             :fired="false"
             :userInfo="getUserInfo(item)"
+            :replyMsg="getReply(item)"
+            :replyUserInfo="getUserInfo(getReply(item))"
             :src="item.msgContent.imageMsg.imageUrl"
             @showBigImg="showBigImg(item)"
           />
@@ -138,6 +142,8 @@
             @menuClick="menuClick($event, item)"
             :isBurn="item.msgShowType === 3"
             :fired="false"
+            :replyMsg="getReply(item)"
+            :replyUserInfo="getUserInfo(getReply(item))"
             :src="item.msgContent.imageMsg.imageUrl"
           />
         </div>
@@ -150,6 +156,8 @@
             :userInfo="getUserInfo(item)"
             :item="item.msgContent.fileInfo"
             :isBurn="item.msgShowType === 3"
+            :replyMsg="getReply(item)"
+            :replyUserInfo="getUserInfo(getReply(item))"
             :fired="false"
             @download="download(item.msgContent.fileInfo)"
           />
@@ -159,6 +167,8 @@
             @menuClick="menuClick($event, item)"
             :item="item.msgContent.fileInfo"
             :isBurn="item.msgShowType === 3"
+            :replyMsg="getReply(item)"
+            :replyUserInfo="getUserInfo(getReply(item))"
             :fired="false"
             @download="download(item.msgContent.fileInfo)"
           />
@@ -201,6 +211,8 @@
             @menuClick="menuClick($event, item)"
             :userInfo="getUserInfo(item)"
             :isBurn="item.msgShowType === 3"
+            :replyMsg="getReply(item)"
+            :replyUserInfo="getUserInfo(getReply(item))"
             :fired="false"
             :voiceMsg="item.msgContent.voiceMsg"
             :msgId="item.msgId"
@@ -210,6 +222,8 @@
             @menuClick="menuClick($event, item)"
             :isRead="item.msgId <= readMsgId"
             :isBurn="item.msgShowType === 3"
+            :replyMsg="getReply(item)"
+            :replyUserInfo="getUserInfo(getReply(item))"
             :fired="false"
             :voiceMsg="item.msgContent.voiceMsg"
           />
@@ -256,6 +270,10 @@
             @menuClick="menuClick($event, item)"
             :videoMsgInfo="item.msgContent.videoMsgInfo"
             :msgId="item.msgId"
+            :isBurn="item.msgShowType === 3"
+            :replyMsg="getReply(item)"
+            :replyUserInfo="getUserInfo(getReply(item))"
+            :fired="false"
             @onPlay="playMsgId = item.msgId"
             :playMsgId="playMsgId"
           />
@@ -265,6 +283,10 @@
             @menuClick="menuClick($event, item)"
             :videoMsgInfo="item.msgContent.videoMsgInfo"
             :msgId="item.msgId"
+            :isBurn="item.msgShowType === 3"
+            :replyMsg="getReply(item)"
+            :replyUserInfo="getUserInfo(getReply(item))"
+            :fired="false"
             @onPlay="playMsgId = item.msgId"
             :playMsgId="playMsgId"
           />
@@ -330,6 +352,9 @@
           @click="del(copyItem)"
           >{{ t('撤销') }}</span
         >
+        <span v-if="['imageMsg'].includes(copyItem.type)">{{
+          t('添加到收藏')
+        }}</span>
         <span v-if="isShowHowComponent(copyItem)" @click="delMsg(copyItem)">{{
           t('删除')
         }}</span>
@@ -470,6 +495,10 @@ const showUserInfo = async (
       store.commit('SET_ACTIVEISGROUP', false);
     }
   } else {
+    if (props.groupDetailInfo?.groupAttachInfo?.groupMemberSplit) {
+      return Toast('群员不能互相访问详情，请咨询管理员');
+    }
+
     emit('toggleBox', uid);
     emit('changeTag', Etag.UserInfo);
   }
@@ -634,8 +663,10 @@ const getReply = (item: IMsgInfo<string>) => {
 const getUserInfo: (item: IMsgInfo<string>) => IUserInfo = (item) => {
   return (
     !activeIsGroup.value
-      ? props.yUserInfo
-      : groupMemberLists.value.find((e) => e.uid === item.fromId)
+      ? userInfo.value.uid === item?.fromId
+        ? userInfo.value
+        : props.yUserInfo
+      : groupMemberLists.value.find((e) => e.uid === item?.fromId)
   ) as IUserInfo;
 };
 
@@ -928,7 +959,7 @@ const arrDistinctByProp = (arr: Array<any>, prop: string) => {
       font-size: 12px;
       font-family: PingFangSC-Regular, PingFang SC;
       font-weight: 400;
-      width: 45px;
+      width: 65px;
       color: #333333;
       border-radius: 4px;
       cursor: pointer;

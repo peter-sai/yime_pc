@@ -5,7 +5,7 @@ const loading = () => {
   let app: any = null;
   const showImg = (
     initialSlide: number,
-    imgList: { msgId: number; imageUrl: string }[],
+    imgList: { msgId: number; imageUrl: string }[]
   ) => {
     hideImg();
     console.log(initialSlide, imgList);

@@ -21,7 +21,13 @@
     />
 
     <!-- 消息内容 -->
-    <div class="msg">
+    <div
+      class="msg"
+      :style="{
+        background: `url(${bg}) center no-repeat`,
+        backgroundSize: 'cover',
+      }"
+    >
       <Message
         :key="store.state.key"
         :yUserInfo="yUserInfo"
@@ -124,6 +130,12 @@
           <Forward @toggleBox="toggleBox" @changeTag="changeTag" />
         </div>
       </transition>
+      <!-- 设置背景 -->
+      <transition name="fade-transform1" mode="out-in">
+        <div v-if="showBox && tag === Etag.SetBackground" class="boxContent">
+          <SetBackground @toggleBox="toggleBox" @changeTag="changeTag" />
+        </div>
+      </transition>
     </div>
   </div>
 </template>
@@ -149,6 +161,7 @@ import { getTime } from '@/utils/utils';
 import { Store, useStore } from 'vuex';
 import UserInfo, { useToggleFriend } from '../Layout/Chat/userInfo.vue';
 import Forward from '../Layout/Chat/Forward.vue';
+import SetBackground from '../Layout/Chat/SetBackground.vue';
 import CloudFile from '../Layout/Chat/cloudFile.vue';
 import CommonGroup from '../Layout/Chat/commonGroup.vue';
 import Recommend from '../Layout/Chat/recommend.vue';
@@ -244,10 +257,24 @@ const userDetailInfo: Ref<IUserDetailInfo> = ref({}) as Ref<IUserDetailInfo>; //
 const isBotUser = ref(false);
 const onlineInfo: Ref<IUserInfo> = ref({}) as Ref<IUserInfo>;
 const files = ref('');
+const bg = computed(() => store.state.chatbg);
 
 const groupDetailInfo: ComputedRef<IGroupInfo> = computed(
   () => store.state.msgList[store.state.userUid]?.groupDetailInfo || {}
 );
+
+// 获取聊天背景
+const getClientGetCurrentBackground = async () => {
+  const data = await store.dispatch('postMsg', {
+    query: {
+      toId: store.state.activeUid,
+    },
+    cmd: 2041,
+    encryption: 'Aoelailiao.Message.ClientGetCurrentBackgroundUrlReq',
+    auth: true,
+  });
+  store.commit('SET_CHATBG', data.body.backgroundUrl || '');
+};
 
 // 群聊陌生人
 const strangerInfo = computed(() => {
@@ -364,6 +391,8 @@ init(store, userDetailInfo, isBotUser, yUserInfo, onlineInfo);
 const cbImg = useCbImg(store, accept, t);
 
 onMounted(async () => {
+  store.commit('SET_CHATBG', '');
+  getClientGetCurrentBackground();
   changUserImg.value!.addEventListener('change', (e) => {
     cbImg(e, store.state.activeUid!);
     changUserImg.value?.setAttribute('type', 'text');

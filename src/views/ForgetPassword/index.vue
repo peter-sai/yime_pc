@@ -122,7 +122,7 @@ function useGetCode(
   areaCode: Ref<number>,
   time: Ref<number>,
   timeout: any,
-  t: any,
+  t: any
 ) {
   return async () => {
     if (!query.phone) {

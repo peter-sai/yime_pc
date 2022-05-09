@@ -98,7 +98,7 @@ const init = async () => {
       auth: true,
     });
     const friendInfos = data.body.friendInfos.filter(
-      (e: IContacts) => Number(e.uid) !== Number(activeUid),
+      (e: IContacts) => Number(e.uid) !== Number(activeUid)
     );
 
     list.value = friendInfos.concat(data.body.groupInfos || []);
@@ -119,7 +119,7 @@ const init = async () => {
 init();
 
 const newList = computed(() =>
-  list.value.filter((e) => e?.name?.includes(search.value)),
+  list.value.filter((e) => e?.name?.includes(search.value))
 );
 
 // 切换选中状态

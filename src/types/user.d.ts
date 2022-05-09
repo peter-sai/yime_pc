@@ -15,6 +15,7 @@ export interface IUserInfo {
   onlineState: number;
   imAccount: string;
   lastOnlineTime: number; //上次在线时间
+  isAdmin: boolean;
   isBotUser: number; //是否为机器人,默认为0表示真实用户，1表示为机器人，机器人用户不会收到消息推送
 }
 

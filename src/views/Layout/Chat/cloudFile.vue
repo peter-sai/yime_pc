@@ -65,7 +65,7 @@ const init = async () => {
     auth: true,
   });
   list.value = (data.body.msgInfos || []).sort(
-    (a: IMsgInfo<IFileInfo>, b: IMsgInfo<IFileInfo>) => a.msgTime > b.msgTime,
+    (a: IMsgInfo<IFileInfo>, b: IMsgInfo<IFileInfo>) => a.msgTime > b.msgTime
   );
 };
 
