@@ -2,21 +2,16 @@
   <div class="reply" v-if="replyMsg?.msgId">
     <div
       class="reply-stringContent"
-      v-if="replyMsg?.msgContent?.msgContentType === 1"
+      v-if="
+        replyMsg?.msgContent?.msgContentType === 1 ||
+        replyMsg?.msgContent?.msgContentType === 7 ||
+        replyMsg?.msgContent?.msgContentType === 25
+      "
     >
       <div class="nickname" :class="{ nameColor: !isMe }">
         {{ userInfo?.nickname }}
       </div>
-      {{ replyMsg?.msgContent?.stringContent }}
-    </div>
-    <div
-      class="reply-stringContent"
-      v-else-if="replyMsg?.msgContent?.msgContentType === 25"
-    >
-      <div class="nickname" :class="{ nameColor: !isMe }">
-        {{ userInfo?.nickname }}
-      </div>
-      {{ replyMsg?.msgContent?.linkUrlInfo?.url }}
+      {{ replyContent }}
     </div>
     <div class="reply-content" v-else>
       <div class="left" :style="isMe ? 'color: #99ceff' : 'color:gray'">
@@ -76,7 +71,13 @@ const { t } = useI18n();
 const replyContent = computed(() => {
   let name: string;
   const msgContentType = props?.replyMsg?.msgContent?.msgContentType;
-  if (msgContentType === 2) {
+  if (msgContentType === 1) {
+    name = props?.replyMsg?.msgContent?.stringContent;
+  } else if (msgContentType === 7) {
+    name = props?.replyMsg?.msgContent?.groupAtInfo?.stringContent;
+  } else if (msgContentType === 25) {
+    name = props?.replyMsg?.msgContent?.linkUrlInfo?.url;
+  } else if (msgContentType === 2) {
     name = t('[图片]');
   } else if (msgContentType === 3) {
     name = t('[语音]');

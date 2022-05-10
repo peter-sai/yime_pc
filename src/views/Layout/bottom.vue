@@ -803,6 +803,8 @@ const replyContent = computed(() => {
   console.log(msgContentType);
   if (msgContentType === 1) {
     name = replyActive?.value?.replyMsg?.msgContent?.stringContent;
+  } else if (msgContentType === 7) {
+    name = replyActive?.value?.replyMsg?.msgContent?.groupAtInfo?.stringContent;
   } else if (msgContentType === 2) {
     name = t('[图片]');
   } else if (msgContentType === 15) {
