@@ -188,6 +188,10 @@
             :userInfo="getUserInfo(item)"
             v-if="isShowHowComponent(item)"
             :item="item.msgContent.visitingCard"
+            :isBurn="item.msgShowType === 3"
+            :replyMsg="getReply(item)"
+            :replyUserInfo="getUserInfo(getReply(item))"
+            :fired="false"
           />
           <MVisitingCard
             v-else
@@ -200,6 +204,10 @@
             "
             :item="item.msgContent.visitingCard"
             @menuClick="menuClick($event, item)"
+            :isBurn="item.msgShowType === 3"
+            :replyMsg="getReply(item)"
+            :replyUserInfo="getUserInfo(getReply(item))"
+            :fired="false"
             :isRead="item.msgId <= readMsgId"
           />
         </div>
