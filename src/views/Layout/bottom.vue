@@ -9,7 +9,7 @@
           <span>{{ replyContent }}</span>
         </div>
       </div>
-      <img src="../../assets/img/close.svg" alt="" @click="closeReply" />
+      <img src="../../assets/img/close.svg" alt="" @click="reset" />
     </div>
     <div class="content">
       <div class="itemLeft">
@@ -818,15 +818,6 @@ const replyContent = computed(() => {
   }
   return name;
 });
-// 关闭回复面板
-const closeReply = () => {
-  replyData.value[store.state.activeUid] = {
-    showReplyBox: false,
-    replyMsg: {},
-    replyUser: '',
-  };
-  store.commit('SET_REPLYDATA', replyData);
-};
 
 // 设置焚毁时间
 const userBeforeFire = useBeforeSwitch(store, 1001, t);
