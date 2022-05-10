@@ -4,8 +4,19 @@
       class="reply-stringContent"
       v-if="replyMsg?.msgContent?.msgContentType === 1"
     >
-      <div class="nickname">{{ userInfo?.nickname }}</div>
+      <div class="nickname" :class="{ nameColor: !isMe }">
+        {{ userInfo?.nickname }}
+      </div>
       {{ replyMsg?.msgContent?.stringContent }}
+    </div>
+    <div
+      class="reply-stringContent"
+      v-else-if="replyMsg?.msgContent?.msgContentType === 25"
+    >
+      <div class="nickname" :class="{ nameColor: !isMe }">
+        {{ userInfo?.nickname }}
+      </div>
+      {{ replyMsg?.msgContent?.linkUrlInfo?.url }}
     </div>
     <div class="reply-content" v-else>
       <div class="left" :style="isMe ? 'color: #99ceff' : 'color:gray'">
@@ -24,6 +35,7 @@
           v-else-if="
             replyMsg?.msgContent?.msgContentType === 2 ||
             replyMsg?.msgContent?.msgContentType === 23 ||
+            replyMsg?.msgContent?.msgContentType === 25 ||
             replyMsg?.msgContent?.msgContentType === 15
           "
           :src="replyContentImg"
@@ -152,6 +164,9 @@ const replyContentImg = computed(() => {
       font-weight: 400;
       color: #99ceff;
       line-height: 25px;
+    }
+    .nameColor {
+      color: #999999 !important;
     }
   }
   .line {

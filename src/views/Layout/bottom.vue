@@ -811,6 +811,8 @@ const replyContent = computed(() => {
     name = t('[语音]');
   } else if (msgContentType === 23) {
     name = t('[视频]');
+  } else if (msgContentType === 25) {
+    name = t('[链接]]');
   } else {
     const res =
       replyActive?.value?.replyMsg?.msgContent?.fileInfo?.fileName?.split('.');
