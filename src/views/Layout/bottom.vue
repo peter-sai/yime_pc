@@ -800,10 +800,13 @@ const replyContent = computed(() => {
   let name: string;
   const msgContentType =
     replyActive?.value?.replyMsg?.msgContent?.msgContentType;
+  console.log(msgContentType);
   if (msgContentType === 1) {
     name = replyActive?.value?.replyMsg?.msgContent?.stringContent;
   } else if (msgContentType === 2) {
     name = t('[图片]');
+  } else if (msgContentType === 15) {
+    name = t('[名片]');
   } else if (msgContentType === 3) {
     name = t('[语音]');
   } else if (msgContentType === 23) {

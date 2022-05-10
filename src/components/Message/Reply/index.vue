@@ -68,6 +68,8 @@ const replyContent = computed(() => {
     name = t('[图片]');
   } else if (msgContentType === 3) {
     name = t('[语音]');
+  } else if (msgContentType === 15) {
+    name = t('[名片]');
   } else if (msgContentType === 23) {
     name = t('[视频]');
   } else {
