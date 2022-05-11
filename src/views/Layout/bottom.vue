@@ -1000,8 +1000,32 @@ const delCollection = async (
 };
 
 // 发送表情
-const sendCollection = (item: { id: number; url: string }) => {
-  console.log(item);
+const sendCollection = async (item: { id: number; url: string }) => {
+  const query = {
+    msgInfo: {
+      isGroupMsg: store.state.activeIsGroup ? 1 : 0,
+      replyMsgId: store.state.replyMsg?.msgId ?? null,
+      fromId: store.state.userInfo.uid,
+      toId: store.state.activeUid,
+      msgShowType: 1,
+      isEncrypt: 0,
+      msgContent: {
+        msgContentType: 27,
+        msgContent: 'emojiInfo',
+        emojiInfo: {
+          url: item.url,
+        },
+      },
+    },
+  };
+
+  const data = await store.dispatch('postMsg', {
+    query: query,
+    cmd: 2001,
+    encryption: 'Aoelailiao.Message.ClientSendMsgToServerReq',
+    auth: true,
+  });
+  console.log(data);
 };
 </script>
 <style lang="scss" scoped>

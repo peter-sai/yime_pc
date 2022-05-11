@@ -794,6 +794,8 @@ const switchMsg = (
       return (item.msgContent.groupAtInfo as IGroupAtInfo).stringContent;
     case 'videoMsgInfo':
       return t('[视频]');
+    case 'emojiInfo':
+      return t('[表情]');
     default:
       return '';
   }
