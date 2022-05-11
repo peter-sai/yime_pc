@@ -147,6 +147,32 @@
             :src="item.msgContent.imageMsg.imageUrl"
           />
         </div>
+        <!-- 表情消息 -->
+        <div class="item" v-else-if="item.type === 'emojiInfo'">
+          <YImg
+            @click="showUserInfo(getUserInfo(item).uid)"
+            v-if="isShowHowComponent(item)"
+            @menuClick="menuClick($event, item)"
+            :isBurn="item.msgShowType === 3"
+            :fired="false"
+            :userInfo="getUserInfo(item)"
+            :replyMsg="getReply(item)"
+            :replyUserInfo="getUserInfo(getReply(item))"
+            :src="item.msgContent.emojiInfo.url"
+            isEmoji
+          />
+          <MImg
+            v-else
+            :isRead="item.msgId <= readMsgId"
+            @menuClick="menuClick($event, item)"
+            :isBurn="item.msgShowType === 3"
+            :fired="false"
+            :replyMsg="getReply(item)"
+            :replyUserInfo="getUserInfo(getReply(item))"
+            :src="item.msgContent.emojiInfo.url"
+            isEmoji
+          />
+        </div>
         <!-- 文件消息 -->
         <div class="item" v-else-if="item.type === 'fileInfo'">
           <YFile
@@ -342,9 +368,11 @@
           @click="copyImg(copyItem?.msgContent?.imageMsg?.imageUrl)"
           >{{ t('复制') }}</span
         >
-        <span @click="reply(copyItem)">{{ t('回复') }}</span>
+        <span @click="reply(copyItem)" v-if="copyItem.type !== 'emojiInfo'">{{
+          t('回复')
+        }}</span>
         <span
-          v-if="copyItem.type !== 'voiceMsg'"
+          v-if="copyItem.type !== 'voiceMsg' && copyItem.type !== 'emojiInfo'"
           @click="forward(copyItem.msgId)"
           >{{ t('转发') }}</span
         >
@@ -369,6 +397,24 @@
           t('删除')
         }}</span>
       </div>
+    </div>
+    <div
+      class="goBottom"
+      v-if="unRead"
+      @click.stop="
+        unRead = 0;
+        scroll();
+      "
+    >
+      <div class="tag">
+        <Badge :num="unRead" />
+      </div>
+      <Iconfont
+        name="iconleft"
+        size="20"
+        color="#929292"
+        style="transform: rotate(-90deg)"
+      />
     </div>
   </div>
 </template>
@@ -443,7 +489,9 @@ import { Toast } from '@/plugin/Toast';
 import ClipboardJS from 'clipboard';
 import { MediaAudio } from '@/plugin/Audio';
 import { hideLoading, showLoading } from '@/plugin/Loading';
+import Badge from '@/components/Badge/index.vue';
 
+const unRead = ref(0);
 const playMsgId = ref(0);
 
 async function getGroupInfo(store: Store<initStore>, uid: number) {
@@ -748,8 +796,21 @@ let stop = watch(
       }
     }
     if (data.cmd === 2004) {
-      await nextTick;
-      scroll();
+      if (msgWindow.value.scrollHeight <= msgWindow.value.clientHeight) return;
+      // 单聊 除去自己端
+      if (!store.state.activeIsGroup) {
+        if (data.body.msgInfos[0].toId === store.state.userInfo.uid) {
+          unRead.value++;
+        }
+      } else {
+        // 群聊 除去自己端
+        if (data.body.msgInfos[0].fromId !== store.state.userInfo.uid) {
+          unRead.value++;
+        }
+      }
+
+      // await nextTick;
+      // scroll();
     }
   }
 );
@@ -942,6 +1003,25 @@ const addToCollection = async (copyItem: any) => {
 </script>
 <style lang="scss" scoped>
 @import '@/style/base.scss';
+.goBottom {
+  position: fixed;
+  right: 20px;
+  bottom: 100px;
+  z-index: 999;
+  width: 36px;
+  height: 36px;
+  background: #fff;
+  cursor: pointer;
+  border-radius: 50%;
+  box-shadow: 0px 0px 18px 0px rgba(0, 0, 0, 0.12);
+  .tag {
+    position: absolute;
+    width: 30px;
+    bottom: 80%;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
 .msgWindow {
   position: absolute;
   left: 0;

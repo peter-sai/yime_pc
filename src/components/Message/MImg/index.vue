@@ -23,8 +23,12 @@
             <Reply :replyMsg="replyMsg" :userInfo="replyUserInfo" isMe />
             <img
               @click="shogImg"
-              style="max-width: 100%; max-height: 100%; cursor: pointer"
               :src="src"
+              :style="
+                isEmoji
+                  ? { maxWidth: '100px', maxHeight: '100%px' }
+                  : { maxWidth: '100%', maxHeight: '100%', cursor: 'pointer' }
+              "
               alt=""
             />
           </ImgBg>
@@ -33,8 +37,12 @@
           <Fire :isBurn="isBurn" :fired="fired" :left="`-15px`" :top="`-8px`" />
           <img
             @click="shogImg"
-            style="max-width: 100%; max-height: 100%; cursor: pointer"
             :src="src"
+            :style="
+              isEmoji
+                ? { maxWidth: '100px', maxHeight: '100%px' }
+                : { maxWidth: '100%', maxHeight: '100%', cursor: 'pointer' }
+            "
             alt=""
           />
         </div>
@@ -85,6 +93,9 @@ const props = defineProps({
   },
   replyMsg: {
     type: Object as PropType<IMsgInfo>,
+  },
+  isEmoji: {
+    type: Boolean,
   },
 });
 

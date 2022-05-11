@@ -73,6 +73,7 @@ export default {
   'YIME未打开时，消息后台提醒通知，如果不起作用，请前往手机设置打开软件通知权限':
     'Please go to setting to turn on the notification if you can not received message when your YIME is not working.',
   '[位置]': '[Location]',
+  '[表情]': '[expression]',
   '[位置消息]': '[Location message]',
   '[名片]': '[business]',
   '[图片]': '[images]',

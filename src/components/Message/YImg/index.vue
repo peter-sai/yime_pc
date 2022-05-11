@@ -13,7 +13,11 @@
           <Reply :replyMsg="replyMsg" :userInfo="replyUserInfo" />
           <img
             @click="shogImg"
-            style="max-width: 100%; max-height: 100%; cursor: pointer"
+            :style="
+              isEmoji
+                ? { maxWidth: '100px', maxHeight: '100%px' }
+                : { maxWidth: '100%', maxHeight: '100%', cursor: 'pointer' }
+            "
             :src="src"
             alt=""
           />
@@ -24,7 +28,11 @@
         <Fire :isBurn="isBurn" :fired="fired" :right="`-15px`" :top="`-10px`" />
         <img
           @click="shogImg"
-          style="max-width: 100%; max-height: 100%; cursor: pointer"
+          :style="
+            isEmoji
+              ? { maxWidth: '100px', maxHeight: '100px' }
+              : { maxWidth: '100%', maxHeight: '100%', cursor: 'pointer' }
+          "
           :src="src"
           alt=""
         />
@@ -55,7 +63,7 @@ export default defineComponent({
 });
 </script>
 <script lang="ts" setup>
-const props = defineProps({
+defineProps({
   src: {
     type: String,
     default: '',
@@ -88,6 +96,9 @@ const props = defineProps({
   },
   replyMsg: {
     type: Object as PropType<IMsgInfo>,
+  },
+  isEmoji: {
+    type: Boolean,
   },
 });
 const { t } = useI18n();
