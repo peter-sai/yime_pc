@@ -18,6 +18,23 @@ protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } },
 ]);
 
+app.setAsDefaultProtocolClient('yime');
+
+// windows
+app.on('second-instance', async (event, argv) => {
+  // Windows 下通过协议URL启动时，URL会作为参数，所以需要在这个事件里处理
+  if (process.platform === 'win32') {
+    /** 向渲染进程传递唤醒参数 */
+    win.webContents.send('awaken', { awakenArgs: argv });
+  }
+});
+
+// Mac
+app.on('open-url', (event, url) => {
+  /** 向渲染进程传递唤醒参数 */
+  win.webContents.send('awaken', { awakenArgs: url });
+});
+
 async function createWindow() {
   // Create the browser window.
   win = new BrowserWindow({
@@ -70,16 +87,21 @@ async function createWindow() {
     fs.access(dowUrl, (err: any) => {
       if (!err) {
         shell.openPath(dowUrl);
+        dowUrl = '';
       } else {
         win.webContents.downloadURL(url);
       }
     });
   });
   win.webContents.session.on('will-download', (event, item) => {
-    item.setSavePath(dowUrl);
+    if (dowUrl) {
+      item.setSavePath(dowUrl);
+    }
     item.once('done', (_, state) => {
       if (state === 'completed') {
-        shell.openPath(dowUrl);
+        if (dowUrl) {
+          shell.openPath(dowUrl);
+        }
       } else {
         console.log(`Download failed: ${state}`);
       }
