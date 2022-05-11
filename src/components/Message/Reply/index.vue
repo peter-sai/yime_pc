@@ -71,7 +71,8 @@ const replyContent = computed(() => {
   } else if (msgContentType === 23) {
     name = t('[视频]');
   } else {
-    const res = props?.replyMsg?.msgContent?.fileInfo?.fileName?.split('.');
+    const res =
+      props?.replyMsg?.msgContent?.fileInfo?.fileName?.split('.') || [];
     if (res.length > 1) {
       const suffix = res[1];
       name = `[ ${suffix.toLocaleLowerCase()} ]`;
@@ -91,7 +92,8 @@ const replyContentImg = computed(() => {
   } else if (msgContentType === 23) {
     imageUrl = props?.replyMsg?.msgContent?.videoMsgInfo?.imageUrl;
   } else {
-    const res = props?.replyMsg?.msgContent?.fileInfo?.fileName?.split('.');
+    const res =
+      props?.replyMsg?.msgContent?.fileInfo?.fileName?.split('.') || [];
     if (res.length > 1) {
       const suffix = res[1];
       if (suffix.toLocaleLowerCase().includes('doc')) {

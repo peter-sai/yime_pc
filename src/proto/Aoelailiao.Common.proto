@@ -3,7 +3,7 @@ package Aoelailiao.Common;
 option java_package = "com.aoetech.aoelailiao.protobuf";
 option java_multiple_files = true;
 // option optimize_for = LITE_RUNTIME;
-option go_package = "github.com/protocolbuffers/protobuf/aoelailiao/go/protocolpb";
+option go_package = ".;protocolpb";
 //全局错误码result_code定义
 // 1024,接口被限制,需要强制弹框显示result_string字段
 
