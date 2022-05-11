@@ -4,7 +4,33 @@
     <Iconfont v-else name="iconlianxiren" size="46" color="#A8B5BE" />
     <div>
       <div style="flex: 1" @contextmenu="contextmenu">
-        <div class="fileBg" @click="$emit('clickCard')">
+        <ImBg v-bind="$attrs" v-if="replyMsg?.msgId">
+          <Reply :replyMsg="replyMsg" :userInfo="replyUserInfo" />
+          <div class="fileBg" @click="$emit('clickCard')">
+            <div class="left">
+              <div class="title">{{ t(item.showContent) }}</div>
+              <div class="content">
+                <img
+                  v-if="item?.icon"
+                  class="userImg"
+                  :src="item?.icon"
+                  alt=""
+                />
+                <span v-else>{{
+                  item?.name.substr(0, 1).toLocaleUpperCase()
+                }}</span>
+                <div class="size">{{ item?.name }}</div>
+              </div>
+            </div>
+          </div>
+          <Fire
+            :isBurn="isBurn"
+            :fired="fired"
+            :left="`-20px`"
+            :top="`-100px`"
+          />
+        </ImBg>
+        <div v-else class="fileBg" @click="$emit('clickCard')">
           <div class="left">
             <div class="title">{{ t(item.showContent) }}</div>
             <div class="content">
@@ -26,6 +52,10 @@ import { defineComponent, defineProps, defineEmits } from 'vue';
 import { PropType } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { IUserInfo } from '@/types/user';
+import { IMsgInfo } from '@/types/msg';
+import Fire from '../Fire/index.vue';
+import Reply from '../Reply/index.vue';
+import ImBg from '../ImgBg/index.vue';
 import Iconfont from '../../../iconfont/index.vue';
 import { IVisitingCard } from '@/types/msg';
 defineComponent({
@@ -40,6 +70,18 @@ defineProps({
   },
   userInfo: {
     type: Object as PropType<IUserInfo>,
+  },
+  isBurn: {
+    type: Boolean,
+  },
+  fired: {
+    type: Boolean,
+  },
+  replyUserInfo: {
+    type: Object as PropType<IUserInfo>,
+  },
+  replyMsg: {
+    type: Object as PropType<IMsgInfo>,
   },
 });
 const { t } = useI18n();

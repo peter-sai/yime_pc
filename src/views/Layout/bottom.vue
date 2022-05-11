@@ -9,7 +9,7 @@
           <span>{{ replyContent }}</span>
         </div>
       </div>
-      <img src="../../assets/img/close.svg" alt="" @click="closeReply" />
+      <img src="../../assets/img/close.svg" alt="" @click="reset" />
     </div>
     <div class="content">
       <div class="itemLeft">
@@ -871,14 +871,21 @@ const replyContent = computed(() => {
   let name: string;
   const msgContentType =
     replyActive?.value?.replyMsg?.msgContent?.msgContentType;
+  console.log(msgContentType);
   if (msgContentType === 1) {
     name = replyActive?.value?.replyMsg?.msgContent?.stringContent;
+  } else if (msgContentType === 7) {
+    name = replyActive?.value?.replyMsg?.msgContent?.groupAtInfo?.stringContent;
   } else if (msgContentType === 2) {
     name = t('[图片]');
+  } else if (msgContentType === 15) {
+    name = t('[名片]');
   } else if (msgContentType === 3) {
     name = t('[语音]');
   } else if (msgContentType === 23) {
     name = t('[视频]');
+  } else if (msgContentType === 25) {
+    name = t('[链接]]');
   } else {
     const res =
       replyActive?.value?.replyMsg?.msgContent?.fileInfo?.fileName?.split('.');
@@ -889,15 +896,6 @@ const replyContent = computed(() => {
   }
   return name;
 });
-// 关闭回复面板
-const closeReply = () => {
-  replyData.value[store.state.activeUid] = {
-    showReplyBox: false,
-    replyMsg: {},
-    replyUser: '',
-  };
-  store.commit('SET_REPLYDATA', replyData);
-};
 
 // 设置焚毁时间
 const userBeforeFire = useBeforeSwitch(store, 1001, t);
