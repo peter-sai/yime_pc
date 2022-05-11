@@ -4,7 +4,7 @@ import "Aoelailiao.Common.proto";
 option java_package = "com.aoetech.aoelailiao.protobuf";
 option java_multiple_files = true;
 // option optimize_for = LITE_RUNTIME;
-option go_package = "github.com/protocolbuffers/protobuf/aoelailiao/go/protocolpb";
+option go_package = ".;protocolpb";
 
 //给用户创建标签
 message ClientCreateLabelReq

@@ -176,6 +176,9 @@ const submit = async () => {
           },
         },
       };
+      if (store.state.replyMsg?.msgId) {
+        res.msgInfo.replyMsgId = store.state.replyMsg?.msgId;
+      }
       const data = await store.dispatch('postMsg', {
         query: res,
         cmd: 2001,
@@ -185,6 +188,7 @@ const submit = async () => {
       Toast(t(data.body.resultString));
       if (data.body.resultCode === 0) {
         emit('toggleBox');
+        reset();
       }
     });
   } else {
@@ -232,6 +236,19 @@ const submit = async () => {
     }
   }
 };
+function reset() {
+  const replyData: any = computed(() => store.state.replyData);
+  const activeUid: any = computed(() => store.state.activeUid);
+  if (replyData.value && activeUid.value) {
+    replyData.value[activeUid.value] = {
+      showReplyBox: false,
+      replyMsg: {},
+      replyUser: '',
+    };
+    store.commit('SET_REPLYDATA', replyData);
+    store.commit('SET_REPLYMSG', {});
+  }
+}
 </script>
 <style lang="scss" scoped>
 @import '@/style/base.scss';

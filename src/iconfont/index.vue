@@ -55,6 +55,7 @@ import iconright from './iconright.vue';
 import iconsearch from './iconsearch.vue';
 import iconshijian from './iconshijian.vue';
 import iconshipintonghua from './iconshipintonghua.vue';
+import iconshoucang from './iconshoucang.vue';
 import iconshoujihaoma from './iconshoujihaoma.vue';
 import iconshoujihaoma1 from './iconshoujihaoma1.vue';
 import iconshuangxiangsudicopy from './iconshuangxiangsudicopy.vue';
@@ -149,6 +150,7 @@ export default {
     iconsearch,
     iconshijian,
     iconshipintonghua,
+    iconshoucang,
     iconshoujihaoma,
     iconshoujihaoma1,
     iconshuangxiangsudicopy,

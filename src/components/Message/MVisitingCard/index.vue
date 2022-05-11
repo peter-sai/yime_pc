@@ -1,7 +1,24 @@
 <template>
   <div class="mmsg">
-    <div style="flex: 1" @contextmenu="contextmenu">
-      <div class="fileBg" @click="$emit('clickCard')">
+    <div class="wrapper">
+      @contextmenu="contextmenu">
+      <ImBg v-bind="$attrs" isMe v-if="replyMsg?.msgId">
+        <Reply :replyMsg="replyMsg" :userInfo="replyUserInfo" isMe />
+        <div class="fileBg" @click="$emit('clickCard')">
+          <div class="left">
+            <div class="title">{{ t(item.showContent) }}</div>
+            <div class="content">
+              <img v-if="item?.icon" class="userImg" :src="item?.icon" alt="" />
+              <span v-else>{{
+                item?.name.substr(0, 1).toLocaleUpperCase()
+              }}</span>
+              <div class="size">{{ item?.name }}</div>
+            </div>
+          </div>
+        </div>
+        <Fire :isBurn="isBurn" :fired="fired" :left="`-20px`" :top="`-100px`" />
+      </ImBg>
+      <div v-else class="fileBg" @click="$emit('clickCard')">
         <div class="left">
           <div class="title">{{ t(item.showContent) }}</div>
           <div class="content">
@@ -21,6 +38,11 @@
 import IsRead from '@/components/IsRead/index.vue';
 import { useI18n } from 'vue-i18n';
 import { IVisitingCard } from '@/types/msg';
+import { IMsgInfo } from '@/types/msg';
+import { IUserInfo } from '@/types/user';
+import ImBg from '../ImgBg/index.vue';
+import Fire from '../Fire/index.vue';
+import Reply from '../Reply/index.vue';
 import { PropType, defineComponent, defineProps, defineEmits } from 'vue';
 export default defineComponent({
   name: 'MVisitingCard',
@@ -35,6 +57,18 @@ defineProps({
   item: {
     type: Object as PropType<IVisitingCard>,
     required: true,
+  },
+  isBurn: {
+    type: Boolean,
+  },
+  fired: {
+    type: Boolean,
+  },
+  replyUserInfo: {
+    type: Object as PropType<IUserInfo>,
+  },
+  replyMsg: {
+    type: Object as PropType<IMsgInfo>,
   },
 });
 const { t } = useI18n();
@@ -104,5 +138,12 @@ const contextmenu = (e: any) => {
       }
     }
   }
+}
+.wrapper {
+  flex: 1 1 0%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
 }
 </style>

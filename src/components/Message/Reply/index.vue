@@ -2,10 +2,16 @@
   <div class="reply" v-if="replyMsg?.msgId">
     <div
       class="reply-stringContent"
-      v-if="replyMsg?.msgContent?.msgContentType === 1"
+      v-if="
+        replyMsg?.msgContent?.msgContentType === 1 ||
+        replyMsg?.msgContent?.msgContentType === 7 ||
+        replyMsg?.msgContent?.msgContentType === 25
+      "
     >
-      <div class="nickname">{{ userInfo?.nickname }}</div>
-      {{ replyMsg?.msgContent?.stringContent }}
+      <div class="nickname" :class="{ nameColor: !isMe }">
+        {{ userInfo?.nickname }}
+      </div>
+      {{ replyContent }}
     </div>
     <div class="reply-content" v-else>
       <div class="left" :style="isMe ? 'color: #99ceff' : 'color:gray'">
@@ -24,6 +30,7 @@
           v-else-if="
             replyMsg?.msgContent?.msgContentType === 2 ||
             replyMsg?.msgContent?.msgContentType === 23 ||
+            replyMsg?.msgContent?.msgContentType === 25 ||
             replyMsg?.msgContent?.msgContentType === 15
           "
           :src="replyContentImg"
@@ -64,14 +71,23 @@ const { t } = useI18n();
 const replyContent = computed(() => {
   let name: string;
   const msgContentType = props?.replyMsg?.msgContent?.msgContentType;
-  if (msgContentType === 2) {
+  if (msgContentType === 1) {
+    name = props?.replyMsg?.msgContent?.stringContent;
+  } else if (msgContentType === 7) {
+    name = props?.replyMsg?.msgContent?.groupAtInfo?.stringContent;
+  } else if (msgContentType === 25) {
+    name = props?.replyMsg?.msgContent?.linkUrlInfo?.url;
+  } else if (msgContentType === 2) {
     name = t('[图片]');
   } else if (msgContentType === 3) {
     name = t('[语音]');
+  } else if (msgContentType === 15) {
+    name = t('[名片]');
   } else if (msgContentType === 23) {
     name = t('[视频]');
   } else {
-    const res = props?.replyMsg?.msgContent?.fileInfo?.fileName?.split('.');
+    const res =
+      props?.replyMsg?.msgContent?.fileInfo?.fileName?.split('.') || [];
     if (res.length > 1) {
       const suffix = res[1];
       name = `[ ${suffix.toLocaleLowerCase()} ]`;
@@ -91,7 +107,8 @@ const replyContentImg = computed(() => {
   } else if (msgContentType === 23) {
     imageUrl = props?.replyMsg?.msgContent?.videoMsgInfo?.imageUrl;
   } else {
-    const res = props?.replyMsg?.msgContent?.fileInfo?.fileName?.split('.');
+    const res =
+      props?.replyMsg?.msgContent?.fileInfo?.fileName?.split('.') || [];
     if (res.length > 1) {
       const suffix = res[1];
       if (suffix.toLocaleLowerCase().includes('doc')) {
@@ -150,6 +167,9 @@ const replyContentImg = computed(() => {
       font-weight: 400;
       color: #99ceff;
       line-height: 25px;
+    }
+    .nameColor {
+      color: #999999 !important;
     }
   }
   .line {

@@ -9,7 +9,7 @@
           <span>{{ replyContent }}</span>
         </div>
       </div>
-      <img src="../../assets/img/close.svg" alt="" @click="closeReply" />
+      <img src="../../assets/img/close.svg" alt="" @click="reset" />
     </div>
     <div class="content">
       <div class="itemLeft">
@@ -188,7 +188,7 @@
     <!-- 表情 -->
     <div v-if="showExpres">
       <div class="box">
-        <div class="expres" v-if="!showCacheEmoji">
+        <div class="expres" v-if="showCacheEmoji === 2">
           <div
             class="item"
             @click.stop="select(item, modelValue)"
@@ -198,7 +198,7 @@
             <img class="img" :src="item.path" alt="" />
           </div>
         </div>
-        <div class="expres" v-else>
+        <div class="expres" v-else-if="showCacheEmoji === 1">
           <div
             class="item"
             @click.stop="select(item, modelValue)"
@@ -208,41 +208,83 @@
             <img class="img" :src="item.path" alt="" />
           </div>
         </div>
+        <div class="expres" v-else-if="showCacheEmoji === 3">
+          <div class="add" @click.stop="uploadImgToCollection"></div>
+          <div
+            class="item"
+            @contextmenu="contextmenu($event, item)"
+            v-for="item in collectionList"
+            :key="item.id"
+            @click.stop="sendCollection(item)"
+          >
+            <img :src="item.url" alt="" class="img" />
+            <div class="preview">
+              <img :src="item.url" alt="" />
+            </div>
+          </div>
+        </div>
       </div>
       <div class="btn">
         <Iconfont
-          v-if="!showCacheEmoji"
+          v-if="showCacheEmoji === 1"
           class="iconfont"
-          @click.stop="changeCacheEmoji(true)"
+          @click.stop="changeCacheEmoji(1)"
+          name="iconemoji_icon2_copy"
+          size="18"
+        />
+        <Iconfont
+          v-else
+          class="iconfont"
+          @click.stop="changeCacheEmoji(1)"
           name="iconshijian"
           color="main"
           size="18"
         />
         <Iconfont
-          v-else
-          class="iconfont"
-          @click.stop="changeCacheEmoji(true)"
-          name="iconemoji_icon2_copy"
-          size="18"
-        />
-        <Iconfont
-          v-if="showCacheEmoji"
-          class="iconfont"
-          name="iconemoji_icon3"
-          size="18"
-          color="main"
-          @click.stop="changeCacheEmoji(false)"
-        />
-        <Iconfont
-          v-else
+          v-if="showCacheEmoji === 2"
           class="iconfont"
           name="iconicon_xiaolian"
           size="18"
           color="#617EE0"
-          @click.stop="changeCacheEmoji(false)"
+          @click.stop="changeCacheEmoji(2)"
+        />
+        <Iconfont
+          v-else
+          class="iconfont"
+          name="iconemoji_icon3"
+          size="18"
+          color="main"
+          @click.stop="changeCacheEmoji(2)"
+        />
+        <Iconfont
+          v-if="showCacheEmoji === 3"
+          class="iconfont"
+          name="iconshoucang"
+          size="18"
+          color="#617EE0"
+          @click.stop="changeCacheEmoji(3)"
+        />
+        <Iconfont
+          v-else
+          class="iconfont"
+          name="iconshoucang"
+          size="18"
+          color="main"
+          @click.stop="changeCacheEmoji(3)"
         />
       </div>
     </div>
+
+    <div
+      class="menu"
+      v-if="showMenu"
+      @contextmenu="(e) => e.preventDefault()"
+      :style="styleCollection"
+    >
+      <span @click.stop="delCollection(rightClickItem)">{{ t('删除') }}</span>
+    </div>
+    <!-- 图片添加到表情 -->
+    <input ref="changUserImg" type="file" hidden accept="image/*" />
   </div>
 </template>
 <script lang="ts">
@@ -319,6 +361,7 @@ function useInput(
 import Table from '@/components/Table/index.vue';
 import { hideLoading, showLoading } from '@/plugin/Loading';
 import send from '../../assets/img/send.svg';
+const changUserImg: Ref<HTMLInputElement | null> = ref(null);
 const input: Ref<HTMLInputElement | null> = ref(null);
 const store = useStore(key);
 const { t } = useI18n();
@@ -326,6 +369,18 @@ const audioObj = ref({});
 const showAtBox = ref(false);
 const showReplyBox = ref(false);
 const atUserInfoList: Ref<IUserInfo[]> = ref([]);
+const collectionList: Ref<{ id: number; url: string }[]> = ref([]);
+
+const styleCollection = ref({ left: '0px', top: '0px' });
+const showMenu = ref(false);
+const rightClickItem: Ref<{ id: number; url: string } | any> = ref({});
+const contextmenu = (e: any, item: { id: number; url: string }) => {
+  styleCollection.value.left = e.pageX + 'px';
+  styleCollection.value.top = e.pageY + 'px';
+  e?.preventDefault();
+  showMenu.value = true;
+  rightClickItem.value = item;
+};
 
 const dropFile = computed(() => store.state.dropFile);
 const destoryReaded = computed(
@@ -412,9 +467,9 @@ if (!emojiList.value.length) {
 }
 
 // 是否显示缓存图标
-const showCacheEmoji = ref(false);
+const showCacheEmoji = ref(2);
 // 切换显示缓存图标
-const changeCacheEmoji = (item: boolean) => {
+const changeCacheEmoji = async (item: number) => {
   showCacheEmoji.value = item;
 };
 
@@ -489,9 +544,12 @@ async function getGroupMemberUserInfos() {
   emit('atUserInfoLists', atUserInfoList.value);
 }
 
-const toggleExpres = () => {
+const toggleExpres = async () => {
   showExpres.value = !showExpres.value;
   input.value?.focus();
+  if (showExpres.value) {
+    getCollectionList();
+  }
 };
 
 const bodyClickCb = () => {
@@ -505,6 +563,19 @@ onMounted(() => {
   document.body.addEventListener('click', bodyClickCb);
   input.value?.focus();
   burnInfo.active = destoryReaded.value ? destoryReaded : 0;
+
+  // 上传图片 添加到表情
+  changUserImg.value!.addEventListener('change', async (e: any) => {
+    if (!e.target.files || !e.target.files.length) return;
+    if (!store.state.client.userAgent) {
+      await initOss(store);
+    }
+    const file = e.target.files[0];
+    const info = (await store.state.client.put(file.name, file)) as {
+      url: string;
+    } | null;
+    addToCollection(info?.url || '');
+  });
 });
 
 onBeforeUnmount(() => {
@@ -800,14 +871,21 @@ const replyContent = computed(() => {
   let name: string;
   const msgContentType =
     replyActive?.value?.replyMsg?.msgContent?.msgContentType;
+  console.log(msgContentType);
   if (msgContentType === 1) {
     name = replyActive?.value?.replyMsg?.msgContent?.stringContent;
+  } else if (msgContentType === 7) {
+    name = replyActive?.value?.replyMsg?.msgContent?.groupAtInfo?.stringContent;
   } else if (msgContentType === 2) {
     name = t('[图片]');
+  } else if (msgContentType === 15) {
+    name = t('[名片]');
   } else if (msgContentType === 3) {
     name = t('[语音]');
   } else if (msgContentType === 23) {
     name = t('[视频]');
+  } else if (msgContentType === 25) {
+    name = t('[链接]]');
   } else {
     const res =
       replyActive?.value?.replyMsg?.msgContent?.fileInfo?.fileName?.split('.');
@@ -818,15 +896,6 @@ const replyContent = computed(() => {
   }
   return name;
 });
-// 关闭回复面板
-const closeReply = () => {
-  replyData.value[store.state.activeUid] = {
-    showReplyBox: false,
-    replyMsg: {},
-    replyUser: '',
-  };
-  store.commit('SET_REPLYDATA', replyData);
-};
 
 // 设置焚毁时间
 const userBeforeFire = useBeforeSwitch(store, 1001, t);
@@ -875,6 +944,65 @@ function useBeforeSwitch(
     });
   };
 }
+
+async function getCollectionList() {
+  const data = await store.dispatch('postMsg', {
+    query: {
+      optype: 0,
+    },
+    cmd: 2037,
+    encryption: 'Aoelailiao.Message.ImageOperateReq',
+    auth: true,
+  });
+  collectionList.value = data.body.images;
+}
+
+//
+const uploadImgToCollection = () => changUserImg.value?.click();
+
+// 添加到收藏
+async function addToCollection(url: string) {
+  const query = {
+    optype: 10,
+    url,
+  };
+  const data = await store.dispatch('postMsg', {
+    query,
+    cmd: 2037,
+    encryption: 'Aoelailiao.Message.ImageOperateReq',
+    auth: true,
+  });
+  Toast(t(data.body.resultString));
+  if (data.body.resultCode === 0) {
+    getCollectionList();
+  }
+}
+
+// 删除表情
+const delCollection = async (
+  rightClickItem: { id: number; url: string } | any
+) => {
+  showMenu.value = false;
+  const query = {
+    optype: 20,
+    imageId: rightClickItem.id,
+  };
+  const data = await store.dispatch('postMsg', {
+    query,
+    cmd: 2037,
+    encryption: 'Aoelailiao.Message.ImageOperateReq',
+    auth: true,
+  });
+  Toast(t(data.body.resultString));
+  if (data.body.resultCode === 0) {
+    getCollectionList();
+  }
+};
+
+// 发送表情
+const sendCollection = (item: { id: number; url: string }) => {
+  console.log(item);
+};
 </script>
 <style lang="scss" scoped>
 @import '@/style/base.scss';
@@ -1073,13 +1201,58 @@ function useBeforeSwitch(
       .item {
         display: inline-block;
         font-size: 12px;
-        // width: 5%;
         text-align: center;
         margin: 5px;
+        position: relative;
         cursor: pointer;
         .img {
           width: 28px;
           height: 28px;
+        }
+        .preview {
+          display: none;
+          position: absolute;
+          top: 100%;
+          left: 50%;
+          transform: translateX(-50%);
+          img {
+            width: 200px;
+            height: 200px;
+          }
+        }
+        &:hover .preview {
+          display: block;
+        }
+      }
+      .add {
+        width: 24px;
+        height: 24px;
+        border: 2px solid #999999;
+        border-radius: 4px;
+        position: relative;
+        margin: 0 5px;
+        display: inline-block;
+        &::after {
+          display: block;
+          content: '';
+          width: 80%;
+          height: 2px;
+          background: #999;
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
+        }
+        &::before {
+          display: block;
+          content: '';
+          height: 80%;
+          width: 2px;
+          background: #999;
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
         }
       }
     }
@@ -1091,8 +1264,39 @@ function useBeforeSwitch(
     align-items: center;
     padding: 0 20px;
     .iconfont {
-      margin-right: 15px;
+      margin: 0 7px;
       cursor: pointer;
+    }
+  }
+}
+.menu {
+  position: fixed;
+  left: 88px;
+  top: 36px;
+  background: #ffffff;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.07);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 5px;
+  span {
+    font-size: 12px;
+    font-family: PingFangSC-Regular, PingFang SC;
+    font-weight: 400;
+    width: 55px;
+    color: #333333;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    padding: 3px 0;
+    margin: 2px 0;
+    line-height: 17px;
+    &:hover {
+      background: #0085ff;
+      color: #fff;
     }
   }
 }

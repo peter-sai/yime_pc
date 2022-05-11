@@ -3,7 +3,7 @@ package Aoelailiao.Message;
 import "Aoelailiao.Common.proto";
 option java_package = "com.aoetech.aoelailiao.protobuf";
 option java_multiple_files = true;
-option go_package = "github.com/protocolbuffers/protobuf/aoelailiao/go/protocolpb";
+option go_package = ".;protocolpb";
 
 message MsgInfo
 {
@@ -36,7 +36,7 @@ message MsgContentInfo
     // 0--无效，1--文本，2--图片，3--语音，5--事件操作描述信息, 6--系统通知消息，
     // 7--群内@消息，8--消息撤回,9--视频通话，11--位置，12--申请消息（属于系统通知消息）
     // 15--名片，18--消息记录转发消息 17--邀请用户加入群聊,19--文件消息,23--视频消息,
-    // 24--清理消息 25--链接消息,26--焚阅消息
+    // 24--清理消息 25--链接消息,26--焚阅消息,27--表情
     optional uint32 msg_content_type = 1;
     oneof msg_content
     {
@@ -59,7 +59,14 @@ message MsgContentInfo
         CleanInfo clean_info = 24;        //清理消息
         LinkUrlInfo link_url_info = 25;   //链接消息
         FireInfo fire_info = 26;          //焚阅消息
+        EmojiInfo emoji_info = 27;        // 表情
     }
+}
+
+// 表情类型消息内容
+message EmojiInfo
+{
+    optional string url = 10;
 }
 
 message LinkUrlInfo
@@ -1035,7 +1042,7 @@ enum SessionSyncType {
     // 自身的好友和群发生变化
     // 前端
     //     细一点的方法 CID_PROTO_LOGIN_USER_GET_USER_INFO_REQ(1011) 获取个人信息
-    //              或 CID_PROTO_LOGIN_CLIENT_GET_GROUP_INFO_REQ(1029) 获取群信息 
+    //              或 CID_PROTO_LOGIN_CLIENT_GET_GROUP_INFO_REQ(1029) 获取群信息
     //     一股脑方法 CID_PROTO_LOGIN_USER_GET_FRIENDS_AND_GROUPS_LIST_REQ(1009) 全量获取好友和群信息
     // 参数 -- is_group_msg 修改的对象
     // 参数 -- object_id 修改的对象
@@ -1083,4 +1090,40 @@ message SessionSyncNotify
     optional uint32 is_group_msg = 16;
 
     optional uint32 hide_opt = 20; // 0 隐藏, 1 删除
+}
+
+message Image
+{
+    optional uint64 id = 1;   // 图片主键id
+    optional string url = 10; // 图片地址
+}
+
+// cid 2037
+// 图片操作
+message ImageOperateReq
+{
+    // 操作类型
+    // 0 (默认) 查
+    // 10 增
+    // 20 删
+    optional uint32 optype = 10;
+
+    // 删除的id
+    optional uint64 image_id = 15;
+
+    // 增加时的地址, 增加时, 服务器尽可能做url去重,
+    // 插入两次相同的url, 不会增加记录, 但不返回错误
+    // 大于 100 个时, 返回错误, 不能新增
+    optional string url = 20;
+}
+
+// cid 2038
+// 图片操作响应
+message ImageOperateAns
+{
+    optional uint32 result_code = 1;   // 错误码
+    optional string result_string = 2; // 错误描述
+
+    // 图片列表 (全量, 查看时返回)
+    repeated Image images = 20;
 }

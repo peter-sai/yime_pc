@@ -188,6 +188,10 @@
             :userInfo="getUserInfo(item)"
             v-if="isShowHowComponent(item)"
             :item="item.msgContent.visitingCard"
+            :isBurn="item.msgShowType === 3"
+            :replyMsg="getReply(item)"
+            :replyUserInfo="getUserInfo(getReply(item))"
+            :fired="false"
           />
           <MVisitingCard
             v-else
@@ -200,6 +204,10 @@
             "
             :item="item.msgContent.visitingCard"
             @menuClick="menuClick($event, item)"
+            :isBurn="item.msgShowType === 3"
+            :replyMsg="getReply(item)"
+            :replyUserInfo="getUserInfo(getReply(item))"
+            :fired="false"
             :isRead="item.msgId <= readMsgId"
           />
         </div>
@@ -352,9 +360,11 @@
           @click="del(copyItem)"
           >{{ t('撤销') }}</span
         >
-        <span v-if="['imageMsg'].includes(copyItem.type)">{{
-          t('添加到收藏')
-        }}</span>
+        <span
+          v-if="['imageMsg'].includes(copyItem.type)"
+          @click="addToCollection(copyItem)"
+          >{{ t('添加到收藏') }}</span
+        >
         <span v-if="isShowHowComponent(copyItem)" @click="delMsg(copyItem)">{{
           t('删除')
         }}</span>
@@ -918,6 +928,21 @@ const arrDistinctByProp = (arr: Array<any>, prop: string) => {
     obj[item[prop]] ? '' : (obj[item[prop]] = true && preValue.push(item));
     return preValue;
   }, []);
+};
+
+// 添加到收藏
+const addToCollection = async (copyItem: any) => {
+  const query = {
+    optype: 10,
+    url: copyItem.msgContent.imageMsg.imageUrl,
+  };
+  const data = await store.dispatch('postMsg', {
+    query,
+    cmd: 2037,
+    encryption: 'Aoelailiao.Message.ImageOperateReq',
+    auth: true,
+  });
+  Toast(t(data.body.resultString));
 };
 </script>
 <style lang="scss" scoped>
