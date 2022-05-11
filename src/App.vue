@@ -228,6 +228,8 @@ import Electron from 'Electron';
 const store = useStore(key);
 store.dispatch('init');
 Electron.ipcRenderer.on('awaken', (event, params) => {
+  console.log(params);
+
   if (params.awakenArgs.indexOf('gid') !== -1) {
     const url = params.awakenArgs.split('=');
     if (url[1]) {
@@ -237,7 +239,6 @@ Electron.ipcRenderer.on('awaken', (event, params) => {
   }
   if (params.awakenArgs.indexOf('uid') !== -1) {
     const url = params.awakenArgs.split('=');
-    console.log(url[1]);
     if (url[1]) {
       store.commit('SET_ACTIVEUID', url[1]);
       store.commit('SET_ACTIVEISGROUP', false);

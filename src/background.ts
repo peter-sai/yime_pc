@@ -20,21 +20,6 @@ protocol.registerSchemesAsPrivileged([
 
 app.setAsDefaultProtocolClient('yime');
 
-// windows
-app.on('second-instance', async (event, argv) => {
-  // Windows 下通过协议URL启动时，URL会作为参数，所以需要在这个事件里处理
-  if (process.platform === 'win32') {
-    /** 向渲染进程传递唤醒参数 */
-    win.webContents.send('awaken', { awakenArgs: argv });
-  }
-});
-
-// Mac
-app.on('open-url', (event, url) => {
-  /** 向渲染进程传递唤醒参数 */
-  win.webContents.send('awaken', { awakenArgs: url });
-});
-
 async function createWindow() {
   // Create the browser window.
   win = new BrowserWindow({
@@ -58,6 +43,29 @@ async function createWindow() {
     // Load the index.html when not in development
     win.loadURL('app://./index.html');
   }
+
+  const gotTheLock = app.requestSingleInstanceLock();
+
+  if (!gotTheLock) {
+    app.quit();
+  } else {
+    // windows
+    app.on('second-instance', async (event, argv) => {
+      // Windows 下通过协议URL启动时，URL会作为参数，所以需要在这个事件里处理
+      if (process.platform === 'win32') {
+        if (win.isMinimized()) win.restore();
+        win.focus();
+        /** 向渲染进程传递唤醒参数 */
+        win.webContents.send('awaken', { awakenArgs: argv.pop() });
+      }
+    });
+  }
+
+  // Mac
+  app.on('open-url', (event, url) => {
+    /** 向渲染进程传递唤醒参数 */
+    win.webContents.send('awaken', { awakenArgs: url });
+  });
 
   // win 下设置角标
   if (process.platform !== 'darwin') {
