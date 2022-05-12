@@ -998,4 +998,5 @@ export default {
   '发言太快了，休息一下吧': "It's too fast to speak. Let's have a rest",
   '您的ip有风险，为了您的安全，您已被暂时限制登录':
     'Your IP is at risk. For your security, you have been temporarily restricted from logging in',
+  原消息已被删除: 'The original message has been deleted',
 };

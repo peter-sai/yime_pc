@@ -13,6 +13,12 @@
       </div>
       {{ replyContent }}
     </div>
+    <div class="reply-stringContent" v-else-if="replyMsg?.msgId === 1">
+      <div class="nickname" :class="{ nameColor: !isMe }">
+        {{ userInfo?.nickname }}
+      </div>
+      {{ t('原消息已被删除') }}
+    </div>
     <div class="reply-content" v-else>
       <div class="left" :style="isMe ? 'color: #99ceff' : 'color:gray'">
         <span>{{ userInfo?.nickname }}</span>

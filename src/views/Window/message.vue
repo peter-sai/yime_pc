@@ -712,9 +712,15 @@ const isShowHowComponent = (item: IMsgInfo<string>) => {
 
 // 获取回复的信息
 const getReply = (item: IMsgInfo<string>) => {
-  return itemChat.value.readList.find(
+  let msgInfo = itemChat.value.readList.find(
     (e) => e.msgId === item.replyMsgId
   ) as IMsgInfo;
+  if (msgInfo == undefined && item.replyMsgId) {
+    msgInfo = {
+      msgId: 1,
+    };
+  }
+  return msgInfo;
 };
 
 // 获取需要显示的头像信息
