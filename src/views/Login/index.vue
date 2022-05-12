@@ -84,7 +84,6 @@
       >
         <!-- 记住密码 -->
         <div
-          v-if="btns.active !== 0"
           style="display: flex; align-items: center; margin-top: 20px"
           @click="changeRememberPwd"
         >
@@ -181,8 +180,10 @@ function changeBtnActive(item: ILoginBtnItem) {
 }
 
 let rememberPwdInfo = {
-  userName: '',
+  im: '',
   password: '',
+  imPassword: '',
+  phone: '',
 };
 try {
   const remember = getStorage('rememberPwd');
@@ -196,12 +197,12 @@ try {
 
 // 参数
 const query = reactive({
-  phone: '',
+  phone: rememberPwdInfo?.phone || '',
   verificationCode: '',
-  im: rememberPwdInfo?.userName || '',
-  imPassword: rememberPwdInfo?.password || '',
+  im: rememberPwdInfo?.im || '',
+  imPassword: rememberPwdInfo?.imPassword || '',
   userName: '',
-  password: '',
+  password: rememberPwdInfo?.password || '',
 });
 
 type TQuery = typeof query;
@@ -288,6 +289,17 @@ function useLogin(
       if (!query.password) {
         return Toast(t('请输入密码'));
       }
+
+      if (rememberPwd.value) {
+        const obj = {
+          phone: query.phone,
+          password: query.password,
+        };
+        setStorage('rememberPwd', JSON.stringify(obj));
+      } else {
+        setStorage('rememberPwd', undefined);
+      }
+
       // 密码登录
       showLoading();
       const res = {
@@ -350,8 +362,8 @@ function useLogin(
       }
       if (rememberPwd.value) {
         const obj = {
-          userName: query.im,
-          password: query.imPassword,
+          im: query.im,
+          imPassword: query.imPassword,
         };
         setStorage('rememberPwd', JSON.stringify(obj));
       } else {

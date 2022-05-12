@@ -5,7 +5,7 @@
         <Iconfont
           name="iconfork"
           size="20"
-          @click="$emit('changeTag', Etag.UserInfo)"
+          @click="$emit('changeTag', Etag.GroupInfo)"
         />
       </template>
     </NavigationBar>

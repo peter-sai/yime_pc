@@ -218,7 +218,7 @@
       class="menu"
       v-if="showMenu && !rightClickItem.isRoot"
       @contextmenu="(e) => e?.preventDefault()"
-      :style="{ left: style.left + 'px', top: style.top + 'px' }"
+      :style="style"
     >
       <span
         v-if="isRoot && !rightClickItem.isAdmin"
@@ -362,12 +362,34 @@ const inGroupType = ref('');
 
 const showMenu = ref(false);
 const rightClickItem = ref({}) as Ref<IUserInfo>;
-const style = ref({ left: '0px', top: '0px' });
+const style: Ref<any> = ref({});
 const contextmenu = (e: any, item: IUserInfo) => {
   if (!isRoot.value && !isAdmin.value) return;
 
-  style.value.left = e.pageX;
-  style.value.top = e.pageY;
+  if (90 + e.pageX > window.innerWidth) {
+    style.value.right = 0;
+    style.value.top = e.pageY + 'px';
+    style.value.left = 'auto';
+    style.value.bottom = 'auto';
+  } else if (90 + e.pageY > window.innerHeight) {
+    style.value.bottom = 0;
+    style.value.left = e.pageX + 'px';
+    style.value.right = 'auto';
+    style.value.top = 'auto';
+  } else if (
+    90 + e.pageX > window.innerWidth &&
+    90 + e.pageY > window.innerHeight
+  ) {
+    style.value.right = 0;
+    style.value.bottom = 0;
+    style.value.left = 'auto';
+    style.value.top = 'auto';
+  } else {
+    style.value.left = e.pageX + 'px';
+    style.value.top = e.pageY + 'px';
+    style.value.bottom = 'auto';
+    style.value.right = 'auto';
+  }
   e?.preventDefault();
   showMenu.value = true;
   rightClickItem.value = item;
@@ -408,6 +430,9 @@ const beforeTop = useBeforeSwitch(store, 1004, t);
 const userClick = (uid: number) => {
   if (uid === store.state.userInfo.uid) return;
 
+  if (props.groupDetailInfo?.groupAttachInfo?.groupMemberSplit) {
+    return Toast('群员不能互相访问详情，请咨询管理员');
+  }
   emit('updateUser', uid);
   emit('changeTag', Etag.UserInfo);
 };
@@ -640,8 +665,6 @@ async function uploadGroupInfo() {
   padding-bottom: 40px;
   .menu {
     position: fixed;
-    left: 88px;
-    top: 36px;
     background: #ffffff;
     box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.07);
     border-radius: 8px;
