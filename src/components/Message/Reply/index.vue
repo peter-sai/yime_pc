@@ -91,6 +91,8 @@ const replyContent = computed(() => {
     name = t('[名片]');
   } else if (msgContentType === 23) {
     name = t('[视频]');
+  } else if (msgContentType === 27) {
+    name = t('[表情]');
   } else {
     const res =
       props?.replyMsg?.msgContent?.fileInfo?.fileName?.split('.') || [];
