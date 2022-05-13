@@ -888,7 +888,9 @@ const replyContent = computed(() => {
     name = t('[链接]]');
   } else {
     const res =
-      replyActive?.value?.replyMsg?.msgContent?.fileInfo?.fileName?.split('.');
+      replyActive?.value?.replyMsg?.msgContent?.fileInfo?.fileName?.split(
+        '.'
+      ) || [];
     if (res.length > 1) {
       const suffix = res[1];
       name = `[ ${suffix.toLocaleLowerCase()} ]`;
