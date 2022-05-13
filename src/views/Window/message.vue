@@ -368,9 +368,7 @@
           @click="copyImg(copyItem?.msgContent?.imageMsg?.imageUrl)"
           >{{ t('复制') }}</span
         >
-        <span @click="reply(copyItem)" v-if="copyItem.type !== 'emojiInfo'">{{
-          t('回复')
-        }}</span>
+        <span @click="reply(copyItem)">{{ t('回复') }}</span>
         <span
           v-if="copyItem.type !== 'voiceMsg' && copyItem.type !== 'emojiInfo'"
           @click="forward(copyItem.msgId)"
@@ -389,7 +387,10 @@
           >{{ t('撤销') }}</span
         >
         <span
-          v-if="['imageMsg'].includes(copyItem.type)"
+          v-if="
+            ['imageMsg', 'emojiInfo'].includes(copyItem.type) &&
+            copyItem.fromId !== store.state.userInfo.uid
+          "
           @click="addToCollection(copyItem)"
           >{{ t('添加到收藏') }}</span
         >
@@ -804,13 +805,18 @@ let stop = watch(
     if (data.cmd === 2004) {
       if (msgWindow.value.scrollHeight <= msgWindow.value.clientHeight) return;
       // 单聊 除去自己端
-      if (!store.state.activeIsGroup) {
-        if (data.body.msgInfos[0].toId === store.state.userInfo.uid) {
+      const msgInfos = data.body.msgInfos[0];
+      const state = store.state;
+      if (!state.activeIsGroup) {
+        if (msgInfos.fromId === state.activeUid) {
           unRead.value++;
         }
       } else {
         // 群聊 除去自己端
-        if (data.body.msgInfos[0].fromId !== store.state.userInfo.uid) {
+        if (
+          msgInfos.fromId !== state.userInfo.uid &&
+          msgInfos.toId === state.activeUid
+        ) {
           unRead.value++;
         }
       }
@@ -994,9 +1000,16 @@ const arrDistinctByProp = (arr: Array<any>, prop: string) => {
 
 // 添加到收藏
 const addToCollection = async (copyItem: any) => {
+  let url = '';
+  if (copyItem.type === 'emojiInfo') {
+    url = copyItem.msgContent.emojiInfo.url;
+  } else {
+    url = copyItem.msgContent.imageMsg.imageUrl;
+  }
+
   const query = {
     optype: 10,
-    url: copyItem.msgContent.imageMsg.imageUrl,
+    url,
   };
   const data = await store.dispatch('postMsg', {
     query,

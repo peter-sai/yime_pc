@@ -3,7 +3,13 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onBeforeUnmount, watch } from 'vue';
+import {
+  computed,
+  defineComponent,
+  onBeforeUnmount,
+  reactive,
+  watch,
+} from 'vue';
 import { Store, useStore } from 'vuex';
 import { getOssInfo } from './api';
 import { getToken as getUserToken } from './utils/utils';
@@ -39,6 +45,9 @@ import { initOss } from './hooks/window';
 import { useI18n } from 'vue-i18n';
 import { hideLoading } from './plugin/Loading';
 import { yimechat } from './api';
+const abc = reactive({ a: 1, b: { c: 2 } });
+console.log(abc.b);
+
 export async function initRonyun(store: Store<initStore>) {
   // IM 客户端初始化
   const RongCallLib = RongIMLib.init({
