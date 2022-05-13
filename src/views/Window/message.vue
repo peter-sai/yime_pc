@@ -368,9 +368,7 @@
           @click="copyImg(copyItem?.msgContent?.imageMsg?.imageUrl)"
           >{{ t('复制') }}</span
         >
-        <span @click="reply(copyItem)" v-if="copyItem.type !== 'emojiInfo'">{{
-          t('回复')
-        }}</span>
+        <span @click="reply(copyItem)">{{ t('回复') }}</span>
         <span
           v-if="copyItem.type !== 'voiceMsg' && copyItem.type !== 'emojiInfo'"
           @click="forward(copyItem.msgId)"
