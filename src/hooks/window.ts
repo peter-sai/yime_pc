@@ -647,7 +647,10 @@ const useSystemNotifyInfo = (
   return (item: IMsgInfo<ISystemNotifyInfo>) => {
     const { systemNotifyInfo } = item.msgContent;
 
-    const frestMsg = systemNotifyInfo.appointUserSystemNotifyInfos[0];
+    const frestMsg = systemNotifyInfo?.appointUserSystemNotifyInfos?.length
+      ? systemNotifyInfo?.appointUserSystemNotifyInfos[0]
+      : {};
+
     if ((frestMsg.userIds || []).includes(store.state.userInfo.uid)) {
       const msg = frestMsg.appointUserNotifyInfo.msgText || '';
       // 格式化消息

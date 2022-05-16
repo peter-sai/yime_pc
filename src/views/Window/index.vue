@@ -19,25 +19,6 @@
       @toggleBox="toggleBox"
       @changeTag="changeTag"
     />
-    <!-- <div class="search">
-      <div class="left">
-        <div class="top"></div>
-        <div class="bottom"></div>
-      </div>
-      <div class="intputBg">
-        <div class="icon">
-          <Iconfont name="iconsousuo" size="15" color="#aaa" />
-        </div>
-        <input type="text" />
-        <div class="icon close">
-          <Iconfont name="iconsearch" size="20" color="#aaa" />
-        </div>
-      </div>
-      <div class="num">0/0</div>
-      <div class="close">
-        <Iconfont name="iconsearch" size="20" color="#0085FF" />
-      </div>
-    </div> -->
 
     <!-- 消息内容 -->
     <div
@@ -173,6 +154,8 @@ import {
   computed,
   onUnmounted,
   ComputedRef,
+  reactive,
+  effect,
 } from 'vue';
 import Message from './message.vue';
 import { useI18n } from 'vue-i18n';
@@ -535,67 +518,6 @@ onUnmounted(() => {
     bottom: 0;
     width: 320px;
     background: #fff;
-  }
-}
-.search {
-  height: 50px;
-  border-top: 1px solid #f0f1f4;
-  border-bottom: 1px solid #f0f1f4;
-  background: #fff;
-  position: relative;
-  z-index: 999;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 20px;
-  .left {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    .top {
-      width: 10px;
-      height: 10px;
-      border-bottom: 2px solid #ddd;
-      border-left: 2px solid #ddd;
-      transform: rotate(-45deg) translateY(-5px);
-      margin-right: 15px;
-      cursor: pointer;
-    }
-    .bottom {
-      cursor: pointer;
-      width: 10px;
-      height: 10px;
-      border-top: 2px solid #ddd;
-      border-right: 2px solid #ddd;
-      transform: rotate(-45deg) translateY(5px);
-    }
-  }
-  .intputBg {
-    width: 569px;
-    height: 30px;
-    background: #f0f1f4;
-    border-radius: 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 10px;
-    box-sizing: border-box;
-    input {
-      width: 100%;
-      font-size: 14px;
-      padding-left: 5px;
-    }
-  }
-  .num {
-    font-size: 12px;
-    font-family: PingFangSC-Regular, PingFang SC;
-    font-weight: 400;
-    color: #050505;
-    line-height: 17px;
-  }
-  .close {
-    cursor: pointer;
-    transform: rotate(45deg);
   }
 }
 </style>

@@ -993,6 +993,7 @@ export default {
   记住密码: 'Remember the password',
   群设置: 'Group settings',
   添加到收藏: 'Add to collection',
+  本群管理员已更新: 'The group administrator has been updated',
   '群员不能互相访问详情，请咨询管理员':
     'Group members cannot access each other. Please consult the administrator for details',
   '发言太快了，休息一下吧': "It's too fast to speak. Let's have a rest",

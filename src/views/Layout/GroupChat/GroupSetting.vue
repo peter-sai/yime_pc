@@ -28,7 +28,9 @@
           />
         </template>
       </Table>
-      <div class="btn" @click="dissolution">{{ t('解散群聊') }}</div>
+      <div v-if="isRoot" class="btn" @click="dissolution">
+        {{ t('解散群聊') }}
+      </div>
     </div>
   </div>
 </template>
@@ -39,6 +41,7 @@ import {
   defineEmits,
   defineProps,
   PropType,
+  ref,
 } from 'vue';
 import Iconfont from '@/iconfont/index.vue';
 import { Etag } from '../index.vue';
@@ -67,6 +70,18 @@ const props = defineProps({
 
 const { t } = useI18n();
 const store = useStore(key);
+const isRoot = ref(false);
+// 群管理员
+const adminUidList =
+  props.groupDetailInfo?.groupMemberLists?.adminUidList || [];
+// 判断是否是群主
+const userInfo = store.state.userInfo;
+if (
+  Number(userInfo.uid) ===
+  Number(props.groupDetailInfo?.groupMemberLists?.rootUid)
+) {
+  isRoot.value = true;
+}
 
 const beforeAllowMemberGetHisotyMsg = useBeforeSwitch(store, 1011, t);
 const beforeGroupMemberSplit = useBeforeSwitch(store, 1007, t);
