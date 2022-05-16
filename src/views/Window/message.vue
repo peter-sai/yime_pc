@@ -1,8 +1,8 @@
 <template>
   <div class="search" v-if="search.showBox">
     <div class="left">
-      <div class="top"></div>
-      <div class="bottom"></div>
+      <div class="top" @click="goNext('+')"></div>
+      <div class="bottom" @click="goNext('-')"></div>
     </div>
     <div class="intputBg">
       <div class="icon">
@@ -18,8 +18,16 @@
         <Iconfont name="iconsearch" size="20" color="#aaa" />
       </div>
     </div>
-    <div class="num">0/0</div>
-    <div class="close" @click="search.showBox = false">
+    <div class="num">
+      {{ queryInfo.index + 1 }}/{{ queryInfo.selectList.length }}
+    </div>
+    <div
+      class="close"
+      @click="
+        search.inputVal = '';
+        search.showBox = false;
+      "
+    >
       <Iconfont name="iconsearch" size="20" color="#0085FF" />
     </div>
   </div>
@@ -91,9 +99,21 @@
             {{ t('消息已焚毁') }}
           </Mmsg>
         </div>
-        <div class="item" v-else-if="item.type === 'stringContent'">
+        <div
+          class="item"
+          style="padding: 0"
+          v-else-if="item.type === 'stringContent'"
+        >
           <!-- 普通消息 -->
-          <div>
+          <div
+            style="padding: 20px 0"
+            :style="{
+              background:
+                item.msgId === queryInfo.selectList[queryInfo.index]
+                  ? 'rgba(0,0,0,0.1)'
+                  : '',
+            }"
+          >
             <Ymsg
               @click="showUserInfo(getUserInfo(item).uid)"
               @menuClick="menuClick($event, item)"
@@ -527,6 +547,7 @@ const search = reactive({
   inputVal: '',
   showBox: false,
 });
+
 const searchRef: Ref<HTMLInputElement | null> = ref(null);
 
 const callback = async (e: any) => {
@@ -684,6 +705,30 @@ const itemChat: ComputedRef<ImsgItem> = computed(() => {
   activeList.readList = arrDistinctByProp(activeList.readList, 'clientMsgUuid');
   return activeList;
 });
+
+const queryInfo = reactive<{ selectList: Array<any>; index: number }>({
+  selectList: [],
+  index: 0,
+});
+
+watch(
+  () => search.inputVal,
+  async (val) => {
+    if (val) {
+      itemChat.value.readList.forEach((e) => {
+        if (e.msgContent?.stringContent?.includes(val)) {
+          queryInfo.selectList.push(e.msgId);
+        }
+      });
+    } else {
+      queryInfo.selectList = [];
+    }
+    queryInfo.index = queryInfo.selectList.length - 1;
+    setTimeout(() => {
+      goNext();
+    }, 0);
+  }
+);
 
 const imageList = computed(() => {
   const list = itemChat.value.readList
@@ -1104,6 +1149,24 @@ const addToCollection = async (copyItem: any) => {
     auth: true,
   });
   Toast(t(data.body.resultString));
+};
+
+const goNext = async (val?: string) => {
+  if (val === '+') {
+    if (queryInfo.index < queryInfo.selectList.length - 1) {
+      queryInfo.index++;
+    }
+  } else if (val === '-') {
+    if (queryInfo.index > 0) {
+      queryInfo.index--;
+    }
+  }
+  const dom = document.getElementById(queryInfo.selectList[queryInfo.index]);
+  dom?.scrollIntoView({
+    behavior: 'smooth', //顺滑的滚动
+    block: 'center', //容器上下的中间
+    inline: 'start', //容器左右的左边
+  });
 };
 </script>
 <style lang="scss" scoped>
