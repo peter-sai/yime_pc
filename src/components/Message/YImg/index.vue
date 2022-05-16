@@ -150,6 +150,6 @@ const shogImg = () => {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  max-width: 70%;
+  // max-width: 70%;
 }
 </style>
