@@ -26,7 +26,7 @@
               :src="src"
               :style="
                 isEmoji
-                  ? { maxWidth: '100px', maxHeight: '100%px' }
+                  ? { maxWidth: '100px', maxHeight: '100px' }
                   : { maxWidth: '100%', maxHeight: '100%', cursor: 'pointer' }
               "
               alt=""
@@ -40,7 +40,7 @@
             :src="src"
             :style="
               isEmoji
-                ? { maxWidth: '100px', maxHeight: '100%px' }
+                ? { maxWidth: '100px', maxHeight: '100px' }
                 : { maxWidth: '100%', maxHeight: '100%', cursor: 'pointer' }
             "
             alt=""

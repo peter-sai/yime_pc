@@ -3,7 +3,6 @@ import Login from '../views/Login/index.vue';
 import Register from '../views/Register/index.vue';
 import ForgetPassword from '../views/ForgetPassword/index.vue';
 import Layout from '../views/Layout/index.vue';
-import swiper from '../views/Layout/swiper.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {

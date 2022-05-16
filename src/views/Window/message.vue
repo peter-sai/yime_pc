@@ -1,4 +1,36 @@
 <template>
+  <div class="search" v-if="search.showBox">
+    <div class="left">
+      <div class="top" @click="goNext('+')"></div>
+      <div class="bottom" @click="goNext('-')"></div>
+    </div>
+    <div class="intputBg">
+      <div class="icon">
+        <Iconfont name="iconsousuo" size="15" color="#aaa" />
+      </div>
+      <input
+        type="text"
+        ref="searchRef"
+        :placeholder="t('请输入')"
+        v-model="search.inputVal"
+      />
+      <div class="icon close" @click="search.inputVal = ''">
+        <Iconfont name="iconsearch" size="20" color="#aaa" />
+      </div>
+    </div>
+    <div class="num">
+      {{ queryInfo.index + 1 }}/{{ queryInfo.selectList.length }}
+    </div>
+    <div
+      class="close"
+      @click="
+        search.inputVal = '';
+        search.showBox = false;
+      "
+    >
+      <Iconfont name="iconsearch" size="20" color="#0085FF" />
+    </div>
+  </div>
   <div ref="msgWindow" class="msgWindow">
     <!-- 无消息时显示 -->
     <div
@@ -39,8 +71,11 @@
       </div>
     </div>
     <div class="Message">
-      <div v-for="(item, key) in itemChat.readList || []" :key="item.id">
-        {{ item }}
+      <div
+        v-for="(item, key) in itemChat.readList || []"
+        :key="item.id"
+        :id="item.msgId"
+      >
         <Time v-if="isShowTime(key)">{{ formateTime(item.msgTime, t) }}</Time>
         <!-- 普通消息 -->
         <!-- 阅后即焚 -->
@@ -64,9 +99,21 @@
             {{ t('消息已焚毁') }}
           </Mmsg>
         </div>
-        <div class="item" v-else-if="item.type === 'stringContent'">
+        <div
+          class="item"
+          style="padding: 0"
+          v-else-if="item.type === 'stringContent'"
+        >
           <!-- 普通消息 -->
-          <div>
+          <div
+            style="padding: 20px 0"
+            :style="{
+              background:
+                item.msgId === queryInfo.selectList[queryInfo.index]
+                  ? 'rgba(0,0,0,0.1)'
+                  : '',
+            }"
+          >
             <Ymsg
               @click="showUserInfo(getUserInfo(item).uid)"
               @menuClick="menuClick($event, item)"
@@ -74,6 +121,7 @@
               :replyMsg="getReply(item)"
               :userInfo="getUserInfo(item)"
               :replyUserInfo="getUserInfo(getReply(item))"
+              :search="search.inputVal"
               v-if="isShowHowComponent(item)"
             >
               {{ item.msgContent.stringContent }}
@@ -84,6 +132,7 @@
               :replyMsg="getReply(item)"
               :replyUserInfo="getUserInfo(getReply(item))"
               :isBurn="item.msgShowType === 3"
+              :search="search.inputVal"
               v-else
             >
               {{ item.msgContent.stringContent }}
@@ -368,9 +417,7 @@
           @click="copyImg(copyItem?.msgContent?.imageMsg?.imageUrl)"
           >{{ t('复制') }}</span
         >
-        <span @click="reply(copyItem)" v-if="copyItem.type !== 'emojiInfo'">{{
-          t('回复')
-        }}</span>
+        <span @click="reply(copyItem)">{{ t('回复') }}</span>
         <span
           v-if="copyItem.type !== 'voiceMsg' && copyItem.type !== 'emojiInfo'"
           @click="forward(copyItem.msgId)"
@@ -436,6 +483,8 @@ import {
   watch,
   onUnmounted,
   nextTick,
+  reactive,
+  effect,
 } from 'vue';
 export default defineComponent({
   name: 'Message',
@@ -494,6 +543,24 @@ import { MediaAudio } from '@/plugin/Audio';
 import { hideLoading, showLoading } from '@/plugin/Loading';
 import Electron from 'Electron';
 import Badge from '@/components/Badge/index.vue';
+
+const search = reactive({
+  inputVal: '',
+  showBox: false,
+});
+
+const searchRef: Ref<HTMLInputElement | null> = ref(null);
+
+const callback = async (e: any) => {
+  if (e.ctrlKey && e.keyCode === 70) {
+    search.showBox = true;
+    await nextTick();
+    searchRef.value?.focus();
+  } else if (e.keyCode === 27) {
+    search.showBox = false;
+  }
+};
+document.body.addEventListener('keydown', callback);
 
 const unRead = ref(0);
 const playMsgId = ref(0);
@@ -575,8 +642,21 @@ const copyItem = ref({} as IMsgInfo<string>);
 let clipboard: any = null;
 
 const scroll = () => {
-  msgWindow.value.scrollIntoView();
-  msgWindow.value.scrollTop = msgWindow.value.scrollHeight;
+  if (msgWindow.value) {
+    msgWindow.value.scrollIntoView();
+    msgWindow.value.scrollTop = msgWindow.value.scrollHeight;
+  }
+};
+
+const scrollEvent = (e: any) => {
+  const clientHeight = e.target.clientHeight;
+  const scrollTop = e.target.scrollTop;
+  const scrollHeight = e.target.scrollHeight;
+
+  if (clientHeight + scrollTop >= scrollHeight) {
+    console.log('竖向滚动条已经滚动到底部');
+    unRead.value = 0;
+  }
 };
 
 onMounted(() => {
@@ -591,9 +671,12 @@ onMounted(() => {
     console.log('该浏览器不支持自动复制');
   });
   scroll();
+  msgWindow.value?.addEventListener('scroll', scrollEvent);
 });
 onUnmounted(() => {
   clipboard && clipboard.destroy();
+  document.body.removeEventListener('keydown', callback);
+  msgWindow.value?.removeEventListener('scroll', scrollEvent);
 });
 
 // 清空消息
@@ -624,6 +707,30 @@ const itemChat: ComputedRef<ImsgItem> = computed(() => {
   return activeList;
 });
 
+const queryInfo = reactive<{ selectList: Array<any>; index: number }>({
+  selectList: [],
+  index: 0,
+});
+
+watch(
+  () => search.inputVal,
+  async (val) => {
+    if (val) {
+      itemChat.value.readList.forEach((e) => {
+        if (e.msgContent?.stringContent?.includes(val)) {
+          queryInfo.selectList.push(e.msgId);
+        }
+      });
+    } else {
+      queryInfo.selectList = [];
+    }
+    queryInfo.index = queryInfo.selectList.length - 1;
+    setTimeout(() => {
+      goNext();
+    }, 0);
+  }
+);
+
 const imageList = computed(() => {
   const list = itemChat.value.readList
     .filter((e: IMsgInfo<IImageMsgInfo>) => e.type === 'imageMsg')
@@ -635,6 +742,16 @@ const imageList = computed(() => {
     });
   return list;
 });
+
+function debounce(fn: () => void) {
+  let timer: any;
+  return function () {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      fn.apply(this, arguments); // 把参数传进去
+    }, 700);
+  };
+}
 
 // 登录用户信息
 const userInfo = computed(() => store.state.userInfo);
@@ -716,9 +833,15 @@ const isShowHowComponent = (item: IMsgInfo<string>) => {
 
 // 获取回复的信息
 const getReply = (item: IMsgInfo<string>) => {
-  return itemChat.value.readList.find(
+  let msgInfo = itemChat.value.readList.find(
     (e) => e.msgId === item.replyMsgId
   ) as IMsgInfo;
+  if (msgInfo == undefined && item.replyMsgId) {
+    msgInfo = {
+      msgId: 1,
+    };
+  }
+  return msgInfo;
 };
 
 // 获取需要显示的头像信息
@@ -800,7 +923,19 @@ let stop = watch(
       }
     }
     if (data.cmd === 2004) {
-      if (msgWindow.value.scrollHeight <= msgWindow.value.clientHeight) return;
+      console.log(
+        msgWindow.value.scrollHeight,
+        msgWindow.value.clientHeight + msgWindow.value.scrollTop
+      );
+
+      if (
+        msgWindow.value.scrollHeight <=
+        msgWindow.value.clientHeight + msgWindow.value.scrollTop
+      ) {
+        await nextTick;
+        scroll();
+        return;
+      }
       // 单聊 除去自己端
       const msgInfos = data.body.msgInfos[0];
       const state = store.state;
@@ -1021,6 +1156,24 @@ const addToCollection = async (copyItem: any) => {
   });
   Toast(t(data.body.resultString));
 };
+
+const goNext = async (val?: string) => {
+  if (val === '+') {
+    if (queryInfo.index < queryInfo.selectList.length - 1) {
+      queryInfo.index++;
+    }
+  } else if (val === '-') {
+    if (queryInfo.index > 0) {
+      queryInfo.index--;
+    }
+  }
+  const dom = document.getElementById(queryInfo.selectList[queryInfo.index]);
+  dom?.scrollIntoView({
+    behavior: 'smooth', //顺滑的滚动
+    block: 'center', //容器上下的中间
+    inline: 'start', //容器左右的左边
+  });
+};
 </script>
 <style lang="scss" scoped>
 @import '@/style/base.scss';
@@ -1143,6 +1296,72 @@ const addToCollection = async (copyItem: any) => {
       margin: 0 auto;
       cursor: pointer;
     }
+  }
+}
+.search {
+  height: 50px;
+  border-top: 1px solid #f0f1f4;
+  border-bottom: 1px solid #f0f1f4;
+  background: #fff;
+  position: absolute;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  left: 0;
+  right: 0;
+  top: 0;
+  .left {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .top {
+      width: 10px;
+      height: 10px;
+      border-bottom: 2px solid #ddd;
+      border-left: 2px solid #ddd;
+      transform: rotate(-45deg) translateY(-5px);
+      margin-right: 15px;
+      cursor: pointer;
+    }
+    .bottom {
+      cursor: pointer;
+      width: 10px;
+      height: 10px;
+      border-top: 2px solid #ddd;
+      border-right: 2px solid #ddd;
+      transform: rotate(-45deg) translateY(5px);
+    }
+  }
+  .intputBg {
+    flex: 1;
+    margin: 0 20px;
+    height: 30px;
+    background: #f0f1f4;
+    border-radius: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px;
+    box-sizing: border-box;
+    input {
+      width: 100%;
+      font-size: 14px;
+      padding-left: 5px;
+    }
+  }
+  .num {
+    font-size: 12px;
+    font-family: PingFangSC-Regular, PingFang SC;
+    font-weight: 400;
+    color: #050505;
+    line-height: 17px;
+    margin-right: 20px;
+  }
+  .close {
+    cursor: pointer;
+    transform: rotate(45deg);
   }
 }
 </style>

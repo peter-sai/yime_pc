@@ -154,6 +154,8 @@ import {
   computed,
   onUnmounted,
   ComputedRef,
+  reactive,
+  effect,
 } from 'vue';
 import Message from './message.vue';
 import { useI18n } from 'vue-i18n';
@@ -247,6 +249,7 @@ async function init(
 </script>
 
 <script setup lang="ts">
+import Iconfont from '../../iconfont/index.vue';
 defineEmits(['toggleBox', 'changeTag']);
 const { t } = useI18n();
 const writeState = ref(0); //0--结束输入(未输入), 1--正在输入

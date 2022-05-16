@@ -556,6 +556,7 @@ const bodyClickCb = () => {
   showExpres.value = false;
   showOpertion.value = false;
   burnInfo.show = false;
+  showMenu.value = false;
   // input.value?.focus();
 };
 
@@ -888,7 +889,9 @@ const replyContent = computed(() => {
     name = t('[链接]]');
   } else {
     const res =
-      replyActive?.value?.replyMsg?.msgContent?.fileInfo?.fileName?.split('.');
+      replyActive?.value?.replyMsg?.msgContent?.fileInfo?.fileName?.split(
+        '.'
+      ) || [];
     if (res.length > 1) {
       const suffix = res[1];
       name = `[ ${suffix.toLocaleLowerCase()} ]`;
@@ -1019,13 +1022,12 @@ const sendCollection = async (item: { id: number; url: string }) => {
     },
   };
 
-  const data = await store.dispatch('postMsg', {
+  await store.dispatch('postMsg', {
     query: query,
     cmd: 2001,
     encryption: 'Aoelailiao.Message.ClientSendMsgToServerReq',
     auth: true,
   });
-  console.log(data);
 };
 </script>
 <style lang="scss" scoped>
@@ -1240,8 +1242,8 @@ const sendCollection = async (item: { id: number; url: string }) => {
           left: 50%;
           transform: translateX(-50%);
           img {
-            width: 200px;
-            height: 200px;
+            width: 100px;
+            height: 100px;
           }
         }
         &:hover .preview {

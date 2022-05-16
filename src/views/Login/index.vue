@@ -86,6 +86,7 @@
         <div
           style="display: flex; align-items: center; margin-top: 20px"
           @click="changeRememberPwd"
+          v-if="btns.active !== 2"
         >
           <Iconfont
             v-if="rememberPwd"

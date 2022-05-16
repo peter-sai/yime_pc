@@ -19,7 +19,8 @@
             :top="`-15px`"
           />
           <Reply :replyMsg="replyMsg" :userInfo="replyUserInfo" isMe />
-          <slot />
+          <!-- <slot /> -->
+          <p style="font-size: 14px" v-html="str" />
         </ImgBg>
       </div>
       <IsRead :isRead="isRead" />
@@ -27,7 +28,14 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, defineProps, PropType } from 'vue';
+import {
+  defineComponent,
+  defineProps,
+  PropType,
+  ref,
+  useSlots,
+  watch,
+} from 'vue';
 import ImgBg from '../ImgBg/index.vue';
 import Fire from '../Fire/index.vue';
 import Reply from '../Reply/index.vue';
@@ -41,7 +49,7 @@ export default defineComponent({
 });
 </script>
 <script lang="ts" setup>
-defineProps({
+const props = defineProps({
   isRead: {
     type: Boolean,
     default: false,
@@ -56,6 +64,9 @@ defineProps({
   fired: {
     type: Boolean,
   },
+  search: {
+    type: String,
+  },
   replyUserInfo: {
     type: Object as PropType<IUserInfo>,
   },
@@ -63,6 +74,28 @@ defineProps({
     type: Object as PropType<IMsgInfo>,
   },
 });
+
+const slots: any = useSlots();
+
+const children = slots.default()[0].children;
+const str = ref(children);
+
+watch(
+  () => props.search,
+  (val) => {
+    if (val) {
+      str.value = children.replaceAll(
+        val,
+        `<span
+                  style="color: #f00; font-size: 14px"
+                  >${val}</span
+                >`
+      );
+    } else {
+      str.value = children;
+    }
+  }
+);
 </script>
 <style lang="scss" scoped>
 @import '@/style/base.scss';

@@ -3,7 +3,13 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onBeforeUnmount, watch } from 'vue';
+import {
+  computed,
+  defineComponent,
+  onBeforeUnmount,
+  reactive,
+  watch,
+} from 'vue';
 import { Store, useStore } from 'vuex';
 import { getToken as getUserToken, isMacOs } from './utils/utils';
 import { initStore, key } from './store';

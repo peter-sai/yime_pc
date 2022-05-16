@@ -10,9 +10,12 @@
       <ImBg v-bind="$attrs">
         <Fire :isBurn="isBurn" :fired="fired" :right="`-20px`" :top="`-15px`" />
         <Reply :replyMsg="replyMsg" :userInfo="replyUserInfo" />
-        <p v-for="item in list" :key="item" class="text">
-          {{ item.replace(/\u0000/g, '') }}
-        </p>
+        <p
+          v-for="item in str"
+          :key="item"
+          class="text"
+          v-html="item.replace(/\u0000/g, '')"
+        ></p>
       </ImBg>
     </div>
   </div>
@@ -25,6 +28,9 @@ import {
   PropType,
   computed,
   defineEmits,
+  ref,
+  watch,
+  Ref,
 } from 'vue';
 import ImBg from '../ImgBg/index.vue';
 import Fire from '../Fire/index.vue';
@@ -41,12 +47,15 @@ export default defineComponent({
 </script>
 <script lang="ts" setup>
 defineEmits(['click']);
-defineProps({
+const props = defineProps({
   isBurn: {
     type: Boolean,
   },
   fired: {
     type: Boolean,
+  },
+  search: {
+    type: String,
   },
   userInfo: {
     type: Object as PropType<IUserInfo>,
@@ -65,6 +74,27 @@ const slots: any = useSlots();
 const list = slots.default()[0].children
   ? slots.default()[0].children.split('\n\n')
   : [];
+
+const str: Ref<Array<string>> = ref(list);
+
+watch(
+  () => props.search,
+  (val) => {
+    if (val) {
+      str.value = list.map((v) => {
+        return v.replaceAll(
+          val,
+          `<span
+                    style="color: #f00; font-size: 14px"
+                    >${val}</span
+                  >`
+        );
+      });
+    } else {
+      str.value = list;
+    }
+  }
+);
 </script>
 <style lang="scss" scoped>
 @import '@/style/theme/index.scss';
