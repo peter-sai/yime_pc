@@ -7,7 +7,7 @@
         <span>{{ info }}</span>
       </div>
     </div>
-    <div v-else class="midea">
+    <div v-else class="midea" id="mideaNode">
       <div id="videoBox">
         <div id="yVideo"></div>
       </div>
@@ -128,6 +128,8 @@ import {
   onMounted,
   ref,
   Ref,
+  watch,
+  nextTick,
   PropType,
   onUnmounted,
 } from 'vue';
@@ -418,6 +420,16 @@ onMounted(async () => {
       },
     });
   }
+  draggableFun();
+});
+
+watch(isMideaMini, (res) => {
+  console.log(res);
+  if (!res) {
+    nextTick(() => {
+      draggableFun();
+    });
+  }
 });
 
 // 切换静音
@@ -501,6 +513,33 @@ const changeAudio = () => {
   isAudio.value = true;
 };
 
+// 鼠标拖拽事件
+const draggableFun = () => {
+  let div = document.getElementById('mideaNode');
+  let dragFlag = false;
+  let x, y;
+
+  div.onmousedown = function (e) {
+    dragFlag = true;
+    e = e || window.event;
+    // 获取鼠标在元素上的位置（鼠标按下时在元素上得位置）
+    x = e.clientX - div.offsetLeft;
+    y = e.clientY - div.offsetTop;
+  };
+
+  div.onmousemove = function (e) {
+    if (dragFlag) {
+      e = e || window.event;
+      div.style.left = e.clientX - x + 'px';
+      div.style.top = e.clientY - y + 'px';
+    }
+  };
+  // 鼠标抬起事件
+  div.onmouseup = function (e) {
+    dragFlag = false;
+  };
+};
+
 onUnmounted(() => {
   pause();
 });
@@ -531,6 +570,7 @@ const pause = () => {
   top: 50%;
   transform: translate(-50%, -50%);
   overflow: hidden;
+  cursor: grab;
   #videoBox {
     position: absolute;
     left: 0;
