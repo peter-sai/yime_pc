@@ -157,6 +157,9 @@ const contextmenu = (e: any) => {
     border-radius: 50%;
     margin-right: 10px;
   }
+  .iconfont {
+    margin-right: 10px;
+  }
   .fileBg {
     text-align: left;
     background: #f4f6ff;
