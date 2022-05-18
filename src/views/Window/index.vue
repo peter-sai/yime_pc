@@ -4,6 +4,7 @@
     <ChatHeader
       :icon="yUserInfo?.icon"
       :isBotUser="isBotUser"
+      @queryClick="queryClick"
       :title="
         yUserInfo?.userAttachInfo && yUserInfo.userAttachInfo.remarkName
           ? yUserInfo.userAttachInfo.remarkName
@@ -32,6 +33,7 @@
         :key="store.state.key"
         :yUserInfo="yUserInfo"
         :userDetailInfo="userDetailInfo"
+        ref="message"
         @toggleBox="toggleBox"
         @changeTag="changeTag"
       />
@@ -246,6 +248,11 @@ async function init(
   // 获取用户登录状态
   await useStatus(store, onlineInfo);
 }
+
+const message: Ref<HTMLElement | null> = ref(null);
+const queryClick = () => {
+  message.value.search.showBox = !message.value.search.showBox;
+};
 </script>
 
 <script setup lang="ts">
