@@ -6,7 +6,7 @@
     </div>
     <div>
       <div class="title1" v-if="isGroup">{{ userInfo?.nickname }}</div>
-      <div class="imgBgBox me" v-else-if="replyMsg?.msgId">
+      <div class="imgBgBox me" v-if="replyMsg?.msgId">
         <Reply :replyMsg="replyMsg" :userInfo="replyUserInfo" />
         <div
           class="fileBg"

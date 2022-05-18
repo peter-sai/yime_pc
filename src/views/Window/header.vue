@@ -20,6 +20,7 @@
         </div>
       </div>
       <div class="headerRight">
+        <Iconfont @click="queryClick" name="iconsousuo" size="20" />
         <Iconfont @click="rightClick" name="icondiandian" size="20" />
       </div>
     </div>
@@ -34,7 +35,7 @@ export default defineComponent({
 <script setup lang="ts">
 import Iconfont from '@/iconfont/index.vue';
 import { Etag } from '../Layout/index.vue';
-const emit = defineEmits(['toggleBox', 'changeTag']);
+const emit = defineEmits(['toggleBox', 'changeTag', 'queryClick']);
 defineProps({
   title: {
     type: String,
@@ -53,6 +54,9 @@ defineProps({
 const rightClick = () => {
   emit('toggleBox');
   emit('changeTag', Etag.UserInfo);
+};
+const queryClick = () => {
+  emit('queryClick');
 };
 </script>
 <style lang="scss" scoped>
@@ -82,12 +86,16 @@ const rightClick = () => {
         margin-left: 10px;
         justify-content: space-between;
         .name {
-          height: 14px;
+          height: 20px;
           font-size: 14px;
           font-family: SourceHanSansCN, SourceHanSansCN-Medium;
           font-weight: 500;
           color: #0a0a0a;
-          line-height: 21px;
+          line-height: 20px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          max-width: 250px;
         }
         .subTitle {
           height: 10px;
@@ -101,8 +109,11 @@ const rightClick = () => {
       }
     }
     .headerRight {
+      display: flex;
+      align-items: center;
       .iconfont {
         cursor: pointer;
+        margin-left: 20px;
       }
     }
   }

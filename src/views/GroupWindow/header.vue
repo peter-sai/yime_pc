@@ -21,6 +21,7 @@
         </div>
       </div>
       <div class="headerRight" v-if="isShowRight">
+        <Iconfont @click="queryClick" name="iconsousuo" size="20" />
         <Iconfont @click="rightClick" name="icondiandian" size="20" />
       </div>
     </div>
@@ -44,10 +45,13 @@ import { Etag } from '../Layout/index.vue';
 import { useI18n } from 'vue-i18n';
 import { useStore } from 'vuex';
 import { key } from '@/store';
-const emit = defineEmits(['toggleBox', 'changeTag']);
+const emit = defineEmits(['toggleBox', 'changeTag', 'queryClick']);
 const rightClick = () => {
   emit('toggleBox');
   emit('changeTag', Etag.GroupInfo);
+};
+const queryClick = () => {
+  emit('queryClick');
 };
 const props = defineProps({
   title: {
@@ -159,12 +163,16 @@ const conversationing = computed(() => store.state.conversationIng);
         margin-left: 10px;
         justify-content: space-between;
         .name {
-          height: 14px;
+          height: 20px;
           font-size: 14px;
           font-family: SourceHanSansCN, SourceHanSansCN-Medium;
           font-weight: 500;
           color: #0a0a0a;
-          line-height: 21px;
+          line-height: 20px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          max-width: 250px;
         }
         .subTitle {
           height: 10px;
@@ -178,8 +186,11 @@ const conversationing = computed(() => store.state.conversationIng);
       }
     }
     .headerRight {
+      display: flex;
+      align-items: center;
       .iconfont {
         cursor: pointer;
+        margin-left: 20px;
       }
     }
   }

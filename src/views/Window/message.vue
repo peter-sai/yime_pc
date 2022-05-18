@@ -19,7 +19,9 @@
       </div>
     </div>
     <div class="num">
-      {{ queryInfo.index + 1 }}/{{ queryInfo.selectList.length }}
+      {{ search.inputVal ? queryInfo.index + 1 : 0 }}/{{
+        queryInfo.selectList.length
+      }}
     </div>
     <div
       class="close"
@@ -417,7 +419,15 @@
           @click="copyImg(copyItem?.msgContent?.imageMsg?.imageUrl)"
           >{{ t('复制') }}</span
         >
-        <span @click="reply(copyItem)">{{ t('回复') }}</span>
+        <span
+          v-if="
+            (copyItem.type === 'emojiInfo' &&
+              copyItem.fromId !== store.state.userInfo.uid) ||
+            copyItem.type !== 'emojiInfo'
+          "
+          @click="reply(copyItem)"
+          >{{ t('回复') }}</span
+        >
         <span
           v-if="copyItem.type !== 'voiceMsg' && copyItem.type !== 'emojiInfo'"
           @click="forward(copyItem.msgId)"
@@ -923,11 +933,6 @@ let stop = watch(
       }
     }
     if (data.cmd === 2004) {
-      console.log(
-        msgWindow.value.scrollHeight,
-        msgWindow.value.clientHeight + msgWindow.value.scrollTop
-      );
-
       if (
         msgWindow.value.scrollHeight <=
         msgWindow.value.clientHeight + msgWindow.value.scrollTop
