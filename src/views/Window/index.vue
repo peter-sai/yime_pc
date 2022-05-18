@@ -249,9 +249,11 @@ async function init(
   await useStatus(store, onlineInfo);
 }
 
-const message: Ref<HTMLElement | null> = ref(null);
+const message: Ref<typeof Message | null> = ref(null);
 const queryClick = () => {
-  message.value.search.showBox = !message.value.search.showBox;
+  if (message.value?.search.showBox) {
+    message.value.search.showBox = !message.value.search.showBox;
+  }
 };
 </script>
 

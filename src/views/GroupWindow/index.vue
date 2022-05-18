@@ -471,9 +471,11 @@ const addGroup = async () => {
   Toast(t(data.body.resultString));
 };
 
-const message: Ref<HTMLElement | null> = ref(null);
+const message: Ref<typeof Message | null> = ref(null);
 const queryClick = () => {
-  message.value.search.showBox = !message.value.search.showBox;
+  if (message.value?.search.showBox) {
+    message.value.search.showBox = !message.value.search.showBox;
+  }
 };
 </script>
 <style lang="scss" scoped>
