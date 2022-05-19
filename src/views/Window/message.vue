@@ -863,9 +863,9 @@ const getReply = (item: IMsgInfo<string>) => {
 const getUserInfo: (item: IMsgInfo<string>) => IUserInfo = (item) => {
   return (
     !activeIsGroup.value
-      ? userInfo.value.uid === item?.fromId
-        ? userInfo.value
-        : props.yUserInfo
+      ? props.yUserInfo
+      : userInfo.value.uid === item?.fromId
+      ? userInfo.value
       : groupMemberLists.value.find((e) => e.uid === item?.fromId)
   ) as IUserInfo;
 };
