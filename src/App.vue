@@ -290,7 +290,8 @@ const init = async () => {
   initRonyun(store);
   setTimeout(async () => {
     // 获取漫游数据并且合并
-    const roamList = await getRoam(store);
+    await getRoam(store);
+
     // 合并数据
     await mergeData([], store, roamList);
   }, 2000);
@@ -330,7 +331,6 @@ const stop = watch(
   computed(() => store.state.msgInfo),
   async (data: any) => {
     if (data.cmd == 2170) {
-      console.log(data);
       if (!data.body.isGroupMsg) {
         const res = {
           uid: data.body.objectId,
