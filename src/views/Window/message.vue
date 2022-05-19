@@ -406,7 +406,7 @@
         class="menu"
         v-if="showMen"
         @contextmenu="contextmenu"
-        :style="{ left: style.left + 'px', top: style.top + 'px' }"
+        :style="style"
       >
         <span
           class="copyMsg"
@@ -648,10 +648,7 @@ const showUserInfo = async (
   }
 };
 const { t } = useI18n();
-const style = ref({
-  left: 0,
-  top: 0,
-});
+const style: Ref<any> = ref({});
 
 const copyItem = ref({} as IMsgInfo<string>);
 let clipboard: any = null;
@@ -730,7 +727,10 @@ const queryInfo = reactive<{ selectList: Array<any>; index: number }>({
 watch(
   () => search.inputVal,
   async (val) => {
+    console.log(val);
+
     if (val) {
+      queryInfo.selectList = [];
       itemChat.value.readList.forEach((e) => {
         if (e.msgContent?.stringContent?.includes(val)) {
           queryInfo.selectList.push(e.msgId);
@@ -774,13 +774,36 @@ const userInfo = computed(() => store.state.userInfo);
 const showMen = ref(false);
 
 const menuClick = (e: any, data: any) => {
-  if (e.target.tagName === 'VIDEO') {
-    style.value.left = e.target.offsetParent.offsetLeft + 10;
-    style.value.top = e.target.offsetParent.offsetTop + 10;
+  // if (e.target.tagName === 'VIDEO') {
+  //   style.value.left = e.target.offsetParent.offsetLeft + 10 + 'px';
+  //   style.value.top = e.target.offsetParent.offsetTop + 10 + 'px';
+  // } else {
+  //   style.value.left = e.target.offsetLeft + 10 + 'px';
+  //   style.value.top = e.target.offsetTop + 10 + 'px';
+  // }
+
+  if (75 + e.pageX > window.innerWidth && 125 + e.pageY > window.innerHeight) {
+    style.value.right = 0;
+    style.value.bottom = '50px';
+    style.value.left = 'auto';
+    style.value.top = 'auto';
+  } else if (75 + e.pageX > window.innerWidth) {
+    style.value.right = 0;
+    style.value.top = e.pageY + 'px';
+    style.value.left = 'auto';
+    style.value.bottom = 'auto';
+  } else if (125 + e.pageY > window.innerHeight) {
+    style.value.bottom = '50px';
+    style.value.left = e.pageX + 'px';
+    style.value.right = 'auto';
+    style.value.top = 'auto';
   } else {
-    style.value.left = e.target.offsetLeft + 10;
-    style.value.top = e.target.offsetTop + 10;
+    style.value.left = e.pageX + 'px';
+    style.value.top = e.pageY + 'px';
+    style.value.bottom = 'auto';
+    style.value.right = 'auto';
   }
+
   copyItem.value = data;
   showMen.value = true;
 };
@@ -1222,9 +1245,7 @@ const goNext = async (val?: string) => {
     }
   }
   .menu {
-    position: absolute;
-    left: 88px;
-    top: 36px;
+    position: fixed;
     background: #ffffff;
     box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.07);
     border-radius: 8px;
