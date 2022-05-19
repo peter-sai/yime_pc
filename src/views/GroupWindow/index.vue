@@ -473,7 +473,7 @@ const addGroup = async () => {
 
 const message: Ref<typeof Message | null> = ref(null);
 const queryClick = () => {
-  if (message.value?.search.showBox) {
+  if (message.value) {
     message.value.search.showBox = !message.value.search.showBox;
   }
 };
