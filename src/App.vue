@@ -272,7 +272,7 @@ const init = async () => {
   initRonyun(store);
   setTimeout(async () => {
     // 获取漫游数据并且合并
-    await getRoam(store);
+    const roamList = await getRoam(store);
 
     // 合并数据
     await mergeData([], store, roamList);
