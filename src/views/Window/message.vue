@@ -160,12 +160,18 @@
             @click="showUserInfo(getUserInfo(item).uid)"
             @menuClick="menuClick($event, item)"
             :userInfo="getUserInfo(item)"
+            :isBurn="item.msgShowType === 3"
+            :replyMsg="getReply(item)"
+            :replyUserInfo="getUserInfo(getReply(item))"
             v-if="isShowHowComponent(item)"
           >
             {{ item.msgContent.groupAtInfo.stringContent }}
           </Ymsg>
           <Mmsg
             @menuClick="menuClick($event, item)"
+            :replyMsg="getReply(item)"
+            :replyUserInfo="getUserInfo(getReply(item))"
+            :isBurn="item.msgShowType === 3"
             :isRead="item.msgId <= readMsgId"
             v-else
           >
@@ -881,9 +887,9 @@ const getReply = (item: IMsgInfo<string>) => {
 const getUserInfo: (item: IMsgInfo<string>) => IUserInfo = (item) => {
   return (
     !activeIsGroup.value
-      ? userInfo.value.uid === item?.fromId
-        ? userInfo.value
-        : props.yUserInfo
+      ? props.yUserInfo
+      : userInfo.value.uid === item?.fromId
+      ? userInfo.value
       : groupMemberLists.value.find((e) => e.uid === item?.fromId)
   ) as IUserInfo;
 };

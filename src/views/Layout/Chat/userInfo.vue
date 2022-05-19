@@ -62,7 +62,9 @@
           <template v-slot:right>
             <Switch
               :beforeChange="beforeMsgNotdisturb"
-              :switch="!Boolean(yUserInfo?.userAttachInfo?.msgMute)"
+              :switch="
+                !Boolean(userDetailInfo?.userInfo?.userAttachInfo?.msgMute)
+              "
             />
           </template>
         </Table>
@@ -99,7 +101,9 @@
           <template v-slot:right>
             <Switch
               :beforeChange="beforeTop"
-              :switch="Boolean(yUserInfo?.userAttachInfo?.msgTop)"
+              :switch="
+                Boolean(userDetailInfo?.userInfo?.userAttachInfo?.msgTop)
+              "
             />
           </template>
         </Table>
