@@ -993,6 +993,9 @@ export default {
   记住密码: 'Remember the password',
   群设置: 'Group settings',
   添加到收藏: 'Add to collection',
+  请上传小于5MB的图片: 'Please upload pictures less than 5MB',
+  '请上传jepg，jpg，png，bmp，gif格式的图片':
+    'Please upload pictures in JEPG, JPG, PNG, BMP, GIF format',
   本群管理员已更新: 'The group administrator has been updated',
   '群员不能互相访问详情，请咨询管理员':
     'Group members cannot access each other. Please consult the administrator for details',

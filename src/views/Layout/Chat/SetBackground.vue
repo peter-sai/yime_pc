@@ -18,7 +18,13 @@
       <div class="btn" @click="reset">{{ t('恢复默认背景') }}</div>
     </div>
     <!-- 文件 和 图片选择 -->
-    <input ref="changUserImg" type="file" hidden accept="image/*" multiple />
+    <input
+      ref="changUserImg"
+      type="file"
+      hidden
+      accept="image/gif,image/png,image/jepg,image/bmp,image/jpg"
+      multiple
+    />
   </div>
 </template>
 <script lang="ts">
@@ -93,14 +99,18 @@ const clientsendbackgroundurltoserverreq = async (url: string) => {
 onMounted(async () => {
   changUserImg.value!.addEventListener('change', async (e: any) => {
     if (!e.target.files || !e.target.files.length) return;
-    if (!store.state.client.userAgent) {
-      await initOss(store);
-    }
     const file = e.target.files[0];
-    const info = (await store.state.client.put(file.name, file)) as {
-      url: string;
-    } | null;
-    clientsendbackgroundurltoserverreq(info?.url);
+    console.log(file);
+
+    if (file.size > 5 * 1024 * 1024) return Toast('请上传小于5MB的图片');
+    // if (!store.state.client.userAgent) {
+    //   await initOss(store);
+    // }
+
+    // const info = (await store.state.client.put(file.name, file)) as {
+    //   url: string;
+    // } | null;
+    // clientsendbackgroundurltoserverreq(info?.url);
   });
 });
 
