@@ -12,7 +12,7 @@
       >
         <!-- <img :width="width" :height="height" :src="src" alt="" /> -->
         <SayHello v-if="src === 'emoji_1'" />
-        <div class="box" v-else-if="replyMsg?.msgId">
+        <div class="box" v-else-if="replyMsg?.msgId" @contextmenu="contextmenu">
           <ImgBg v-bind="$attrs" isMe :fired="fired">
             <Fire
               :isBurn="isBurn"
