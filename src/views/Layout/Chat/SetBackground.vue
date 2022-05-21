@@ -22,7 +22,7 @@
       ref="changUserImg"
       type="file"
       hidden
-      accept="image/gif,image/png,image/jepg,image/bmp,image/jpg"
+      accept=".gif,.png,.jepg,.bmp,.jpg"
       multiple
     />
   </div>
@@ -82,7 +82,6 @@ const clientsendbackgroundurltoserverreq = async (url: string) => {
     encryption: 'Aoelailiao.Message.ClientSendBackgroundUrlToServerReq',
     auth: true,
   });
-  console.log(query, data.body);
   Toast(t(data.body.resultString));
   if (data.body.resultCode === 0) {
     emit('changeTag', Etag.UserInfo);

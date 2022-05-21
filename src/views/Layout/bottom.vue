@@ -288,7 +288,7 @@
       ref="changUserImg"
       type="file"
       hidden
-      accept="image/gif,image/png,image/jepg,image/jpg"
+      accept=".gif,.png,.jepg,.jpg"
     />
   </div>
 </template>
