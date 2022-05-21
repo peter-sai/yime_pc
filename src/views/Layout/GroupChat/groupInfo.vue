@@ -1,5 +1,5 @@
 <template>
-  <div class="groupInfo">
+  <div class="groupInfo" @click="showMenu = false">
     <NavigationBar :title="t('群资料')" hide-left disable-left>
       <template v-slot:left>
         <Iconfont
@@ -239,7 +239,7 @@
         >{{ t('转让群主') }}</span
       >
       <span
-        v-if="(isRoot || isAdmin) && !rightClickItem.isAdmin"
+        v-if="isRoot || (isAdmin && !rightClickItem.isAdmin)"
         class="copyMsg"
         @click.stop="del(rightClickItem)"
         >{{ t('移出') }}</span
@@ -514,8 +514,6 @@ init();
 // 删除
 const del = async (e: IUserInfo) => {
   showMenu.value = false;
-  console.log(e);
-  if (!showMenu.value) return;
   const query = {
     groupId: store.state.activeUid,
     groupMemberLists: {

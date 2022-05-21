@@ -454,8 +454,9 @@
         >
         <span
           v-if="
-            ['imageMsg', 'emojiInfo'].includes(copyItem.type) &&
-            copyItem.fromId !== store.state.userInfo.uid
+            (['emojiInfo'].includes(copyItem.type) &&
+              copyItem.fromId !== store.state.userInfo.uid) ||
+            ['imageMsg'].includes(copyItem.type)
           "
           @click="addToCollection(copyItem)"
           >{{ t('添加到收藏') }}</span
@@ -668,7 +669,6 @@ const scrollEvent = (e: any) => {
   const scrollHeight = e.target.scrollHeight;
 
   if (clientHeight + scrollTop >= scrollHeight) {
-    console.log('竖向滚动条已经滚动到底部');
     unRead.value = 0;
   }
 };
@@ -965,7 +965,7 @@ let stop = watch(
     if (data.cmd === 2004) {
       if (
         msgWindow.value.scrollHeight <=
-        msgWindow.value.clientHeight + msgWindow.value.scrollTop
+        msgWindow.value.clientHeight + msgWindow.value.scrollTop + 300
       ) {
         await nextTick;
         scroll();
@@ -977,6 +977,10 @@ let stop = watch(
       if (!state.activeIsGroup) {
         if (msgInfos.fromId === state.activeUid) {
           unRead.value++;
+        } else {
+          await nextTick;
+          scroll();
+          return;
         }
       } else {
         // 群聊 除去自己端
@@ -985,6 +989,10 @@ let stop = watch(
           msgInfos.toId === state.activeUid
         ) {
           unRead.value++;
+        } else {
+          await nextTick;
+          scroll();
+          return;
         }
       }
 
