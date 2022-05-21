@@ -281,17 +281,18 @@ const init = async () => {
 
 init();
 
-// 设置语言
-const langId = Number(getStorage('lang') || -1);
-store.commit('SET_LANG', langId);
-
 // 设置
+if (!navigator.onLine) {
+  window.document.title = '⚠️' + t('当前网络不可用，请检查网络设置');
+}
 store.commit('SET_ISONLINE', navigator.onLine ? false : '网络状态不佳');
 window.addEventListener('offline', () => {
   store.commit('SET_ISONLINE', '网络状态不佳');
+  window.document.title = '⚠️' + t('当前网络不可用，请检查网络设置');
 });
 
 window.addEventListener('online', () => {
+  window.document.title = 'YIME';
   store.commit('SET_ISONLINE', false);
 });
 

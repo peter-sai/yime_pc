@@ -72,15 +72,17 @@ const reset = () => {
 };
 
 const clientsendbackgroundurltoserverreq = async (url: string) => {
+  const query = {
+    toId: store.state.activeUid,
+    selectedBackgroundUrl: url,
+  };
   const data = await store.dispatch('postMsg', {
-    query: {
-      toId: store.state.activeUid,
-      selectedBackgroundUrl: url,
-    },
+    query,
     cmd: 2039,
     encryption: 'Aoelailiao.Message.ClientSendBackgroundUrlToServerReq',
     auth: true,
   });
+  console.log(query, data.body);
   Toast(t(data.body.resultString));
   if (data.body.resultCode === 0) {
     emit('changeTag', Etag.UserInfo);
@@ -100,17 +102,20 @@ onMounted(async () => {
   changUserImg.value!.addEventListener('change', async (e: any) => {
     if (!e.target.files || !e.target.files.length) return;
     const file = e.target.files[0];
-    console.log(file);
 
     if (file.size > 5 * 1024 * 1024) return Toast('请上传小于5MB的图片');
-    // if (!store.state.client.userAgent) {
-    //   await initOss(store);
-    // }
-
-    // const info = (await store.state.client.put(file.name, file)) as {
-    //   url: string;
-    // } | null;
-    // clientsendbackgroundurltoserverreq(info?.url);
+    if (!store.state.client.userAgent) {
+      await initOss(store);
+    }
+    try {
+      const info = (await store.state.client.put(file.name, file)) as {
+        url: string;
+      } | null;
+      clientsendbackgroundurltoserverreq(info?.url);
+    } catch (error) {
+      console.log(error);
+      Toast(t('上传失败'));
+    }
   });
 });
 
