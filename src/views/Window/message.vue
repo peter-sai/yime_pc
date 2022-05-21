@@ -429,7 +429,8 @@
           v-if="
             (copyItem.type === 'emojiInfo' &&
               copyItem.fromId !== store.state.userInfo.uid) ||
-            copyItem.type !== 'emojiInfo'
+            copyItem.type !== 'emojiInfo' ||
+            copyItem.fromId === store.state.userInfo.uid
           "
           @click="reply(copyItem)"
           >{{ t('回复') }}</span

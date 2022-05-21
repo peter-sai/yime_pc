@@ -993,6 +993,8 @@ export default {
   记住密码: 'Remember the password',
   群设置: 'Group settings',
   添加到收藏: 'Add to collection',
+  上传失败: 'Upload failed',
+  最多收藏100个表情图片: 'Collect up to 100 expression pictures',
   请上传小于5MB的图片: 'Please upload pictures less than 5MB',
   '请上传jepg，jpg，png，bmp，gif格式的图片':
     'Please upload pictures in JEPG, JPG, PNG, BMP, GIF format',

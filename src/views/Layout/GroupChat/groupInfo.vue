@@ -239,7 +239,7 @@
         >{{ t('转让群主') }}</span
       >
       <span
-        v-if="isRoot || isAdmin"
+        v-if="(isRoot || isAdmin) && !rightClickItem.isAdmin"
         class="copyMsg"
         @click.stop="del(rightClickItem)"
         >{{ t('移出') }}</span
@@ -450,18 +450,6 @@ const quitGroupChat = async () => {
       Toast(t(data.body.resultString));
       if (data.body.resultCode === 0) {
         emit('toggleBox');
-        // const data = await store.dispatch('postMsg', {
-        //   query: {
-        //     groupId: store.state.activeUid,
-        //   },
-        //   cmd: 1029,
-        //   encryption: 'Aoelailiao.Login.ClientGetGroupInfoReq',
-        //   auth: true,
-        // });
-        // const msgItem = data.body;
-        // const item = store.state.msgList[store.state.activeUid!];
-        // item.groupDetailInfo = msgItem.groupDetailInfo;
-        // store.commit('SET_MSGLISTITEM', { res: item });
 
         if (store.state.msgList[store.state.activeUid!]) {
           store.dispatch('postMsg', {
@@ -526,6 +514,8 @@ init();
 // 删除
 const del = async (e: IUserInfo) => {
   showMenu.value = false;
+  console.log(e);
+  if (!showMenu.value) return;
   const query = {
     groupId: store.state.activeUid,
     groupMemberLists: {
@@ -670,7 +660,7 @@ async function uploadGroupInfo() {
     justify-content: space-evenly;
     align-items: center;
     box-sizing: border-box;
-    padding: 8px 5px;
+    // padding: 8px 5px;
     span {
       font-size: 12px;
       font-family: PingFangSC-Regular, PingFang SC;

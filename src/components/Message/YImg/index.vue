@@ -7,7 +7,7 @@
     <div>
       <!-- <img :width="width" :height="height" :src="src" alt="" /> -->
       <SayHello v-if="src === 'emoji_1'" />
-      <div class="box" v-else-if="replyMsg?.msgId">
+      <div class="box" v-else-if="replyMsg?.msgId" @contextmenu="contextmenu">
         <ImgBg v-bind="$attrs" :fired="fired">
           <Fire :isBurn="isBurn" :fired="fired" :left="`-15px`" :top="`-8px`" />
           <Reply :replyMsg="replyMsg" :userInfo="replyUserInfo" />

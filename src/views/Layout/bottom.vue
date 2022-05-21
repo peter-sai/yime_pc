@@ -284,7 +284,12 @@
       <span @click.stop="delCollection(rightClickItem)">{{ t('删除') }}</span>
     </div>
     <!-- 图片添加到表情 -->
-    <input ref="changUserImg" type="file" hidden accept="image/*" />
+    <input
+      ref="changUserImg"
+      type="file"
+      hidden
+      accept="image/gif,image/png,image/jepg,image/jpg"
+    />
   </div>
 </template>
 <script lang="ts">
@@ -568,10 +573,11 @@ onMounted(() => {
   // 上传图片 添加到表情
   changUserImg.value!.addEventListener('change', async (e: any) => {
     if (!e.target.files || !e.target.files.length) return;
+    const file = e.target.files[0];
+    if (file.size > 5 * 1024 * 1024) return Toast('请上传小于5MB的图片');
     if (!store.state.client.userAgent) {
       await initOss(store);
     }
-    const file = e.target.files[0];
     const info = (await store.state.client.put(file.name, file)) as {
       url: string;
     } | null;
@@ -887,6 +893,8 @@ const replyContent = computed(() => {
     name = t('[视频]');
   } else if (msgContentType === 25) {
     name = t('[链接]]');
+  } else if (msgContentType === 27) {
+    name = t('[表情]');
   } else {
     const res =
       replyActive?.value?.replyMsg?.msgContent?.fileInfo?.fileName?.split(
@@ -1241,6 +1249,7 @@ const sendCollection = async (item: { id: number; url: string }) => {
           top: 100%;
           left: 50%;
           transform: translateX(-50%);
+          z-index: 999;
           img {
             width: 100px;
             height: 100px;

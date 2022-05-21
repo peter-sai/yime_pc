@@ -246,6 +246,17 @@ async function getGroupInfo(store: Store<initStore>) {
     };
 
     store.commit('SET_MSGLISTITEM', { res: item });
+  } else {
+    const data = await store.dispatch('postMsg', {
+      query: {
+        groupId: store.state.activeUid,
+      },
+      cmd: 1029,
+      encryption: 'Aoelailiao.Login.ClientGetGroupInfoReq',
+      auth: true,
+    });
+    msgItem.value.groupDetailInfo = data.body.groupDetailInfo;
+    store.commit('SET_MSGLISTITEM', { res: msgItem.value });
   }
 }
 </script>
