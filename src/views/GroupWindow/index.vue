@@ -221,6 +221,8 @@ async function getGroupInfo(store: Store<initStore>) {
   if (!store.state.activeUid) return;
 
   let msgItem: Ref<ImsgItem> = ref(store.state.msgList[store.state.activeUid!]);
+  console.log(msgItem.value);
+
   // 如果不存在则获取 (群聊不在聊天列表中会没有信息)
   if (!msgItem.value) {
     const data = await store.dispatch('postMsg', {
@@ -247,16 +249,17 @@ async function getGroupInfo(store: Store<initStore>) {
 
     store.commit('SET_MSGLISTITEM', { res: item });
   } else {
+    const activeUid = store.state.activeUid;
     const data = await store.dispatch('postMsg', {
       query: {
-        groupId: store.state.activeUid,
+        groupId: activeUid,
       },
       cmd: 1029,
       encryption: 'Aoelailiao.Login.ClientGetGroupInfoReq',
       auth: true,
     });
     msgItem.value.groupDetailInfo = data.body.groupDetailInfo;
-    store.commit('SET_MSGLISTITEM', { res: msgItem.value });
+    store.commit('SET_MSGLISTITEM', { res: msgItem.value, uid: activeUid });
   }
 }
 </script>
