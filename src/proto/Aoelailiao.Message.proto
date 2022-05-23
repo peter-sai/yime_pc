@@ -10,7 +10,8 @@ message MsgInfo
     optional uint64 msg_id = 1;
     optional uint32 is_group_msg = 2; // 0--普通单个用户消息(默认),1--群消息
     optional uint32 from_id = 3;      //发送者
-    optional uint32 to_id = 4;        //接收者
+    optional string from_name = 13;   //站在"当前用户"角度的发送者名称(优先级: 对发送者的备注名称 > 发送者本身昵称)
+    optional uint32 to_id = 4;        //接收者(群消息:群id, 私聊:个人id)
     optional uint32 msg_time = 5;
 
     // 0--无效，1--普通消息，2--系统通知消息,3--阅后即焚消息，
@@ -28,6 +29,11 @@ message MsgInfo
     // 回复哪一条消息 > 0 表示要回复某一条消息,服务器不做任何有效性判断
     // 转发消息体，不转发引用内容
     optional uint64 reply_msg_id = 11;
+    // 被回复者用户id
+    // 特别是群聊中,to_id是群id,不能判断接收者
+    // 如果 reply_msg_id = 0, 这个值必定留空或0
+    // 如果 reply_msg_id > 0, 这个值应是 reply_msg_id 对应的 from_id
+    optional uint32 reply_to_id = 12;
 }
 
 message MsgContentInfo
@@ -405,8 +411,9 @@ message NotifyClassMsgListInfo
     optional string msg_class_title = 3;              //消息分类标题
     optional uint32 msg_class_have_new_msg = 4;       //是否有未读新消息, 1--有,2--无
     optional string msg_class_recent_msg_content = 5; //最近的消息文本内容描述
-    optional uint32 update_time = 6;
-    optional uint64 max_msg_id = 7; //最近的通知id
+    optional uint32 update_time = 6;                  //
+    optional uint64 max_msg_id = 7;                   //最近的通知id
+    optional uint32 unread_msg_count = 8;             // 未读消息数量
 }
 
 message UsersInfoList
@@ -663,7 +670,12 @@ message UserSearchHistoryMsgReq
     optional string key_word = 3;
     optional uint64 msg_id_min = 4; //加载更多搜索结果
 
-    //搜索类型，1--聊天，2--图片、视频，3--文件
+    //搜索类型
+    // 1--聊天，2--图片、视频，3--文件
+    //      参数: (不变, 略)
+    // 4 -- 会话最近匹配上下文(ver2.5)
+    //      参数: object_id
+    //      参数: key_word
     optional uint32 search_type = 5;
     optional bytes attach_data = 32;
 }
@@ -673,7 +685,15 @@ message UserSearchHistoryMsgAns
     // cmd id:2064
     optional uint32 result_code = 1;
     optional string result_string = 2;
+
+    // search_type 4 (ver2.5)
+    //    返回命中内容和其上下文(最新消息匹配)
     repeated MsgInfo msg_infos = 3;
+
+    // search_type 4 (ver2.5)
+    //    如果搜索到了返回命中消息id( > 0), 上下及其本身在 msg_infos 中
+    optional uint64 msg_id = 4;
+
     optional bytes attach_data = 32;
 }
 

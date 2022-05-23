@@ -1005,4 +1005,5 @@ export default {
   '您的ip有风险，为了您的安全，您已被暂时限制登录':
     'Your IP is at risk. For your security, you have been temporarily restricted from logging in',
   原消息已被删除: 'The original message has been deleted',
+  有回复你的消息: 'I have a message to reply to you',
 };

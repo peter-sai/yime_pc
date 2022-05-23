@@ -57,9 +57,19 @@
               v-if="getType(item.lastMsg, item) === t('有提到你的信息')"
               >@{{ getType(item.lastMsg, item) }}</span
             >
-            <span class="subTitle" v-else>{{
-              (getType(item.lastMsg, item) || '').replace(/\u0000/g, '')
-            }}</span>
+            <span
+              class="subTitle reply"
+              :class="{
+                at: getType(item.lastMsg, item) === t('有回复你的消息'),
+              }"
+              v-else-if="getType(item.lastMsg, item) === t('有回复你的消息')"
+              >[{{ getType(item.lastMsg, item) }}]</span
+            >
+            <span class="subTitle" v-else
+              >{{
+                (getType(item.lastMsg, item) || '').replace(/\u0000/g, '')
+              }}1111</span
+            >
           </template>
           <template v-slot:userImg>
             <div v-if="item.isGroup">
@@ -768,6 +778,9 @@ function useBeforeSwitch(
     overflow: hidden;
     &.at {
       color: #e6a66a;
+    }
+    &.reply {
+      color: #0085ff;
     }
   }
   &::after {
