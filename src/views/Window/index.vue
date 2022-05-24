@@ -4,7 +4,7 @@
     <ChatHeader
       :icon="yUserInfo?.icon"
       :isBotUser="isBotUser"
-      @queryClick="queryClick"
+      @queryClick="toggleSearch = !toggleSearch"
       :title="
         yUserInfo?.userAttachInfo && yUserInfo.userAttachInfo.remarkName
           ? yUserInfo.userAttachInfo.remarkName
@@ -33,7 +33,7 @@
         :key="store.state.key"
         :yUserInfo="yUserInfo"
         :userDetailInfo="userDetailInfo"
-        ref="message"
+        :toggleSearch="toggleSearch"
         @toggleBox="toggleBox"
         @changeTag="changeTag"
       />
@@ -249,18 +249,7 @@ async function init(
   await useStatus(store, onlineInfo);
 }
 
-const message: Ref<typeof Message | null> = ref(null);
-const queryClick = () => {
-  if (message.value) {
-    console.log(
-      message.value,
-      message.value.search,
-      message.value.search.showBox
-    );
-
-    message.value.search.showBox = !message.value.search.showBox;
-  }
-};
+const toggleSearch = ref(false);
 </script>
 
 <script setup lang="ts">

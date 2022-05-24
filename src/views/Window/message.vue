@@ -711,7 +711,17 @@ const props = defineProps({
   userDetailInfo: {
     type: Object as PropType<IUserDetailInfo>,
   },
+  toggleSearch: {
+    type: Boolean,
+  },
 });
+
+watch(
+  () => props.toggleSearch,
+  () => {
+    search.showBox = !search.showBox;
+  }
+);
 
 // 消息列表
 const list = computed(() => store.state.msgList);

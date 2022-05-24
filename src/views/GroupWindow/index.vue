@@ -4,7 +4,7 @@
     <GroupChatHeader
       :title="groupDetailInfo.groupName"
       :groupCallState="groupCallState"
-      @queryClick="queryClick"
+      @queryClick="toggleSearch = !toggleSearch"
       :subTitle="
         groupDetailInfo.groupMemberLists
           ? groupDetailInfo.groupMemberLists.memberUserInfos.length.toString()
@@ -24,9 +24,9 @@
       <Message
         :key="store.state.key"
         v-if="groupDetailInfo.groupId"
-        ref="message"
         :groupDetailInfo="groupDetailInfo"
         @toggleBox="toggleBox"
+        :toggleSearch="toggleSearch"
         @changeTag="changeTag"
         @selectGroupMember="ShowSelectGroupMember"
       />
@@ -485,12 +485,7 @@ const addGroup = async () => {
   Toast(t(data.body.resultString));
 };
 
-const message: Ref<typeof Message | null> = ref(null);
-const queryClick = () => {
-  if (message.value) {
-    message.value.search.showBox = !message.value.search.showBox;
-  }
-};
+const toggleSearch = ref(false);
 </script>
 <style lang="scss" scoped>
 @import '@/style/base.scss';
