@@ -740,7 +740,7 @@ const switchMsg = (
     const newList = readList.slice(length - unReadNum, length);
     const isAt = newList.find((e) => {
       if (e.type === 'groupAtInfo') {
-        const atUsers = e.msgContent.groupAtInfo.atUsers[0];
+        const atUsers = e.msgContent?.groupAtInfo?.atUsers[0];
         if (atUsers.type === 1) {
           return true;
         }
@@ -753,6 +753,19 @@ const switchMsg = (
 
     if (isAt) {
       return t('有提到你的信息');
+    }
+
+    const isReply = newList.find((e) => {
+      if (e.isGroupMsg === 1) {
+        if (Number(e.replyToId) === Number(store.state.userInfo.uid)) {
+          return true;
+        }
+      }
+      return false;
+    });
+
+    if (isReply) {
+      return t('有回复你的消息');
     }
   }
 
