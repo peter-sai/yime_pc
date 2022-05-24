@@ -874,7 +874,7 @@ export default {
   手机号搜索: 'Mobile phone number search',
   YIME号搜索: 'YIME number search',
   昵称搜索: 'Nickname search',
-  '对方通过%@发来消息': 'The other person sends a message via {0}',
+  '对方通过%@发来消息': 'The other person sends a message via %',
   继续聊天: 'Continue to chat',
   没有搜索结果: 'No search results were found',
   未连接网络: 'Disconnected network',
@@ -994,7 +994,7 @@ export default {
   群设置: 'Group settings',
   添加到收藏: 'Add to collection',
   上传失败: 'Upload failed',
-  最多收藏100个表情图片: 'Collect up to 100 expression pictures',
+  最多100张表情收藏: 'Collect up to 100 expression pictures',
   请上传小于5MB的图片: 'Please upload pictures less than 5MB',
   '请上传jepg，jpg，png，bmp，gif格式的图片':
     'Please upload pictures in JEPG, JPG, PNG, BMP, GIF format',
