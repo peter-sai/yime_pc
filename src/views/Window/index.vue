@@ -252,6 +252,12 @@ async function init(
 const message: Ref<typeof Message | null> = ref(null);
 const queryClick = () => {
   if (message.value) {
+    console.log(
+      message.value,
+      message.value.search,
+      message.value.search.showBox
+    );
+
     message.value.search.showBox = !message.value.search.showBox;
   }
 };
@@ -291,6 +297,7 @@ const getClientGetCurrentBackground = async () => {
 // 群聊陌生人
 const strangerInfo = computed(() => {
   const userInfo = store.state?.msgList[store.state?.activeUid];
+
   if (
     userInfo?.userDetailInfo?.isFriend ||
     userInfo?.userDetailInfo?.isInMyBlacklist ||
@@ -299,6 +306,7 @@ const strangerInfo = computed(() => {
     return null;
   }
   const msgSource = userInfo?.lastMsg?.attachInfo?.msgSource;
+
   try {
     if (msgSource) {
       const item = JSON.parse(msgSource);
@@ -340,7 +348,7 @@ const addFriend = async () => {
 };
 
 const formate = (temp: string, info: string) => {
-  return temp.replace('%@', info);
+  return temp.replace('%', info);
 };
 
 // 文件选择类型

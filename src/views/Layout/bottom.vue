@@ -217,10 +217,18 @@
             :key="item.id"
             @click.stop="sendCollection(item)"
           >
-            <img :src="item.url" alt="" class="img" />
-            <div class="preview">
-              <img :src="item.url" alt="" />
-            </div>
+            <img
+              :src="item.url"
+              alt=""
+              class="img"
+              @mouseenter.stop="mouseover($event, item)"
+              @mouseleave.stop="mouseout(item)"
+            />
+            <teleport to="body">
+              <div class="preview" :style="item.style" v-show="item.isShow">
+                <img :src="item.url" alt="" />
+              </div>
+            </teleport>
           </div>
         </div>
       </div>
@@ -374,7 +382,9 @@ const audioObj = ref({});
 const showAtBox = ref(false);
 const showReplyBox = ref(false);
 const atUserInfoList: Ref<IUserInfo[]> = ref([]);
-const collectionList: Ref<{ id: number; url: string }[]> = ref([]);
+const collectionList: Ref<
+  { id: number; url: string; style: any; isShow: boolean }[]
+> = ref([]);
 
 const styleCollection = ref({ left: '0px', top: '0px' });
 const showMenu = ref(false);
@@ -1037,6 +1047,29 @@ const sendCollection = async (item: { id: number; url: string }) => {
     auth: true,
   });
 };
+
+const mouseover = (
+  e: any,
+  item: {
+    id: number;
+    url: string;
+    style: any;
+    isShow: boolean;
+  }
+) => {
+  item.style = {};
+  item.style.left = e.pageX + 'px';
+  item.style.top = e.pageY - 110 + 'px';
+  item.isShow = true;
+};
+const mouseout = (item: {
+  id: number;
+  url: string;
+  style: any;
+  isShow: boolean;
+}) => {
+  item.isShow = false;
+};
 </script>
 <style lang="scss" scoped>
 @import '@/style/base.scss';
@@ -1482,6 +1515,17 @@ const sendCollection = async (item: { id: number; url: string }) => {
       width: 20px;
       height: 20px;
     }
+  }
+}
+.preview {
+  position: fixed;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 99999;
+  img {
+    width: 100px;
+    height: 100px;
   }
 }
 </style>

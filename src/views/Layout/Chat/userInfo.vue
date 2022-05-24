@@ -300,11 +300,12 @@ export async function upDateStore(
 // 删除/添加好友后更新联系人列表
 async function upDateContact(store: Store<initStore>, val: boolean) {
   const userInfo = store.state.userInfo;
-  const item = store.state.msgList[store.state.userUid!];
+  const item = store.state.msgList[store.state.activeUid!];
+  // const item = store.state.msgList[store.state.userUid!];
 
   if (item) {
     item.userDetailInfo.isFriend = val ? 1 : 0;
-    store.commit('SET_MSGLISTITEM', { res: item, uid: store.state.userUid });
+    store.commit('SET_MSGLISTITEM', { res: item, uid: store.state.activeUid });
   }
   let list: IContacts[] = [];
   const data = await store.dispatch('postMsg', {
