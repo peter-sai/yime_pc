@@ -896,13 +896,16 @@ const getReply = (item: IMsgInfo<string>) => {
 
 // 获取需要显示的头像信息
 const getUserInfo: (item: IMsgInfo<string>) => IUserInfo = (item) => {
-  return (
-    !activeIsGroup.value
-      ? props.yUserInfo
-      : userInfo.value.uid === item?.fromId
-      ? userInfo.value
-      : groupMemberLists.value.find((e) => e.uid === item?.fromId)
-  ) as IUserInfo;
+  let userInfos;
+  if (!activeIsGroup.value) {
+    userInfos =
+      userInfo.value.uid === item?.fromId ? userInfo.value : props.yUserInfo;
+  } else {
+    userInfos =
+      groupMemberLists.value.find((e) => e.uid === item?.fromId) ||
+      userInfo.value;
+  }
+  return userInfos as IUserInfo;
 };
 
 const userGetConversationHasReadedMsgInfo =
