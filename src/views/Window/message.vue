@@ -739,8 +739,6 @@ const queryInfo = reactive<{ selectList: Array<any>; index: number }>({
 watch(
   () => search.inputVal,
   async (val) => {
-    console.log(val);
-
     if (val) {
       queryInfo.selectList = [];
       itemChat.value.readList.forEach((e) => {
@@ -755,6 +753,9 @@ watch(
     setTimeout(() => {
       goNext();
     }, 0);
+    if (!queryInfo.selectList.length && val) {
+      return Toast(t('没有找到任何相关内容'));
+    }
   }
 );
 
@@ -896,13 +897,16 @@ const getReply = (item: IMsgInfo<string>) => {
 
 // 获取需要显示的头像信息
 const getUserInfo: (item: IMsgInfo<string>) => IUserInfo = (item) => {
-  return (
-    !activeIsGroup.value
-      ? props.yUserInfo
-      : userInfo.value.uid === item?.fromId
-      ? userInfo.value
-      : groupMemberLists.value.find((e) => e.uid === item?.fromId)
-  ) as IUserInfo;
+  let userInfos;
+  if (!activeIsGroup.value) {
+    userInfos =
+      userInfo.value.uid === item?.fromId ? userInfo.value : props.yUserInfo;
+  } else {
+    userInfos =
+      groupMemberLists.value.find((e) => e.uid === item?.fromId) ||
+      userInfo.value;
+  }
+  return userInfos as IUserInfo;
 };
 
 const userGetConversationHasReadedMsgInfo =

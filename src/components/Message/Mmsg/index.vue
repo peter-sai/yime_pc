@@ -87,7 +87,7 @@ watch(
       str.value = children.replaceAll(
         val,
         `<span
-                  style="color: #f00; font-size: 14px"
+                  style="color: #f00; font-size: 1rem"
                   >${val}</span
                 >`
       );

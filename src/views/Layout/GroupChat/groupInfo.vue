@@ -174,7 +174,7 @@
               @contextmenu="contextmenu($event, item)"
               :title="item?.userAttachInfo?.remarkName || item.nickname"
               :sub-title="item.onlineState ? t('在线') : t('离线')"
-              @click.stop="userClick(item.uid)"
+              @click="userClick(item.uid)"
               v-for="item in groupMemberUserInfos"
               :key="item.uid"
               :style="{
@@ -241,7 +241,7 @@
       <span
         v-if="isRoot || (isAdmin && !rightClickItem.isAdmin)"
         class="copyMsg"
-        @click.stop="del(rightClickItem)"
+        @click="del(rightClickItem)"
         >{{ t('移出') }}</span
       >
     </div>
