@@ -54,6 +54,7 @@ import { getTag } from '@/utils/utils';
 import { useI18n } from 'vue-i18n';
 import { useStore } from 'vuex';
 import { Toast } from '@/plugin/Toast';
+import { showLoading } from '@/plugin/Loading';
 const emit = defineEmits(['toggleBox', 'changeTag']);
 
 const { t } = useI18n();
@@ -101,12 +102,18 @@ onMounted(async () => {
   changUserImg.value!.addEventListener('change', async (e: any) => {
     if (!e.target.files || !e.target.files.length) return;
     const file = e.target.files[0];
+    changUserImg.value?.setAttribute('type', 'text');
+    const typeList = ['gif', 'png', 'jepg', 'jpg', 'bmp'];
+    if (!typeList.find((e) => file.type.includes(e))) {
+      return Toast(t('请上传jepg，jpg，png，bmp，gif格式的图片'));
+    }
 
     if (file.size > 5 * 1024 * 1024) return Toast('请上传小于5MB的图片');
     if (!store.state.client.userAgent) {
       await initOss(store);
     }
     try {
+      showLoading();
       const info = (await store.state.client.put(file.name, file)) as {
         url: string;
       } | null;
@@ -119,7 +126,10 @@ onMounted(async () => {
 });
 
 // 发送图片
-const sendImg = () => changUserImg.value?.click();
+const sendImg = () => {
+  changUserImg.value?.click();
+  changUserImg.value?.setAttribute('type', 'file');
+};
 </script>
 <style lang="scss" scoped>
 @import '@/style/base.scss';

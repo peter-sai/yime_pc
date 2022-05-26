@@ -738,8 +738,6 @@ const queryInfo = reactive<{ selectList: Array<any>; index: number }>({
 watch(
   () => search.inputVal,
   async (val) => {
-    console.log(val);
-
     if (val) {
       queryInfo.selectList = [];
       itemChat.value.readList.forEach((e) => {
@@ -754,6 +752,9 @@ watch(
     setTimeout(() => {
       goNext();
     }, 0);
+    if (!queryInfo.selectList.length && val) {
+      return Toast(t('没有找到任何相关内容'));
+    }
   }
 );
 

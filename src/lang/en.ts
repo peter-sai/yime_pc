@@ -998,6 +998,8 @@ export default {
   请上传小于5MB的图片: 'Please upload pictures less than 5MB',
   '请上传jepg，jpg，png，bmp，gif格式的图片':
     'Please upload pictures in JEPG, JPG, PNG, BMP, GIF format',
+  '请上传 jpg、png或gif格式图片':
+    'Please upload pictures in jpg、png、gif format',
   本群管理员已更新: 'The group administrator has been updated',
   '群员不能互相访问详情，请咨询管理员':
     'Group members cannot access each other. Please consult the administrator for details',
@@ -1005,5 +1007,6 @@ export default {
   '您的ip有风险，为了您的安全，您已被暂时限制登录':
     'Your IP is at risk. For your security, you have been temporarily restricted from logging in',
   原消息已被删除: 'The original message has been deleted',
+  没有找到任何相关内容: 'No relevant content was found',
   有回复你的消息: 'I have a message to reply to you',
 };

@@ -50,7 +50,18 @@ const activeUid = computed(() => store.state.activeUid);
 const store = useStore(key);
 const userInfo = store.state.userInfo;
 
-const list: Ref<IGroupListItem[]> = computed(() => store.state.groupInfos);
+const list: Ref<IGroupListItem[]> = computed(() => {
+  const filterList = store.state.groupInfos.map((e: any) => {
+    if (e.groupMemberLists.rootUid === Number(userInfo.uid)) {
+      e.root = true;
+    }
+    if (e.groupMemberLists.adminUidList.includes(Number(userInfo.uid))) {
+      e.admin = true;
+    }
+    return e;
+  });
+  return filterList;
+});
 const init = async () => {
   const data = await store.dispatch('postMsg', {
     query: {},

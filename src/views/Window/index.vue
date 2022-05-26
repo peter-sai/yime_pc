@@ -30,7 +30,7 @@
       }"
     >
       <Message
-        :key="store.state.key"
+        v-if="isShow"
         :yUserInfo="yUserInfo"
         :userDetailInfo="userDetailInfo"
         :toggleSearch="toggleSearch"
@@ -241,12 +241,15 @@ async function init(
   userDetailInfo: Ref<IUserDetailInfo>,
   isBotUser: Ref<boolean>,
   yUserInfo: Ref<IUserInfo>,
-  onlineInfo: Ref<IUserInfo>
+  onlineInfo: Ref<IUserInfo>,
+  isShow: Ref<boolean>
 ) {
+  isShow.value = false;
   // 获取用户详细资料
   await useGetDetail(store, userDetailInfo, isBotUser, yUserInfo);
   // 获取用户登录状态
   await useStatus(store, onlineInfo);
+  isShow.value = true;
 }
 
 const toggleSearch = ref(false);
@@ -394,8 +397,9 @@ const recommend = () => {
   changeTag(Etag.Recommend);
 };
 
+const isShow = ref(false);
 // 初始化
-init(store, userDetailInfo, isBotUser, yUserInfo, onlineInfo);
+init(store, userDetailInfo, isBotUser, yUserInfo, onlineInfo, isShow);
 
 const cbImg = useCbImg(store, accept, t);
 

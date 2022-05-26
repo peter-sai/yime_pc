@@ -65,11 +65,9 @@
               v-else-if="getType(item.lastMsg, item) === t('有回复你的消息')"
               >[{{ getType(item.lastMsg, item) }}]</span
             >
-            <span class="subTitle" v-else
-              >{{
-                (getType(item.lastMsg, item) || '').replace(/\u0000/g, '')
-              }}1111</span
-            >
+            <span class="subTitle" v-else>{{
+              (getType(item.lastMsg, item) || '').replace(/\u0000/g, '')
+            }}</span>
           </template>
           <template v-slot:userImg>
             <div v-if="item.isGroup">

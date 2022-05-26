@@ -584,10 +584,18 @@ onMounted(() => {
   changUserImg.value!.addEventListener('change', async (e: any) => {
     if (!e.target.files || !e.target.files.length) return;
     const file = e.target.files[0];
+    changUserImg.value?.setAttribute('type', 'text');
+    const typeList = ['gif', 'png', 'jepg', 'jpg'];
+    if (!typeList.find((e) => file.type.includes(e))) {
+      return Toast(t('请上传 jpg、png或gif格式图片'));
+    }
+
     if (file.size > 5 * 1024 * 1024) return Toast('请上传小于5MB的图片');
     if (!store.state.client.userAgent) {
       await initOss(store);
     }
+
+    showLoading();
     const info = (await store.state.client.put(file.name, file)) as {
       url: string;
     } | null;
@@ -975,11 +983,15 @@ async function getCollectionList() {
     encryption: 'Aoelailiao.Message.ImageOperateReq',
     auth: true,
   });
-  collectionList.value = data.body.images;
+
+  collectionList.value = data.body.images.reverse();
 }
 
 //
-const uploadImgToCollection = () => changUserImg.value?.click();
+const uploadImgToCollection = () => {
+  changUserImg.value?.setAttribute('type', 'file');
+  changUserImg.value?.click();
+};
 
 // 添加到收藏
 async function addToCollection(url: string) {
