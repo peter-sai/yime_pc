@@ -13,7 +13,7 @@
       :subTitle="
         writeState
           ? t('正在输入内容')
-          : onlineInfo.onlineState || isBotUser
+          : onlineInfo.onlineState
           ? t('在线')
           : t('上次在线：') + getTime(onlineInfo.lastOnlineTime, t)
       "
@@ -232,6 +232,8 @@ const useStatus = async (
     encryption: 'Aoelailiao.Message.UserOnlineStateNotifyReq',
     auth: true,
   });
+  console.log(data.body);
+
   onlineInfo.value = data.body?.userOnlineState || {};
 };
 

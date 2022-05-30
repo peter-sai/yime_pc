@@ -295,6 +295,7 @@ async function getGroupMemberUserInfos(
     encryption: 'Aoelailiao.Login.ClientGetUserInfoListReq',
     auth: true,
   });
+  console.log(res.body.userInfo);
 
   groupMemberUserInfos.value = (res.body.userInfo || []).map((e: any) => {
     e.isRoot = false;
