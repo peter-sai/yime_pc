@@ -1,5 +1,5 @@
 <template>
-  <div class="reply" v-if="replyMsg?.msgId">
+  <div class="reply" v-if="replyMsg?.msgId" @click.stop="goTo">
     <div class="reply-stringContent">
       <div class="nickname">{{ userInfo?.nickname }}</div>
       {{ replyMsg?.msgContent?.stringContent }}
@@ -16,7 +16,7 @@ export default defineComponent({
 <script lang="ts" setup>
 import { IMsgInfo } from '@/types/msg';
 import { IUserInfo } from '@/types/user';
-defineProps({
+const props = defineProps({
   userInfo: {
     type: Object as PropType<IUserInfo>,
   },
@@ -24,6 +24,14 @@ defineProps({
     type: Object as PropType<IMsgInfo>,
   },
 });
+const goTo = () => {
+  const dom = document.getElementById(props.replyMsg.msgId);
+  dom?.scrollIntoView({
+    behavior: 'smooth', //顺滑的滚动
+    block: 'center', //容器上下的中间
+    inline: 'start', //容器左右的左边
+  });
+};
 </script>
 <style lang="scss" scoped>
 .reply {

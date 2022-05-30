@@ -14,7 +14,13 @@
         </div>
         <Table :title="item.name" hideMore @click="item.active = !item.active">
           <template v-slot:left>
-            <img v-if="item.icon" :src="item.icon" alt="" />
+            <Iconfont
+              v-if="item.isBotUser"
+              name="iconbianzu16"
+              color="#A8B5BE"
+              size="38"
+            />
+            <img v-else-if="item.icon" :src="item.icon" alt="" />
             <Iconfont v-else name="iconlianxiren" size="30" color="#A8B5BE" />
           </template>
           <template v-slot:right>

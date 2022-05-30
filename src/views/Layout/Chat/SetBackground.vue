@@ -103,9 +103,10 @@ onMounted(async () => {
     if (!e.target.files || !e.target.files.length) return;
     const file = e.target.files[0];
     changUserImg.value?.setAttribute('type', 'text');
-    const typeList = ['gif', 'png', 'jepg', 'jpg', 'bmp'];
+    const typeList = ['gif', 'png', 'jpeg', 'jpg', 'bmp'];
+
     if (!typeList.find((e) => file.type.includes(e))) {
-      return Toast(t('请上传jepg，jpg，png，bmp，gif格式的图片'));
+      return Toast(t('请上传jpeg，jpg，png，bmp，gif格式的图片'));
     }
 
     if (file.size > 5 * 1024 * 1024) return Toast('请上传小于5MB的图片');

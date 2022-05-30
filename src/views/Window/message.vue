@@ -795,7 +795,10 @@ const menuClick = (e: any, data: any) => {
   //   style.value.top = e.target.offsetTop + 10 + 'px';
   // }
 
-  if (75 + e.pageX > window.innerWidth && 125 + e.pageY > window.innerHeight) {
+  if (
+    75 + e.pageX > window.innerWidth &&
+    125 + e.pageY > window.innerHeight - 50
+  ) {
     style.value.right = 0;
     style.value.bottom = '50px';
     style.value.left = 'auto';
@@ -805,7 +808,7 @@ const menuClick = (e: any, data: any) => {
     style.value.top = e.pageY + 'px';
     style.value.left = 'auto';
     style.value.bottom = 'auto';
-  } else if (125 + e.pageY > window.innerHeight) {
+  } else if (125 + e.pageY > window.innerHeight - 50) {
     style.value.bottom = '50px';
     style.value.left = e.pageX + 'px';
     style.value.right = 'auto';

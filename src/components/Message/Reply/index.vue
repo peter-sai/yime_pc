@@ -1,5 +1,5 @@
 <template>
-  <div class="reply" v-if="replyMsg?.msgId">
+  <div class="reply" v-if="replyMsg?.msgId" @click.stop="goTo">
     <div
       class="reply-stringContent"
       v-if="
@@ -133,6 +133,15 @@ const replyContentImg = computed(() => {
   }
   return imageUrl;
 });
+
+const goTo = () => {
+  const dom = document.getElementById(props.replyMsg.msgId);
+  dom?.scrollIntoView({
+    behavior: 'smooth', //顺滑的滚动
+    block: 'center', //容器上下的中间
+    inline: 'start', //容器左右的左边
+  });
+};
 </script>
 <style lang="scss" scoped>
 .reply {
