@@ -1,8 +1,22 @@
 <template>
   <div class="search" v-if="search.showBox">
     <div class="left">
-      <div class="top" @click="goNext('+')"></div>
-      <div class="bottom" @click="goNext('-')"></div>
+      <div
+        class="top"
+        :class="
+          (queryInfo.index + 1 === queryInfo.selectList.length ||
+            !queryInfo.selectList.length) &&
+          'disable'
+        "
+        @click="goNext('+')"
+      ></div>
+      <div
+        class="bottom"
+        :class="
+          (queryInfo.index < 1 || !queryInfo.selectList.length) && 'disable'
+        "
+        @click="goNext('-')"
+      ></div>
     </div>
     <div class="intputBg">
       <div class="icon">
@@ -576,6 +590,7 @@ const callback = async (e: any) => {
     searchRef.value?.focus();
   } else if (e.keyCode === 27) {
     search.showBox = false;
+    search.inputVal = '';
   }
 };
 document.body.addEventListener('keydown', callback);
@@ -786,7 +801,7 @@ const userInfo = computed(() => store.state.userInfo);
 
 const showMen = ref(false);
 
-const menuClick = (e: any, data: any) => {
+const menuClick = (e: any, data: IMsgInfo<string>) => {
   // if (e.target.tagName === 'VIDEO') {
   //   style.value.left = e.target.offsetParent.offsetLeft + 10 + 'px';
   //   style.value.top = e.target.offsetParent.offsetTop + 10 + 'px';
@@ -794,30 +809,38 @@ const menuClick = (e: any, data: any) => {
   //   style.value.left = e.target.offsetLeft + 10 + 'px';
   //   style.value.top = e.target.offsetTop + 10 + 'px';
   // }
+  let boxHeader = 125;
+  if (isShowHowComponent(data)) {
+    boxHeader = 175;
+  }
 
   if (
     75 + e.pageX > window.innerWidth &&
-    125 + e.pageY > window.innerHeight - 50
+    boxHeader + e.pageY > window.innerHeight - 50
   ) {
     style.value.right = 0;
     style.value.bottom = '50px';
     style.value.left = 'auto';
     style.value.top = 'auto';
+    console.log(1);
   } else if (75 + e.pageX > window.innerWidth) {
     style.value.right = 0;
     style.value.top = e.pageY + 'px';
     style.value.left = 'auto';
     style.value.bottom = 'auto';
-  } else if (125 + e.pageY > window.innerHeight - 50) {
+    console.log(2);
+  } else if (boxHeader + e.pageY > window.innerHeight - 50) {
     style.value.bottom = '50px';
     style.value.left = e.pageX + 'px';
     style.value.right = 'auto';
     style.value.top = 'auto';
+    console.log(3);
   } else {
     style.value.left = e.pageX + 'px';
     style.value.top = e.pageY + 'px';
     style.value.bottom = 'auto';
     style.value.right = 'auto';
+    console.log(4);
   }
 
   copyItem.value = data;
@@ -1377,19 +1400,27 @@ const goNext = async (val?: string) => {
     .top {
       width: 10px;
       height: 10px;
-      border-bottom: 2px solid #ddd;
-      border-left: 2px solid #ddd;
+      border-bottom: 2px solid #0085ff;
+      border-left: 2px solid #0085ff;
       transform: rotate(-45deg) translateY(-5px);
       margin-right: 15px;
       cursor: pointer;
+      &.disable {
+        border-bottom: 2px solid #ddd;
+        border-left: 2px solid #ddd;
+      }
     }
     .bottom {
       cursor: pointer;
       width: 10px;
       height: 10px;
-      border-top: 2px solid #ddd;
-      border-right: 2px solid #ddd;
+      border-top: 2px solid #0085ff;
+      border-right: 2px solid #0085ff;
       transform: rotate(-45deg) translateY(5px);
+      &.disable {
+        border-top: 2px solid #ddd;
+        border-right: 2px solid #ddd;
+      }
     }
   }
   .intputBg {
