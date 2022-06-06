@@ -48,9 +48,11 @@
           @click="toggleSelect"
         />
         {{ t('本人接受') }}
-        <span @click="goTo('agreement')" class="agreement">{{
-          t('《YiMe协议》')
-        }}</span>
+        <span
+          @click="goLink('https://yime.app/userAgreements')"
+          class="agreement"
+          >{{ t('《YiMe协议》') }}</span
+        >
       </div>
     </div>
   </div>
@@ -101,6 +103,10 @@ const toggleSelect = () => {
 const goBack = useGoBack(useRouter);
 
 const goTo = useGoTo(useRouter);
+
+const goLink = (url: string) => {
+  window.open(url);
+};
 
 // 注册
 const reg = useReg(goTo, store, query, agreement, route, t);
