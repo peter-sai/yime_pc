@@ -232,8 +232,6 @@ const useStatus = async (
     encryption: 'Aoelailiao.Message.UserOnlineStateNotifyReq',
     auth: true,
   });
-  console.log(data.body);
-
   onlineInfo.value = data.body?.userOnlineState || {};
 };
 

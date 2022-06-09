@@ -221,7 +221,6 @@ async function getGroupInfo(store: Store<initStore>) {
   if (!store.state.activeUid) return;
 
   let msgItem: Ref<ImsgItem> = ref(store.state.msgList[store.state.activeUid!]);
-  console.log(msgItem.value);
 
   // 如果不存在则获取 (群聊不在聊天列表中会没有信息)
   if (!msgItem.value) {

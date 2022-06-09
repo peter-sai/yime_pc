@@ -57,6 +57,9 @@ const props = defineProps({
   search: {
     type: String,
   },
+  isEnterInputVal: {
+    type: String,
+  },
   userInfo: {
     type: Object as PropType<IUserInfo>,
   },
@@ -77,10 +80,23 @@ const list = slots.default()[0].children
 
 const str: Ref<Array<string>> = ref(list);
 
+if (props.isEnterInputVal) {
+  str.value = list.map((v) => {
+    return v.replaceAll(
+      props.search,
+      `<span
+                style="color: #f00; font-size: 1rem"
+                >${props.search}</span
+              >`
+    );
+  });
+}
+
 watch(
-  () => props.search,
-  (val) => {
-    if (val) {
+  () => props.isEnterInputVal,
+  (isEnterInputVal) => {
+    if (isEnterInputVal) {
+      const val = props.search;
       str.value = list.map((v) => {
         return v.replaceAll(
           val,
