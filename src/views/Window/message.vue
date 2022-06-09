@@ -28,12 +28,20 @@
         :placeholder="t('请输入')"
         v-model="search.inputVal"
       />
-      <div class="icon close" @click="search.inputVal = ''">
+      <div
+        class="icon close"
+        @click="
+          search.inputVal = '';
+          queryInfo.selectList = [];
+          queryInfo.index = 0;
+          isEnterInputVal = '';
+        "
+      >
         <Iconfont name="iconsearch" size="20" color="#aaa" />
       </div>
     </div>
     <div class="num">
-      {{ search.inputVal ? queryInfo.index + 1 : 0 }}/{{
+      {{ queryInfo.selectList.length ? queryInfo.index + 1 : 0 }}/{{
         queryInfo.selectList.length
       }}
     </div>
@@ -41,6 +49,8 @@
       class="close"
       @click="
         search.inputVal = '';
+        queryInfo.selectList = [];
+        queryInfo.index = 0;
         search.showBox = false;
       "
     >
@@ -138,6 +148,7 @@
               :userInfo="getUserInfo(item)"
               :replyUserInfo="getUserInfo(getReply(item))"
               :search="search.inputVal"
+              :isEnterInputVal="isEnterInputVal"
               v-if="isShowHowComponent(item)"
             >
               {{ item.msgContent.stringContent }}
@@ -149,6 +160,7 @@
               :replyUserInfo="getUserInfo(getReply(item))"
               :isBurn="item.msgShowType === 3"
               :search="search.inputVal"
+              :isEnterInputVal="isEnterInputVal"
               v-else
             >
               {{ item.msgContent.stringContent }}
@@ -591,6 +603,8 @@ const callback = async (e: any) => {
   } else if (e.keyCode === 27) {
     search.showBox = false;
     search.inputVal = '';
+    queryInfo.selectList = [];
+    queryInfo.index = 0;
   }
 };
 document.body.addEventListener('keydown', callback);
@@ -738,22 +752,24 @@ watch(
   }
 );
 
-// 消息列表
-const list = computed(() => store.state.msgList);
-const itemChat: ComputedRef<ImsgItem> = computed(() => {
-  let activeList = list.value[store.state.activeUid!] || {};
-  activeList.readList = arrDistinctByProp(activeList.readList, 'clientMsgUuid');
-  return activeList;
-});
+const isEnterInputVal = ref('');
+// 点击确定查询选中的文案
+const searchRefKeyDownCallBack = async (e: any) => {
+  if (e.keyCode === 13) {
+    // const data = await store.dispatch('postMsg', {
+    //   query: {
+    //     isGroupMsg: 0,
+    //     objectId: store.state.activeUid,
+    //     searchType: 4,
+    //     keyWord: search.inputVal,
+    //   },
+    //   cmd: 2063,
+    //   encryption: 'Aoelailiao.Message.UserSearchHistoryMsgReq',
+    //   auth: true,
+    // });
+    // console.log(data);
 
-const queryInfo = reactive<{ selectList: Array<any>; index: number }>({
-  selectList: [],
-  index: 0,
-});
-
-watch(
-  () => search.inputVal,
-  async (val) => {
+    const val = (isEnterInputVal.value = search.inputVal);
     if (val) {
       queryInfo.selectList = [];
       itemChat.value.readList.forEach((e) => {
@@ -772,7 +788,57 @@ watch(
       return Toast(t('没有找到任何相关内容'));
     }
   }
+};
+watch(
+  () => search.showBox,
+  async (val) => {
+    if (val) {
+      await nextTick();
+      searchRef.value?.addEventListener('keydown', searchRefKeyDownCallBack);
+    } else {
+      isEnterInputVal.value = '';
+      await nextTick();
+      searchRef.value?.removeEventListener('keydown', searchRefKeyDownCallBack);
+    }
+  }
 );
+
+// 消息列表
+const list = computed(() => store.state.msgList);
+const itemChat: ComputedRef<ImsgItem> = computed(() => {
+  let activeList = list.value[store.state.activeUid!] || {};
+  activeList.readList = arrDistinctByProp(activeList.readList, 'clientMsgUuid');
+  return activeList;
+});
+
+const queryInfo = reactive<{ selectList: Array<any>; index: number }>({
+  selectList: [],
+  index: 0,
+});
+
+// 自动查询选中的文案
+// watch(
+//   () => search.inputVal,
+//   async (val) => {
+//     if (val) {
+//       queryInfo.selectList = [];
+//       itemChat.value.readList.forEach((e) => {
+//         if (e.msgContent?.stringContent?.includes(val)) {
+//           queryInfo.selectList.push(e.msgId);
+//         }
+//       });
+//     } else {
+//       queryInfo.selectList = [];
+//     }
+//     queryInfo.index = queryInfo.selectList.length - 1;
+//     setTimeout(() => {
+//       goNext();
+//     }, 0);
+//     if (!queryInfo.selectList.length && val) {
+//       return Toast(t('没有找到任何相关内容'));
+//     }
+//   }
+// );
 
 const imageList = computed(() => {
   const list = itemChat.value.readList
@@ -809,10 +875,7 @@ const menuClick = (e: any, data: IMsgInfo<string>) => {
   //   style.value.left = e.target.offsetLeft + 10 + 'px';
   //   style.value.top = e.target.offsetTop + 10 + 'px';
   // }
-  let boxHeader = 125;
-  if (isShowHowComponent(data)) {
-    boxHeader = 175;
-  }
+  const boxHeader = 175;
 
   if (
     75 + e.pageX > window.innerWidth &&

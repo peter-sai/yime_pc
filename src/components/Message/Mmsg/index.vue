@@ -20,7 +20,7 @@
           />
           <Reply :replyMsg="replyMsg" :userInfo="replyUserInfo" isMe />
           <!-- <slot /> -->
-          <p style="font-size: 14px" v-html="str" />
+          <p class="text" v-html="str" />
         </ImgBg>
       </div>
       <IsRead :isRead="isRead" />
@@ -67,6 +67,9 @@ const props = defineProps({
   search: {
     type: String,
   },
+  isEnterInputVal: {
+    type: String,
+  },
   replyUserInfo: {
     type: Object as PropType<IUserInfo>,
   },
@@ -80,10 +83,21 @@ const slots: any = useSlots();
 const children = slots.default()[0].children;
 const str = ref(children);
 
+if (props.isEnterInputVal) {
+  str.value = children.replaceAll(
+    props.search,
+    `<span
+              style="color: #f00; font-size: 1rem"
+              >${props.search}</span
+            >`
+  );
+}
+
 watch(
-  () => props.search,
-  (val) => {
-    if (val) {
+  () => props.isEnterInputVal,
+  (isEnterInputVal) => {
+    if (isEnterInputVal) {
+      const val = props.search;
       str.value = children.replaceAll(
         val,
         `<span
@@ -107,6 +121,9 @@ watch(
     background: #ffffff;
     opacity: 0.2;
     margin: 5px 0;
+  }
+  .text {
+    font-size: 16px;
   }
   .box {
     display: flex;
