@@ -885,25 +885,21 @@ const menuClick = (e: any, data: IMsgInfo<string>) => {
     style.value.bottom = '50px';
     style.value.left = 'auto';
     style.value.top = 'auto';
-    console.log(1);
   } else if (75 + e.pageX > window.innerWidth) {
     style.value.right = 0;
     style.value.top = e.pageY + 'px';
     style.value.left = 'auto';
     style.value.bottom = 'auto';
-    console.log(2);
   } else if (boxHeader + e.pageY > window.innerHeight - 50) {
     style.value.bottom = '50px';
     style.value.left = e.pageX + 'px';
     style.value.right = 'auto';
     style.value.top = 'auto';
-    console.log(3);
   } else {
     style.value.left = e.pageX + 'px';
     style.value.top = e.pageY + 'px';
     style.value.bottom = 'auto';
     style.value.right = 'auto';
-    console.log(4);
   }
 
   copyItem.value = data;

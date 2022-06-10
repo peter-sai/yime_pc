@@ -585,7 +585,7 @@ onMounted(() => {
     if (!e.target.files || !e.target.files.length) return;
     const file = e.target.files[0];
     changUserImg.value?.setAttribute('type', 'text');
-    const typeList = ['gif', 'png', 'jepg', 'jpg'];
+    const typeList = ['gif', 'png', 'jpeg', 'jpg'];
     if (!typeList.find((e) => file.type.includes(e))) {
       return Toast(t('请上传 jpg、png或gif格式图片'));
     }
@@ -1052,12 +1052,15 @@ const sendCollection = async (item: { id: number; url: string }) => {
     },
   };
 
-  await store.dispatch('postMsg', {
+  const data = await store.dispatch('postMsg', {
     query: query,
     cmd: 2001,
     encryption: 'Aoelailiao.Message.ClientSendMsgToServerReq',
     auth: true,
   });
+  if (data.body.resultCode !== 0) {
+    return Toast(data.body.resultString);
+  }
 };
 
 const mouseover = (
