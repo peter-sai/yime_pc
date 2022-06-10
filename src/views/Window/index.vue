@@ -514,8 +514,9 @@ onUnmounted(() => {
     }
   }
   .box {
-    position: absolute;
+    z-index: 99;
     left: 0;
+    position: absolute;
     right: 0;
     bottom: 0;
     top: 0;
@@ -523,6 +524,7 @@ onUnmounted(() => {
   }
   .boxContent {
     position: absolute;
+    z-index: 99;
     right: 0;
     top: 0;
     bottom: 0;

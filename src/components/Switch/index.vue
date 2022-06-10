@@ -20,7 +20,8 @@ const props = defineProps({
   },
 });
 const emit = defineEmits(['toggle']);
-const active = computed(() => props.switch);
+// const active = computed(() => props.switch);
+const active = ref(props.switch);
 const toggle = async () => {
   emit('toggle', !active.value);
   if (props.beforeChange) {

@@ -387,10 +387,39 @@ type TMsgItem = INotifyClassMsgListInfo & ImsgItem;
 const { t } = useI18n();
 const formateTime = useFormateTime();
 const showMenu = ref(false);
-const style = ref({ left: '0px', top: '0px' });
+const style: Ref<any> = ref({});
 const contextmenu = (e: any, item: ImsgItem) => {
-  style.value.left = e.pageX + 'px';
-  style.value.top = e.pageY + 'px';
+  // style.value.left = e.pageX + 'px';
+  // style.value.top = e.pageY + 'px';
+
+  const boxHight = 200;
+  const boxWidth = 0;
+
+  if (
+    boxWidth + e.pageX > window.innerWidth &&
+    boxHight + e.pageY > window.innerHeight
+  ) {
+    style.value.right = 0;
+    style.value.bottom = '0';
+    style.value.left = 'auto';
+    style.value.top = 'auto';
+  } else if (boxWidth + e.pageX > window.innerWidth) {
+    style.value.right = 0;
+    style.value.top = e.pageY + 'px';
+    style.value.left = 'auto';
+    style.value.bottom = 'auto';
+  } else if (boxHight + e.pageY > window.innerHeight) {
+    style.value.bottom = '0';
+    style.value.left = e.pageX + 'px';
+    style.value.right = 'auto';
+    style.value.top = 'auto';
+  } else {
+    style.value.left = e.pageX + 'px';
+    style.value.top = e.pageY + 'px';
+    style.value.bottom = 'auto';
+    style.value.right = 'auto';
+  }
+
   e?.preventDefault();
   showMenu.value = true;
   rightClickItem.value = item;

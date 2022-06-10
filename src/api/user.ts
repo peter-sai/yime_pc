@@ -1,3 +1,4 @@
+import { Toast } from '@/plugin/Toast';
 import { initStore } from '@/store';
 import { setStorage } from '@/utils/utils';
 import { Store } from 'vuex';
@@ -14,6 +15,7 @@ const upDateUser = async (store: Store<initStore>) => {
     encryption: 'Aoelailiao.Login.ClientGetUserInfoReq',
     auth: true,
   });
+  if (data.body.resultCode !== 0) return Toast(data.body.resultString);
 
   const userDetailInfo = data.body.userDetailInfo;
   const userInfo = data.body.userDetailInfo.userInfo;
