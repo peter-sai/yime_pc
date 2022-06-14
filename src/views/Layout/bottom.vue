@@ -896,7 +896,6 @@ const replyContent = computed(() => {
   let name: string;
   const msgContentType =
     replyActive?.value?.replyMsg?.msgContent?.msgContentType;
-  console.log(msgContentType);
   if (msgContentType === 1) {
     name = replyActive?.value?.replyMsg?.msgContent?.stringContent;
   } else if (msgContentType === 7) {
@@ -999,6 +998,7 @@ async function addToCollection(url: string) {
     optype: 10,
     url,
   };
+
   const data = await store.dispatch('postMsg', {
     query,
     cmd: 2037,
@@ -1058,6 +1058,7 @@ const sendCollection = async (item: { id: number; url: string }) => {
     encryption: 'Aoelailiao.Message.ClientSendMsgToServerReq',
     auth: true,
   });
+  reset();
   if (data.body.resultCode !== 0) {
     return Toast(data.body.resultString);
   }

@@ -948,6 +948,7 @@ const useDelMsg = (
       encryption: 'Aoelailiao.Message.DeleteMsgReq',
       auth: true,
     });
+
     Toast(t(data.body.resultString));
     if (data.body.resultCode === 0) {
       const msgList = store.state.msgList;
@@ -958,7 +959,12 @@ const useDelMsg = (
       const delKey = readList.findIndex(
         (e: any) => Number(e.msgId) === Number(msg.msgId)
       );
+
       readList.splice(delKey, 1);
+      // 如果删除的是最后一条 则更新lastmsg
+      if (delKey === readList.length) {
+        msgInfo.lastMsg = readList[readList.length - 1];
+      }
       store.commit('SET_MSGLIST', msgList);
       store.commit('set_Key', Math.random());
     }

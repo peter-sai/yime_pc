@@ -56,13 +56,13 @@ onBeforeUnmount(() => {
 });
 
 const cbImg = async (e: any) => {
-  changUserImg.value?.setAttribute('type', 'text');
   if (!store.state.client.userAgent) {
     await initOss(store);
   }
+  const file = e.target.files[0];
+  changUserImg.value?.setAttribute('type', 'text');
   showLoading();
   try {
-    const file = e.target.files[0];
     // const url = await upLoadFile(file, store, t);
     let info: any = await store.state.client.put(file.name, file);
     imgUrl.value = info.url || '';

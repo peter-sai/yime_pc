@@ -33,7 +33,12 @@
           }}</span>
         </div>
         <div class="title">{{ groupDetailInfo?.groupName }}</div>
-        <div class="subTitle">
+        <div
+          class="subTitle"
+          :class="
+            groupDetailInfo?.groupNoticeInfo?.groupNoticeContent && 'active'
+          "
+        >
           {{
             groupDetailInfo?.groupNoticeInfo?.groupNoticeContent ||
             t('暂无群公告')
@@ -725,9 +730,11 @@ async function uploadGroupInfo() {
       font-weight: 400;
       color: #929292;
       line-height: 17px;
-      text-align: left;
-      text-align: center;
       margin: 5px auto 15px;
+      text-align: center;
+      &.active {
+        text-align: left;
+      }
     }
   }
   .main {

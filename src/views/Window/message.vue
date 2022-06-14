@@ -190,6 +190,8 @@
             :replyMsg="getReply(item)"
             :replyUserInfo="getUserInfo(getReply(item))"
             v-if="isShowHowComponent(item)"
+            :search="search.inputVal"
+            :isEnterInputVal="isEnterInputVal"
           >
             {{ item.msgContent.groupAtInfo.stringContent }}
           </Ymsg>
@@ -199,6 +201,8 @@
             :replyUserInfo="getUserInfo(getReply(item))"
             :isBurn="item.msgShowType === 3"
             :isRead="item.msgId <= readMsgId"
+            :search="search.inputVal"
+            :isEnterInputVal="isEnterInputVal"
             v-else
           >
             {{ item.msgContent.groupAtInfo.stringContent }}

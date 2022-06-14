@@ -85,11 +85,12 @@ onBeforeUnmount(() => {
 
 // 选择图片之后的回调函数
 const cb = async (e: any) => {
-  changUserImg.value?.setAttribute('type', 'text');
   if (!store.state.client.userAgent) {
     await initOss(store);
   }
+
   const file = e.target.files[0];
+  changUserImg.value?.setAttribute('type', 'text');
   showLoading();
   try {
     // const url = await upLoadFile(file, store, t);
@@ -152,6 +153,7 @@ const submit = async () => {
     encryption: 'Aoelailiao.Login.UserSetItemReq',
     auth: true,
   });
+
   if (data.body.resultCode === 0) {
     await upDateUser(store);
     goBack();

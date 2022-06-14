@@ -458,6 +458,7 @@ onUnmounted(() => {
     right: 0;
     bottom: 50px;
     padding: 20px;
+    z-index: -1;
   }
   .stranger {
     position: absolute;
