@@ -493,7 +493,6 @@ const videoCallActionUploadReq = async (actionType: number) => {
     videoType: props.mediaType,
     talkUid: props.yUserInfo?.uid,
   };
-  console.log(query);
 
   const data = await store.dispatch('postMsg', {
     query,

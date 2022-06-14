@@ -9,12 +9,15 @@ const upDateUser = async (store: Store<initStore>) => {
   const res = {
     uid: info.uid,
   };
+
   const data = await store.dispatch('postMsg', {
     query: res,
     cmd: 1011,
     encryption: 'Aoelailiao.Login.ClientGetUserInfoReq',
     auth: true,
   });
+  console.log(data.body);
+
   if (data.body.resultCode !== 0) return Toast(data.body.resultString);
 
   const userDetailInfo = data.body.userDetailInfo;

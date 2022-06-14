@@ -40,7 +40,6 @@ import {
 import messageAudio from './assets/audio/message.wav';
 import { MediaAudio } from './plugin/Audio';
 import { GroupMediaAudio, hideGroupMediaAudio } from './plugin/GroupAudio';
-import { Toast } from './plugin/Toast';
 import { initOss } from './hooks/window';
 import { useI18n } from 'vue-i18n';
 import { hideLoading } from './plugin/Loading';
@@ -314,7 +313,7 @@ const stop = watch(
   computed(() => store.state.msgInfo),
   async (data: any) => {
     if (data.cmd == 2170) {
-      if (!data.body.isGroupMsg) {
+      if (!data.body.isGroupMsg && data.body.objectId) {
         const res = {
           uid: data.body.objectId,
         };
@@ -399,11 +398,17 @@ const stop = watch(
       // 处理双向清空消息
       if (msgInfos[0].msgContent.msgContent === 'cleanInfo') {
         const { maxMsgId } = msgInfos[0].msgContent.cleanInfo;
-        const newList = (
-          msgList[store.state.activeUid!]?.readList || []
-        ).filter((e: any) => Number(e.msgId) > Number(maxMsgId));
+        const { toId, fromId } = msgInfos[0];
+        let uid = toId;
+        if (toId === store.state.userInfo.uid) {
+          uid = fromId;
+        }
 
-        msgList[store.state.activeUid!].readList = newList;
+        const newList = (msgList[uid!]?.readList || []).filter(
+          (e: any) => Number(e.msgId) > Number(maxMsgId)
+        );
+
+        msgList[uid!].readList = newList;
         store.commit('SET_MSGLIST', msgList);
         setMsgList(msgList);
       }
