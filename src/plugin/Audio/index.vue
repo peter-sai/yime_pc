@@ -424,7 +424,6 @@ onMounted(async () => {
 });
 
 watch(isMideaMini, (res) => {
-  console.log(res);
   if (!res) {
     nextTick(() => {
       draggableFun();

@@ -37,6 +37,8 @@
           <Fire :isBurn="isBurn" :fired="fired" :left="`-15px`" :top="`-8px`" />
           <img
             @click="shogImg"
+            @load="emit('delImgLoadEvent')"
+            @error="emit('delImgLoadEvent')"
             :src="src"
             :style="
               isEmoji
@@ -99,7 +101,12 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['menuClick', 'showBigImg']);
+const emit = defineEmits([
+  'menuClick',
+  'showBigImg',
+  'addImgLoadEvent',
+  'delImgLoadEvent',
+]);
 
 const contextmenu = (e: any) => {
   e.preventDefault();
@@ -109,6 +116,8 @@ const contextmenu = (e: any) => {
 const shogImg = () => {
   emit('showBigImg');
 };
+
+emit('addImgLoadEvent');
 </script>
 <style lang="scss" scoped>
 @import '@/style/theme/index.scss';

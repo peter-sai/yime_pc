@@ -214,6 +214,8 @@
             @click="showUserInfo(getUserInfo(item).uid)"
             v-if="isShowHowComponent(item)"
             @menuClick="menuClick($event, item)"
+            @addImgLoadEvent="addImgLoadEvent(item)"
+            @delImgLoadEvent="delImgLoadEvent(item)"
             :isBurn="item.msgShowType === 3"
             :fired="false"
             :userInfo="getUserInfo(item)"
@@ -227,6 +229,8 @@
             :isRead="item.msgId <= readMsgId"
             @showBigImg="showBigImg(item)"
             @menuClick="menuClick($event, item)"
+            @addImgLoadEvent="addImgLoadEvent(item)"
+            @delImgLoadEvent="delImgLoadEvent(item)"
             :isBurn="item.msgShowType === 3"
             :fired="false"
             :replyMsg="getReply(item)"
@@ -855,29 +859,12 @@ const imageList = computed(() => {
   return list;
 });
 
-function debounce(fn: () => void) {
-  let timer: any;
-  return function () {
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-      fn.apply(this, arguments); // 把参数传进去
-    }, 700);
-  };
-}
-
 // 登录用户信息
 const userInfo = computed(() => store.state.userInfo);
 
 const showMen = ref(false);
 
 const menuClick = (e: any, data: IMsgInfo<string>) => {
-  // if (e.target.tagName === 'VIDEO') {
-  //   style.value.left = e.target.offsetParent.offsetLeft + 10 + 'px';
-  //   style.value.top = e.target.offsetParent.offsetTop + 10 + 'px';
-  // } else {
-  //   style.value.left = e.target.offsetLeft + 10 + 'px';
-  //   style.value.top = e.target.offsetTop + 10 + 'px';
-  // }
   const boxHeader = 175;
 
   if (
@@ -1314,6 +1301,20 @@ const goNext = async (val?: string) => {
     inline: 'start', //容器左右的左边
   });
 };
+
+const imgLoadEventList: Ref<Array<number>> = ref([]);
+const addImgLoadEvent = (e: any) => {
+  imgLoadEventList.value.push(e.msgId);
+};
+const delImgLoadEvent = (e: any) => {
+  const index = imgLoadEventList.value.findIndex((v) => v === e.msgId);
+  imgLoadEventList.value.splice(index, 1);
+};
+watch(imgLoadEventList.value, (val) => {
+  if (!val.length) {
+    scroll();
+  }
+});
 </script>
 <style lang="scss" scoped>
 @import '@/style/base.scss';

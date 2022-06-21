@@ -588,7 +588,6 @@ async function sendImgInfo(
         },
       };
     }
-    console.log(res);
 
     const data = await store.dispatch('postMsg', {
       query: res,
@@ -721,7 +720,8 @@ const switchMsg = (
   store: Store<initStore>,
   yUserInfo?: IUserInfo,
   groupUserInfos?: IUserInfo[],
-  msgItem?: ImsgItem
+  msgItem?: ImsgItem | undefined,
+  lock?: boolean
 ) => {
   // 格式化 systemNotifyInfo
   const systemNotifyInfo = useSystemNotifyInfo(store, t);
@@ -732,40 +732,45 @@ const switchMsg = (
     return t('[阅后即焚]');
   }
 
-  // 处理@信息
+  // 处理@信息 和 回复消息
   if (msgItem) {
     const readList = msgItem.readList;
     const unReadNum = msgItem.unReadNum;
     const length = readList.length;
-    const newList = readList.slice(length - unReadNum, length);
-    const isAt = newList.find((e) => {
+    const newList = readList
+      .slice(length - unReadNum, length)
+      .sort((a, b) => b.msgId - a.msgId);
+    const hasAtAndReplyList = newList.filter((e) => {
       if (e.type === 'groupAtInfo') {
-        const atUsers = e.msgContent?.groupAtInfo?.atUsers[0];
-        if (atUsers.type === 1) {
-          return true;
-        }
-        if (Number(atUsers.uid) === Number(store.state.userInfo.uid)) {
-          return true;
-        }
-      }
-      return false;
-    });
-
-    if (isAt) {
-      return t('有提到你的信息');
-    }
-
-    const isReply = newList.find((e) => {
-      if (e.isGroupMsg === 1) {
-        if (Number(e.replyToId) === Number(store.state.userInfo.uid)) {
-          return true;
+        // 处理@消息
+        if (!e.replyMsgId) {
+          const atUsers = e.msgContent?.groupAtInfo?.atUsers;
+          if (!atUsers || !atUsers.length) return false;
+          if (atUsers[0].type === 1) {
+            return true;
+          }
+          if (Number(atUsers[0].uid) === Number(store.state.userInfo.uid)) {
+            return true;
+          }
+        } else {
+          // 处理回复消息
+          if (Number(e.replyToId) === Number(store.state.userInfo.uid)) {
+            return true;
+          }
         }
       }
       return false;
     });
 
-    if (isReply) {
-      return t('有回复你的消息');
+    if (hasAtAndReplyList.length) {
+      // 判断第一条数据
+      // 只有回复消息才有 replyMsgId 字段
+      if (hasAtAndReplyList[0].replyMsgId && !lock) {
+        return t('有回复你的消息');
+      }
+      if (!hasAtAndReplyList[0].replyMsgId) {
+        return t('有提到你的信息');
+      }
     }
   }
 

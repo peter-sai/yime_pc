@@ -1,7 +1,6 @@
 <template>
   <div class="mmsg">
-    <div class="wrapper">
-      @contextmenu="contextmenu">
+    <div class="wrapper" @contextmenu="contextmenu">
       <ImBg v-bind="$attrs" isMe v-if="replyMsg?.msgId">
         <Reply :replyMsg="replyMsg" :userInfo="replyUserInfo" isMe />
         <div class="fileBg" @click="$emit('clickCard')">

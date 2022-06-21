@@ -389,7 +389,6 @@ const sotreRoot = createStore({
       }
     },
     logout({ commit, state }) {
-      console.log(state);
       setMsgList(state.msgList);
       commit('SET_SWITCHSETTINGINFO', null);
       commit('SET_USERDETAILINFO', null);

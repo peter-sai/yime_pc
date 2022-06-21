@@ -34,6 +34,8 @@
               : { maxWidth: '100%', maxHeight: '100%', cursor: 'pointer' }
           "
           :src="src"
+          @load="emit('delImgLoadEvent')"
+          @error="emit('delImgLoadEvent')"
           alt=""
         />
       </div>
@@ -105,7 +107,12 @@ const { t } = useI18n();
 const store = useStore(key);
 const isGroup = computed(() => store.state.activeIsGroup);
 
-const emit = defineEmits(['menuClick', 'click', 'showBigImg']);
+const emit = defineEmits([
+  'menuClick',
+  'click',
+  'showBigImg',
+  'delImgLoadEvent',
+]);
 
 const contextmenu = (e: any) => {
   e.preventDefault();

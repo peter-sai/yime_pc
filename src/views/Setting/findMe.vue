@@ -40,7 +40,7 @@
           {{ t('关闭后，其他用户将不能通过上述信息找到你') }}
         </div>
       </div>
-      <div class="info">{{ t('可通过以下方式私聊我') }}</div>
+      <div class="info">{{ t('可通过以下方式找到我') }}</div>
       <div>
         <Table title="群聊" hide-more>
           <template v-slot:right>

@@ -1008,5 +1008,5 @@ export default {
     'Your IP is at risk. For your security, you have been temporarily restricted from logging in',
   原消息已被删除: 'The original message has been deleted',
   没有找到任何相关内容: 'No relevant content was found',
-  有回复你的消息: 'I have a message to reply to you',
+  有回复你的消息: 'Replied',
 };
