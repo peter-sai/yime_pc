@@ -63,8 +63,9 @@
                 at: getType(item.lastMsg, item) === t('有回复你的消息'),
               }"
               v-else-if="getType(item.lastMsg, item) === t('有回复你的消息')"
-              >[{{ getType(item.lastMsg, item) }}]</span
-            >
+              >[{{ getType(item.lastMsg, item) }}]
+              {{ getType(item.lastMsg, item, true) }}
+            </span>
             <span class="subTitle" v-else>{{
               (getType(item.lastMsg, item) || '').replace(/\u0000/g, '')
             }}</span>
@@ -134,7 +135,7 @@
           v-if="item.msgClassId === 1"
           html
           :subTitle="JSON.parse(item.msgClassRecentMsgContent).Jt"
-          @click="store.commit('SET_ACTIVEUID', item.msgClassId)"
+          @click="setActiveuId(item)"
           :hover="item.msgClassId === store.state.activeUid"
         >
           <template v-slot:title>
@@ -149,6 +150,9 @@
             </div>
           </template>
           <!-- <template v-slot:time>{{ formateTime(item.updateTime) }}</template> -->
+          <template v-slot:num v-if="item.unRead">
+            <Badge :num="Number(item.unRead)" />
+          </template>
         </TableDouble>
         <!-- 反馈 -->
         <TableDouble
@@ -156,7 +160,7 @@
           html
           :subTitle="item.msgClassRecentMsgContent"
           :title="t(item.msgClassTitle)"
-          @click="store.commit('SET_ACTIVEUID', item.msgClassId)"
+          @click="setActiveuId(item)"
           :hover="item.msgClassId === store.state.activeUid"
         >
           <template v-slot:userImg>
@@ -425,6 +429,24 @@ const contextmenu = (e: any, item: ImsgItem) => {
   rightClickItem.value = item;
 };
 
+const setActiveuId = async (item: TMsgItem) => {
+  store.commit('SET_ACTIVEUID', item.msgClassId);
+  // 重置 unRead 字段
+  const newItem = store.state.msgList[item.msgClassId] || {};
+  newItem.unRead = undefined;
+  store.commit('ADD_NOTIFY', { id: item.msgClassId, res: newItem });
+  // 设置已读
+  await store.dispatch('postMsg', {
+    query: {
+      msgClassId: item.msgClassId,
+      hasReadMsgIdMax: item.maxMsgId,
+    },
+    cmd: 2025,
+    encryption: 'Aoelailiao.Message.UserSendSystemNotifyMsgReadedStateReq',
+    auth: true,
+  });
+};
+
 const rightClick = (e: any, item: ImsgItem) => {
   style.value.left = e.pageX + 'px';
   style.value.top = e.pageY + 'px';
@@ -483,11 +505,23 @@ const msgList: ComputedRef<TMsgItem[]> = computed(() => {
   return topList.concat(defList);
 });
 
-const getType = (lastMsg: IMsgInfo<TMsgContent>, item: ImsgItem) => {
+const getType = (
+  lastMsg: IMsgInfo<TMsgContent>,
+  item: ImsgItem,
+  lock?: boolean
+) => {
   if (lastMsg.isGroupMsg) {
-    return switchMsg(lastMsg, t, store, {} as IUserInfo, [], item);
+    return switchMsg(lastMsg, t, store, {} as IUserInfo, [], item, lock);
   } else {
-    return switchMsg(lastMsg, t, store, item?.userDetailInfo?.userInfo || []);
+    return switchMsg(
+      lastMsg,
+      t,
+      store,
+      item?.userDetailInfo?.userInfo || {},
+      [],
+      item,
+      lock
+    );
   }
 };
 
@@ -531,7 +565,9 @@ const init = async () => {
   const data: INotifyClassMsgListInfo[] = await userGetSystemNotice(store);
 
   data.forEach((e: any) => {
-    store.commit('ADD_NOTIFY', { id: e.msgClassId, res: e });
+    const unReadNum = store.state.msgList[e.msgClassId]?.unRead || 0;
+    const newRes = Object.assign({ unRead: unReadNum as number }, e);
+    store.commit('ADD_NOTIFY', { id: e.msgClassId, res: newRes });
   });
   // 合并数据
   await mergeData(offlineMsgInfos, store, []);
@@ -565,6 +601,8 @@ const userInfo = store.state.userInfo;
 // 退出群聊
 const userOperateGroupInfo = useUserOperateGroupInfo(store);
 const quitGroupChat = async (item: ImsgItem) => {
+  if (item.groupDetailInfo.groupState === 3)
+    return Toast(t('群不存在或者已被解散'));
   if (
     Number(item.groupDetailInfo.groupMemberLists.rootUid) ===
     Number(store.state.userInfo.uid)
@@ -804,7 +842,8 @@ function useBeforeSwitch(
     text-overflow: ellipsis;
     overflow: hidden;
     &.at {
-      color: #e6a66a;
+      color: #0085ff;
+      // color: #e6a66a;
     }
     &.reply {
       color: #0085ff;

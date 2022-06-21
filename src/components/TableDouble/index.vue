@@ -48,7 +48,7 @@ defineProps({
   },
   subAuto: {
     type: String,
-    default: '10rem',
+    default: '12.3rem',
   },
   html: {
     type: Boolean,

@@ -152,6 +152,7 @@ import { switchMsg } from '@/hooks/window';
 import { IGroupInfo, IUserInfo } from '@/types/user';
 import { IGroupListItem } from '@/types/group';
 import { getTag } from '@/utils/utils';
+import { hideLoading, showLoading } from '@/plugin/Loading';
 const emit = defineEmits(['isSearch', 'rightClick']);
 const goTo = useGoTo(useRouter);
 const showBox = ref(false);
@@ -188,7 +189,36 @@ const contextmenu = (e: any, item: ImsgItem) => {
   emit('rightClick', e, item);
 };
 
-const toggleShowSearch = (res: boolean) => {
+const toggleShowSearch = async (res: boolean) => {
+  // // 第一次显示的时候获取最新的列表
+  // if (res && !showSearch.value) {
+  //   const data = await store.dispatch('postMsg', {
+  //     query: {},
+  //     cmd: 1009,
+  //     encryption: 'Aoelailiao.Login.UserGetFriendsAndGroupsListReq',
+  //     auth: true,
+  //   });
+
+  //   console.log(data.body);
+
+  //   data.body.groupInfos.forEach((e: IGroupListItem) => {
+  //     if (e.groupMemberLists.rootUid === Number(userInfo.uid)) {
+  //       e.root = true;
+  //     }
+  //     if (e.groupMemberLists.adminUidList.includes(Number(userInfo.uid))) {
+  //       e.admin = true;
+  //     }
+  //   });
+
+  //   store.commit('SET_GROUPINFOS', data.body.groupInfos);
+  //   const list = data.body.friendInfos;
+  //   list.forEach((e: any) => {
+  //     e.name = (e.userAttachInfo && e.userAttachInfo.remarkName) || e.nickname;
+  //     e.tag = getTag(e);
+  //   });
+  //   list.sort((a: any, b: any) => a.tag.charCodeAt(0) - b.tag.charCodeAt(0));
+  //   store.commit('SET_CONTACT', list);
+  // }
   showSearch.value = res;
   emit('isSearch', res);
 };
@@ -207,99 +237,113 @@ const goToWindow = (item: ImsgItem) => {
   // store.commit('SET_MSGLISTITEM', { res: item });
 };
 
+let timer: any = null;
 watch(val, (res) => {
-  contactsList.value = [];
-  groupList.value = [];
-  toggleShowSearch(false);
-  if (!res) return;
-  toggleShowSearch(true);
-  for (const [key, val] of Object.entries(list.value)) {
-    // 存放搜索到的内容
-    const filterContactsList: IMsgInfo<string>[] = [];
-    const fliterGroupList: IMsgInfo<string>[] = [];
-    (val.readList || []).forEach((e: IMsgInfo<string>) => {
-      // 过滤消息类型
-      if (
-        e.type === 'stringContent' &&
-        e.msgShowType === 1 &&
-        e.msgContent.stringContent.toLocaleLowerCase().includes(res)
-      ) {
-        if (val.isGroup) {
-          fliterGroupList.push(e);
-        } else {
-          filterContactsList.push(e);
+  if (timer) {
+    clearTimeout(timer);
+    timer = null;
+  }
+  timer = setTimeout(async () => {
+    contactsList.value = [];
+    groupList.value = [];
+    if (!res) {
+      toggleShowSearch(false);
+      return;
+    }
+    toggleShowSearch(true);
+    for (const [key, val] of Object.entries(list.value)) {
+      // 存放搜索到的内容
+      const filterContactsList: IMsgInfo<string>[] = [];
+      const fliterGroupList: IMsgInfo<string>[] = [];
+      (val.readList || []).forEach((e: IMsgInfo<string>) => {
+        // 过滤消息类型
+        if (
+          e.type === 'stringContent' &&
+          e.msgShowType === 1 &&
+          e.msgContent.stringContent.toLocaleLowerCase().includes(res)
+        ) {
+          if (val.isGroup) {
+            fliterGroupList.push(e);
+          } else {
+            filterContactsList.push(e);
+          }
         }
+      });
+      if (filterContactsList.length) {
+        val.msg = filterContactsList.sort((a, b) => b.msgId - a.msgId)[
+          filterContactsList.length - 1
+        ];
+        contactsList.value.push(val);
+      }
+      if (fliterGroupList.length) {
+        val.msg = fliterGroupList.sort((a, b) => b.msgId - a.msgId)[
+          fliterGroupList.length - 1
+        ];
+        groupList.value.push(val);
+      }
+    }
+
+    await init();
+    // 整合群组和个人
+    groupInfos.value.forEach((e: IGroupInfo) => {
+      if (
+        e.groupName.toLocaleLowerCase().includes(res.toLocaleLowerCase()) &&
+        groupList.value.every((v) => v.id !== e.groupId)
+      ) {
+        groupList.value.push(e);
       }
     });
-    if (filterContactsList.length) {
-      val.msg = filterContactsList.sort((a, b) => b.msgId - a.msgId)[
-        filterContactsList.length - 1
-      ];
-      contactsList.value.push(val);
-    }
-    if (fliterGroupList.length) {
-      val.msg = fliterGroupList.sort((a, b) => b.msgId - a.msgId)[
-        fliterGroupList.length - 1
-      ];
-      groupList.value.push(val);
-    }
-  }
-  // 整合群组和个人
-  groupInfos.value.forEach((e: IGroupInfo) => {
-    if (
-      e.groupName.toLocaleLowerCase().includes(res.toLocaleLowerCase()) &&
-      groupList.value.every((v) => v.id !== e.groupId)
-    ) {
-      groupList.value.push(e);
-    }
-  });
-  contact.value.forEach((e: IUserInfo) => {
-    if (
-      e.nickname.toLocaleLowerCase().includes(res.toLocaleLowerCase()) &&
-      contactsList.value.every((v) => v.id !== e.uid)
-    ) {
-      contactsList.value.push(e);
-    }
-  });
+    contact.value.forEach((e: IUserInfo) => {
+      if (
+        e.nickname.toLocaleLowerCase().includes(res.toLocaleLowerCase()) &&
+        contactsList.value.every((v) => v.id !== e.uid)
+      ) {
+        contactsList.value.push(e);
+      }
+    });
+
+    clearTimeout(timer);
+    timer = null;
+  }, 500);
 });
 
 // 获取列表
 const init = async () => {
   try {
-    const storeList = store.state.contact;
-    if (!storeList.length) {
-      const data = await store.dispatch('postMsg', {
-        query: {},
-        cmd: 1009,
-        encryption: 'Aoelailiao.Login.UserGetFriendsAndGroupsListReq',
-        auth: true,
-      });
+    showLoading();
+    // const storeList = store.state.contact;
+    // if (!storeList.length) {
+    const data = await store.dispatch('postMsg', {
+      query: {},
+      cmd: 1009,
+      encryption: 'Aoelailiao.Login.UserGetFriendsAndGroupsListReq',
+      auth: true,
+    });
+    hideLoading();
 
-      data.body.groupInfos.forEach((e: IGroupListItem) => {
-        if (e.groupMemberLists.rootUid === Number(userInfo.uid)) {
-          e.root = true;
-        }
-        if (e.groupMemberLists.adminUidList.includes(Number(userInfo.uid))) {
-          e.admin = true;
-        }
-      });
+    data.body.groupInfos.forEach((e: IGroupListItem) => {
+      if (e.groupMemberLists.rootUid === Number(userInfo.uid)) {
+        e.root = true;
+      }
+      if (e.groupMemberLists.adminUidList.includes(Number(userInfo.uid))) {
+        e.admin = true;
+      }
+    });
 
-      store.commit('SET_GROUPINFOS', data.body.groupInfos);
-      const list = data.body.friendInfos;
-      list.forEach((e: any) => {
-        e.name =
-          (e.userAttachInfo && e.userAttachInfo.remarkName) || e.nickname;
-        e.tag = getTag(e);
-      });
-      list.sort((a: any, b: any) => a.tag.charCodeAt(0) - b.tag.charCodeAt(0));
-      store.commit('SET_CONTACT', list);
-    }
+    store.commit('SET_GROUPINFOS', data.body.groupInfos);
+    const list = data.body.friendInfos;
+    list.forEach((e: any) => {
+      e.name = (e.userAttachInfo && e.userAttachInfo.remarkName) || e.nickname;
+      e.tag = getTag(e);
+    });
+    list.sort((a: any, b: any) => a.tag.charCodeAt(0) - b.tag.charCodeAt(0));
+    store.commit('SET_CONTACT', list);
+    // }
   } catch (error) {
+    hideLoading();
     console.log(error);
   }
 };
-
-init();
 
 // 获取群列表和联系人
 const getList = async () => {

@@ -358,21 +358,25 @@ const stop = watch(
       try {
         const notifyContent = JSON.parse(data.body.notifyContent);
         if (notifyContent.Jt) {
+          const unReadNum = store.state.msgList[1]?.unRead || 0;
           const res = {
             msgClassHaveNewMsg: 1,
             msgClassId: 1,
             msgClassRecentMsgContent: data.body.notifyContent,
             msgClassTitle: '系统消息',
             updateTime: data.body.updateTime,
+            unRead: (unReadNum as number) + 1,
           };
           store.commit('ADD_NOTIFY', { id: 1, res });
         } else {
+          const unReadNum = store.state.msgList[2]?.unRead || 0;
           const res = {
             msgClassHaveNewMsg: 1,
             msgClassId: 2,
             msgClassRecentMsgContent: data.body.notifyContent,
             msgClassTitle: '用户反馈消息',
             updateTime: data.body.updateTime,
+            unRead: (unReadNum as number) + 1,
           };
           store.commit('ADD_NOTIFY', { id: 2, res });
         }

@@ -168,6 +168,7 @@ const contextmenu = (e: any) => {
       text-align: left;
       text-overflow: ellipsis;
       overflow: hidden;
+      white-space: nowrap;
     }
     .host {
       display: flex;
@@ -175,6 +176,7 @@ const contextmenu = (e: any) => {
       align-items: center;
       span {
         font-size: 14px;
+        white-space: nowrap;
         color: #fff;
         text-overflow: ellipsis;
         overflow: hidden;
