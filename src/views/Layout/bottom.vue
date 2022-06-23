@@ -1267,7 +1267,7 @@ const mouseout = (item: {
     min-height: 50px;
     padding: 10px 20px;
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: space-between;
     background: #fff;
     box-sizing: border-box;
