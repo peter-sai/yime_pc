@@ -161,7 +161,8 @@ const useEnter = (
 ) => {
   const urlP =
     // eslint-disable-next-line no-useless-escape
-    /^((https?|ftp|file):\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+    // /^((https?|ftp|file):\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+    /(http|https):\/\/\S*/;
   const userInfo = store.state.userInfo;
   return async (groupList: IUserInfo[] = [], copyImgList?: File[]) => {
     for (const e of copyImgList || []) {
@@ -235,7 +236,7 @@ const useEnter = (
 
     // 处理@消息
     const atList = search.value.split('@');
-    if (atList.length && groupList.length) {
+    if (atList.length > 1 && groupList.length) {
       const list = groupList.filter((e) =>
         search.value.includes(`@${e.nickname}`)
       );
@@ -275,6 +276,7 @@ const useEnter = (
     if (store.state.replyMsg?.msgId) {
       res.msgInfo.replyMsgId = store.state.replyMsg?.msgId;
     }
+
     const data = await store.dispatch('postMsg', {
       query: res,
       cmd: 2001,
@@ -714,7 +716,15 @@ export const formatMsg = (
   }
 };
 
-const switchMsg = (
+const switchMsg: (
+  item: IMsgInfo<TMsgContent>,
+  t: { (key: string | number): string },
+  store: Store<initStore>,
+  yUserInfo?: IUserInfo,
+  groupUserInfos?: IUserInfo[],
+  msgItem?: ImsgItem | undefined,
+  lock?: boolean
+) => string = (
   item: IMsgInfo<TMsgContent>,
   t: { (key: string | number): string },
   store: Store<initStore>,
@@ -723,9 +733,9 @@ const switchMsg = (
   msgItem?: ImsgItem | undefined,
   lock?: boolean
 ) => {
-  // 格式化 systemNotifyInfo
-  const systemNotifyInfo = useSystemNotifyInfo(store, t);
-  const userName = '';
+  // // 格式化 systemNotifyInfo
+  // const systemNotifyInfo = useSystemNotifyInfo(store, t);
+  // const userName = '';
   // let fireInfo, infoList;
   // 阅后即焚
   if (Number(item.msgShowType) === 3 && item.type === 'stringContent') {
@@ -758,6 +768,13 @@ const switchMsg = (
             return true;
           }
         }
+      } else {
+        if (e.replyMsgId) {
+          // 处理回复消息
+          if (Number(e.replyToId) === Number(store.state.userInfo.uid)) {
+            return true;
+          }
+        }
       }
       return false;
     });
@@ -765,18 +782,35 @@ const switchMsg = (
     if (hasAtAndReplyList.length) {
       // 判断第一条数据
       // 只有回复消息才有 replyMsgId 字段
-      if (hasAtAndReplyList[0].replyMsgId && !lock) {
+      const fristMsg = hasAtAndReplyList[0];
+
+      if (fristMsg.replyMsgId && !lock) {
         return t('有回复你的消息');
       }
-      if (!hasAtAndReplyList[0].replyMsgId) {
+      if (fristMsg.replyMsgId && lock) {
+        return matchType(fristMsg, t, store);
+      }
+      if (!fristMsg.replyMsgId) {
         return t('有提到你的信息');
       }
     }
   }
 
+  return matchType(item, t, store);
+};
+
+// 匹配类型
+function matchType(
+  item: IMsgInfo<TMsgContent>,
+  t: { (key: string | number): string },
+  store: Store<initStore>
+) {
+  // 格式化 systemNotifyInfo
+  const systemNotifyInfo = useSystemNotifyInfo(store, t);
+  const userName = '';
   switch (item.type || (item.msgContent && item.msgContent.msgContent)) {
     case 'stringContent':
-      return item.msgContent.stringContent;
+      return item.msgContent.stringContent as string;
     case 'imageMsg':
       return t('[图片]');
     case 'fileInfo':
@@ -820,7 +854,7 @@ const switchMsg = (
     default:
       return '';
   }
-};
+}
 
 // 离线数据
 const useGetOfflineMsg = async (store: any) => {
