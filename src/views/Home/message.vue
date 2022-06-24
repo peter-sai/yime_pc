@@ -661,7 +661,7 @@ const quitGroupChat = async (item: ImsgItem) => {
     });
 
     store.commit('SET_GROUPINFOS', data1.body.groupInfos);
-    // store.commit('DEL_MSGITEM', item.id);
+    store.commit('DEL_MSGITEM', item.id);
   }
 };
 
