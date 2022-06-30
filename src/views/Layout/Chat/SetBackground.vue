@@ -48,14 +48,14 @@ export default defineComponent({
 </script>
 <script setup lang="ts">
 import { key } from '@/store';
-import { initOss } from '@/hooks/window';
+import { initOss, useToggleFriend } from '@/hooks/window';
 import { IContacts, IGroupInfo } from '@/types/user';
 import { getTag } from '@/utils/utils';
 import { useI18n } from 'vue-i18n';
 import { useStore } from 'vuex';
 import { Toast } from '@/plugin/Toast';
 import { showLoading } from '@/plugin/Loading';
-const emit = defineEmits(['toggleBox', 'changeTag']);
+const emit = defineEmits(['toggleBox', 'changeTag', 'blackListToast']);
 
 const { t } = useI18n();
 const store = useStore(key);
@@ -83,7 +83,11 @@ const clientsendbackgroundurltoserverreq = async (url: string) => {
     encryption: 'Aoelailiao.Message.ClientSendBackgroundUrlToServerReq',
     auth: true,
   });
-  Toast(t(data.body.resultString));
+
+  if(data.body.resultCode == 1535){
+    throw emit('blackListToast', {store, t, yUserInfo: {uid: store.state.activeUi}, title: t('该用户已注销,是否将其移除好友列表,并清空聊天会话?')})
+  }
+
   if (data.body.resultCode === 0) {
     emit('changeTag', Etag.UserInfo);
     const data = await store.dispatch('postMsg', {

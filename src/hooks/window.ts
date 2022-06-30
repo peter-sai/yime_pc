@@ -12,8 +12,9 @@ import {
   IVideoCallMsgInfo,
   TMsgContent,
 } from '@/types/msg';
-import { IGroupInfo, IUserDetailInfo, IUserInfo } from '@/types/user';
-import { getToken as getUserToken } from '@/utils/utils';
+import { IGroupInfo, IUserDetailInfo, IUserInfo, IContacts } from '@/types/user';
+import { IGroupListItem } from '@/types/group';
+import { getToken as getUserToken, getTag } from '@/utils/utils';
 import { getOssInfo, getToken, upload } from '../api';
 import { number } from '@intlify/core-base';
 import moment from 'moment';
@@ -157,7 +158,8 @@ const useEnter = (
   store: Store<initStore>,
   search: Ref<string>,
   isGroupMsg = 0,
-  t: { (key: string | number): string }
+  t: { (key: string | number): string },
+  callBack?: (uid: number, body:any)=> void
 ) => {
   const urlP =
     // eslint-disable-next-line no-useless-escape
@@ -284,10 +286,11 @@ const useEnter = (
       auth: true,
     });
 
+    callBack && callBack(Number(store.state.activeUid), data.body)
     if (data.body.resultCode === 0) {
       search.value = '';
       reset(store);
-    } else {
+    } else if (data.body.resultCode != 1535) {
       Toast(t(data.body.resultString));
     }
   };
@@ -350,7 +353,7 @@ const useSendImg = (
       if (data.body.resultCode === 0) {
         reset(store);
       }
-      if (data.body.resultCode !== 0) {
+      if (data.body.resultCode !== 0 || data.body.resultCode !== 1535) {
         Toast(t(data.body.resultString));
       }
     } else if (type === 'img') {
@@ -465,7 +468,8 @@ const useCbImg = (
   store: Store<initStore>,
   accept: Ref<string>,
   t: { (key: string | number): string },
-  isGroupMsg = 0
+  isGroupMsg = 0,
+  callBack?: (uid: number, body:any)=> void
 ) => {
   return async (e: any, uid?: number) => {
     if (!e.target.files || !e.target.files.length) return;
@@ -477,7 +481,7 @@ const useCbImg = (
     try {
       const files = e.target.files;
       files.forEach(async (v: File) => {
-        await sendImgInfo(v, store, accept, t, isGroupMsg, uid);
+        await sendImgInfo(v, store, accept, t, isGroupMsg, uid, callBack);
       });
     } catch (error) {
       console.log(error);
@@ -491,7 +495,8 @@ async function sendImgInfo(
   accept: Ref<string>,
   t: { (key: string | number): string },
   isGroupMsg: number,
-  uid?: number
+  uid?: number,
+  callBack?: (uid: number, body:any)=> void
 ) {
   try {
     ////  开始上传图片 ///
@@ -597,10 +602,13 @@ async function sendImgInfo(
       encryption: 'Aoelailiao.Message.ClientSendMsgToServerReq',
       auth: true,
     });
-    if (data.body.resultCode !== 0) {
-      Toast(t(data.body.resultString));
-    } else {
-      reset(store);
+    callBack && callBack(Number(uid || store.state.activeUid), data.body)
+    if(data.body.resultCode != 1535){
+      if (data.body.resultCode !== 0) {
+        Toast(t(data.body.resultString));
+      } else {
+        reset(store);
+      }
     }
   } catch (error) {
     console.log(error);
@@ -1037,6 +1045,43 @@ const useFormateTime = () => {
   };
 };
 
+// 添加好友和删除好友
+function useToggleFriend(
+  store: Store<initStore>,
+  t: { (key: string | number): string },
+  yUserInfo: IUserInfo,
+  isDel?: boolean
+) {
+  return async (e: boolean) => {
+    const res = {
+      operateType: e ? 1 : 2,
+      userInfo: {
+        uid: yUserInfo.uid,
+      },
+    };
+    const data = await store.dispatch('postMsg', {
+      query: res,
+      cmd: 1025,
+      encryption: 'Aoelailiao.Login.UserOperateFriendShipReq',
+      auth: true,
+    });
+    
+    return new Promise((resovle, reject) => {
+      if (data.body.resultCode === 0) {
+        resovle(true);
+        if(isDel){
+          useDelUser(store, {id:yUserInfo.uid, isGroup: 0})
+          store.commit('DEL_MSGITEM', yUserInfo.uid);
+        }
+        upDateContact(store, e);
+      } else {
+        reject();
+      }
+      Toast(t(data.body.resultString));
+    });
+  };
+}
+
 const initRongConnect = async (
   store: Store<initStore>,
   rongIm: RCCallClient | null
@@ -1121,6 +1166,89 @@ async function downloadFile(file: { url: string; name: string }) {
   saveAs(blob, file.name);
 }
 
+
+// 删除/添加好友后更新联系人列表
+async function upDateContact(store: Store<initStore>, val: boolean) {
+  const userInfo = store.state.userInfo;
+  const item = store.state.msgList[store.state.activeUid!];
+  // const item = store.state.msgList[store.state.userUid!];
+
+  if (item) {
+    item.userDetailInfo.isFriend = val ? 1 : 0;
+    store.commit('SET_MSGLISTITEM', { res: item, uid: store.state.activeUid });
+  }
+  let list: IContacts[] = [];
+  const data = await store.dispatch('postMsg', {
+    query: {},
+    cmd: 1009,
+    encryption: 'Aoelailiao.Login.UserGetFriendsAndGroupsListReq',
+    auth: true,
+  });
+
+  data.body.groupInfos.forEach((e: IGroupListItem) => {
+    if (e.groupMemberLists.rootUid === Number(userInfo.uid)) {
+      e.root = true;
+    }
+    if (e.groupMemberLists.adminUidList.includes(Number(userInfo.uid))) {
+      e.admin = true;
+    }
+  });
+
+  store.commit('SET_GROUPINFOS', data.body.groupInfos);
+  list = data.body.friendInfos;
+  list.forEach((e) => {
+    e.name = (e.userAttachInfo && e.userAttachInfo.remarkName) || e.nickname;
+    e.tag = getTag(e);
+  });
+  list.sort((a: any, b: any) => a.tag.charCodeAt() - b.tag.charCodeAt());
+  store.commit('SET_CONTACT', list);
+}
+
+function useDelUser(store: Store<initStore>, item: {id: number, isGroup: number}){
+  if (store.state.msgList[item.id]) {
+    /*
+      1、所有未读消息设为已读
+      2、关闭消息通知
+      3、取消置顶
+      4、当前列表删除会话入口
+      5、关闭提示弹窗
+      6、删除当前操作时间点以前的所有聊天记录，并且不再同步到客户端
+    */
+    const selectItem = store.state.msgList[item.id];
+    // delete store.state.msgList[item.id];
+    selectItem.lastMsg = {};
+    selectItem.readList = [];
+    selectItem.unReadNum = 0;
+    selectItem.isDel = true;
+    selectItem.unRead = false;
+    if (selectItem.isGroup) {
+      selectItem.groupDetailInfo.groupAttachInfo.groupTop = 0;
+      selectItem.groupDetailInfo.groupAttachInfo.groupMsgMute = 1;
+    } else {
+      if (selectItem?.userDetailInfo?.userInfo?.userAttachInfo) {
+        selectItem.userDetailInfo.userInfo.userAttachInfo.msgTop = 0;
+        selectItem.userDetailInfo.userInfo.userAttachInfo.msgMute = 1;
+      } else {
+        selectItem.userDetailInfo.userInfo.userAttachInfo = {};
+        selectItem.userDetailInfo.userInfo.userAttachInfo.msgTop = 0;
+        selectItem.userDetailInfo.userInfo.userAttachInfo.msgMute = 1;
+      }
+    }
+    store.commit('SET_ACTIVEUID', null);
+    store.dispatch('postMsg', {
+      query: {
+        isGroupMsg: item.isGroup,
+        objectId: item.id,
+        opt: 1,
+      },
+      cmd: 2163,
+      encryption: 'Aoelailiao.Message.HideConversationReq',
+      auth: true,
+    });
+  }
+}
+
+
 export {
   useUserOperateGroupInfo,
   useBeforeSwitch,
@@ -1142,4 +1270,6 @@ export {
   initRongConnect,
   getRoam,
   downloadFile,
+  useToggleFriend,
+  useDelUser
 };
