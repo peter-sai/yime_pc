@@ -5,7 +5,7 @@ import router from '@/router/index';
 import i18n from '@/lang/index';
 
 let app: any = null;
-const Dialog = (props: { title: string; callBack: () => Promise<void> }) => {
+const Dialog = (props: { title: string; btnClass: string[]; callBack: () => Promise<void> }) => {
   const option = {
     ...props,
     destroy: () => {

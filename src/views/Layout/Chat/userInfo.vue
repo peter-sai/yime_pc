@@ -178,47 +178,49 @@ import { Etag } from '../index.vue';
 import { useI18n } from 'vue-i18n';
 import { getTag } from '@/utils/utils';
 import { hideLoading, showLoading } from '@/plugin/Loading';
-import { Dialog } from '@/plugin/Dialog';
+import { Dialog, hidePush } from '@/plugin/Dialog';
 import { IGroupListItem } from '@/types/group';
+import { useToggleFriend } from '@/hooks/window';
 
 export default defineComponent({
   name: 'userInfo',
 });
 
 // 添加好友和删除好友
-export function useToggleFriend(
-  store: Store<initStore>,
-  t: { (key: string | number): string },
-  yUserInfo: IUserInfo
-) {
-  return async (e: boolean) => {
-    const res = {
-      operateType: e ? 1 : 2,
-      userInfo: {
-        uid: yUserInfo.uid,
-      },
-    };
-    const data = await store.dispatch('postMsg', {
-      query: res,
-      cmd: 1025,
-      encryption: 'Aoelailiao.Login.UserOperateFriendShipReq',
-      auth: true,
-    });
-    return new Promise((resovle, reject) => {
-      if (data.body.resultCode === 0) {
-        resovle(true);
-        upDateContact(store, e);
-      } else {
-        reject();
-      }
-      Toast(t(data.body.resultString));
-    });
-  };
-}
+// export function useToggleFriend(
+//   store: Store<initStore>,
+//   t: { (key: string | number): string },
+//   yUserInfo: IUserInfo
+// ) {
+//   return async (e: boolean) => {
+//     const res = {
+//       operateType: e ? 1 : 2,
+//       userInfo: {
+//         uid: yUserInfo.uid,
+//       },
+//     };
+//     const data = await store.dispatch('postMsg', {
+//       query: res,
+//       cmd: 1025,
+//       encryption: 'Aoelailiao.Login.UserOperateFriendShipReq',
+//       auth: true,
+//     });
+//     return new Promise((resovle, reject) => {
+//       if (data.body.resultCode === 0) {
+//         resovle(true);
+//         upDateContact(store, e);
+//       } else {
+//         reject();
+//       }
+//       Toast(t(data.body.resultString));
+//     });
+//   };
+// }
 
 // 用户操作设置项的开关
 function useBeforeSwitch(
   store: Store<initStore>,
+  emit: any,
   settingItemId: number,
   t: { (key: string | number): string },
   yUserInfo: IUserInfo,
@@ -262,6 +264,10 @@ function useBeforeSwitch(
       } else {
         reject();
       }
+      if(data.body.resultCode == 1535){
+        throw emit('blackListToast', {store, t, yUserInfo, title: t('该用户已注销,是否将其移除好友列表,并清空聊天会话?')})
+      }
+      
       Toast(t(data.body.resultString));
     });
   };
@@ -298,45 +304,46 @@ export async function upDateStore(
 }
 
 // 删除/添加好友后更新联系人列表
-async function upDateContact(store: Store<initStore>, val: boolean) {
-  const userInfo = store.state.userInfo;
-  const item = store.state.msgList[store.state.activeUid!];
-  // const item = store.state.msgList[store.state.userUid!];
+// async function upDateContact(store: Store<initStore>, val: boolean) {
+//   const userInfo = store.state.userInfo;
+//   const item = store.state.msgList[store.state.activeUid!];
+//   // const item = store.state.msgList[store.state.userUid!];
 
-  if (item) {
-    item.userDetailInfo.isFriend = val ? 1 : 0;
-    store.commit('SET_MSGLISTITEM', { res: item, uid: store.state.activeUid });
-  }
-  let list: IContacts[] = [];
-  const data = await store.dispatch('postMsg', {
-    query: {},
-    cmd: 1009,
-    encryption: 'Aoelailiao.Login.UserGetFriendsAndGroupsListReq',
-    auth: true,
-  });
+//   if (item) {
+//     item.userDetailInfo.isFriend = val ? 1 : 0;
+//     store.commit('SET_MSGLISTITEM', { res: item, uid: store.state.activeUid });
+//   }
+//   let list: IContacts[] = [];
+//   const data = await store.dispatch('postMsg', {
+//     query: {},
+//     cmd: 1009,
+//     encryption: 'Aoelailiao.Login.UserGetFriendsAndGroupsListReq',
+//     auth: true,
+//   });
 
-  data.body.groupInfos.forEach((e: IGroupListItem) => {
-    if (e.groupMemberLists.rootUid === Number(userInfo.uid)) {
-      e.root = true;
-    }
-    if (e.groupMemberLists.adminUidList.includes(Number(userInfo.uid))) {
-      e.admin = true;
-    }
-  });
+//   data.body.groupInfos.forEach((e: IGroupListItem) => {
+//     if (e.groupMemberLists.rootUid === Number(userInfo.uid)) {
+//       e.root = true;
+//     }
+//     if (e.groupMemberLists.adminUidList.includes(Number(userInfo.uid))) {
+//       e.admin = true;
+//     }
+//   });
 
-  store.commit('SET_GROUPINFOS', data.body.groupInfos);
-  list = data.body.friendInfos;
-  list.forEach((e) => {
-    e.name = (e.userAttachInfo && e.userAttachInfo.remarkName) || e.nickname;
-    e.tag = getTag(e);
-  });
-  list.sort((a: any, b: any) => a.tag.charCodeAt() - b.tag.charCodeAt());
-  store.commit('SET_CONTACT', list);
-}
+//   store.commit('SET_GROUPINFOS', data.body.groupInfos);
+//   list = data.body.friendInfos;
+//   list.forEach((e) => {
+//     e.name = (e.userAttachInfo && e.userAttachInfo.remarkName) || e.nickname;
+//     e.tag = getTag(e);
+//   });
+//   list.sort((a: any, b: any) => a.tag.charCodeAt() - b.tag.charCodeAt());
+//   store.commit('SET_CONTACT', list);
+// }
 
 // 操作黑名单
 export function useBeforeBlacklist(
   store: Store<initStore>,
+  emit: any,
   t: { (key: string | number): string },
   yUserInfo: IUserInfo
 ) {
@@ -352,6 +359,11 @@ export function useBeforeBlacklist(
       encryption: 'Aoelailiao.Login.UserOperateBlackListReq',
       auth: true,
     });
+    
+    if(data.body.resultCode == 1535){
+      throw emit('blackListToast', {store, t, yUserInfo, title: t('该用户已注销,是否将其移除好友列表,并清空聊天会话?')})
+    }
+
     store.state.msgList[yUserInfo.uid].userDetailInfo.isInMyBlacklist = e
       ? 1
       : 0;
@@ -360,7 +372,7 @@ export function useBeforeBlacklist(
 }
 </script>
 <script setup lang="ts">
-const emit = defineEmits(['toggleBox', 'changeTag']);
+const emit = defineEmits(['toggleBox', 'changeTag', 'blackListToast']);
 const props = defineProps({
   userDetailInfo: {
     type: Object as PropType<IUserDetailInfo>,
@@ -384,6 +396,7 @@ const toggleFriend = useToggleFriend(store, t, props.yUserInfo);
 // 消息免打扰
 const beforeMsgNotdisturb = useBeforeSwitch(
   store,
+  emit,
   1005,
   t,
   props.yUserInfo,
@@ -391,16 +404,16 @@ const beforeMsgNotdisturb = useBeforeSwitch(
 );
 
 // @我时显示通知
-const beforeMsgAtNotify = useBeforeSwitch(store, 2108, t, props.yUserInfo);
+const beforeMsgAtNotify = useBeforeSwitch(store, emit, 2108, t, props.yUserInfo);
 
 // 截屏通知
-const beforeCaptureNotifica = useBeforeSwitch(store, 1003, t, props.yUserInfo);
+const beforeCaptureNotifica = useBeforeSwitch(store, emit, 1003, t, props.yUserInfo);
 
 // 置顶
-const beforeTop = useBeforeSwitch(store, 1004, t, props.yUserInfo);
+const beforeTop = useBeforeSwitch(store, emit, 1004, t, props.yUserInfo);
 
 // 黑名单
-const beforeBlacklist = useBeforeBlacklist(store, t, props.yUserInfo);
+const beforeBlacklist = useBeforeBlacklist(store, emit, t, props.yUserInfo);
 
 // 双向清空聊天记录
 const clientCleanMsg = () => {
@@ -416,6 +429,10 @@ const clientCleanMsg = () => {
         encryption: 'Aoelailiao.Message.ClientCleanMsgReq',
         auth: true,
       });
+      if(data.body.resultCode == 1535){
+        hidePush()
+        throw emit('blackListToast', {store, t, yUserInfo: {uid:props.yUserInfo.uid}, title: t('该用户已注销,是否将其移除好友列表,并清空聊天会话?')})
+      }
       Toast(t(data.body.resultString));
     },
   });

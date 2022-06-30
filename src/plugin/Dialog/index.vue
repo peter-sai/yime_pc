@@ -5,7 +5,7 @@
         <div class="title">{{ title }}</div>
         <div class="btn">
           <div class="left" @click="isShow = false">{{ t('取消') }}</div>
-          <div class="right" @click="submit">{{ t('确定') }}</div>
+          <div class="right" :class="btnClass" @click="submit">{{ t('确定') }}</div>
         </div>
       </div>
     </div>
@@ -23,6 +23,9 @@ export default defineComponent({
 const props = defineProps({
   title: {
     type: String,
+  },
+  btnClass: {
+    type: Array,
   },
   callBack: {
     type: Function,
@@ -88,6 +91,9 @@ const submit = async () => {
           border-left-style: solid;
           border-left-color: #ededed;
           color: #0085ff;
+          &.red {
+            color: #FF0000;
+          }
         }
         &.left {
           color: #666666;
