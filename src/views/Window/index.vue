@@ -5,11 +5,7 @@
       :icon="yUserInfo?.icon"
       :isBotUser="isBotUser"
       @queryClick="toggleSearch = !toggleSearch"
-      :title="
-        yUserInfo?.userAttachInfo && yUserInfo.userAttachInfo.remarkName
-          ? yUserInfo.userAttachInfo.remarkName
-          : yUserInfo.nickname
-      "
+      :title="remarkName? remarkName: yUserInfo.nickname"
       :subTitle="
         writeState
           ? t('正在输入内容')
@@ -140,6 +136,12 @@
           <SetBackground @toggleBox="toggleBox" @changeTag="changeTag" @blackListToast="blackListToast" />
         </div>
       </transition>
+      <!-- 设置备注 -->
+      <transition name="fade-transform1" mode="out-in">
+        <div v-if="showBox && tag === Etag.SetRemarkName" class="boxContent">
+          <SetRemarkName @toggleBox="toggleBox" @changeTag="changeTag" />
+        </div>
+      </transition>
     </div>
   </div>
 </template>
@@ -168,6 +170,7 @@ import { Store, useStore } from 'vuex';
 import UserInfo from '../Layout/Chat/userInfo.vue';
 import Forward from '../Layout/Chat/Forward.vue';
 import SetBackground from '../Layout/Chat/SetBackground.vue';
+import SetRemarkName from '../Layout/Chat/SetRemarkName.vue';
 import CloudFile from '../Layout/Chat/cloudFile.vue';
 import CommonGroup from '../Layout/Chat/commonGroup.vue';
 import Recommend from '../Layout/Chat/recommend.vue';
@@ -271,6 +274,7 @@ const isBotUser = ref(false);
 const onlineInfo: Ref<IUserInfo> = ref({}) as Ref<IUserInfo>;
 const files = ref('');
 const bg = computed(() => store.state.chatbg);
+const remarkName = computed(() => store.state.msgList[store.state.userUid]?.userDetailInfo.userInfo.userAttachInfo.remarkName || '');
 
 const groupDetailInfo: ComputedRef<IGroupInfo> = computed(
   () => store.state.msgList[store.state.userUid]?.groupDetailInfo || {}

@@ -16,7 +16,10 @@
           <Iconfont v-else name="iconlianxiren" size="60" color="#A8B5BE" />
         </div>
         <div class="right">
-          <div class="userName">{{ yUserInfo?.nickname }}</div>
+          <div class="userName">
+            <span>{{ yUserInfo?.userAttachInfo?.remarkName || yUserInfo?.nickname }}</span>
+            <img src="../../../assets/img/edit.svg" alt="" @click="$emit('changeTag', Etag.SetRemarkName)" />
+          </div>
           <div class="phone">
             <Iconfont name="iconshoujihaoma" size="10" color="#929292" />
             {{ t(userDetailInfo?.phone || '') }}
@@ -527,6 +530,14 @@ getOnLineStatus();
         color: #2b2c33;
         line-height: 20px;
         letter-spacing: 0px;
+        span {
+          display: inline-block;
+          margin-right: 8px;
+          font-size: 14px;
+        }
+        img{
+          cursor: pointer;
+        }
       }
       .phone {
         font-size: 12px;
