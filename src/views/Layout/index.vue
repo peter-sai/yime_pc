@@ -77,6 +77,7 @@ export enum Etag {
   SelectGroupMemberVideos,
   SetBackground,
   GroupSetting,
+  SetRemarkName
 }
 export default defineComponent({
   name: 'Layout',

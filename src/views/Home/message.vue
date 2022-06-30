@@ -25,7 +25,7 @@
               <span v-if="item.isGroup">
                 {{ item.groupDetailInfo?.groupName }}
               </span>
-              <span v-else>{{ item.userDetailInfo?.userInfo?.nickname }}</span>
+              <span v-else>{{ item.userDetailInfo?.userInfo?.userAttachInfo?.remarkName || item.userDetailInfo?.userInfo?.nickname }}</span>
               <Iconfont
                 v-if="
                   item.isGroup
@@ -807,7 +807,7 @@ function useBeforeSwitch(
       encryption: 'Aoelailiao.Login.UserOperateSettingItemSwitchReq',
       auth: true,
     });
-    
+
     hideLoading();
     return new Promise((resovle, reject) => {
       if (data.body.resultCode === 0) {
