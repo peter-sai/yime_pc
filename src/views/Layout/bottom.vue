@@ -1513,6 +1513,9 @@ const mouseout = (item: {
     letter-spacing: 0px;
     outline: none;
     word-break: break-all;
+    max-height: 264px;
+    overflow-y: auto;
+    overflow-x: none;
   }
 }
 .itemRight {
