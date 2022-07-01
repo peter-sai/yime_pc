@@ -177,7 +177,7 @@
           <div class="groupList">
             <TableDouble
               @contextmenu="contextmenu($event, item)"
-              :title="item?.userAttachInfo?.remarkName || item.nickname"
+              :title="item.nickname"
               :sub-title="item.onlineState ? t('在线') : t('离线')"
               @click="userClick(item.uid)"
               v-for="item in groupMemberUserInfos"
@@ -448,26 +448,27 @@ const quitGroupChat = async () => {
   Dialog({
     title: t('退出群聊') + '?',
     callBack: async () => {
+      const groupId = store.state.activeUid
       const query = {
-        groupId: store.state.activeUid,
+        groupId,
       };
       const data = await userOperateGroupInfo(3, query);
       Toast(t(data.body.resultString));
       if (data.body.resultCode === 0) {
         emit('toggleBox');
 
-        if (store.state.msgList[store.state.activeUid!]) {
+        if (store.state.msgList[groupId!]) {
           store.dispatch('postMsg', {
             query: {
               isGroupMsg: store.state.activeIsGroup ? 1 : 0,
-              objectId: store.state.activeUid,
+              objectId: groupId,
               opt: 1,
             },
             cmd: 2163,
             encryption: 'Aoelailiao.Message.HideConversationReq',
             auth: true,
           });
-          delete store.state.msgList[store.state.activeUid!];
+          delete store.state.msgList[groupId!];
           store.commit('SET_ACTIVEUID', null);
         }
 
@@ -488,6 +489,7 @@ const quitGroupChat = async () => {
         });
 
         store.commit('SET_GROUPINFOS', data1.body.groupInfos);
+        store.commit('DEL_MSGITEM', groupId);
       }
     },
   });

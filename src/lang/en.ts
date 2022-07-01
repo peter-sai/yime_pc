@@ -1009,4 +1009,5 @@ export default {
   原消息已被删除: 'The original message has been deleted',
   没有找到任何相关内容: 'No relevant content was found',
   有回复你的消息: 'Replied',
+  '该用户已注销,是否将其移除好友列表,并清空聊天会话?': 'This user has logged off. Do you want to remove him from the friends list and clear the chat session?'
 };

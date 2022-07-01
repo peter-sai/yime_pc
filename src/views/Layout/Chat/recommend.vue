@@ -91,7 +91,7 @@ export default defineComponent({
 });
 </script>
 <script setup lang="ts">
-const emit = defineEmits(['changeTag', 'toggleBox']);
+const emit = defineEmits(['changeTag', 'toggleBox', 'blackListToast']);
 const props = defineProps({
   isCreateGroupChat: {
     type: Boolean,
@@ -185,6 +185,9 @@ const submit = async () => {
         encryption: 'Aoelailiao.Message.ClientSendMsgToServerReq',
         auth: true,
       });
+      if(data.body.resultCode == 1535){
+        throw emit('blackListToast', {store, t, yUserInfo:{uid:store.state.activeUid}, title: t('该用户已注销,是否将其移除好友列表,并清空聊天会话?')})
+      }
       Toast(t(data.body.resultString));
       if (data.body.resultCode === 0) {
         emit('toggleBox');

@@ -5,11 +5,7 @@
       :icon="yUserInfo?.icon"
       :isBotUser="isBotUser"
       @queryClick="toggleSearch = !toggleSearch"
-      :title="
-        yUserInfo?.userAttachInfo && yUserInfo.userAttachInfo.remarkName
-          ? yUserInfo.userAttachInfo.remarkName
-          : yUserInfo.nickname
-      "
+      :title="remarkName? remarkName: yUserInfo.nickname"
       :subTitle="
         writeState
           ? t('正在输入内容')
@@ -81,6 +77,7 @@
             :onlineInfo="onlineInfo"
             @toggleBox="toggleBox"
             @changeTag="changeTag"
+            @blackListToast="blackListToast"
           />
         </div>
       </transition>
@@ -113,6 +110,7 @@
             @toggleBox="toggleBox"
             :isCreateGroupChat="false"
             @changeTag="changeTag"
+            @blackListToast="blackListToast"
           />
         </div>
       </transition>
@@ -135,7 +133,13 @@
       <!-- 设置背景 -->
       <transition name="fade-transform1" mode="out-in">
         <div v-if="showBox && tag === Etag.SetBackground" class="boxContent">
-          <SetBackground @toggleBox="toggleBox" @changeTag="changeTag" />
+          <SetBackground @toggleBox="toggleBox" @changeTag="changeTag" @blackListToast="blackListToast" />
+        </div>
+      </transition>
+      <!-- 设置备注 -->
+      <transition name="fade-transform1" mode="out-in">
+        <div v-if="showBox && tag === Etag.SetRemarkName" class="boxContent">
+          <SetRemarkName @toggleBox="toggleBox" @changeTag="changeTag" />
         </div>
       </transition>
     </div>
@@ -163,19 +167,21 @@ import Message from './message.vue';
 import { useI18n } from 'vue-i18n';
 import { getTime } from '@/utils/utils';
 import { Store, useStore } from 'vuex';
-import UserInfo, { useToggleFriend } from '../Layout/Chat/userInfo.vue';
+import UserInfo from '../Layout/Chat/userInfo.vue';
 import Forward from '../Layout/Chat/Forward.vue';
 import SetBackground from '../Layout/Chat/SetBackground.vue';
+import SetRemarkName from '../Layout/Chat/SetRemarkName.vue';
 import CloudFile from '../Layout/Chat/cloudFile.vue';
 import CommonGroup from '../Layout/Chat/commonGroup.vue';
 import Recommend from '../Layout/Chat/recommend.vue';
-import { useEnter, useCbImg, useSendImg } from '@/hooks/window';
+import { useEnter, useCbImg, useSendImg, useToggleFriend } from '@/hooks/window';
 import GroupInfo from '../Layout/GroupChat/groupInfo.vue';
 import ChatHeader from './header.vue';
 import Bottom from '../Layout/bottom.vue';
 import { Etag } from '../Layout/index.vue';
 import { ImsgItem } from '@/types/msg';
 import { useBeforeBlacklist } from '../Layout/Chat/userInfo.vue';
+import { Dialog } from '@/plugin/Dialog';
 
 export default defineComponent({
   name: 'window',
@@ -268,6 +274,10 @@ const isBotUser = ref(false);
 const onlineInfo: Ref<IUserInfo> = ref({}) as Ref<IUserInfo>;
 const files = ref('');
 const bg = computed(() => store.state.chatbg);
+const remarkName = computed(() => {
+  const data:any = store.state.contact.find((item:any) => item.uid == store.state.activeUid)
+  return  data ? data.userAttachInfo.remarkName : ''
+});
 
 const groupDetailInfo: ComputedRef<IGroupInfo> = computed(
   () => store.state.msgList[store.state.userUid]?.groupDetailInfo || {}
@@ -401,7 +411,22 @@ const isShow = ref(false);
 // 初始化
 init(store, userDetailInfo, isBotUser, yUserInfo, onlineInfo, isShow);
 
-const cbImg = useCbImg(store, accept, t);
+const cbImg = useCbImg(store, accept, t, 0, async (uid, body) => {
+  console.log(body)
+  if(body.resultCode == 1535){
+    blackListToast({store, t, yUserInfo:{ uid }, title: t('该用户已注销,是否将其移除好友列表,并清空聊天会话?')})  
+  }
+});
+
+const blackListToast = ({store, t, yUserInfo, title, content}:any) => {
+  Dialog({
+    title,
+    btnClass: ['red'],
+    callBack: async () => {
+      await useToggleFriend(store, t, yUserInfo, true)(false);
+    }
+  });
+}
 
 onMounted(async () => {
   store.commit('SET_CHATBG', '');
@@ -417,7 +442,12 @@ onBeforeUnmount(() => {
 });
 
 // 发送消息
-const enter = useEnter(store, inputVal, 0, t);
+const enter = useEnter(store, inputVal, 0, t, async (uid, body) => {
+  console.log(body)
+  if(body.resultCode == 1535){
+    blackListToast({store, t, yUserInfo:{ uid }, title: t('该用户已注销,是否将其移除好友列表,并清空聊天会话?')})  
+  }
+});
 // 发送图片
 const sendImg = useSendImg(store, 0, t, changUserImg, accept, nextTick);
 
