@@ -17,8 +17,8 @@
         </div>
         <div class="right">
           <div class="userName">
-            <span>{{ yUserInfo?.userAttachInfo?.remarkName || yUserInfo?.nickname }}</span>
-            <img src="../../../assets/img/edit.svg" alt="" @click="$emit('changeTag', Etag.SetRemarkName)" />
+            <span>{{ remarkName || yUserInfo?.nickname }}</span>
+            <img src="../../../assets/img/edit.svg" alt="" v-if="yUserInfo.imAccount != ' ' && yUserInfo.icon != ' '" @click="$emit('changeTag', Etag.SetRemarkName)" />
           </div>
           <div class="phone">
             <Iconfont name="iconshoujihaoma" size="10" color="#929292" />
@@ -346,9 +346,9 @@ export async function upDateStore(
 // 操作黑名单
 export function useBeforeBlacklist(
   store: Store<initStore>,
-  emit: any,
   t: { (key: string | number): string },
-  yUserInfo: IUserInfo
+  yUserInfo: IUserInfo,
+  emit?: any
 ) {
   return async (e: boolean) => {
     const res = {
@@ -393,6 +393,10 @@ const store = useStore(key);
 const { t } = useI18n();
 const onLineStatus: Ref<IUserInfo> = ref({}) as Ref<IUserInfo>;
 
+const remarkName = computed(() => {
+  const data:any = store.state.contact.find((item:any) => item.uid == store.state.activeUid)
+  return  data ? data.userAttachInfo.remarkName : ''
+});
 // 添加好友和删除好友
 const toggleFriend = useToggleFriend(store, t, props.yUserInfo);
 
@@ -416,7 +420,7 @@ const beforeCaptureNotifica = useBeforeSwitch(store, emit, 1003, t, props.yUserI
 const beforeTop = useBeforeSwitch(store, emit, 1004, t, props.yUserInfo);
 
 // 黑名单
-const beforeBlacklist = useBeforeBlacklist(store, emit, t, props.yUserInfo);
+const beforeBlacklist = useBeforeBlacklist(store, t, props.yUserInfo, emit);
 
 // 双向清空聊天记录
 const clientCleanMsg = () => {
