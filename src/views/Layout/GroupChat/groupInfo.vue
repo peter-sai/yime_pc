@@ -177,7 +177,7 @@
           <div class="groupList">
             <TableDouble
               @contextmenu="contextmenu($event, item)"
-              :title="item?.userAttachInfo?.remarkName || item.nickname"
+              :title="item.nickname"
               :sub-title="item.onlineState ? t('在线') : t('离线')"
               @click="userClick(item.uid)"
               v-for="item in groupMemberUserInfos"

@@ -274,7 +274,10 @@ const isBotUser = ref(false);
 const onlineInfo: Ref<IUserInfo> = ref({}) as Ref<IUserInfo>;
 const files = ref('');
 const bg = computed(() => store.state.chatbg);
-const remarkName = computed(() => store.state.msgList[store.state.userUid]?.userDetailInfo.userInfo.userAttachInfo.remarkName || '');
+const remarkName = computed(() => {
+  const data:any = store.state.contact.find((item:any) => item.uid == store.state.activeUid)
+  return  data ? data.userAttachInfo.remarkName : ''
+});
 
 const groupDetailInfo: ComputedRef<IGroupInfo> = computed(
   () => store.state.msgList[store.state.userUid]?.groupDetailInfo || {}

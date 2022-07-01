@@ -41,11 +41,12 @@ import { getTag } from '@/utils/utils';
 import { useI18n } from 'vue-i18n';
 import { useStore } from 'vuex';
 import { Toast } from '@/plugin/Toast';
+import { useToggleFriend } from '@/hooks/window';
 const emit = defineEmits(['toggleBox', 'changeTag']);
 
 const { t } = useI18n();
 const store = useStore(key);
-const remarkName = ref(store.state.msgList[store.state.activeUid].userDetailInfo.userInfo.userAttachInfo.remarkName || '');
+const remarkName = ref('');
 
 const submit = async () => {
   if(remarkName.value.length < 1 || remarkName.value.length > 20){
@@ -53,25 +54,53 @@ const submit = async () => {
     return;
   }
   const res = {
-      operateType: 11,
-      userInfo: {
-        uid: store.state.activeUid,
-      },
-      remarkName: remarkName.value
+    operateType: 11,
+    userInfo: {
+      uid: store.state.activeUid,
+    },
+    remarkName: remarkName.value
+  };
+  const data = await store.dispatch('postMsg', {
+    query: res,
+    cmd: 1025,
+    encryption: 'Aoelailiao.Login.UserOperateFriendShipReq',
+    auth: true,
+  });
+
+  Toast(t(data.body.resultString));
+  const index:any = store.state.contact.findIndex((item:any) => item.uid == store.state.activeUid)
+  if(index == -1){
+    await useToggleFriend(store, t, {uid: store.state.activeUid} as any)(true)
+  }
+
+  if(store.state.msgList[store.state.activeUid!]?.userDetailInfo){
+    store.state.msgList[store.state.activeUid!].userDetailInfo.userInfo.userAttachInfo.remarkName = remarkName.value
+  }
+  
+  if(store.state.contact[index!]){
+    (store.state.contact[index!] as any).userAttachInfo.remarkName = remarkName.value
+  }
+  emit('changeTag', Etag.UserInfo);
+}
+
+onMounted(async () => {
+  const data:any = store.state.contact.find((item:any) => item.uid == store.state.activeUid)
+  console.log(store.state.contact)
+  if(data){
+    remarkName.value = data.userAttachInfo?.remarkName
+  }else{
+    const res = {
+      uid: store.state.activeUid,
     };
     const data = await store.dispatch('postMsg', {
       query: res,
-      cmd: 1025,
-      encryption: 'Aoelailiao.Login.UserOperateFriendShipReq',
+      cmd: 1011,
+      encryption: 'Aoelailiao.Login.ClientGetUserInfoReq',
       auth: true,
     });
-
-    Toast(t(data.body.resultString));
-    if (data.body.resultCode === 0) {
-      store.state.msgList[store.state.activeUid].userDetailInfo.userInfo.userAttachInfo.remarkName = remarkName.value;
-      emit('changeTag', Etag.UserInfo);
-    }
-}
+    remarkName.value = data.body.userDetailInfo.userInfo.userAttachInfo?.remarkName
+  }
+});
 </script>
 <style lang="scss" scoped>
 @import '@/style/base.scss';
