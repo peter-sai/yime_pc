@@ -18,7 +18,7 @@
         <div class="right">
           <div class="userName">
             <span>{{ remarkName || yUserInfo?.nickname }}</span>
-            <img src="../../../assets/img/edit.svg" alt="" @click="$emit('changeTag', Etag.SetRemarkName)" />
+            <img src="../../../assets/img/edit.svg" alt="" v-if="yUserInfo.imAccount != ' ' && yUserInfo.icon != ' '" @click="$emit('changeTag', Etag.SetRemarkName)" />
           </div>
           <div class="phone">
             <Iconfont name="iconshoujihaoma" size="10" color="#929292" />
