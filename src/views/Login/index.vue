@@ -401,6 +401,9 @@ function useLogin(
           account: '+' + areaCode.value + query.phone,
           loginType: 0,
           password: md5(query.password),
+          equipmentInformation: {
+            deviceBrand: 'web',
+          },
         },
         cmd: 2181,
         encryption: 'Aoelailiao.Login.BeforeLoginReq',
@@ -443,6 +446,9 @@ function useLogin(
         query: {
           account: '+' + areaCode.value + query.phone,
           loginType: 5,
+          equipmentInformation: {
+            deviceBrand: 'web',
+          },
         },
         cmd: 2181,
         encryption: 'Aoelailiao.Login.BeforeLoginReq',
@@ -494,6 +500,9 @@ function useLogin(
           account: query.im,
           loginType: 9,
           password: md5(query.imPassword),
+          equipmentInformation: {
+            deviceBrand: 'web',
+          },
         },
         cmd: 2181,
         encryption: 'Aoelailiao.Login.BeforeLoginReq',
