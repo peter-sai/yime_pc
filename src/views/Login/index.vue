@@ -124,12 +124,14 @@
 </template>
 <script lang="ts">
 import {
+  computed,
   defineComponent,
   onMounted,
   onUnmounted,
   reactive,
   ref,
   Ref,
+  watch,
 } from 'vue';
 export default defineComponent({
   name: 'login',
@@ -270,6 +272,100 @@ const timeout = (time: Ref<number>, codeMsg: Ref<string>) => {
 // 登录
 const login = useLogin(goTo, store, query, areaCode, t);
 
+// const map = {
+//   0 允许登录,
+//   1 拒绝登录,
+//   2 超时,
+//   3 出现错误,
+//   4 需要短信验证
+//   5 需要等待审核 (如果收到这个推送, 需要等待下一个推送返回最终结果)
+//   6 无需审核, 直接登录
+// }
+const map = [
+  '允许登录',
+  '拒绝登录',
+  '超时',
+  '出现错误',
+  '需要短信验证',
+  '需要等待审核',
+  '无需审核',
+];
+
+watch(
+  computed(() => store.state.msgInfo),
+  async (data: any) => {
+    if (data.cmd == 2183) {
+      if (data.body.result === 0 || data.body.result === 6) {
+        const language = getStorage('language') || 0;
+        showLoading();
+        if (btns.active === 0) {
+          const res = {
+            loginInfo: {
+              loginType: 0,
+              loginId: '+' + areaCode.value + query.phone,
+              loginPasswdToken: md5(query.password),
+            },
+            clientLanguageType: language,
+            equipmentInformation: {
+              deviceBrand: 'web',
+              releaseVersion: '2.0.0',
+              devicePublicIp: returnCitySN.cip || '',
+            },
+          };
+          const data = await store.dispatch('postMsg', {
+            query: res,
+            cmd: 1005,
+            encryption: 'Aoelailiao.Login.LoginReq',
+          });
+          useLoginCb(data, goTo, areaCode, query, store, t);
+        } else if (btns.active === 2) {
+          const res = {
+            loginInfo: {
+              loginType: 5,
+              loginId: '+' + areaCode.value + query.phone,
+              loginPasswdToken: query.verificationCode,
+            },
+            clientLanguageType: language,
+            equipmentInformation: {
+              deviceBrand: 'web',
+              releaseVersion: '2.0.0',
+              devicePublicIp: returnCitySN.cip || '',
+            },
+          };
+          const data = await store.dispatch('postMsg', {
+            query: res,
+            cmd: 1005,
+            encryption: 'Aoelailiao.Login.LoginReq',
+          });
+          useLoginCb(data, goTo, areaCode, query, store, t);
+        } else {
+          const res = {
+            loginInfo: {
+              loginType: 9,
+              loginId: query.im,
+              loginPasswdToken: md5(query.imPassword),
+            },
+            clientLanguageType: language,
+            equipmentInformation: {
+              deviceBrand: 'web',
+              releaseVersion: '2.0.0',
+              devicePublicIp: returnCitySN.cip || '',
+            },
+          };
+          const data = await store.dispatch('postMsg', {
+            query: res,
+            cmd: 1005,
+            encryption: 'Aoelailiao.Login.LoginReq',
+          });
+          useLoginCb(data, goTo, areaCode, query, store, t);
+        }
+      } else {
+        return Toast(t(map[data.body.result]));
+      }
+    }
+  }
+);
+
 // 登录
 function useLogin(
   goTo: (e: string) => void,
@@ -299,27 +395,40 @@ function useLogin(
         setStorage('rememberPwd', undefined);
       }
 
-      // 密码登录
-      showLoading();
-      const res = {
-        loginInfo: {
+      // 先调用2181 请求授权
+      const authData = await store.dispatch('postMsg', {
+        query: {
+          account: '+' + areaCode.value + query.phone,
           loginType: 0,
-          loginId: '+' + areaCode.value + query.phone,
-          loginPasswdToken: md5(query.password),
+          password: md5(query.password),
         },
-        clientLanguageType: language,
-        equipmentInformation: {
-          deviceBrand: 'web',
-          releaseVersion: '2.0.0',
-          devicePublicIp: returnCitySN.cip || '',
-        },
-      };
-      const data = await store.dispatch('postMsg', {
-        query: res,
-        cmd: 1005,
-        encryption: 'Aoelailiao.Login.LoginReq',
+        cmd: 2181,
+        encryption: 'Aoelailiao.Login.BeforeLoginReq',
       });
-      useLoginCb(data, goTo, areaCode, query, store, t);
+      if (authData.body.resultCode !== 0)
+        return Toast(t(authData.body.resultString));
+
+      // 密码登录
+      // showLoading();
+      // const res = {
+      //   loginInfo: {
+      //     loginType: 0,
+      //     loginId: '+' + areaCode.value + query.phone,
+      //     loginPasswdToken: md5(query.password),
+      //   },
+      //   clientLanguageType: language,
+      //   equipmentInformation: {
+      //     deviceBrand: 'web',
+      //     releaseVersion: '2.0.0',
+      //     devicePublicIp: returnCitySN.cip || '',
+      //   },
+      // };
+      // const data = await store.dispatch('postMsg', {
+      //   query: res,
+      //   cmd: 1005,
+      //   encryption: 'Aoelailiao.Login.LoginReq',
+      // });
+      // useLoginCb(data, goTo, areaCode, query, store, t);
     } else if (btns.active === 2) {
       // 验证码登录
       if (!query.phone) {
@@ -329,28 +438,38 @@ function useLogin(
         return Toast(t('请输入验证码'));
       }
 
-      showLoading();
-
-      const res = {
-        loginInfo: {
+      // 先调用2181 请求授权
+      const authData = await store.dispatch('postMsg', {
+        query: {
+          account: '+' + areaCode.value + query.phone,
           loginType: 5,
-          loginId: '+' + areaCode.value + query.phone,
-          loginPasswdToken: query.verificationCode,
         },
-        clientLanguageType: language,
-        equipmentInformation: {
-          deviceBrand: 'web',
-          releaseVersion: '2.0.0',
-          devicePublicIp: returnCitySN.cip || '',
-        },
-      };
-
-      const data = await store.dispatch('postMsg', {
-        query: res,
-        cmd: 1005,
-        encryption: 'Aoelailiao.Login.LoginReq',
+        cmd: 2181,
+        encryption: 'Aoelailiao.Login.BeforeLoginReq',
       });
-      useLoginCb(data, goTo, areaCode, query, store, t);
+      if (authData.body.resultCode !== 0)
+        return Toast(t(authData.body.resultString));
+
+      // showLoading();
+      // const res = {
+      //   loginInfo: {
+      //     loginType: 5,
+      //     loginId: '+' + areaCode.value + query.phone,
+      //     loginPasswdToken: query.verificationCode,
+      //   },
+      //   clientLanguageType: language,
+      //   equipmentInformation: {
+      //     deviceBrand: 'web',
+      //     releaseVersion: '2.0.0',
+      //     devicePublicIp: returnCitySN.cip || '',
+      //   },
+      // };
+      // const data = await store.dispatch('postMsg', {
+      //   query: res,
+      //   cmd: 1005,
+      //   encryption: 'Aoelailiao.Login.LoginReq',
+      // });
+      // useLoginCb(data, goTo, areaCode, query, store, t);
     } else {
       // IM登录
       if (!query.im) {
@@ -369,28 +488,39 @@ function useLogin(
         setStorage('rememberPwd', undefined);
       }
 
-      showLoading();
-
-      const res = {
-        loginInfo: {
+      // 先调用2181 请求授权
+      const authData = await store.dispatch('postMsg', {
+        query: {
+          account: query.im,
           loginType: 9,
-          loginId: query.im,
-          loginPasswdToken: md5(query.imPassword),
+          password: md5(query.imPassword),
         },
-        clientLanguageType: language,
-        equipmentInformation: {
-          deviceBrand: 'web',
-          releaseVersion: '2.0.0',
-          devicePublicIp: returnCitySN.cip || '',
-        },
-      };
-
-      const data = await store.dispatch('postMsg', {
-        query: res,
-        cmd: 1005,
-        encryption: 'Aoelailiao.Login.LoginReq',
+        cmd: 2181,
+        encryption: 'Aoelailiao.Login.BeforeLoginReq',
       });
-      useLoginCb(data, goTo, areaCode, query, store, t);
+      if (authData.body.resultCode !== 0)
+        return Toast(t(authData.body.resultString));
+
+      // showLoading();
+      // const res = {
+      //   loginInfo: {
+      //     loginType: 9,
+      //     loginId: query.im,
+      //     loginPasswdToken: md5(query.imPassword),
+      //   },
+      //   clientLanguageType: language,
+      //   equipmentInformation: {
+      //     deviceBrand: 'web',
+      //     releaseVersion: '2.0.0',
+      //     devicePublicIp: returnCitySN.cip || '',
+      //   },
+      // };
+      // const data = await store.dispatch('postMsg', {
+      //   query: res,
+      //   cmd: 1005,
+      //   encryption: 'Aoelailiao.Login.LoginReq',
+      // });
+      // useLoginCb(data, goTo, areaCode, query, store, t);
     }
   };
 }

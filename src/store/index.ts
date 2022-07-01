@@ -601,6 +601,16 @@ function getMessage(cmd: any, encryption: any, state: any) {
           LogOutAns = protoRoot.lookup('Aoelailiao.Message.SessionSyncNotify');
         }
 
+        if (ansCmd === 2183) {
+          LogOutAns = protoRoot.lookup('Aoelailiao.Login.BeforeLoginNotify');
+        }
+
+        if (ansCmd === 2184) {
+          LogOutAns = protoRoot.lookup(
+            'Aoelailiao.Login.AskLoginApprovingNotify'
+          );
+        }
+
         const query = {
           length: dataview.getUint32(0),
           serviceId: dataview.getUint8(4),
@@ -685,7 +695,7 @@ function getMessage(cmd: any, encryption: any, state: any) {
 }
 
 function onMessage() {
-  const cmdList = [2129, 2004, 2125, 2148, 2024, 2156, 2162, 2170];
+  const cmdList = [2129, 2004, 2125, 2148, 2024, 2156, 2162, 2170, 2183, 2184];
   ws.onmessage = (evt: any) => {
     if (sotreRoot.state.isOnLine) {
       sotreRoot.commit('SET_ISONLINE', false);

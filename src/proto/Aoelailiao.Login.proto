@@ -1038,3 +1038,65 @@ message UserShortLinkConvertAns
     optional string link_url = 3;
     optional bytes attach_data = 32;
 }
+
+// cid 2181
+// 处理授权请求
+// 当用户登录时, 会向已登录会话请求登录授权
+message BeforeLoginReq
+{
+    optional string account = 1;                             // 登录账号(手机/imaccount)
+    optional EquipmentInformation equipment_information = 3; // 当前设备信息
+
+    // 0--手机号,1--微信,2--QQ,3--微博,4--微信小程序,5--短信验证码登录,6--支付宝登录,7--验证码注册,8--token登录,9--imaccount/密码登录
+    optional uint32 login_type = 5;
+    optional uint32 loginNewType = 6; // (与ios测试时使用)
+    optional string password = 7;     // 密码
+}
+
+// cid 2182
+// 处理授权请求服务器处理结果
+message BeforeLoginAns
+{
+    optional uint32 result_code = 1;   // 错误码
+    optional string result_string = 2; // 错误描述
+}
+
+// cid 2183
+// 登录前处理结果推送
+message BeforeLoginNotify
+{
+    // 0 允许登录,
+    // 1 拒绝登录,
+    // 2 超时,
+    // 3 出现错误,
+    // 4 需要短信验证
+    // 5 需要等待审核 (如果收到这个推送, 需要等待下一个推送返回最终结果)
+    // 6 无需审核, 直接登录
+    optional uint32 result = 1; // 判断结果
+}
+
+// cid CID_ASK_LOGIN_APPROVING_NOTIFY             CID = 2184 // (2)
+// 用户的其它已登录设备接收到此推送通知：
+//    用户在另一设备上发出了登录请求，但是该请求需要被许可
+message AskLoginApprovingNotify
+{
+    optional string account = 1;                             // 登录账号(手机/imaccount)
+    optional EquipmentInformation equipment_information = 3; // 当前设备信息
+
+    // 0--手机号,1--微信,2--QQ,3--微博,4--微信小程序,5--短信验证码登录,6--支付宝登录,7--验证码注册,8--token登录,9--imaccount/密码登录
+    optional uint32 login_type = 5;
+}
+
+// cid:   CID_FEEDBACK_LOGIN_APPROVED_REQ         CID = 2185 // (3)
+message FeedbackLoginApproveReq
+{
+    // 0 - Approved, 1 - Rejected
+    optional uint32 state = 1;
+}
+
+// cid:   CID_FEEDBACK_LOGIN_APPROVED_ANS         CID = 2186 // (3)
+message FeedbackLoginApprovedAns
+{
+    optional uint32 result_code = 1;   // 错误码
+    optional string result_string = 2; // 错误描述
+}
