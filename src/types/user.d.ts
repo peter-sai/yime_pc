@@ -19,6 +19,12 @@ export interface IUserInfo {
   isBotUser: number; //是否为机器人,默认为0表示真实用户，1表示为机器人，机器人用户不会收到消息推送
 }
 
+declare global {
+  interface Window {
+    uuid: string;
+  }
+}
+
 export interface IUserDetailInfo {
   userInfo: IUserInfo;
   isFriend: number;

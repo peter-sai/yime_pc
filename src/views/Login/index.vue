@@ -312,6 +312,7 @@ watch(
               deviceBrand: 'web',
               releaseVersion: '2.0.0',
               devicePublicIp: returnCitySN.cip || '',
+              deviceUuid: window.uuid,
             },
           };
           const data = await store.dispatch('postMsg', {
@@ -332,6 +333,7 @@ watch(
               deviceBrand: 'web',
               releaseVersion: '2.0.0',
               devicePublicIp: returnCitySN.cip || '',
+              deviceUuid: window.uuid,
             },
           };
           const data = await store.dispatch('postMsg', {
@@ -352,6 +354,7 @@ watch(
               deviceBrand: 'web',
               releaseVersion: '2.0.0',
               devicePublicIp: returnCitySN.cip || '',
+              deviceUuid: window.uuid,
             },
           };
           const data = await store.dispatch('postMsg', {
@@ -405,6 +408,9 @@ function useLogin(
           password: md5(query.password),
           equipmentInformation: {
             deviceBrand: 'web',
+            releaseVersion: '2.0.0',
+            devicePublicIp: returnCitySN.cip || '',
+            deviceUuid: window.uuid,
           },
         },
         cmd: 2181,
@@ -450,6 +456,9 @@ function useLogin(
           loginType: 5,
           equipmentInformation: {
             deviceBrand: 'web',
+            releaseVersion: '2.0.0',
+            devicePublicIp: returnCitySN.cip || '',
+            deviceUuid: window.uuid,
           },
         },
         cmd: 2181,
@@ -504,6 +513,9 @@ function useLogin(
           password: md5(query.imPassword),
           equipmentInformation: {
             deviceBrand: 'web',
+            releaseVersion: '2.0.0',
+            devicePublicIp: returnCitySN.cip || '',
+            deviceUuid: window.uuid,
           },
         },
         cmd: 2181,
