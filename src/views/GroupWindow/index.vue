@@ -119,6 +119,7 @@
             :yUserInfo="userInfo"
             @toggleBox="toggleBox"
             @changeTag="changeTag"
+            @blackListToast="blackListToast"
             :title="groupDetailInfo.groupName"
           />
         </div>
@@ -209,10 +210,11 @@ import AddGroupType from '../Layout/GroupChat/addGroupType.vue';
 import AddGroupMembers from '../Layout/GroupChat/addGroupMembers.vue';
 import Bottom from '../Layout/bottom.vue';
 import { Etag } from '../Layout/index.vue';
-import { useEnter, useCbImg, useSendImg } from '@/hooks/window';
+import { useEnter, useCbImg, useSendImg, useToggleFriend } from '@/hooks/window';
 import { useI18n } from 'vue-i18n';
 import { ImsgItem } from '@/types/msg';
 import { Toast } from '@/plugin/Toast';
+import { Dialog } from '@/plugin/Dialog';
 export default defineComponent({
   name: 'groupWindow',
 });
@@ -260,6 +262,21 @@ async function getGroupInfo(store: Store<initStore>) {
     msgItem.value.groupDetailInfo = data.body.groupDetailInfo;
     store.commit('SET_MSGLISTITEM', { res: msgItem.value, uid: activeUid });
   }
+}
+
+const blackListToast = ({store, t, yUserInfo, title}:{
+  store:Store<initStore>, 
+  t: { (key: string | number): string },
+  yUserInfo: IUserInfo, 
+  title: string}
+) => {
+  Dialog({
+    title,
+    btnClass: ['red'],
+    callBack: async () => {
+      await useToggleFriend(store, t, yUserInfo, true)(false);
+    }
+  });
 }
 </script>
 <script setup lang="ts">

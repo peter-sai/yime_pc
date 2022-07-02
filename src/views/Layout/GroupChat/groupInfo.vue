@@ -429,12 +429,25 @@ const beforeMsgNotdisturb = useBeforeSwitch(store, 1005, t, true);
 // 置顶
 const beforeTop = useBeforeSwitch(store, 1004, t);
 
-const userClick = (uid: number) => {
+const userClick = async (uid: number) => {
   if (uid === store.state.userInfo.uid) return;
 
   if (props.groupDetailInfo?.groupAttachInfo?.groupMemberSplit) {
     return Toast('群员不能互相访问详情，请咨询管理员');
   }
+
+  const data = await store.dispatch('postMsg', {
+    query: {
+      uid,
+    },
+    cmd: 1011,
+    encryption: 'Aoelailiao.Login.ClientGetUserInfoReq',
+    auth: true,
+  });
+  if(!data.body.userDetailInfo.isFriend && data.body.userDetailInfo.userInfo.imAccount == ' '){
+    return Toast(t('用户已注销'));
+  }
+
   emit('updateUser', uid);
   emit('changeTag', Etag.UserInfo);
 };
