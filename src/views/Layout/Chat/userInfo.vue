@@ -18,7 +18,12 @@
         <div class="right">
           <div class="userName">
             <span>{{ remarkName || yUserInfo?.nickname }}</span>
-            <img src="../../../assets/img/edit.svg" alt="" v-if="yUserInfo.imAccount != ' ' && yUserInfo.icon != ' '" @click="$emit('changeTag', Etag.SetRemarkName)" />
+            <img
+              src="../../../assets/img/edit.svg"
+              alt=""
+              v-if="yUserInfo.imAccount != ' ' && yUserInfo.icon != ' '"
+              @click="$emit('changeTag', Etag.SetRemarkName)"
+            />
           </div>
           <div class="phone">
             <Iconfont name="iconshoujihaoma" size="10" color="#929292" />
@@ -267,10 +272,15 @@ function useBeforeSwitch(
       } else {
         reject();
       }
-      if(data.body.resultCode == 1535){
-        throw emit('blackListToast', {store, t, yUserInfo, title: t('该用户已注销,是否将其移除好友列表,并清空聊天会话?')})
+      if (data.body.resultCode == 1535) {
+        throw emit('blackListToast', {
+          store,
+          t,
+          yUserInfo,
+          title: t('该用户已注销,是否将其移除好友列表,并清空聊天会话?'),
+        });
       }
-      
+
       Toast(t(data.body.resultString));
     });
   };
@@ -362,9 +372,14 @@ export function useBeforeBlacklist(
       encryption: 'Aoelailiao.Login.UserOperateBlackListReq',
       auth: true,
     });
-    
-    if(data.body.resultCode == 1535){
-      throw emit('blackListToast', {store, t, yUserInfo, title: t('该用户已注销,是否将其移除好友列表,并清空聊天会话?')})
+
+    if (data.body.resultCode == 1535) {
+      throw emit('blackListToast', {
+        store,
+        t,
+        yUserInfo,
+        title: t('该用户已注销,是否将其移除好友列表,并清空聊天会话?'),
+      });
     }
 
     store.state.msgList[yUserInfo.uid].userDetailInfo.isInMyBlacklist = e
@@ -394,8 +409,10 @@ const { t } = useI18n();
 const onLineStatus: Ref<IUserInfo> = ref({}) as Ref<IUserInfo>;
 
 const remarkName = computed(() => {
-  const data:any = store.state.contact.find((item:any) => item.uid == store.state.activeUid)
-  return  data ? data.userAttachInfo.remarkName : ''
+  const data: any = store.state.contact.find(
+    (item: any) => item.uid == store.state.activeUid
+  );
+  return data ? data.userAttachInfo.remarkName : '';
 });
 // 添加好友和删除好友
 const toggleFriend = useToggleFriend(store, t, props.yUserInfo);
@@ -411,10 +428,22 @@ const beforeMsgNotdisturb = useBeforeSwitch(
 );
 
 // @我时显示通知
-const beforeMsgAtNotify = useBeforeSwitch(store, emit, 2108, t, props.yUserInfo);
+const beforeMsgAtNotify = useBeforeSwitch(
+  store,
+  emit,
+  2108,
+  t,
+  props.yUserInfo
+);
 
 // 截屏通知
-const beforeCaptureNotifica = useBeforeSwitch(store, emit, 1003, t, props.yUserInfo);
+const beforeCaptureNotifica = useBeforeSwitch(
+  store,
+  emit,
+  1003,
+  t,
+  props.yUserInfo
+);
 
 // 置顶
 const beforeTop = useBeforeSwitch(store, emit, 1004, t, props.yUserInfo);
@@ -436,9 +465,14 @@ const clientCleanMsg = () => {
         encryption: 'Aoelailiao.Message.ClientCleanMsgReq',
         auth: true,
       });
-      if(data.body.resultCode == 1535){
-        hidePush()
-        throw emit('blackListToast', {store, t, yUserInfo: {uid:props.yUserInfo.uid}, title: t('该用户已注销,是否将其移除好友列表,并清空聊天会话?')})
+      if (data.body.resultCode == 1535) {
+        hidePush();
+        throw emit('blackListToast', {
+          store,
+          t,
+          yUserInfo: { uid: props.yUserInfo.uid },
+          title: t('该用户已注销,是否将其移除好友列表,并清空聊天会话?'),
+        });
       }
       Toast(t(data.body.resultString));
     },
@@ -539,7 +573,7 @@ getOnLineStatus();
           margin-right: 8px;
           font-size: 14px;
         }
-        img{
+        img {
           cursor: pointer;
         }
       }

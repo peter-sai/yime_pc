@@ -12,7 +12,12 @@ import {
   IVideoCallMsgInfo,
   TMsgContent,
 } from '@/types/msg';
-import { IGroupInfo, IUserDetailInfo, IUserInfo, IContacts } from '@/types/user';
+import {
+  IGroupInfo,
+  IUserDetailInfo,
+  IUserInfo,
+  IContacts,
+} from '@/types/user';
 import { IGroupListItem } from '@/types/group';
 import { getToken as getUserToken, getTag } from '@/utils/utils';
 import { getOssInfo, getToken, upload } from '../api';
@@ -159,7 +164,7 @@ const useEnter = (
   search: Ref<string>,
   isGroupMsg = 0,
   t: { (key: string | number): string },
-  callBack?: (uid: number, body:any)=> void
+  callBack?: (uid: number, body: any) => void
 ) => {
   const urlP =
     // eslint-disable-next-line no-useless-escape
@@ -286,7 +291,7 @@ const useEnter = (
       auth: true,
     });
 
-    callBack && callBack(Number(store.state.activeUid), data.body)
+    callBack && callBack(Number(store.state.activeUid), data.body);
     if (data.body.resultCode === 0) {
       search.value = '';
       reset(store);
@@ -469,7 +474,7 @@ const useCbImg = (
   accept: Ref<string>,
   t: { (key: string | number): string },
   isGroupMsg = 0,
-  callBack?: (uid: number, body:any)=> void
+  callBack?: (uid: number, body: any) => void
 ) => {
   return async (e: any, uid?: number) => {
     if (!e.target.files || !e.target.files.length) return;
@@ -496,7 +501,7 @@ async function sendImgInfo(
   t: { (key: string | number): string },
   isGroupMsg: number,
   uid?: number,
-  callBack?: (uid: number, body:any)=> void
+  callBack?: (uid: number, body: any) => void
 ) {
   try {
     ////  开始上传图片 ///
@@ -602,8 +607,8 @@ async function sendImgInfo(
       encryption: 'Aoelailiao.Message.ClientSendMsgToServerReq',
       auth: true,
     });
-    callBack && callBack(Number(uid || store.state.activeUid), data.body)
-    if(data.body.resultCode != 1535){
+    callBack && callBack(Number(uid || store.state.activeUid), data.body);
+    if (data.body.resultCode != 1535) {
       if (data.body.resultCode !== 0) {
         Toast(t(data.body.resultString));
       } else {
@@ -1065,12 +1070,12 @@ function useToggleFriend(
       encryption: 'Aoelailiao.Login.UserOperateFriendShipReq',
       auth: true,
     });
-    
+
     return new Promise((resovle, reject) => {
       if (data.body.resultCode === 0) {
         resovle(true);
-        if(isDel){
-          useDelUser(store, {id:yUserInfo.uid, isGroup: 0})
+        if (isDel) {
+          useDelUser(store, { id: yUserInfo.uid, isGroup: 0 });
           store.commit('DEL_MSGITEM', yUserInfo.uid);
         }
         upDateContact(store, e);
@@ -1166,7 +1171,6 @@ async function downloadFile(file: { url: string; name: string }) {
   saveAs(blob, file.name);
 }
 
-
 // 删除/添加好友后更新联系人列表
 async function upDateContact(store: Store<initStore>, val: boolean) {
   const userInfo = store.state.userInfo;
@@ -1204,7 +1208,10 @@ async function upDateContact(store: Store<initStore>, val: boolean) {
   store.commit('SET_CONTACT', list);
 }
 
-function useDelUser(store: Store<initStore>, item: {id: number, isGroup: number}){
+function useDelUser(
+  store: Store<initStore>,
+  item: { id: number; isGroup: number }
+) {
   if (store.state.msgList[item.id]) {
     /*
       1、所有未读消息设为已读
@@ -1248,7 +1255,6 @@ function useDelUser(store: Store<initStore>, item: {id: number, isGroup: number}
   }
 }
 
-
 export {
   useUserOperateGroupInfo,
   useBeforeSwitch,
@@ -1271,5 +1277,5 @@ export {
   getRoam,
   downloadFile,
   useToggleFriend,
-  useDelUser
+  useDelUser,
 };
