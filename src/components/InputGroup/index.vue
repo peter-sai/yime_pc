@@ -11,6 +11,7 @@
       :type="type"
       :placeholder="placeholder"
       :value="modelValue"
+      :autocomplete="autocomplete? 'on': 'new-password'"
       @input="$emit('update:modelValue', $event.target?.value)"
     />
     <div class="btn" @click="$emit('onGetCode')"><slot name="getCode" /></div>
@@ -46,6 +47,10 @@ defineProps({
     type: String,
     default: 'text',
   },
+  autocomplete: {
+    type: Boolean,
+    default: true,
+  }
 });
 const inputBlur = () => {
   active.value = false;
