@@ -1065,7 +1065,7 @@ function useToggleFriend(
       encryption: 'Aoelailiao.Login.UserOperateFriendShipReq',
       auth: true,
     });
-    
+  
     return new Promise((resovle, reject) => {
       if (data.body.resultCode === 0) {
         resovle(true);
@@ -1175,6 +1175,7 @@ async function upDateContact(store: Store<initStore>, val: boolean) {
 
   if (item) {
     item.userDetailInfo.isFriend = val ? 1 : 0;
+    val || (item.userDetailInfo.userInfo.userAttachInfo.remarkName = '');
     store.commit('SET_MSGLISTITEM', { res: item, uid: store.state.activeUid });
   }
   let list: IContacts[] = [];
