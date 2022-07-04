@@ -256,6 +256,9 @@ import Electron from 'Electron';
 import moment from 'moment'
 const store = useStore(key);
 store.dispatch('init');
+Electron.ipcRenderer.on('sendUuid', (event, params) => {
+  window.uuid = params.uuid
+})
 Electron.ipcRenderer.on('awaken', (event, params) => {
   console.log(params);
 

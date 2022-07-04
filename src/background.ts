@@ -4,6 +4,7 @@ import { app, protocol, BrowserWindow, shell } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer';
 import config from './config';
+const { machineIdSync } = require('node-machine-id');
 const os = require('os');
 const fs = require('fs');
 const path = require('path');
@@ -44,6 +45,7 @@ async function createWindow() {
     win.loadURL('app://./index.html');
   }
 
+  win.webContents.send('sendUuid', { uuid: machineIdSync() });
   const gotTheLock = app.requestSingleInstanceLock();
 
   if (!gotTheLock) {
