@@ -5,7 +5,7 @@
       :icon="yUserInfo?.icon"
       :isBotUser="isBotUser"
       @queryClick="toggleSearch = !toggleSearch"
-      :title="remarkName? remarkName: yUserInfo.nickname"
+      :title="remarkName ? remarkName : yUserInfo.nickname"
       :subTitle="
         writeState
           ? t('正在输入内容')
@@ -133,7 +133,11 @@
       <!-- 设置背景 -->
       <transition name="fade-transform1" mode="out-in">
         <div v-if="showBox && tag === Etag.SetBackground" class="boxContent">
-          <SetBackground @toggleBox="toggleBox" @changeTag="changeTag" @blackListToast="blackListToast" />
+          <SetBackground
+            @toggleBox="toggleBox"
+            @changeTag="changeTag"
+            @blackListToast="blackListToast"
+          />
         </div>
       </transition>
       <!-- 设置备注 -->
@@ -174,7 +178,12 @@ import SetRemarkName from '../Layout/Chat/SetRemarkName.vue';
 import CloudFile from '../Layout/Chat/cloudFile.vue';
 import CommonGroup from '../Layout/Chat/commonGroup.vue';
 import Recommend from '../Layout/Chat/recommend.vue';
-import { useEnter, useCbImg, useSendImg, useToggleFriend } from '@/hooks/window';
+import {
+  useEnter,
+  useCbImg,
+  useSendImg,
+  useToggleFriend,
+} from '@/hooks/window';
 import GroupInfo from '../Layout/GroupChat/groupInfo.vue';
 import ChatHeader from './header.vue';
 import Bottom from '../Layout/bottom.vue';
@@ -275,8 +284,10 @@ const onlineInfo: Ref<IUserInfo> = ref({}) as Ref<IUserInfo>;
 const files = ref('');
 const bg = computed(() => store.state.chatbg);
 const remarkName = computed(() => {
-  const data:any = store.state.contact.find((item:any) => item.uid == store.state.activeUid)
-  return  data ? data.userAttachInfo.remarkName : ''
+  const data: any = store.state.contact.find(
+    (item: any) => item.uid == store.state.activeUid
+  );
+  return data ? data.userAttachInfo.remarkName : '';
 });
 
 const groupDetailInfo: ComputedRef<IGroupInfo> = computed(
@@ -412,21 +423,26 @@ const isShow = ref(false);
 init(store, userDetailInfo, isBotUser, yUserInfo, onlineInfo, isShow);
 
 const cbImg = useCbImg(store, accept, t, 0, async (uid, body) => {
-  console.log(body)
-  if(body.resultCode == 1535){
-    blackListToast({store, t, yUserInfo:{ uid }, title: t('该用户已注销,是否将其移除好友列表,并清空聊天会话?')})  
+  console.log(body);
+  if (body.resultCode == 1535) {
+    blackListToast({
+      store,
+      t,
+      yUserInfo: { uid },
+      title: t('该用户已注销,是否将其移除好友列表,并清空聊天会话?'),
+    });
   }
 });
 
-const blackListToast = ({store, t, yUserInfo, title, content}:any) => {
+const blackListToast = ({ store, t, yUserInfo, title, content }: any) => {
   Dialog({
     title,
     btnClass: ['red'],
     callBack: async () => {
       await useToggleFriend(store, t, yUserInfo, true)(false);
-    }
+    },
   });
-}
+};
 
 onMounted(async () => {
   store.commit('SET_CHATBG', '');
@@ -443,9 +459,14 @@ onBeforeUnmount(() => {
 
 // 发送消息
 const enter = useEnter(store, inputVal, 0, t, async (uid, body) => {
-  console.log(body)
-  if(body.resultCode == 1535){
-    blackListToast({store, t, yUserInfo:{ uid }, title: t('该用户已注销,是否将其移除好友列表,并清空聊天会话?')})  
+  console.log(body);
+  if (body.resultCode == 1535) {
+    blackListToast({
+      store,
+      t,
+      yUserInfo: { uid },
+      title: t('该用户已注销,是否将其移除好友列表,并清空聊天会话?'),
+    });
   }
 });
 // 发送图片

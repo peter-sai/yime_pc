@@ -15,11 +15,13 @@
         <InputGroup
           type="text"
           :placeholder="t('请输入昵称')"
+          :autocomplete="false"
           v-model="query.nickname"
         ></InputGroup>
         <InputGroup
           type="password"
           :placeholder="t('请输入6-15位新密码')"
+          :autocomplete="false"
           v-model="query.password"
         ></InputGroup>
         <InputGroup

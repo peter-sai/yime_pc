@@ -1,5 +1,26 @@
 <template>
-  <router-view />
+  <div>
+    <router-view />
+    <Teleport to="body" v-if="authInfo.isShow">
+      <div class="verificationBox">
+        <div class="verification">
+          <i class="close"></i>
+          <div class="title">{{t('安全验证')}}</div>
+          <div class="content">
+            <div class="time">{{ moment(authInfo.time).format('YYYY-MM-DD HH:mm') }}</div>
+            <div class="info">
+              {{t('您的账号在<spile>上发起登录申请，是否确认登录？'.replace('<spile>',authInfo.deviceBrand))}}
+            </div>
+            <div class="subInfo">{{t('如非本人操作，请尽快更改密码')}}</div>
+          </div>
+          <div class="btn">
+            <div @click="auth(0)">{{t('确认登录')}}</div>
+            <div @click="auth(1)">{{t('撤销操作')}}</div>
+          </div>
+        </div>
+      </div>
+    </Teleport>
+  </div>
 </template>
 
 <script lang="ts">
@@ -44,6 +65,7 @@ import { useI18n } from 'vue-i18n';
 import { hideLoading } from './plugin/Loading';
 import { yimechat } from './api';
 import config from './config';
+import { Toast } from './plugin/Toast';
 
 export async function initRonyun(store: Store<initStore>) {
   // IM 客户端初始化
@@ -231,6 +253,7 @@ export function reconnect(store: Store<initStore>) {
 </script>
 <script lang="ts" setup>
 import Electron from 'Electron';
+import moment from 'moment'
 const store = useStore(key);
 store.dispatch('init');
 Electron.ipcRenderer.on('awaken', (event, params) => {
@@ -328,9 +351,33 @@ const clientSendMsgAckToServer = (msgInfos: IMsgInfo<string>[]) => {
   }
 };
 
+const authInfo = reactive({
+  deviceBrand: '',
+  isShow: false,
+  time: 0,
+});
+
+// 验证登录 (是否允许其他端登录)
+const auth = async (state: 0 | 1) => {
+  const res = await store.dispatch('postMsg', {
+    query: { state },
+    cmd: 2185,
+    encryption: 'Aoelailiao.Login.FeedbackLoginApproveReq',
+    auth: true,
+  });
+  authInfo.isShow = false
+  return Toast(t(res.body.resultString));
+};
 const stop = watch(
   computed(() => store.state.msgInfo),
   async (data: any) => {
+    if (data.cmd === 2184) {
+      // 验证其他端登录
+      // data.body
+      authInfo.deviceBrand = data.body.equipmentInformation.deviceBrand;
+      authInfo.isShow = true;
+      authInfo.time = Date.now();
+    }
     if (data.cmd == 2170) {
       if (!data.body.isGroupMsg && data.body.objectId) {
         const res = {
@@ -654,10 +701,120 @@ Electron.ipcRenderer.on('close', () => {
   console.log(11);
 });
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+.verificationBox {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 9999;
+  background: #000000;
+  opacity: 0.76;
+  .verification {
+    width: 310px;
+    height: 256px;
+    background: #ffffff;
+    box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+    position: absolute;
+    left: 50%;
+    right: 50%;
+    top: 50%;
+    bottom: 50%;
+    transform: translate(-50%, -50%);
+    .close {
+      position: absolute;
+      cursor: pointer;
+      right: 20px;
+      top: 20px;
+      width: 10px;
+      height: 10px;
+      &::after {
+        display: block;
+        position: absolute;
+        content: '';
+        width: 100%;
+        height: 2px;
+        left: 50%;
+        top: 50%;
+        background: #000000;
+        transform: translate(-50%, -50%) rotate(45deg);
+      }
+      &::before {
+        display: block;
+        position: absolute;
+        content: '';
+        width: 100%;
+        height: 2px;
+        left: 50%;
+        top: 50%;
+        background: #000000;
+        transform: translate(-50%, -50%) rotate(-45deg);
+      }
+    }
+    .title {
+      font-size: 16px;
+      font-weight: 500;
+      color: rgba(0, 0, 0, 0.85);
+      text-align: center;
+      margin-top: 32px;
+    }
+    .content {
+      margin: 15px 0 20px;
+      padding: 0 16px;
+      .time {
+        font-size: 14px;
+        font-weight: 400;
+        color: #666666;
+        line-height: 22px;
+      }
+      .info {
+        font-size: 14px;
+        font-weight: 400;
+        color: #666666;
+        line-height: 22px;
+        margin: 5px 0 10px;
+      }
+      .subInfo {
+        font-size: 12px;
+        font-weight: 400;
+        color: #fa5151;
+        line-height: 22px;
+      }
+    }
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+      div {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        justify-content: center;
+        width: 96px;
+        height: 32px;
+        background: #0085ff;
+        font-size: 14px;
+        font-family: PingFangSC-Regular, PingFang SC;
+        font-weight: 400;
+        color: #ffffff;
+        line-height: 22px;
+        text-align: center;
+        border-radius: 3px;
+        overflow: hidden;
+        &:last-child {
+          background: transparent;
+          color: #666666;
+          border: 1px solid #dddddd;
+        }
+      }
+    }
+  }
 }
 </style>

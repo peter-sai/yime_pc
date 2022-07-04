@@ -1267,7 +1267,7 @@ const mouseout = (item: {
     min-height: 50px;
     padding: 10px 20px;
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     justify-content: space-between;
     background: #fff;
     box-sizing: border-box;
@@ -1496,7 +1496,7 @@ const mouseout = (item: {
 }
 .itemLeft {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   flex: 1;
   position: relative;
   .iconfont {
