@@ -259,9 +259,8 @@ store.dispatch('init');
 Electron.ipcRenderer.on('sendUuid', (event, params) => {
   window.uuid = params.uuid
 })
+Electron.ipcRenderer.send('getUUid');
 Electron.ipcRenderer.on('awaken', (event, params) => {
-  console.log(params);
-
   if (params.awakenArgs.indexOf('gid') !== -1) {
     const url = params.awakenArgs.split('=');
     if (url[1]) {

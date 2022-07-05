@@ -536,6 +536,7 @@ function useLogin(
       //     deviceBrand: 'web',
       //     releaseVersion: '2.0.0',
       //     devicePublicIp: returnCitySN.cip || '',
+      //     deviceUuid: window.uuid,
       //   },
       // };
       // const data = await store.dispatch('postMsg', {

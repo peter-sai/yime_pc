@@ -45,7 +45,6 @@ async function createWindow() {
     win.loadURL('app://./index.html');
   }
 
-  win.webContents.send('sendUuid', { uuid: machineIdSync() });
   const gotTheLock = app.requestSingleInstanceLock();
 
   if (!gotTheLock) {
@@ -84,6 +83,11 @@ async function createWindow() {
     if (data) {
       win.show();
     }
+  });
+
+  // active 程序
+  ipcMain.on('getUUid', (event) => {
+    win.webContents.send('sendUuid', { uuid: machineIdSync() });
   });
 
   // 设置通知标题
