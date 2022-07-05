@@ -1,5 +1,12 @@
 <template>
-  <div class="groupAudio">
+  <div class="mideaMini" v-if="isMideaMini" @click="fullScroll">
+    <div class="mideaContent">
+      <img v-if="mediaType === 2" src="../../assets/img/video3.svg" alt="" />
+      <img v-else src="../../assets/img/vioce3.svg" alt="" />
+      <span>{{ info }}</span>
+    </div>
+  </div>
+  <div v-else class="groupAudio" id="groupVideoBox">
     <div id="videoBox">
       <div
         id="yVideoGroup"
@@ -7,7 +14,12 @@
       ></div>
     </div>
     <div class="miniSize">
-      <Iconfont name="iconnarrow_icon" size="20" color="#fff" />
+      <Iconfont
+        name="iconnarrow_icon"
+        size="20"
+        color="#fff"
+        @click="fullScroll"
+      />
     </div>
     <div class="call">
       <div class="img" v-if="!conversationIng && mediaType === 2">
@@ -316,6 +328,19 @@ const isMute = ref(false);
 const isAnswer = ref(false);
 const sessionRoot = ref({}) as Ref<RCCallSession>;
 
+const isMideaMini = ref(false);
+watch(isMideaMini, (res) => {
+  if (!res) {
+    nextTick(() => {
+      draggableFun();
+    });
+  }
+});
+//缩放
+const fullScroll = () => {
+  isMideaMini.value = !isMideaMini.value;
+};
+
 // 关闭弹框
 const close = () => {
   props.destroy && props.destroy();
@@ -550,6 +575,7 @@ onMounted(async () => {
       },
     });
   }
+  draggableFun();
 });
 
 const videoCallActionUploadReq = async (
@@ -568,6 +594,33 @@ const videoCallActionUploadReq = async (
     encryption: 'Aoelailiao.Message.GroupVideoCallActionUploadReq',
     auth: true,
   });
+};
+
+// 鼠标拖拽事件
+const draggableFun = () => {
+  let div: any = document.getElementById('groupVideoBox');
+  let dragFlag = false;
+  let x: any, y: any;
+
+  div.onmousedown = function (e: any) {
+    dragFlag = true;
+    e = e || window.event;
+    // 获取鼠标在元素上的位置（鼠标按下时在元素上得位置）
+    x = e.clientX - div.offsetLeft;
+    y = e.clientY - div.offsetTop;
+  };
+
+  div.onmousemove = function (e: any) {
+    if (dragFlag) {
+      e = e || window.event;
+      div.style.left = e.clientX - x + 'px';
+      div.style.top = e.clientY - y + 'px';
+    }
+  };
+  // 鼠标抬起事件
+  div.onmouseup = function () {
+    dragFlag = false;
+  };
 };
 
 onUnmounted(() => {
@@ -691,6 +744,37 @@ watch(
         bottom: 100%;
         right: 0;
       }
+    }
+  }
+}
+.mideaMini {
+  width: 81px;
+  height: 82px;
+  background: #f7f7f7;
+  border-radius: 14px 0px 0px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: fixed;
+  right: 8px;
+  top: 35%;
+  .mideaContent {
+    width: 61px;
+    height: 61px;
+    background: #ffffff;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    img {
+      margin: 12px auto 6px auto;
+    }
+    span {
+      font-size: 12px;
+      font-family: Helvetica;
+      color: #0085ff;
+      line-height: 17px;
     }
   }
 }

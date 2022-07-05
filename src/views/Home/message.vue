@@ -25,7 +25,10 @@
               <span v-if="item.isGroup">
                 {{ item.groupDetailInfo?.groupName }}
               </span>
-              <span v-else>{{ item.userDetailInfo?.userInfo?.userAttachInfo?.remarkName || item.userDetailInfo?.userInfo?.nickname }}</span>
+              <span v-else>{{
+                item.userDetailInfo?.userInfo?.userAttachInfo?.remarkName ||
+                item.userDetailInfo?.userInfo?.nickname
+              }}</span>
               <Iconfont
                 v-if="
                   item.isGroup
@@ -150,8 +153,14 @@
             </div>
           </template>
           <!-- <template v-slot:time>{{ formateTime(item.updateTime) }}</template> -->
-          <template v-slot:num v-if="item.unRead">
-            <Badge :num="Number(item.unRead)" />
+          <template v-slot:num v-if="item.unReadNum">
+            <Badge :num="Number(item.unReadNum)" />
+          </template>
+          <template v-slot:num v-else-if="item.unRead">
+            <Badge
+              :num="0"
+              :hover="item.msgClassId === store.state.activeUid"
+            />
           </template>
         </TableDouble>
         <!-- 反馈 -->
@@ -175,7 +184,7 @@
 
     <div class="box" v-if="showMenu" :style="style">
       <div
-        v-if="rightClickItem.isGroup"
+        v-if="rightClickItem.isGroup && !rightClickItem.msgClassId"
         class="rightClickItem"
         @click="
           groupBeforeTop(
@@ -192,7 +201,7 @@
         }}</span>
       </div>
       <div
-        v-else
+        v-else-if="!rightClickItem.msgClassId"
         class="rightClickItem"
         @click="
           userBeforeTop(
@@ -222,7 +231,7 @@
       </div>
       <div
         class="rightClickItem"
-        v-if="rightClickItem.isGroup"
+        v-if="rightClickItem.isGroup && !rightClickItem.msgClassId"
         @click="
           beforeMsgNotdisturb(
             rightClickItem.groupDetailInfo?.groupAttachInfo?.groupMsgMute,
@@ -240,7 +249,7 @@
       </div>
       <div
         class="rightClickItem"
-        v-else
+        v-else-if="!rightClickItem.msgClassId"
         @click="
           beforeMsgNotdisturb(
             rightClickItem.userDetailInfo?.userInfo?.userAttachInfo?.msgMute,
@@ -257,17 +266,25 @@
       </div>
       <div
         class="rightClickItem"
-        v-if="rightClickItem.isGroup"
+        v-if="rightClickItem.isGroup && !rightClickItem.msgClassId"
         @click="quitGroupChat(rightClickItem)"
       >
         <Iconfont name="icontuichu" size="15" />
         <span>{{ t('退出群聊') }}</span>
       </div>
-      <div class="rightClickItem" @click="hide(rightClickItem)">
+      <div
+        class="rightClickItem"
+        v-if="!rightClickItem.msgClassId"
+        @click="hide(rightClickItem)"
+      >
         <Iconfont name="iconyincangbukejian" size="15" />
         <span>{{ t('隐藏') }}</span>
       </div>
-      <div class="rightClickItem" @click="del(rightClickItem)">
+      <div
+        class="rightClickItem"
+        v-if="!rightClickItem.msgClassId"
+        @click="del(rightClickItem)"
+      >
         <Iconfont name="icondelete" size="12" />
         <span>{{ t('删除') }}</span>
       </div>
@@ -311,7 +328,7 @@ import {
   useClientSendMsgAckToServer,
   useUserOperateGroupInfo,
   useToggleFriend,
-  useDelUser
+  useDelUser,
 } from '@/hooks/window';
 import { hideLoading, showLoading } from '@/plugin/Loading';
 import { Toast } from '@/plugin/Toast';
@@ -350,8 +367,13 @@ function useBeforeSwitchChat(
       auth: true,
     });
 
-    if(data.body.resultCode == 1535){
-      throw blackListToast({store, t, yUserInfo:{ uid: item.id }, title: t('该用户已注销,是否将其移除好友列表,并清空聊天会话?')})  
+    if (data.body.resultCode == 1535) {
+      throw blackListToast({
+        store,
+        t,
+        yUserInfo: { uid: item.id },
+        title: t('该用户已注销,是否将其移除好友列表,并清空聊天会话?'),
+      });
     }
 
     hideLoading();
@@ -392,15 +414,15 @@ async function userGetSystemNotice(store: Store<initStore>) {
   return data.body?.classMsgInfo.filter((e: any) => e.msgClassHaveNewMsg === 1);
 }
 
-const blackListToast = ({store, t, yUserInfo, title, content}:any) => {
+const blackListToast = ({ store, t, yUserInfo, title, content }: any) => {
   Dialog({
     title,
     btnClass: ['red'],
     callBack: async () => {
       await useToggleFriend(store, t, yUserInfo, true)(false);
-    }
+    },
   });
-}
+};
 </script>
 <script setup lang="ts">
 type TMsgItem = INotifyClassMsgListInfo & ImsgItem;
@@ -596,17 +618,19 @@ setTimeout(() => {
 // 设置已读
 const read = (item: ImsgItem) => {
   const msgList = store.state.msgList;
-  const res = msgList[item.id];
+  const id = item.id || item.msgClassId;
+  const res = msgList[id];
   res.unReadNum = 0;
   res.unRead = false;
-  store.commit('SET_MSGLISTITEM', { uid: item.id, res });
+  store.commit('SET_MSGLISTITEM', { uid: id, res });
 };
 // 设置未读
 const unRead = (item: ImsgItem) => {
   const msgList = store.state.msgList;
-  const res = msgList[item.id];
+  const id = item.id || item.msgClassId;
+  const res = msgList[id];
   res.unRead = true;
-  store.commit('SET_MSGLISTITEM', { uid: item.id, res });
+  store.commit('SET_MSGLISTITEM', { uid: id, res });
 };
 
 // 设置静音
@@ -688,7 +712,7 @@ const del = (item: any) => {
       '当前会话删除后，所有聊天记录将被被删除，收到新消息，或通过搜索会话名称，会话将再次显示'
     ),
     callBack: async () => {
-      useDelUser(store, item)
+      useDelUser(store, item);
       // if (store.state.msgList[item.id]) {
       //   /*
       //     1、所有未读消息设为已读
@@ -820,11 +844,16 @@ function useBeforeSwitch(
       } else {
         reject();
       }
-      
-      if(data.body.resultCode == 1535){
-        return blackListToast({store, t, yUserInfo:{ uid }, title: t('该用户已注销,是否将其移除好友列表，并清空聊天会话?')})  
+
+      if (data.body.resultCode == 1535) {
+        return blackListToast({
+          store,
+          t,
+          yUserInfo: { uid },
+          title: t('该用户已注销,是否将其移除好友列表，并清空聊天会话?'),
+        });
       }
-      Toast(t(data.body.resultString)); 
+      Toast(t(data.body.resultString));
     });
   };
 }
