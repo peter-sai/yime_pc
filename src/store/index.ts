@@ -447,7 +447,7 @@ const sotreRoot = createStore({
 
       if (state.msgList[id]) {
         if (
-          !state.msgList[id].readList.find(
+          !state.msgList[id]?.readList?.find(
             (e: IMsgInfo<TMsgContent>) => Number(e.msgId) === Number(res.msgId)
           )
         ) {

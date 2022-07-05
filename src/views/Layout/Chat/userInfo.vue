@@ -382,9 +382,10 @@ export function useBeforeBlacklist(
       });
     }
 
-    store.state.msgList[yUserInfo.uid].userDetailInfo.isInMyBlacklist = e
-      ? 1
-      : 0;
+    const item = store.state.msgList[yUserInfo.uid];
+    if (item) {
+      item.userDetailInfo.isInMyBlacklist = e ? 1 : 0;
+    }
     Toast(t(data.body.resultString));
   };
 }

@@ -513,11 +513,11 @@ const changeAudio = () => {
 
 // 鼠标拖拽事件
 const draggableFun = () => {
-  let div = document.getElementById('mideaNode');
+  let div: any = document.getElementById('mideaNode');
   let dragFlag = false;
-  let x, y;
+  let x: any, y: any;
 
-  div.onmousedown = function (e) {
+  div.onmousedown = function (e: any) {
     dragFlag = true;
     e = e || window.event;
     // 获取鼠标在元素上的位置（鼠标按下时在元素上得位置）
@@ -525,7 +525,7 @@ const draggableFun = () => {
     y = e.clientY - div.offsetTop;
   };
 
-  div.onmousemove = function (e) {
+  div.onmousemove = function (e: any) {
     if (dragFlag) {
       e = e || window.event;
       div.style.left = e.clientX - x + 'px';
@@ -533,7 +533,7 @@ const draggableFun = () => {
     }
   };
   // 鼠标抬起事件
-  div.onmouseup = function (e) {
+  div.onmouseup = function () {
     dragFlag = false;
   };
 };
