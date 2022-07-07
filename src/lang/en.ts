@@ -1018,4 +1018,6 @@ export default {
     'Your account has initiated a login application on <spile>. Are you sure to login?',
   '如非本人操作，请尽快更改密码':
     'Please change your password as soon as possible if it is not your own operation',
+  '登录已撤销，为了账号安全，请尽快修改密码':
+    'Login has been revoked. Please change your password as soon as possible for the sake of account security',
 };

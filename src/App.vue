@@ -4,7 +4,7 @@
     <Teleport to="body" v-if="authInfo.isShow">
       <div class="verificationBox">
         <div class="verification">
-          <i class="close"></i>
+          <i @click="authInfo.isShow = !authInfo.isShow" class="close"></i>
           <div class="title">{{t('安全验证')}}</div>
           <div class="content">
             <div class="time">{{ moment(authInfo.time).format('YYYY-MM-DD HH:mm') }}</div>
@@ -341,12 +341,20 @@ const authInfo = reactive({
 // 验证登录 (是否允许其他端登录)
 const auth = async (state: 0 | 1) => {
   const res = await store.dispatch('postMsg', {
-    query: { state },
+    query: {
+      state,
+      equipmentInformation: {
+        deviceBrand: 'web',
+      }
+    },
     cmd: 2185,
     encryption: 'Aoelailiao.Login.FeedbackLoginApproveReq',
     auth: true,
   });
   authInfo.isShow = false
+  if (res.body.resultCode === 0 && state ===1) {
+    return Toast(t('登录已撤销，为了账号安全，请尽快修改密码'));
+  } 
   return Toast(t(res.body.resultString));
 };
 const stop = watch(

@@ -3303,6 +3303,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
               loginType: {
                 type: "uint32",
                 id: 5
+              },
+              askTime: {
+                type: "uint64",
+                id: 6
               }
             }
           },
@@ -3311,10 +3315,29 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
               state: {
                 type: "uint32",
                 id: 1
+              },
+              equipmentInformation: {
+                type: "EquipmentInformation",
+                id: 2
               }
             }
           },
-          FeedbackLoginApprovedAns: {
+          FeedbackLoginApproveAns: {
+            fields: {
+              resultCode: {
+                type: "uint32",
+                id: 1
+              },
+              resultString: {
+                type: "string",
+                id: 2
+              }
+            }
+          },
+          CancelLoginAskReq: {
+            fields: {}
+          },
+          CancelLoginAskAns: {
             fields: {
               resultCode: {
                 type: "uint32",
