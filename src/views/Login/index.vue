@@ -120,6 +120,27 @@
       <!-- info -->
       <!-- <div class="info">{{ t("未注册请使用验证码登录") }}</div> -->
     </div>
+    <Teleport to="body" v-if="showAuth">
+      <div class="verificationBox">
+        <div class="box"></div>
+        <div class="verification">
+          <i class="close" @click="closeAuth"></i>
+          <div class="title">{{ t('安全验证') }}</div>
+          <div class="content">
+            <div class="info">
+              {{ t('为了您的账号安全，请在已登录设备上确认本次登录操作') }}
+            </div>
+            <div class="time">{{ authTimeMsg }}</div>
+            <div class="subInfo">{{ t('倒计时结束将取消登录') }}</div>
+          </div>
+          <div class="btn">
+            <div @click="cancelLogin">
+              {{ t('取消登录') }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </Teleport>
   </div>
 </template>
 <script lang="ts">
@@ -212,7 +233,7 @@ type TQuery = typeof query;
 
 // 验证码文案
 let codeMsg = ref(t('获取验证码'));
-let time = ref(60);
+let codeTime = ref(60);
 
 // 区号
 const areaCode = ref(86);
@@ -223,15 +244,23 @@ const list = reactive(code);
 // 区号弹框
 const showBox = ref(false);
 
+// 点击登录之后启动验证倒计时
+const authTimeMsg = ref('60s');
+const authTime = ref(60);
+const showAuth = ref(false);
+const closeAuth = () => {
+  showAuth.value = false;
+};
+
 // 点击获取验证码
-const getCode = useGetCode(store, codeMsg, query, areaCode, time, t);
+const getCode = useGetCode(store, codeMsg, query, areaCode, codeTime, t);
 // 获取验证码
 function useGetCode(
   store: Store<initStore>,
   codeMsg: Ref<string>,
   query: TQuery,
   areaCode: Ref<number>,
-  time: Ref<number>,
+  codeTime: Ref<number>,
   t: any
 ) {
   return async () => {
@@ -250,22 +279,22 @@ function useGetCode(
         encryption: 'Aoelailiao.Login.GetAuthCodeReq',
       });
       if (data.body.resultCode === 0) {
-        codeMsg.value = time.value + 's';
-        timeout(time, codeMsg);
+        codeMsg.value = codeTime.value + 's';
+        timeout(codeTime, codeMsg, t('获取验证码'));
       }
       return Toast(t(data.body.resultString));
     }
   };
 }
 // timeout
-const timeout = (time: Ref<number>, codeMsg: Ref<string>) => {
+const timeout = (time: Ref<number>, codeMsg: Ref<string>, info: string) => {
   setTimeout(() => {
-    if (time.value > 0) {
-      timeout(time, codeMsg);
+    if (time.value > 0 && (showAuth.value || info === t('获取验证码'))) {
+      timeout(time, codeMsg, info);
       time.value--;
       codeMsg.value = time.value + 's';
     } else {
-      codeMsg.value = t('获取验证码');
+      codeMsg.value = info;
       time.value = 60;
     }
   }, 1000);
@@ -297,6 +326,9 @@ watch(
   computed(() => store.state.msgInfo),
   async (data: any) => {
     if (data.cmd == 2183) {
+      if (data.body.result !== 5) {
+        showAuth.value = false;
+      }
       if (data.body.result === 0 || data.body.result === 6) {
         const language = getStorage('language') || 0;
         showLoading();
@@ -371,6 +403,19 @@ watch(
   }
 );
 
+// 取消登录
+const cancelLogin = async () => {
+  const data = await store.dispatch('postMsg', {
+    query: {},
+    cmd: 2187,
+    encryption: 'Aoelailiao.Login.CancelLoginAskReq',
+  });
+  if (data.body.resultCode !== 0) {
+    showAuth.value = false;
+    return Toast(t(data.body.resultString));
+  }
+};
+
 // 登录
 function useLogin(
   goTo: (e: string) => void,
@@ -380,8 +425,9 @@ function useLogin(
   t: (key: string) => string
 ) {
   return async () => {
+    timeout(authTime, authTimeMsg, t('60s'));
+    showAuth.value = true;
     const language = getStorage('language') || 0;
-
     if (btns.active === 0) {
       if (!query.phone) {
         return Toast(t('请输入手机号'));
@@ -416,8 +462,10 @@ function useLogin(
         cmd: 2181,
         encryption: 'Aoelailiao.Login.BeforeLoginReq',
       });
-      if (authData.body.resultCode !== 0)
+      if (authData.body.resultCode !== 0) {
+        showAuth.value = false;
         return Toast(t(authData.body.resultString));
+      }
 
       // 密码登录
       // showLoading();
@@ -464,8 +512,10 @@ function useLogin(
         cmd: 2181,
         encryption: 'Aoelailiao.Login.BeforeLoginReq',
       });
-      if (authData.body.resultCode !== 0)
+      if (authData.body.resultCode !== 0) {
+        showAuth.value = false;
         return Toast(t(authData.body.resultString));
+      }
 
       // showLoading();
       // const res = {
@@ -521,8 +571,10 @@ function useLogin(
         cmd: 2181,
         encryption: 'Aoelailiao.Login.BeforeLoginReq',
       });
-      if (authData.body.resultCode !== 0)
+      if (authData.body.resultCode !== 0) {
+        showAuth.value = false;
         return Toast(t(authData.body.resultString));
+      }
 
       // showLoading();
       // const res = {
@@ -742,6 +794,118 @@ onUnmounted(() => {
       line-height: 18px;
       letter-spacing: 1px;
       text-align: center;
+    }
+  }
+}
+.verificationBox {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 9999;
+  .box {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background: #000000;
+    opacity: 0.76;
+  }
+  .verification {
+    width: 310px;
+    height: 256px;
+    background: #ffffff;
+    box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+    position: absolute;
+    left: 50%;
+    right: 50%;
+    top: 50%;
+    bottom: 50%;
+    transform: translate(-50%, -50%);
+    .close {
+      position: absolute;
+      cursor: pointer;
+      right: 20px;
+      top: 20px;
+      width: 10px;
+      height: 10px;
+      &::after {
+        display: block;
+        position: absolute;
+        content: '';
+        width: 100%;
+        height: 2px;
+        left: 50%;
+        top: 50%;
+        background: #000000;
+        transform: translate(-50%, -50%) rotate(45deg);
+      }
+      &::before {
+        display: block;
+        position: absolute;
+        content: '';
+        width: 100%;
+        height: 2px;
+        left: 50%;
+        top: 50%;
+        background: #000000;
+        transform: translate(-50%, -50%) rotate(-45deg);
+      }
+    }
+    .title {
+      font-size: 16px;
+      font-weight: 500;
+      color: rgba(0, 0, 0, 0.85);
+      text-align: center;
+      margin-top: 32px;
+    }
+    .content {
+      margin: 15px 0 20px;
+      padding: 0 16px;
+      .time {
+        font-size: 18px;
+        font-weight: 400;
+        color: #fa5151;
+        line-height: 22px;
+        text-align: center;
+        margin-top: 17px;
+      }
+      .info {
+        font-size: 14px;
+        font-weight: 400;
+        color: #666666;
+        line-height: 22px;
+      }
+      .subInfo {
+        font-size: 12px;
+        font-weight: 400;
+        color: #999999;
+        text-align: center;
+        line-height: 22px;
+      }
+    }
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+      div {
+        width: 222px;
+        height: 32px;
+        background: #fafafa;
+        border: 1px solid #dddddd;
+        font-size: 14px;
+        font-family: PingFangSC-Regular, PingFang SC;
+        font-weight: 400;
+        color: #666666;
+        line-height: 22px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+      }
     }
   }
 }

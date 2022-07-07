@@ -40,6 +40,7 @@
         <InputGroup
           :placeholder="t('请输入验证码')"
           v-model="query.verificationCode"
+          :autocomplete="false"
           @onGetCode="getCode"
         >
           <template v-slot:getCode>{{ codeMsg }}</template>
@@ -47,6 +48,7 @@
         <InputGroup
           type="password"
           :placeholder="t('请输入密码')"
+          :autocomplete="false"
           v-model="query.password"
         ></InputGroup>
         <InputGroup
