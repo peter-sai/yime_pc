@@ -93,13 +93,13 @@ async function userGetSystemNoticeContent(store: Store<initStore>) {
 }
 </script>
 <script setup lang="ts">
+import SystemWindowHeader from './header.vue';
+import { useI18n } from 'vue-i18n';
 interface IsystemList {
   text: string;
   time: number;
   img: string[];
 }
-import SystemWindowHeader from './header.vue';
-import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 const store = useStore(key);
 const systemList: Ref<IsystemList[]> = ref([]);
@@ -128,7 +128,6 @@ const icon = computed(() => {
 
 const init = async () => {
   const data = await userGetSystemNoticeContent(store);
-
   if (store.state.activeUid === 1) {
     // 系统通知详情
     systemList.value = data.map((e: any) => {

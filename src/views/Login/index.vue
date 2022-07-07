@@ -153,6 +153,7 @@ import {
   ref,
   Ref,
   watch,
+  watchEffect,
 } from 'vue';
 export default defineComponent({
   name: 'login',
@@ -300,6 +301,12 @@ const timeout = (time: Ref<number>, codeMsg: Ref<string>, info: string) => {
   }, 1000);
 };
 
+watchEffect(() => {
+  if (authTime.value <= 1) {
+    cancelLogin();
+  }
+});
+
 // 登录
 const login = useLogin(goTo, store, query, areaCode, t);
 
@@ -328,6 +335,7 @@ watch(
     if (data.cmd == 2183) {
       if (data.body.result !== 5) {
         showAuth.value = false;
+        Toast(t(map[data.body.result]));
       }
       if (data.body.result === 0 || data.body.result === 6) {
         const language = getStorage('language') || 0;
@@ -396,8 +404,6 @@ watch(
           });
           useLoginCb(data, goTo, areaCode, query, store, t);
         }
-      } else {
-        return Toast(t(map[data.body.result]));
       }
     }
   }

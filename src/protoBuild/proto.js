@@ -3307,6 +3307,10 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
               askTime: {
                 type: "uint64",
                 id: 6
+              },
+              canceled: {
+                type: "bool",
+                id: 7
               }
             }
           },

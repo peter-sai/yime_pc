@@ -137,7 +137,7 @@
         <TableDouble
           v-if="item.msgClassId === 1"
           html
-          :subTitle="JSON.parse(item.msgClassRecentMsgContent).Jt"
+          :subTitle="getSystemInfo(item.msgClassRecentMsgContent)"
           @click="setActiveuId(item)"
           :hover="item.msgClassId === store.state.activeUid"
         >
@@ -402,6 +402,14 @@ function useBeforeSwitchChat(
   };
 }
 
+const getSystemInfo = (item: string) => {
+  try {
+    return JSON.parse(item).Jt;
+  } catch (error) {
+    return item;
+  }
+};
+
 // 获取通知
 async function userGetSystemNotice(store: Store<initStore>) {
   const data = await store.dispatch('postMsg', {
@@ -469,8 +477,9 @@ const contextmenu = (e: any, item: ImsgItem) => {
 
 const setActiveuId = async (item: TMsgItem) => {
   store.commit('SET_ACTIVEUID', item.msgClassId);
-  // 重置 unRead 字段
+  // 重置 unReadNum 字段
   const newItem = store.state.msgList[item.msgClassId] || {};
+  newItem.unReadNum = undefined;
   newItem.unRead = undefined;
   store.commit('ADD_NOTIFY', { id: item.msgClassId, res: newItem });
   // 设置已读
