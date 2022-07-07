@@ -1086,6 +1086,7 @@ message AskLoginApprovingNotify
     // 0--手机号,1--微信,2--QQ,3--微博,4--微信小程序,5--短信验证码登录,6--支付宝登录,7--验证码注册,8--token登录,9--imaccount/密码登录
     optional uint32 login_type = 5;
     optional uint64 ask_time = 6; // 申请时间
+    optional bool canceled = 7;   // 申请者取消是为true
 }
 
 // cid:   CID_FEEDBACK_LOGIN_APPROVED_REQ         CID = 2185 // (3)

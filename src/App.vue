@@ -362,10 +362,13 @@ const stop = watch(
   async (data: any) => {
     if (data.cmd === 2184) {
       // 验证其他端登录
-      // data.body
-      authInfo.deviceBrand = data.body.equipmentInformation.deviceBrand;
-      authInfo.isShow = true;
-      authInfo.time = Date.now();
+      if (data.body.canceled) {
+        authInfo.isShow = false
+      } else {
+        authInfo.deviceBrand = data.body.equipmentInformation.deviceBrand;
+        authInfo.isShow = true;
+        authInfo.time = data.body.askTime
+      }
     }
     if (data.cmd == 2170) {
       if (!data.body.isGroupMsg && data.body.objectId) {
