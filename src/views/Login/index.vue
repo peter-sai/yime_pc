@@ -341,7 +341,7 @@ watch(
             },
             clientLanguageType: language,
             equipmentInformation: {
-              deviceBrand: 'web',
+              deviceBrand: window.deviceBrand,
               releaseVersion: '2.0.0',
               devicePublicIp: returnCitySN.cip || '',
               deviceUuid: window.uuid,
@@ -362,7 +362,7 @@ watch(
             },
             clientLanguageType: language,
             equipmentInformation: {
-              deviceBrand: 'web',
+              deviceBrand: window.deviceBrand,
               releaseVersion: '2.0.0',
               devicePublicIp: returnCitySN.cip || '',
               deviceUuid: window.uuid,
@@ -383,7 +383,7 @@ watch(
             },
             clientLanguageType: language,
             equipmentInformation: {
-              deviceBrand: 'web',
+              deviceBrand: window.deviceBrand,
               releaseVersion: '2.0.0',
               devicePublicIp: returnCitySN.cip || '',
               deviceUuid: window.uuid,
@@ -453,7 +453,7 @@ function useLogin(
           loginType: 0,
           password: md5(query.password),
           equipmentInformation: {
-            deviceBrand: 'web',
+            deviceBrand: window.deviceBrand,
             releaseVersion: '2.0.0',
             devicePublicIp: returnCitySN.cip || '',
             deviceUuid: window.uuid,
@@ -503,7 +503,7 @@ function useLogin(
           account: '+' + areaCode.value + query.phone,
           loginType: 5,
           equipmentInformation: {
-            deviceBrand: 'web',
+            deviceBrand: window.deviceBrand,
             releaseVersion: '2.0.0',
             devicePublicIp: returnCitySN.cip || '',
             deviceUuid: window.uuid,
@@ -562,7 +562,7 @@ function useLogin(
           loginType: 9,
           password: md5(query.imPassword),
           equipmentInformation: {
-            deviceBrand: 'web',
+            deviceBrand: window.deviceBrand,
             releaseVersion: '2.0.0',
             devicePublicIp: returnCitySN.cip || '',
             deviceUuid: window.uuid,

@@ -22,6 +22,7 @@ export interface IUserInfo {
 declare global {
   interface Window {
     uuid: string;
+    deviceBrand: string;
   }
 }
 

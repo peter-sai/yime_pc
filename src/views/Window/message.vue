@@ -1022,7 +1022,7 @@ const init = async () => {
         fromId: isGroup ? msgList?.lastMsg.toId : msgList?.lastMsg.fromId,
         msgIdMax: msgList?.lastMsg.msgId,
       },
-      deviceBrand: 'web',
+      deviceBrand: window.deviceBrand,
     };
 
     await store.dispatch('postMsg', {

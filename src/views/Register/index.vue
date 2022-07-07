@@ -146,7 +146,7 @@ function useReg(
         loginPasswdToken: route.query.loginPasswdToken,
       },
       equipmentInformation: {
-        deviceBrand: 'web',
+        deviceBrand: window.deviceBrand,
         releaseVersion: '2.0.0',
         devicePublicIp: returnCitySN.cip || '',
         deviceUuid: window.uuid,

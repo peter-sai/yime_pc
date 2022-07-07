@@ -278,6 +278,7 @@ Electron.ipcRenderer.on('awaken', (event, params) => {
   }
 });
 const { t } = useI18n();
+window.deviceBrand = navigator.userAgent.toLocaleLowerCase().includes('mac') ? 'mac' : 'window'
 
 store.commit('set_T', t);
 
@@ -366,7 +367,7 @@ const auth = async (state: 0 | 1) => {
     query: {
       state,
       equipmentInformation: {
-        deviceBrand: 'web',
+        deviceBrand: window.deviceBrand,
         releaseVersion: '2.0.0',
         devicePublicIp: returnCitySN.cip || '',
         deviceUuid: window.uuid,
@@ -557,7 +558,7 @@ const stop = watch(
             toId: msgInfos[0].fromId,
             msgIdMax: msgInfos[0].msgId,
           },
-          deviceBrand: 'web',
+          deviceBrand: window.deviceBrand,
         };
         await store.dispatch('postMsg', {
           query: res,
@@ -575,7 +576,7 @@ const stop = watch(
             fromId: msgInfos[0].fromId,
             msgIdMax: msgInfos[0].msgId,
           },
-          deviceBrand: 'web',
+          deviceBrand: window.deviceBrand,
         };
 
         await store.dispatch('postMsg', {
