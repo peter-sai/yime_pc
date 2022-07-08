@@ -459,6 +459,9 @@ function useLogin(
           password: md5(query.password),
           equipmentInformation: {
             deviceBrand: 'web',
+            releaseVersion: '2.0.0',
+            devicePublicIp: returnCitySN.cip || '',
+            deviceUuid: store.state.deviceUuid
           },
         },
         cmd: 2181,
@@ -506,6 +509,9 @@ function useLogin(
           loginType: 5,
           equipmentInformation: {
             deviceBrand: 'web',
+            releaseVersion: '2.0.0',
+            devicePublicIp: returnCitySN.cip || '',
+            deviceUuid: store.state.deviceUuid
           },
         },
         cmd: 2181,
@@ -562,6 +568,9 @@ function useLogin(
           password: md5(query.imPassword),
           equipmentInformation: {
             deviceBrand: 'web',
+            releaseVersion: '2.0.0',
+            devicePublicIp: returnCitySN.cip || '',
+            deviceUuid: store.state.deviceUuid
           },
         },
         cmd: 2181,

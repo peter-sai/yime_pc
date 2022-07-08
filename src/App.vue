@@ -66,6 +66,7 @@ import { useI18n } from 'vue-i18n';
 import { hideLoading } from './plugin/Loading';
 import { yimechat } from './api';
 import { Toast } from './plugin/Toast';
+import returnCitySN from 'returnCitySN';
 
 export async function initRonyun(store: Store<initStore>) {
   // IM 客户端初始化
@@ -349,6 +350,9 @@ const auth = async (state: 0 | 1) => {
       state,
       equipmentInformation: {
         deviceBrand: 'web',
+        releaseVersion: '2.0.0',
+        devicePublicIp: returnCitySN.cip || '',
+        deviceUuid: store.state.deviceUuid
       }
     },
     cmd: 2185,
