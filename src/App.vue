@@ -35,7 +35,7 @@ import { Store, useStore } from 'vuex';
 import { getOssInfo } from './api';
 import { getToken as getUserToken } from './utils/utils';
 import { initStore, key } from './store';
-import { getStorage, setMsgList } from './utils/utils';
+import { getStorage, setMsgList, getDeviceUuidStr } from './utils/utils';
 import {
   getRoam,
   initRongConnect,
@@ -289,6 +289,10 @@ const init = async () => {
 
   // 获取阿里存储信息
   initOss(store);
+
+  //获取设备唯一编码
+  const deviceUuid = await getDeviceUuidStr();
+  store.commit('SET_DEVICEUUID', deviceUuid);
 
   // 初始化融云服务
   initRonyun(store);

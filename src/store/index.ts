@@ -152,6 +152,7 @@ const initState = {
   conversationIng: true, // 是否在通话中,
   key: 0,
   chatbg: '',
+  deviceUuid: '', //设备唯一标识
 };
 
 export type initStore = typeof initState;
@@ -339,6 +340,9 @@ const sotreRoot = createStore({
         // 填写Bucket名称。
         bucket: '123message',
       });
+    },
+    SET_DEVICEUUID: (state, val) => {
+      state.deviceUuid = val;
     },
   },
   actions: {

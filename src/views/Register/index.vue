@@ -141,6 +141,7 @@ function useReg(
         deviceBrand: 'web',
         releaseVersion: '2.0.0',
         devicePublicIp: returnCitySN.cip || '',
+        deviceUuid: store.state.deviceUuid
       },
     };
     const data = await store.dispatch('postMsg', {
