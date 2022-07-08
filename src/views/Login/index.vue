@@ -319,7 +319,8 @@ const login = useLogin(goTo, store, query, areaCode, t);
 // }
 const map = [
   '允许登录',
-  '拒绝登录',
+  '登录已撤销，为了账号安全，请尽快修改密码',
+  // '拒绝登录',
   '超时',
   '出现错误',
   '需要短信验证',
