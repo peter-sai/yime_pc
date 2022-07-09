@@ -420,8 +420,9 @@ const cancelLogin = async () => {
     encryption: 'Aoelailiao.Login.CancelLoginAskReq',
   });
   if (data.body.resultCode !== 0) {
-    showAuth.value = false;
     return Toast(t(data.body.resultString));
+  } else {
+    showAuth.value = false;
   }
 };
 
