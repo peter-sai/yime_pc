@@ -420,14 +420,14 @@ onMounted(async () => {
       },
     });
   }
+  await nextTick();
   draggableFun();
 });
 
-watch(isMideaMini, (res) => {
+watch(isMideaMini, async (res) => {
   if (!res) {
-    nextTick(() => {
-      draggableFun();
-    });
+    await nextTick();
+    draggableFun();
   }
 });
 
