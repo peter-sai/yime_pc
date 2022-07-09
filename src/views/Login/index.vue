@@ -337,6 +337,8 @@ watch(
       if (data.body.result !== 5) {
         showAuth.value = false;
         Toast(t(map[data.body.result]));
+      } else {
+        showAuth.value = true;
       }
       if (data.body.result === 0 || data.body.result === 6) {
         const language = getStorage('language') || 0;
@@ -433,7 +435,7 @@ function useLogin(
 ) {
   return async () => {
     timeout(authTime, authTimeMsg, t('60s'));
-    showAuth.value = true;
+    // showAuth.value = true;
     const language = getStorage('language') || 0;
     if (btns.active === 0) {
       if (!query.phone) {

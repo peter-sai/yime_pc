@@ -329,11 +329,10 @@ const isAnswer = ref(false);
 const sessionRoot = ref({}) as Ref<RCCallSession>;
 
 const isMideaMini = ref(false);
-watch(isMideaMini, (res) => {
+watch(isMideaMini, async (res) => {
   if (!res) {
-    nextTick(() => {
-      draggableFun();
-    });
+    await nextTick();
+    draggableFun();
   }
 });
 //缩放
@@ -575,6 +574,7 @@ onMounted(async () => {
       },
     });
   }
+  await nextTick();
   draggableFun();
 });
 
