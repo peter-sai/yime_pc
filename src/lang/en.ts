@@ -1020,4 +1020,8 @@ export default {
     'Please change your password as soon as possible if it is not your own operation',
   '登录已撤销，为了账号安全，请尽快修改密码':
     'Login has been revoked. Please change your password as soon as possible for the sake of account security',
+  '为了您的账号安全，请在已登录设备上确认本次登录操作':
+    'For the security of your account, please confirm this login operation on the logged in device',
+  倒计时结束将取消登录: 'Login will be canceled after the countdown',
+  取消登录: 'Cancel login',
 };
