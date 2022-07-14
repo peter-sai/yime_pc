@@ -28,6 +28,7 @@ import { useI18n } from 'vue-i18n';
 import { stringifyQuery } from 'vue-router';
 import { Store } from 'vuex';
 import { RCCallClient } from '@rongcloud/plugin-call';
+import { setMsgList } from '@/utils/utils';
 
 // 获取阿里存储信息
 export async function initOss(store: Store<initStore>) {
@@ -1255,6 +1256,34 @@ function useDelUser(
   }
 }
 
+const useGetGroupHistoryMsg = async (store: Store<initStore>, item: ImsgItem, isInit?:boolean) => {
+  if(
+    !item.groupDetailInfo.groupAttachInfo.allowMemberGetHisotyMsg || 
+    item?.isReadInitHisotyMsg  &&
+    !!isInit
+  ) return;
+
+  const msgList = store.state.msgList
+  
+  const data = await store.dispatch('postMsg', {
+    query: { isGroupMsg: 1, objectId:item.id, msgIdMin:item.readList[0]['msgId'], msgNum:30 },
+    cmd: 2057,
+    encryption: 'Aoelailiao.Message.UserGetMoreMsgInfoReq',
+    auth: true,
+  });
+  let hisMsgList = JSON.parse(JSON.stringify(data.body.msgInfos));
+  hisMsgList = hisMsgList.map((item:any, index:number) => {
+    item.type = data.body.msgInfos[index].msgContent.msgContent
+    return item
+  })
+  hisMsgList.reverse();
+  item.readList = [...hisMsgList, ...item.readList];
+  item.isReadInitHisotyMsg = true;
+  msgList[item.id] = item
+  setMsgList(msgList)
+  return data.body.msgInfos.length
+}
+
 export {
   useUserOperateGroupInfo,
   useBeforeSwitch,
@@ -1278,4 +1307,5 @@ export {
   downloadFile,
   useToggleFriend,
   useDelUser,
+  useGetGroupHistoryMsg
 };

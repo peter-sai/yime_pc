@@ -329,6 +329,7 @@ import {
   useUserOperateGroupInfo,
   useToggleFriend,
   useDelUser,
+  useGetGroupHistoryMsg
 } from '@/hooks/window';
 import { hideLoading, showLoading } from '@/plugin/Loading';
 import { Toast } from '@/plugin/Toast';
@@ -575,6 +576,7 @@ const getType = (
 const goTo = (item: ImsgItem) => {
   if (item.isGroup) {
     // 群聊
+    useGetGroupHistoryMsg(store, item, true);
     store.commit('SET_ACTIVEUID', item.id);
     store.commit('SET_ACTIVEISGROUP', true);
   } else {
