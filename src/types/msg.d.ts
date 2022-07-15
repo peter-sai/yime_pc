@@ -226,6 +226,7 @@ export interface ImsgItem {
   groupDetailInfo: IGroupInfo;
   isDel: boolean;
   unRead: boolean;
+  isReadInitHisotyMsg?: boolean;
 }
 
 export interface INotifyClassMsgListInfo {
