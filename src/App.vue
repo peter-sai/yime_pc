@@ -403,8 +403,9 @@ const stop = watch(
     }
     if (data.cmd === 2024) {
       try {
-        const notifyContent = JSON.parse(data.body.notifyContent);
-        if (notifyContent.Jt) {
+        // const notifyContent = JSON.parse(data.body.notifyContent);
+        // if (notifyContent.Jt) {
+        if (data.body.notifyContent) {
           const unReadNum = store.state.msgList[1]?.unReadNum || 0;
           const res = {
             msgClassHaveNewMsg: 1,
