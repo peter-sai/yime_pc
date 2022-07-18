@@ -587,6 +587,7 @@ import {
   useDelMsg,
   formatMsg,
   downloadFile,
+  useGetGroupHistoryMsg
 } from '@/hooks/window';
 import { IGroupInfo, IUserDetailInfo, IUserInfo } from '@/types/user';
 import { Toast } from '@/plugin/Toast';
@@ -700,13 +701,26 @@ const scroll = () => {
   }
 };
 
-const scrollEvent = (e: any) => {
+const status: Ref<boolean> = ref(true);
+const scrollEvent = async (e: any) => {
   const clientHeight = e.target.clientHeight;
   const scrollTop = e.target.scrollTop;
   const scrollHeight = e.target.scrollHeight;
 
   if (clientHeight + scrollTop >= scrollHeight) {
     unRead.value = 0;
+  }
+
+  const id = msgWindow.value.querySelector('.Message').firstElementChild.id
+  if(status.value && scrollTop <= 0 && !!store.state?.activeUid){
+    status.value = false
+    const data = await useGetGroupHistoryMsg(store, store.state?.msgList[store.state?.activeUid])
+    await nextTick();
+    msgWindow.value.scrollTo({
+      top: msgWindow.value.querySelector('div[id="'+id+'"]').offsetTop,
+      behavior:'instant'
+    })
+    status.value = !!data
   }
 };
 
@@ -963,7 +977,7 @@ const getReply = (item: IMsgInfo<string>) => {
   let msgInfo = itemChat.value.readList.find(
     (e) => e.msgId === item.replyMsgId
   ) as IMsgInfo;
-  if (msgInfo == undefined && item.replyMsgId) {
+  if (msgInfo == undefined && item.replyMsgId && item.replyMsgId != '0') {
     msgInfo = {
       msgId: 1,
     };

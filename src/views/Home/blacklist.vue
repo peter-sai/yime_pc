@@ -57,8 +57,12 @@ const init = async () => {
       encryption: 'Aoelailiao.Login.UserOperateBlackListReq',
       auth: true,
     });
+    if (data.body.resultCode !== 0) {
+      hideLoading();
+      return Toast(t(data.body.resultString));
+    }
 
-    if (data.body.userBlacklistInfo.blacklistUidLists.length) {
+    if (data.body?.userBlacklistInfo?.blacklistUidLists.length) {
       const res1 = {
         uid: data.body.userBlacklistInfo.blacklistUidLists,
       };
