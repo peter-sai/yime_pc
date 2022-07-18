@@ -5646,6 +5646,30 @@ var $root = ($protobuf.roots["default"] || ($protobuf.roots["default"] = new $pr
                 id: 20
               }
             }
+          },
+          GetUserStatusReq: {
+            fields: {
+              uid: {
+                type: "uint32",
+                id: 1
+              }
+            }
+          },
+          GetUserStatusAns: {
+            fields: {
+              resultCode: {
+                type: "uint32",
+                id: 1
+              },
+              resultString: {
+                type: "string",
+                id: 2
+              },
+              status: {
+                type: "uint32",
+                id: 3
+              }
+            }
           }
         }
       },

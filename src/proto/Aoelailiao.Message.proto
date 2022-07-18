@@ -1147,3 +1147,16 @@ message ImageOperateAns
     // 图片列表 (全量, 查看时返回)
     repeated Image images = 20;
 }
+
+// cid 2191
+message GetUserStatusReq
+{
+    optional uint32 uid = 1; // 用户id
+}
+// cid 2192
+message GetUserStatusAns
+{
+    optional uint32 result_code = 1;   // 错误码
+    optional string result_string = 2; // 错误描述
+    optional uint32 status = 3;        // 用户状态 1 正常 99 注销
+}
