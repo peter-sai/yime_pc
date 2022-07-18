@@ -1256,11 +1256,11 @@ function useDelUser(
   }
 }
 
-const useGetGroupHistoryMsg = async (store: Store<initStore>, item: ImsgItem, isInit?:boolean) => {
+const useGetGroupHistoryMsg = async (store: Store<initStore>, item: ImsgItem, isPage?:boolean) => {
   if(
     !item.groupDetailInfo.groupAttachInfo.allowMemberGetHisotyMsg || 
     item?.isReadInitHisotyMsg  &&
-    !!isInit
+    !!isPage
   ) return;
 
   const msgList = store.state.msgList
@@ -1282,6 +1282,18 @@ const useGetGroupHistoryMsg = async (store: Store<initStore>, item: ImsgItem, is
   msgList[item.id] = item
   setMsgList(msgList)
   return data.body.msgInfos.length
+}
+
+
+async function getUserStatus(store: Store<initStore>) {
+  return await store.dispatch('postMsg', {
+    query: {
+      uid: store.state.activeUid,
+    },
+    cmd: 2191,
+    encryption: 'Aoelailiao.Message.GetUserStatusReq',
+    auth: true,
+  });
 }
 
 export {
@@ -1307,5 +1319,6 @@ export {
   downloadFile,
   useToggleFriend,
   useDelUser,
-  useGetGroupHistoryMsg
+  useGetGroupHistoryMsg,
+  getUserStatus
 };
