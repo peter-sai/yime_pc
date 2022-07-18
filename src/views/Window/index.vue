@@ -183,6 +183,7 @@ import {
   useCbImg,
   useSendImg,
   useToggleFriend,
+  getUserStatus
 } from '@/hooks/window';
 import GroupInfo from '../Layout/GroupChat/groupInfo.vue';
 import ChatHeader from './header.vue';
@@ -413,7 +414,17 @@ const changeTag = (val: Etag) => {
 const inputVal = ref('');
 
 // 分享
-const recommend = () => {
+const recommend = async () => {
+  const res = await getUserStatus(store)
+  if(res.body.status == 99){
+    blackListToast({
+      store,
+      t,
+      yUserInfo: { uid: store.state.activeUid },
+      title: t('该用户已注销,是否将其移除好友列表,并清空聊天会话?'),
+    });
+    return;
+  }
   toggleBox();
   changeTag(Etag.Recommend);
 };

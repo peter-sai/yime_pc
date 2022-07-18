@@ -21,8 +21,7 @@
             <img
               src="../../../assets/img/edit.svg"
               alt=""
-              v-if="yUserInfo.imAccount != ' ' && yUserInfo.icon != ' '"
-              @click="$emit('changeTag', Etag.SetRemarkName)"
+              @click="handleChangeTag(Etag.SetRemarkName)"
             />
           </div>
           <div class="phone">
@@ -124,7 +123,7 @@
           </Table>
           <Table
             title="与好友新建群聊"
-            @click="$emit('changeTag', Etag.CreateGroupChat)"
+            @click="handleChangeTag(Etag.CreateGroupChat)"
           >
             <template v-slot:left>
               <Iconfont name="iconyaoqinghaoyou" size="15" />
@@ -188,7 +187,7 @@ import { getTag } from '@/utils/utils';
 import { hideLoading, showLoading } from '@/plugin/Loading';
 import { Dialog, hidePush } from '@/plugin/Dialog';
 import { IGroupListItem } from '@/types/group';
-import { useToggleFriend } from '@/hooks/window';
+import { useToggleFriend, getUserStatus } from '@/hooks/window';
 
 export default defineComponent({
   name: 'userInfo',
@@ -389,6 +388,26 @@ export function useBeforeBlacklist(
     Toast(t(data.body.resultString));
   };
 }
+
+function useToggleFriendStatus(
+  store: Store<initStore>,
+  t: { (key: string | number): string },
+  yUserInfo: IUserInfo,
+  emit?: any
+) {
+  return async (e: boolean) => {
+    const res = await getUserStatus(store)
+    if(res.body.status == 99){
+      throw emit('blackListToast', {
+        store,
+        t,
+        yUserInfo: yUserInfo,
+        title: t('该用户已注销,是否将其移除好友列表,并清空聊天会话?'),
+      });
+    }
+    useToggleFriend(store, t, yUserInfo)(e)
+  }
+}
 </script>
 <script setup lang="ts">
 const emit = defineEmits(['toggleBox', 'changeTag', 'blackListToast']);
@@ -416,7 +435,7 @@ const remarkName = computed(() => {
   return data ? data.userAttachInfo.remarkName : '';
 });
 // 添加好友和删除好友
-const toggleFriend = useToggleFriend(store, t, props.yUserInfo);
+const toggleFriend = useToggleFriendStatus(store, t, props.yUserInfo, emit)
 
 // 消息免打扰
 const beforeMsgNotdisturb = useBeforeSwitch(
@@ -495,6 +514,20 @@ const send = () => {
   store.commit('SET_ACTIVEUID', props.yUserInfo?.uid);
   store.commit('SET_ACTIVEISGROUP', false);
 };
+
+
+const handleChangeTag = async (e) => {
+  const res = await getUserStatus(store)
+  if(res.body.status == 99){
+    throw emit('blackListToast', {
+        store,
+        t,
+        yUserInfo: { uid: props.yUserInfo.uid },
+        title: t('该用户已注销,是否将其移除好友列表,并清空聊天会话?'),
+    });
+  }
+  emit('changeTag', e)
+}
 
 // 获取用户在线状态
 const getOnLineStatus = async () => {
