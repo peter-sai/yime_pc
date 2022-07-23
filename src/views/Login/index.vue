@@ -141,6 +141,27 @@
         </div>
       </div>
     </Teleport>
+    <Teleport to="body" v-if="isShowSmsAuth">
+      <div class="verificationBox">
+        <div class="box"></div>
+        <div class="smsVerification">
+          <i class="close" @click="isShowSmsAuth = false"></i>
+          <div class="title">{{ t('安全验证') }}</div>
+          <div class="content">为了您的账号安全，请使用短信验证码登录</div>
+          <div class="btn">
+            <div
+              @click="
+                btns.active = 2;
+                isShowSmsAuth = false;
+              "
+            >
+              {{ t('短信验证码登录') }}
+            </div>
+            <div @click="isShowSmsAuth = false">{{ t('取消登录') }}</div>
+          </div>
+        </div>
+      </div>
+    </Teleport>
   </div>
 </template>
 <script lang="ts">
@@ -184,6 +205,8 @@ const rememberPwd = ref(false);
 const changeRememberPwd = () => {
   rememberPwd.value = !rememberPwd.value;
 };
+
+const isShowSmsAuth = ref(false);
 
 const { t } = useI18n();
 const store = useStore(key);
@@ -334,7 +357,11 @@ watch(
     if (data.cmd == 2183) {
       if (data.body.result !== 5) {
         showAuth.value = false;
-        Toast(t(map[data.body.result]));
+        if (data.body?.result === 4) {
+          isShowSmsAuth.value = true;
+        } else {
+          Toast(t(map[data.body.result]));
+        }
       } else {
         showAuth.value = true;
       }
@@ -808,6 +835,43 @@ onUnmounted(() => {
     background: #000000;
     opacity: 0.76;
   }
+  .close {
+    position: absolute;
+    cursor: pointer;
+    right: 20px;
+    top: 20px;
+    width: 10px;
+    height: 10px;
+    &::after {
+      display: block;
+      position: absolute;
+      content: '';
+      width: 100%;
+      height: 2px;
+      left: 50%;
+      top: 50%;
+      background: #000000;
+      transform: translate(-50%, -50%) rotate(45deg);
+    }
+    &::before {
+      display: block;
+      position: absolute;
+      content: '';
+      width: 100%;
+      height: 2px;
+      left: 50%;
+      top: 50%;
+      background: #000000;
+      transform: translate(-50%, -50%) rotate(-45deg);
+    }
+  }
+  .title {
+    font-size: 16px;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.85);
+    text-align: center;
+    margin-top: 32px;
+  }
   .verification {
     width: 310px;
     height: 256px;
@@ -820,43 +884,7 @@ onUnmounted(() => {
     top: 50%;
     bottom: 50%;
     transform: translate(-50%, -50%);
-    .close {
-      position: absolute;
-      cursor: pointer;
-      right: 20px;
-      top: 20px;
-      width: 10px;
-      height: 10px;
-      &::after {
-        display: block;
-        position: absolute;
-        content: '';
-        width: 100%;
-        height: 2px;
-        left: 50%;
-        top: 50%;
-        background: #000000;
-        transform: translate(-50%, -50%) rotate(45deg);
-      }
-      &::before {
-        display: block;
-        position: absolute;
-        content: '';
-        width: 100%;
-        height: 2px;
-        left: 50%;
-        top: 50%;
-        background: #000000;
-        transform: translate(-50%, -50%) rotate(-45deg);
-      }
-    }
-    .title {
-      font-size: 16px;
-      font-weight: 500;
-      color: rgba(0, 0, 0, 0.85);
-      text-align: center;
-      margin-top: 32px;
-    }
+
     .content {
       margin: 15px 0 20px;
       padding: 0 16px;
@@ -900,6 +928,55 @@ onUnmounted(() => {
         justify-content: center;
         align-items: center;
         cursor: pointer;
+      }
+    }
+  }
+  .smsVerification {
+    width: 310px;
+    height: 200px;
+    background: #ffffff;
+    box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+    position: absolute;
+    left: 50%;
+    right: 50%;
+    top: 50%;
+    bottom: 50%;
+    transform: translate(-50%, -50%);
+    .content {
+      font-size: 14px;
+      font-weight: 400;
+      color: #666666;
+      line-height: 22px;
+      text-align: center;
+      max-width: 70%;
+      margin: 20px auto;
+    }
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+      div {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        justify-content: center;
+        width: 120px;
+        height: 32px;
+        background: #0085ff;
+        font-size: 14px;
+        font-family: PingFangSC-Regular, PingFang SC;
+        font-weight: 400;
+        color: #ffffff;
+        line-height: 22px;
+        text-align: center;
+        border-radius: 3px;
+        overflow: hidden;
+        &:last-child {
+          background: transparent;
+          color: #666666;
+          border: 1px solid #dddddd;
+        }
       }
     }
   }
