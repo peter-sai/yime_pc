@@ -1014,6 +1014,9 @@ export default {
   安全验证: 'Security verification',
   确认登录: 'Confirm login',
   撤销操作: 'Undo operation',
+  '为了您的账号安全，请使用短信验证码登录':
+    'For the security of your account, please login with SMS verification code',
+  短信验证码登录: 'SMS verification code login',
   '您的账号在<spile>上发起登录申请，是否确认登录？':
     'Your account has initiated a login application on <spile>. Are you sure to login?',
   '如非本人操作，请尽快更改密码':
