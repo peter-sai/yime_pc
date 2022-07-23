@@ -3,6 +3,7 @@
     <router-view />
     <Teleport to="body" v-if="authInfo.isShow">
       <div class="verificationBox">
+        <div class="box"></div>
         <div class="verification">
           <i @click="authInfo.isShow = !authInfo.isShow" class="close"></i>
           <div class="title">{{t('安全验证')}}</div>
@@ -733,8 +734,15 @@ Electron.ipcRenderer.on('close', () => {
   top: 0;
   bottom: 0;
   z-index: 9999;
-  background: #000000;
-  opacity: 0.76;
+  .box {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background: #000000;
+    opacity: 0.76;
+  }
   .verification {
     width: 310px;
     height: 256px;
