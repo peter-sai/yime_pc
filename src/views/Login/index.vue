@@ -365,6 +365,7 @@ watch(
           Toast(t(map[data.body.result]));
         }
       } else {
+        hideLoading();
         showAuth.value = true;
       }
       if (data.body.result === 0 || data.body.result === 6) {
