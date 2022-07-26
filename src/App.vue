@@ -8,7 +8,7 @@
           <i @click="authInfo.isShow = !authInfo.isShow" class="close"></i>
           <div class="title">{{t('安全验证')}}</div>
           <div class="content">
-            <div class="time">{{ moment(authInfo.time).format('YYYY-MM-DD HH:mm') }}</div>
+            <div class="time">{{ moment(authInfo.time * 1000).format('YYYY-MM-DD HH:mm') }}</div>
             <div class="info">
               {{t('您的账号在<spile>上发起登录申请，是否确认登录？'.replace('<spile>',authInfo.deviceBrand))}}
             </div>
