@@ -587,7 +587,7 @@ import {
   useDelMsg,
   formatMsg,
   downloadFile,
-  useGetGroupHistoryMsg
+  useGetGroupHistoryMsg,
 } from '@/hooks/window';
 import { IGroupInfo, IUserDetailInfo, IUserInfo } from '@/types/user';
 import { Toast } from '@/plugin/Toast';
@@ -710,16 +710,19 @@ const scrollEvent = async (e: any) => {
     unRead.value = 0;
   }
 
-  const id = msgWindow.value.querySelector('.Message').firstElementChild.id
-  if(status.value && scrollTop <= 0 && !!store.state?.activeUid){
-    status.value = false
-    const data = await useGetGroupHistoryMsg(store, store.state?.msgList[store.state?.activeUid])
+  const id = msgWindow.value.querySelector('.Message').firstElementChild.id;
+  if (status.value && scrollTop <= 0 && !!store.state?.activeUid) {
+    status.value = false;
+    const data = await useGetGroupHistoryMsg(
+      store,
+      store.state?.msgList[store.state?.activeUid]
+    );
     await nextTick();
     msgWindow.value.scrollTo({
-      top: msgWindow.value.querySelector('div[id="'+id+'"]').offsetTop,
-      behavior:'instant'
-    })
-    status.value = !!data
+      top: msgWindow.value.querySelector('div[id="' + id + '"]').offsetTop,
+      behavior: 'instant',
+    });
+    status.value = !!data;
   }
 };
 
@@ -879,7 +882,10 @@ const userInfo = computed(() => store.state.userInfo);
 const showMen = ref(false);
 
 const menuClick = (e: any, data: IMsgInfo<string>) => {
-  const boxHeader = 175;
+  let boxHeader = 175;
+  if (data.type === 'voiceMsg') {
+    boxHeader = 80;
+  }
 
   if (
     75 + e.pageX > window.innerWidth &&
