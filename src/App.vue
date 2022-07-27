@@ -258,6 +258,11 @@ import moment from 'moment'
 const store = useStore(key);
 store.dispatch('init');
 const { t } = useI18n();
+if(navigator.userAgent.toLocaleLowerCase().includes('electron')){
+  window.deviceBrand = navigator.userAgent.toLocaleLowerCase().includes('electron') ? 'mac' : 'window'
+}else{
+  window.deviceBrand = 'web'
+}
 
 store.commit('set_T', t);
 
@@ -294,7 +299,7 @@ const init = async () => {
 
   //获取设备唯一编码
   const deviceUuid = await getDeviceUuidStr();
-  store.commit('SET_DEVICEUUID', deviceUuid);
+  window.uuid = deviceUuid;
 
   // 初始化融云服务
   initRonyun(store);
@@ -350,10 +355,10 @@ const auth = async (state: 0 | 1) => {
     query: {
       state,
       equipmentInformation: {
-        deviceBrand: 'web',
+        deviceBrand: window.deviceBrand,
         releaseVersion: '2.0.0',
         devicePublicIp: returnCitySN.cip || '',
-        deviceUuid: store.state.deviceUuid
+        deviceUuid: window.uuid
       }
     },
     cmd: 2185,

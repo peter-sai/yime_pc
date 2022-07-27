@@ -378,10 +378,10 @@ watch(
             },
             clientLanguageType: language,
             equipmentInformation: {
-              deviceBrand: 'web',
+              deviceBrand: window.deviceBrand,
               releaseVersion: '2.0.0',
               devicePublicIp: returnCitySN.cip || '',
-              deviceUuid: store.state.deviceUuid
+              deviceUuid: window.uuid
             },
           };
           const data = await store.dispatch('postMsg', {
@@ -399,10 +399,10 @@ watch(
             },
             clientLanguageType: language,
             equipmentInformation: {
-              deviceBrand: 'web',
+              deviceBrand: window.deviceBrand,
               releaseVersion: '2.0.0',
               devicePublicIp: returnCitySN.cip || '',
-              deviceUuid: store.state.deviceUuid
+              deviceUuid: window.uuid
             },
           };
           const data = await store.dispatch('postMsg', {
@@ -420,10 +420,10 @@ watch(
             },
             clientLanguageType: language,
             equipmentInformation: {
-              deviceBrand: 'web',
+              deviceBrand: window.deviceBrand,
               releaseVersion: '2.0.0',
               devicePublicIp: returnCitySN.cip || '',
-              deviceUuid: store.state.deviceUuid
+              deviceUuid: window.uuid
             },
           };
           const data = await store.dispatch('postMsg', {
@@ -489,10 +489,10 @@ function useLogin(
           loginType: 0,
           password: md5(query.password),
           equipmentInformation: {
-            deviceBrand: 'web',
+            deviceBrand: window.deviceBrand,
             releaseVersion: '2.0.0',
             devicePublicIp: returnCitySN.cip || '',
-            deviceUuid: store.state.deviceUuid
+            deviceUuid: window.uuid
           },
         },
         cmd: 2181,
@@ -539,10 +539,10 @@ function useLogin(
           account: '+' + areaCode.value + query.phone,
           loginType: 5,
           equipmentInformation: {
-            deviceBrand: 'web',
+            deviceBrand: window.deviceBrand,
             releaseVersion: '2.0.0',
             devicePublicIp: returnCitySN.cip || '',
-            deviceUuid: store.state.deviceUuid
+            deviceUuid: window.uuid
           },
         },
         cmd: 2181,
@@ -598,10 +598,10 @@ function useLogin(
           loginType: 9,
           password: md5(query.imPassword),
           equipmentInformation: {
-            deviceBrand: 'web',
+            deviceBrand: window.deviceBrand,
             releaseVersion: '2.0.0',
             devicePublicIp: returnCitySN.cip || '',
-            deviceUuid: store.state.deviceUuid
+            deviceUuid: window.uuid
           },
         },
         cmd: 2181,
