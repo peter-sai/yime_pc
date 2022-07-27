@@ -3,6 +3,7 @@ import store from '@/store';
 import themeMap from '@/style/theme/index.scss';
 import moment from 'moment';
 import cnchar from 'cnchar-all';
+import FingerprintJS from '@fingerprintjs/fingerprintjs';
 
 // md5
 export const md5 = (value) => {
@@ -225,4 +226,18 @@ export function getLang() {
   } else {
     return 2;
   }
+}
+
+export function getDeviceUuidStr() {
+  return new Promise((resolve, reject) => {
+    FingerprintJS.load().then(fp => {
+      fp.get().then(({visitorId}) => {
+          if(visitorId){
+            resolve(visitorId)
+          }else{
+            reject('')
+          }
+      });
+    })
+  })
 }

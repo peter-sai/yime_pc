@@ -10,6 +10,7 @@
     "proto": "pbjs -t json-module -w commonjs -o src/protoBuild/proto.js  src/proto/*.proto"
   },
   "dependencies": {
+    "@fingerprintjs/fingerprintjs": "^3.3.3",
     "@rongcloud/imlib-next": "^5.1.0",
     "@rongcloud/plugin-call": "^5.0.7",
     "@rongcloud/plugin-rtc": "^5.3.0",
