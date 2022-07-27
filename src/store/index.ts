@@ -218,7 +218,7 @@ const sotreRoot = createStore({
         }
         // push 消息
         if (!res.isRoamMsg) {
-          state.msgList[id].readList.push(res);
+          (state.msgList[id].readList || []).push(res);
           if (
             Number(res.fromId) !== Number(state.userInfo.uid) &&
             (res.isGroupMsg
@@ -231,7 +231,7 @@ const sotreRoot = createStore({
         } else {
           // 漫游消息
 
-          const list = state.msgList[id].readList;
+          const list = state.msgList[id].readList || [];
           const item = state.msgList[id];
           list.push(res);
           list.sort((a, b) => a.msgId - b.msgId);
