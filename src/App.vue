@@ -68,7 +68,6 @@ import { yimechat } from './api';
 import config from './config';
 import returnCitySN from 'returnCitySN';
 import { Toast } from './plugin/Toast';
-import returnCitySN from 'returnCitySN';
 
 export async function initRonyun(store: Store<initStore>) {
   // IM 客户端初始化
