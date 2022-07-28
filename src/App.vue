@@ -68,6 +68,7 @@ import { yimechat } from './api';
 import config from './config';
 import returnCitySN from 'returnCitySN';
 import { Toast } from './plugin/Toast';
+import returnCitySN from 'returnCitySN';
 
 export async function initRonyun(store: Store<initStore>) {
   // IM 客户端初始化
@@ -258,11 +259,11 @@ import Electron from 'Electron';
 import moment from 'moment'
 const store = useStore(key);
 store.dispatch('init');
-Electron.ipcRenderer.on('sendUuid', (event, params) => {
+Electron.ipcRenderer.on('sendUuid', (event: any, params: any) => {
   window.uuid = params.uuid
 })
 Electron.ipcRenderer.send('getUUid');
-Electron.ipcRenderer.on('awaken', (event, params) => {
+Electron.ipcRenderer.on('awaken', (event: any, params: any) => {
   if (params.awakenArgs.indexOf('gid') !== -1) {
     const url = params.awakenArgs.split('=');
     if (url[1]) {
