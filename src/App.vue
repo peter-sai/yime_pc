@@ -36,7 +36,7 @@ import { Store, useStore } from 'vuex';
 import { getOssInfo } from './api';
 import { getToken as getUserToken } from './utils/utils';
 import { initStore, key } from './store';
-import { getStorage, setMsgList } from './utils/utils';
+import { getStorage, setMsgList, getDeviceUuidStr } from './utils/utils';
 import {
   getRoam,
   initRongConnect,
@@ -67,6 +67,7 @@ import { useI18n } from 'vue-i18n';
 import { hideLoading } from './plugin/Loading';
 import { yimechat } from './api';
 import { Toast } from './plugin/Toast';
+import returnCitySN from 'returnCitySN';
 
 export async function initRonyun(store: Store<initStore>) {
   // IM 客户端初始化
@@ -257,6 +258,11 @@ import moment from 'moment'
 const store = useStore(key);
 store.dispatch('init');
 const { t } = useI18n();
+if(navigator.userAgent.toLocaleLowerCase().includes('electron')){
+  window.deviceBrand = navigator.userAgent.toLocaleLowerCase().includes('electron') ? 'mac' : 'window'
+}else{
+  window.deviceBrand = 'web'
+}
 
 store.commit('set_T', t);
 
@@ -290,6 +296,10 @@ const init = async () => {
 
   // 获取阿里存储信息
   initOss(store);
+
+  //获取设备唯一编码
+  const deviceUuid = await getDeviceUuidStr();
+  window.uuid = deviceUuid;
 
   // 初始化融云服务
   initRonyun(store);
@@ -345,7 +355,10 @@ const auth = async (state: 0 | 1) => {
     query: {
       state,
       equipmentInformation: {
-        deviceBrand: 'web',
+        deviceBrand: window.deviceBrand,
+        releaseVersion: '2.0.0',
+        devicePublicIp: returnCitySN.cip || '',
+        deviceUuid: window.uuid
       }
     },
     cmd: 2185,
