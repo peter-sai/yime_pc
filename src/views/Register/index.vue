@@ -51,7 +51,7 @@
         />
         {{ t('本人接受') }}
         <span
-          @click="goLink('https://yime.app/userAgreements')"
+          @click="goLink('https://yime.vip/userAgreements')"
           class="agreement"
           >{{ t('《YiMe协议》') }}</span
         >
