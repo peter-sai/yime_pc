@@ -381,7 +381,7 @@ watch(
               deviceBrand: window.deviceBrand,
               releaseVersion: '2.0.0',
               devicePublicIp: returnCitySN.cip || '',
-              deviceUuid: window.uuid
+              deviceUuid: window.uuid,
             },
           };
           const data = await store.dispatch('postMsg', {
@@ -402,7 +402,7 @@ watch(
               deviceBrand: window.deviceBrand,
               releaseVersion: '2.0.0',
               devicePublicIp: returnCitySN.cip || '',
-              deviceUuid: window.uuid
+              deviceUuid: window.uuid,
             },
           };
           const data = await store.dispatch('postMsg', {
@@ -423,7 +423,7 @@ watch(
               deviceBrand: window.deviceBrand,
               releaseVersion: '2.0.0',
               devicePublicIp: returnCitySN.cip || '',
-              deviceUuid: window.uuid
+              deviceUuid: window.uuid,
             },
           };
           const data = await store.dispatch('postMsg', {
@@ -492,7 +492,7 @@ function useLogin(
             deviceBrand: window.deviceBrand,
             releaseVersion: '2.0.0',
             devicePublicIp: returnCitySN.cip || '',
-            deviceUuid: window.uuid
+            deviceUuid: window.uuid,
           },
         },
         cmd: 2181,
@@ -542,7 +542,7 @@ function useLogin(
             deviceBrand: window.deviceBrand,
             releaseVersion: '2.0.0',
             devicePublicIp: returnCitySN.cip || '',
-            deviceUuid: window.uuid
+            deviceUuid: window.uuid,
           },
         },
         cmd: 2181,
@@ -601,7 +601,7 @@ function useLogin(
             deviceBrand: window.deviceBrand,
             releaseVersion: '2.0.0',
             devicePublicIp: returnCitySN.cip || '',
-            deviceUuid: window.uuid
+            deviceUuid: window.uuid,
           },
         },
         cmd: 2181,
