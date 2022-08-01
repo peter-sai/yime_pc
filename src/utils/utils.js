@@ -193,6 +193,7 @@ export function getMsgList() {
 
 export function setMsgList(val) {
   const userInfo = JSON.parse(getStorage('userInfo'));
+  if (!userInfo || !userInfo.uid) return;
   const uid = userInfo.uid;
   const msgList = JSON.parse(getStorage('msgList')) || {};
   msgList[uid] = val;
@@ -230,14 +231,14 @@ export function getLang() {
 
 export function getDeviceUuidStr() {
   return new Promise((resolve, reject) => {
-    FingerprintJS.load().then(fp => {
-      fp.get().then(({visitorId}) => {
-          if(visitorId){
-            resolve(visitorId)
-          }else{
-            reject('')
-          }
+    FingerprintJS.load().then((fp) => {
+      fp.get().then(({ visitorId }) => {
+        if (visitorId) {
+          resolve(visitorId);
+        } else {
+          reject('');
+        }
       });
-    })
-  })
+    });
+  });
 }
