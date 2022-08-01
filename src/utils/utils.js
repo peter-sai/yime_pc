@@ -3,7 +3,6 @@ import store from '@/store';
 import themeMap from '@/style/theme/index.scss';
 import moment from 'moment';
 import cnchar from 'cnchar-all';
-import FingerprintJS from '@fingerprintjs/fingerprintjs';
 
 // md5
 export const md5 = (value) => {
@@ -193,6 +192,7 @@ export function getMsgList() {
 
 export function setMsgList(val) {
   const userInfo = JSON.parse(getStorage('userInfo'));
+  if (!userInfo || !userInfo.uid) return;
   const uid = userInfo.uid;
   const msgList = JSON.parse(getStorage('msgList')) || {};
   msgList[uid] = val;
