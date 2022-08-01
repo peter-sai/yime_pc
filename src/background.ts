@@ -1,9 +1,17 @@
 'use strict';
 
-import { app, protocol, BrowserWindow, shell } from 'electron';
+import {
+  app,
+  protocol,
+  BrowserWindow,
+  shell,
+  nativeImage,
+  Tray,
+  Menu,
+} from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer';
-import config from './config';
+import config, { IConfig } from './config';
 const { machineIdSync } = require('node-machine-id');
 const os = require('os');
 const fs = require('fs');
@@ -13,6 +21,8 @@ const Badge = require('electron-windows-badge');
 
 const { ipcMain } = require('electron');
 let win: any;
+let tray: any;
+let isQuit = false;
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -107,11 +117,11 @@ async function createWindow() {
       }
     });
   });
-  win.webContents.session.on('will-download', (event, item) => {
+  win.webContents.session.on('will-download', (_: any, item: any) => {
     if (dowUrl) {
       item.setSavePath(dowUrl);
     }
-    item.once('done', (_, state) => {
+    item.once('done', (_: any, state: string) => {
       if (state === 'completed') {
         if (dowUrl) {
           shell.openPath(dowUrl);
@@ -122,8 +132,16 @@ async function createWindow() {
     });
   });
 
-  win.on('close', () => {
+  win.on('close', (e: any) => {
     win.webContents.send('close');
+    if (!win.isFocused()) {
+      win = null;
+    } else {
+      if (!isQuit) {
+        e.preventDefault();
+        win.hide();
+      }
+    }
   });
 }
 
@@ -140,6 +158,7 @@ app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (BrowserWindow.getAllWindows().length === 0) createWindow();
+  else win.show();
 });
 
 // This method will be called when Electron has finished
@@ -154,6 +173,10 @@ app.on('ready', async () => {
       console.error('Vue Devtools failed to install:', e.toString());
     }
   }
+
+  // 设置系统托盘
+  setTray();
+
   createWindow();
 });
 
@@ -170,4 +193,36 @@ if (isDevelopment) {
       app.quit();
     });
   }
+}
+
+function setTray() {
+  const config = {
+    dev: 'YIME',
+    yime: 'YIME',
+    duoliao: 'DUOLIAO',
+    momo: 'MOMO',
+  };
+  const icon = nativeImage.createFromPath(
+    path.join(
+      __dirname,
+      `../build/${config[process.env.VUE_APP_MODE as keyof IConfig]}/logo.png`
+    )
+  );
+  tray = new Tray(icon);
+  //单击打开应用
+  tray.on('click', () => {
+    win.show();
+  });
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: '退出',
+      click: function () {
+        isQuit = true;
+        app.quit();
+      },
+    },
+  ]);
+  tray.on('right-click', () => {
+    tray.popUpContextMenu(contextMenu);
+  });
 }

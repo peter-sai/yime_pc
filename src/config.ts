@@ -14,7 +14,7 @@ export interface IConfig {
 
 const config: IConfig = {
   dev: {
-    VUE_APP_BASEURL: 'wss://ws-test.yimechat.com',
+    VUE_APP_BASEURL: 'wss://ws-test.yime.vip',
     ELECTRON_NAME: 'YIME',
     NODE_ENV: 'development',
     HOST: 'http://16.163.55.202:3000',
