@@ -91,6 +91,12 @@ module.exports = {
           shortcutName: config[process.env.VUE_APP_MODE], // 图标名称
           deleteAppDataOnUninstall: true,
         },
+        publish: [
+          {
+            provider: 'generic',
+            url: 'http://localhost:8000',
+          },
+        ],
       },
     },
   },

@@ -8,16 +8,19 @@ import {
   nativeImage,
   Tray,
   Menu,
+  dialog,
 } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer';
-import config, { IConfig } from './config';
+import config from './config';
 const { machineIdSync } = require('node-machine-id');
 const os = require('os');
 const fs = require('fs');
 const path = require('path');
 const isDevelopment = process.env.NODE_ENV !== 'production';
 const Badge = require('electron-windows-badge');
+const { autoUpdater } = require('electron-updater');
+// const { handleUpdate } = require('./update');
 
 const { ipcMain } = require('electron');
 let win: any;
@@ -44,6 +47,8 @@ async function createWindow() {
       webSecurity: false,
     },
   });
+
+  // handleUpdate(win);
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
@@ -97,7 +102,9 @@ async function createWindow() {
 
   // active 程序
   ipcMain.on('getUUid', (event) => {
-    win.webContents.send('sendUuid', { uuid: machineIdSync() });
+    win.webContents.send('sendUuid', {
+      uuid: machineIdSync(),
+    });
   });
 
   // 设置通知标题
@@ -145,6 +152,12 @@ async function createWindow() {
   });
 }
 
+ipcMain.on('checkUpdate', () => {
+  autoUpdater.checkForUpdates();
+});
+ipcMain.on('downloadUpdate', () => {
+  autoUpdater.downloadUpdate();
+});
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
   // On macOS it is common for applications and their menu bar
@@ -157,8 +170,11 @@ app.on('window-all-closed', () => {
 app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  if (BrowserWindow.getAllWindows().length === 0) createWindow();
-  else win.show();
+  if (BrowserWindow.getAllWindows().length === 0) {
+    createWindow();
+  } else {
+    win.show();
+  }
 });
 
 // This method will be called when Electron has finished
@@ -178,6 +194,8 @@ app.on('ready', async () => {
   setTray();
 
   createWindow();
+  autoUpdateFn();
+  autoUpdater.checkForUpdates();
 });
 
 // Exit cleanly on request from parent process in development mode.
@@ -196,18 +214,7 @@ if (isDevelopment) {
 }
 
 function setTray() {
-  const config = {
-    dev: 'YIME',
-    yime: 'YIME',
-    duoliao: 'DUOLIAO',
-    momo: 'MOMO',
-  };
-  const icon = nativeImage.createFromPath(
-    path.join(
-      __dirname,
-      `../build/${config[process.env.VUE_APP_MODE as keyof IConfig]}/logo.png`
-    )
-  );
+  const icon = nativeImage.createFromPath(path.join(__static, 'logo.png'));
   tray = new Tray(icon);
   //单击打开应用
   tray.on('click', () => {
@@ -224,5 +231,62 @@ function setTray() {
   ]);
   tray.on('right-click', () => {
     tray.popUpContextMenu(contextMenu);
+  });
+}
+
+function autoUpdateFn() {
+  autoUpdater.autoInstallOnAppQuit = false;
+  autoUpdater.autoDownload = false;
+  autoUpdater.setFeedURL('http://127.0.0.1:8000');
+  autoUpdater.on('checking-for-update', () => {
+    console.log('正在检查更新……');
+    win.webContents.send('ev-test', '正在检查更新……');
+  });
+  autoUpdater.on('update-available', (ev, info) => {
+    console.log('检测到有版本更新');
+    win.webContents.send('ev-test', '检测到有版本更新');
+  });
+  autoUpdater.on('update-not-available', (ev, info) => {
+    console.log('现在使用的就是最新版本，不用更新');
+    win.webContents.send('ev-test', '现在使用的就是最新版本，不用更新');
+  });
+  autoUpdater.on('error', (ev, err) => {
+    console.log('检查更新出错');
+    win.webContents.send('ev-test', { code: 0, msg: '检查更新出错', err });
+  });
+
+  // 更新下载进度事件
+  autoUpdater.on('download-progress', (progressObj: any) => {
+    console.log('download-progress:::', progressObj);
+    win.webContents.send('ev-test', progressObj.percent);
+    win.setProgressBar(progressObj.percent / 100);
+  });
+
+  autoUpdater.on('update-downloaded', (ev, releaseNotes, releaseName) => {
+    // Wait 5 seconds, then quit and install
+    // In your application, you don't need to wait 5 seconds.
+    // You could call autoUpdater.quitAndInstall(); immediately
+    const options = {
+      type: 'info',
+      buttons: ['确定', '取消'],
+      title: '应用更新',
+      message: process.platform === 'win32' ? releaseNotes : releaseName,
+      detail: '发现有新版本，是否更新？',
+    };
+    dialog.showMessageBox(options).then((returnVal) => {
+      win.webContents.send('ev-test', returnVal.response);
+      if (returnVal.response === 0) {
+        win.webContents.send('ev-test', '开始更新');
+        console.log('开始更新');
+        isQuit = true;
+        setTimeout(() => {
+          autoUpdater.quitAndInstall();
+        }, 5000);
+      } else {
+        win.webContents.send('ev-test', '取消更新');
+        console.log('取消更新');
+        return;
+      }
+    });
   });
 }

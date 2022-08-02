@@ -1,5 +1,7 @@
 <template>
   <div>
+    <div style="font-size: 20px;" @click="test(1)">checkupload</div>
+    <div  style="font-size: 20px;" @click="test(2)">downloadUpdate</div>
     <router-view />
     <Teleport to="body" v-if="authInfo.isShow">
       <div class="verificationBox">
@@ -256,11 +258,42 @@ export function reconnect(store: Store<initStore>) {
 <script lang="ts" setup>
 import Electron from 'Electron';
 import moment from 'moment'
+
+setTimeout(() => {
+    Electron.ipcRenderer.send('ev-check-for-update');
+    }, 500);
 const store = useStore(key);
 store.dispatch('init');
 Electron.ipcRenderer.on('sendUuid', (event: any, params: any) => {
   window.uuid = params.uuid
 })
+
+//////////
+const test = (num) => {
+  console.log(num);
+  
+  if (num === 1) {
+    Electron.ipcRenderer.send('checkUpdate');
+  } else {
+    Electron.ipcRenderer.send('downloadUpdate');
+  }
+}
+Electron.ipcRenderer.on("ev-message", (event, message) => {
+  console.log(message);
+  Toast(message)
+});
+Electron.ipcRenderer.on("ev-should-update", (event, message) => {
+  console.log(message);
+  const flag = confirm('检查到新版本，是否更新?');
+  if (flag) Electron.ipcRenderer.send("ev-update-now");
+});
+
+Electron.ipcRenderer.on("ev-test", (event, message) => {
+  console.log(message);
+});
+
+//////////
+
 Electron.ipcRenderer.send('getUUid');
 Electron.ipcRenderer.on('awaken', (event: any, params: any) => {
   if (params.awakenArgs.indexOf('gid') !== -1) {
